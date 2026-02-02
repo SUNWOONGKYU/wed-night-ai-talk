@@ -82,6 +82,20 @@ document.getElementById('switch-to-signup').addEventListener('click', (e) => {
     openModal('signup');
 });
 
+// ========== Phone number: strip non-digits ==========
+function sanitizePhone(value) {
+    return value.replace(/[^0-9]/g, '');
+}
+document.querySelectorAll('#s-contact, #inq-phone').forEach(function(el) {
+    el.addEventListener('input', function() {
+        var pos = el.selectionStart;
+        var before = el.value.length;
+        el.value = sanitizePhone(el.value);
+        var after = el.value.length;
+        el.setSelectionRange(pos - (before - after), pos - (before - after));
+    });
+});
+
 // ========== Status helper ==========
 function setStatus(el, message, type) {
     el.textContent = message;
@@ -533,7 +547,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     const email = document.getElementById('s-email').value.trim();
     const password = document.getElementById('s-password').value;
     const name = document.getElementById('s-name').value.trim();
-    const phone = document.getElementById('s-contact').value.trim();
+    const phone = sanitizePhone(document.getElementById('s-contact').value);
     const memberType = document.getElementById('s-type').value;
     const message = document.getElementById('s-message').value.trim();
     const checked = e.target.querySelectorAll('input[name="interests"]:checked');
@@ -652,7 +666,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     const btn = e.target.querySelector('.form-submit');
 
     const name = document.getElementById('p-name').value.trim();
-    const phone = document.getElementById('p-contact').value.trim();
+    const phone = sanitizePhone(document.getElementById('p-contact').value);
     const memberType = document.getElementById('p-type').value;
     const message = document.getElementById('p-message').value.trim();
     const checked = e.target.querySelectorAll('input[name="interests"]:checked');
@@ -753,7 +767,7 @@ document.getElementById('inquiry-form').addEventListener('submit', async (e) => 
     const btn = e.target.querySelector('.form-submit');
 
     const name = document.getElementById('inq-name').value.trim();
-    const phone = document.getElementById('inq-phone').value.trim();
+    const phone = sanitizePhone(document.getElementById('inq-phone').value);
     const email = document.getElementById('inq-email').value.trim();
     const subject = document.getElementById('inq-subject').value.trim();
     const message = document.getElementById('inq-message').value.trim();
