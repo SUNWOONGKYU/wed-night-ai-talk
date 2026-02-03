@@ -186,6 +186,7 @@ function renderEvents(events) {
             <td>
                 <button class="btn-secondary btn-small" onclick="editEvent(${ev.id})">수정</button>
                 <button class="btn-secondary btn-small" onclick="toggleEventActive(${ev.id}, ${ev.is_active})">${ev.is_active ? '비활성화' : '활성화'}</button>
+                <button class="btn-secondary btn-small" onclick="deleteEvent(${ev.id}, '${escapeHtml(ev.title)}')" style="color:var(--accent-pink);">삭제</button>
             </td>
         </tr>`;
     }).join('');
@@ -283,6 +284,17 @@ async function toggleEventActive(id, isActive) {
         loadEvents();
     } catch (e) {
         alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
+async function deleteEvent(id, title) {
+    if (!confirm(`"${title}" 모임을 정말 삭제하시겠습니까?\n삭제하면 복구할 수 없습니다.`)) return;
+    try {
+        await DB.deleteEvent(id);
+        alert('모임이 삭제되었습니다.');
+        loadEvents();
+    } catch (e) {
+        alert('삭제 중 오류가 발생했습니다: ' + (e.message || e));
     }
 }
 

@@ -176,6 +176,14 @@ var DB = {
         return data;
     },
 
+    async deleteEvent(eventId) {
+        var { error } = await _supabase
+            .from('events')
+            .delete()
+            .eq('id', eventId);
+        if (error) throw error;
+    },
+
     async getAllEvents() {
         var { data, error } = await _supabase
             .from('events')
