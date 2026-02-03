@@ -256,7 +256,12 @@ async function toggleEventActive(id, isActive) {
 }
 
 // ========== Attendees ==========
+let currentAttendEventId = null;
+let currentAttendEventTitle = null;
+
 async function viewAttendees(eventId, eventTitle) {
+    currentAttendEventId = eventId;
+    currentAttendEventTitle = eventTitle;
     const card = document.getElementById('attendees-card');
     const tbody = document.getElementById('attendees-tbody');
     const titleEl = document.getElementById('attendees-title');
@@ -303,10 +308,7 @@ async function deleteAttendee(userId, eventId, displayName) {
     try {
         await DB.cancelAttendance(userId, eventId);
         alert('참여 신청이 삭제되었습니다.');
-        // 현재 보고 있는 명단 새로고침
-        const titleEl = document.getElementById('attendees-title');
-        const eventTitle = titleEl.textContent.replace(/^"|".*$/g, '').replace(/^"/, '').replace(/" 참여자 명단$/, '');
-        await viewAttendees(eventId, eventTitle);
+        await viewAttendees(currentAttendEventId, currentAttendEventTitle);
     } catch (e) {
         alert('삭제 중 오류가 발생했습니다: ' + (e.message || e));
     }
