@@ -391,7 +391,7 @@ async function renderScheduleEvents() {
                         <div class="schedule-info-icon">🎬</div>
                         <div class="schedule-info-text">
                             <div class="info-label">온라인 참여</div>
-                            <div class="info-value"><a href="${escapeHtml(ev.youtube_url)}" target="_blank" rel="noopener noreferrer">온라인 참여하기 →</a></div>
+                            <div class="info-value"><a href="${escapeHtml(ev.youtube_url)}" target="_blank" rel="noopener noreferrer">유튜브 라이브 참여하기 →</a></div>
                         </div>
                     </div>`;
             }
