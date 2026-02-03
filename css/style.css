@@ -1545,7 +1545,7 @@ footer {
 #members-table th:nth-child(3),
 #members-table td:nth-child(3) { width: 20%; } /* 이메일 */
 #members-table th:nth-child(4),
-#members-table td:nth-child(4) { width: 25%; white-space: normal; } /* 관심분야 */
+#members-table td:nth-child(4) { width: 45%; white-space: normal; } /* 관심분야 */
 #members-table th:nth-child(5),
 #members-table td:nth-child(5) { width: 10%; } /* 유형 */
 #members-table th:nth-child(6),
