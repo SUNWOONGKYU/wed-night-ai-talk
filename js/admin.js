@@ -210,7 +210,8 @@ eventForm.addEventListener('submit', async (e) => {
         address: document.getElementById('ev-address').value.trim(),
         map_url: document.getElementById('ev-map-url').value.trim(),
         provision: document.getElementById('ev-provision').value.trim(),
-        description: document.getElementById('ev-desc').value.trim()
+        description: document.getElementById('ev-desc').value.trim(),
+        youtube_url: document.getElementById('ev-youtube').value.trim() || null
     };
 
     statusEl.textContent = '저장 중...';
@@ -253,6 +254,7 @@ function editEvent(id) {
     document.getElementById('ev-location-select').value = matchedLoc ? matchedLoc.id : '';
     document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('ev-youtube').value = ev.youtube_url || '';
     document.getElementById('event-form-title').textContent = '모임 수정';
     eventForm.querySelector('.form-submit').textContent = '모임 수정 →';
     eventFormReset.style.display = 'inline-flex';

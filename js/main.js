@@ -385,6 +385,17 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
+            if (ev.youtube_url) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">🎬</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">온라인 참여</div>
+                            <div class="info-value"><a href="${escapeHtml(ev.youtube_url)}" target="_blank" rel="noopener noreferrer">온라인 참여하기 →</a></div>
+                        </div>
+                    </div>`;
+            }
+
             // 참여 버튼 (schedule-highlight 안)
             const attendBtns = isFirst ? `
                 <div class="attend-btn-wrap" id="attend-section">
