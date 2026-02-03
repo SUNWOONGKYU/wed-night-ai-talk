@@ -306,7 +306,7 @@ async function viewAttendees(eventId, eventTitle) {
 async function deleteAttendee(userId, eventId, displayName) {
     if (!confirm(`"${displayName}" 님의 참여 신청을 삭제하시겠습니까?`)) return;
     try {
-        await DB.cancelAttendance(userId, eventId);
+        await DB.adminDeleteAttendance(userId, eventId);
         alert('참여 신청이 삭제되었습니다.');
         await viewAttendees(currentAttendEventId, currentAttendEventTitle);
     } catch (e) {
