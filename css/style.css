@@ -1162,7 +1162,7 @@ footer {
 
 .footer-since {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.1rem;
+    font-size: 0.90rem;
     color: var(--text-muted);
     opacity: 0.8;
     margin-top: 0.5rem;
@@ -1961,6 +1961,8 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .admin-horizontal { grid-template-columns: 1fr; }
+
     .nav-links { display: none; }
     .mobile-menu-btn { display: block; }
 
