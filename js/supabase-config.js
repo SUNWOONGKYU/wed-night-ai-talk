@@ -53,7 +53,7 @@ var Auth = {
 
     async sendPasswordResetEmail(email) {
         var { error } = await _supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + window.location.pathname
+            redirectTo: 'https://sunwoongkyu.github.io/AI_Study_Circle/'
         });
         if (error) throw error;
     },
@@ -256,6 +256,14 @@ var DB = {
             .from('inquiries')
             .delete()
             .eq('id', id);
+        if (error) throw error;
+    },
+
+    async adminDeleteAttendance(userId, eventId) {
+        var { error } = await _supabase.rpc('admin_delete_attendance', {
+            p_user_id: userId,
+            p_event_id: eventId
+        });
         if (error) throw error;
     },
 
