@@ -162,7 +162,18 @@ async function initAuth() {
     Auth.onAuthStateChange(async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
             // 이메일 재설정 링크를 통해 돌아온 경우 → 비밀번호 재설정 폼 표시
-            openModal('reset');
+            // 세션이 존재하더라도 재설정 폼을 강제로 보여줘야 하므로 직접 DOM 제어
+            authModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('profile-container').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('forgot-password-form').style.display = 'none';
+            document.getElementById('reset-password-form').style.display = 'block';
+            document.getElementById('membership-title').textContent = '비밀번호 재설정';
+            var noticeEl = document.getElementById('modal-notice');
+            if (noticeEl) noticeEl.style.display = 'none';
             return;
         }
         if (event === 'SIGNED_IN' && session) {
