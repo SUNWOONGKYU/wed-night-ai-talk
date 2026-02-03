@@ -133,11 +133,34 @@ async function loadEvents() {
     try {
         allEvents = await DB.getAllEvents();
         renderEvents(allEvents);
+        await loadLocationSelect();
     } catch (e) {
         document.getElementById('events-tbody').innerHTML =
             '<tr><td colspan="7" class="admin-empty">모임 목록을 불러올 수 없습니다.</td></tr>';
     }
 }
+
+let locationOptions = [];
+
+async function loadLocationSelect() {
+    try {
+        locationOptions = await DB.getAllLocations();
+        const sel = document.getElementById('ev-location-select');
+        sel.innerHTML = '<option value="">-- 장소를 선택하세요 --</option>' +
+            locationOptions.map(loc =>
+                `<option value="${loc.id}">${escapeHtml(loc.name)}${loc.is_active ? '' : ' (비활성)'}</option>`
+            ).join('');
+    } catch (e) {
+        console.error('loadLocationSelect error:', e);
+    }
+}
+
+document.getElementById('ev-location-select').addEventListener('change', function() {
+    const loc = locationOptions.find(l => l.id == this.value);
+    document.getElementById('ev-location').value = loc ? loc.name : '';
+    document.getElementById('ev-address').value = loc ? (loc.address || '') : '';
+    document.getElementById('ev-map-url').value = loc ? (loc.map_url || '') : '';
+});
 
 function renderEvents(events) {
     const tbody = document.getElementById('events-tbody');
@@ -225,6 +248,9 @@ function editEvent(id) {
     document.getElementById('ev-location').value = ev.location || '';
     document.getElementById('ev-address').value = ev.address || '';
     document.getElementById('ev-map-url').value = ev.map_url || '';
+    // 장소 select에서 이름 매칭으로 선택
+    const matchedLoc = locationOptions.find(l => l.name === ev.location);
+    document.getElementById('ev-location-select').value = matchedLoc ? matchedLoc.id : '';
     document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('event-form-title').textContent = '모임 수정';
@@ -238,6 +264,9 @@ function editEvent(id) {
 function resetEventForm() {
     eventForm.reset();
     document.getElementById('edit-event-id').value = '';
+    document.getElementById('ev-location').value = '';
+    document.getElementById('ev-address').value = '';
+    document.getElementById('ev-map-url').value = '';
     document.getElementById('event-form-title').textContent = '새 모임 등록';
     eventForm.querySelector('.form-submit').textContent = '모임 등록 →';
     eventFormReset.style.display = 'none';
