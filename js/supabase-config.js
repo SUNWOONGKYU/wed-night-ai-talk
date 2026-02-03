@@ -5,6 +5,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 var _supabase = null;
 var _sbInitError = null;
 
+// URL 해시에서 type=recovery 감지 (createClient가 해시를 소비하기 전에 저장)
+var _pendingPasswordRecovery = window.location.hash.indexOf('type=recovery') !== -1;
+
 try {
     _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 } catch (e) {
