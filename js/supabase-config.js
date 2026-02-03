@@ -51,6 +51,18 @@ var Auth = {
         return user;
     },
 
+    async sendPasswordResetEmail(email) {
+        var { error } = await _supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname
+        });
+        if (error) throw error;
+    },
+
+    async updatePassword(newPassword) {
+        var { error } = await _supabase.auth.updateUser({ password: newPassword });
+        if (error) throw error;
+    },
+
     onAuthStateChange(callback) {
         return _supabase.auth.onAuthStateChange(callback);
     }

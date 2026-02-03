@@ -439,7 +439,36 @@
                     </div>
                     <button type="submit" class="btn-primary form-submit">로그인 →</button>
                     <div class="form-status" id="login-status"></div>
+                    <p class="auth-switch"><a href="#" id="switch-to-forgot">비밀번호를 잊으셨나요?</a></p>
                     <p class="auth-switch">아직 멤버가 아니신가요? <a href="#" id="switch-to-signup">멤버 가입</a></p>
+                </form>
+
+                <!-- 비밀번호 찾기 폼 -->
+                <form id="forgot-password-form" class="site-form auth-form" style="display:none;">
+                    <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.95rem;">가입 시 사용한 이메일을 입력하시면 비밀번호 재설정 링크를 보내드립니다.</p>
+                    <div class="form-group">
+                        <label for="fp-email">이메일 <span class="required">*</span></label>
+                        <input type="email" id="fp-email" name="email" required placeholder="email@example.com">
+                    </div>
+                    <button type="submit" class="btn-primary form-submit">재설정 링크 보내기 →</button>
+                    <div class="form-status" id="forgot-status"></div>
+                    <p class="auth-switch"><a href="#" id="switch-to-login-from-forgot">로그인으로 돌아가기</a></p>
+                </form>
+
+                <!-- 비밀번호 재설정 폼 -->
+                <form id="reset-password-form" class="site-form auth-form" style="display:none;">
+                    <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.95rem;">새로운 비밀번호를 입력해주세요.</p>
+                    <div class="form-group">
+                        <label for="rp-new">새 비밀번호 <span class="required">*</span></label>
+                        <input type="password" id="rp-new" name="new_password" required minlength="6" placeholder="영문+숫자 6자 이상" pattern="[a-zA-Z0-9]+" title="영문과 숫자만 사용 가능합니다">
+                        <span class="form-hint">영문, 숫자 조합 6자 이상으로 해주세요</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="rp-confirm">새 비밀번호 확인 <span class="required">*</span></label>
+                        <input type="password" id="rp-confirm" name="confirm_password" required minlength="6" placeholder="새 비밀번호를 다시 입력">
+                    </div>
+                    <button type="submit" class="btn-primary form-submit">비밀번호 변경하기 →</button>
+                    <div class="form-status" id="reset-status"></div>
                 </form>
             </div>
 
@@ -535,7 +564,7 @@
             <form id="attend-popup-form" class="site-form">
                 <div class="form-group">
                     <label for="attend-memo">메모</label>
-                    <textarea id="attend-memo" rows="3" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                    <textarea id="attend-memo" rows="3" placeholder="처음 참여합니다 등"></textarea>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
                     <button type="submit" class="btn-primary form-submit">참여 신청하기 →</button>
@@ -560,8 +589,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260203q"></script>
+    <script src="js/supabase-config.js?v=20260203r"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260203q"></script>
+    <script src="js/main.js?v=20260203r"></script>
 </body>
 </html>

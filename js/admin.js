@@ -264,14 +264,14 @@ async function viewAttendees(eventId, eventTitle) {
 
     card.style.display = 'block';
     titleEl.textContent = `"${eventTitle}" 참여자 명단`;
-    tbody.innerHTML = '<tr><td colspan="5" class="admin-loading">로딩 중...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="admin-loading">로딩 중...</td></tr>';
     countEl.textContent = '';
 
     try {
         const attendees = await DB.getEventAttendees(eventId);
 
         if (attendees.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
             countEl.textContent = '';
         } else {
             tbody.innerHTML = attendees.map(a => {
@@ -285,16 +285,31 @@ async function viewAttendees(eventId, eventTitle) {
                     <td>${escapeHtml(email)}</td>
                     <td>${escapeHtml(a.note || '-')}</td>
                     <td>${date}</td>
+                    <td><button class="btn-secondary btn-small" onclick="deleteAttendee('${a.user_id}', '${a.event_id}', '${escapeHtml(name)}')" style="color:var(--accent-pink);">삭제</button></td>
                 </tr>`;
             }).join('');
             countEl.textContent = `총 ${attendees.length}명`;
         }
     } catch (e) {
         console.error('viewAttendees error:', e);
-        tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function deleteAttendee(userId, eventId, displayName) {
+    if (!confirm(`"${displayName}" 님의 참여 신청을 삭제하시겠습니까?`)) return;
+    try {
+        await DB.cancelAttendance(userId, eventId);
+        alert('참여 신청이 삭제되었습니다.');
+        // 현재 보고 있는 명단 새로고침
+        const titleEl = document.getElementById('attendees-title');
+        const eventTitle = titleEl.textContent.replace(/^"|".*$/g, '').replace(/^"/, '').replace(/" 참여자 명단$/, '');
+        await viewAttendees(eventId, eventTitle);
+    } catch (e) {
+        alert('삭제 중 오류가 발생했습니다: ' + (e.message || e));
+    }
 }
 
 // ========== Locations ==========

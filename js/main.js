@@ -30,13 +30,33 @@ function openModal(tab, options) {
         document.getElementById('membership-title').textContent = '프로필 현황';
         if (currentProfile) fillProfileAll();
     } else {
-        // 비로그인 상태: 가입/로그인 표시
+        // 비로그인 상태: 가입/로그인/비밀번호찾기/재설정 표시
         document.getElementById('auth-container').style.display = 'block';
         document.getElementById('profile-container').style.display = 'none';
-        const isLogin = tab === 'login';
-        document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
-        document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
-        document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
+
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+        const forgotForm = document.getElementById('forgot-password-form');
+        const resetForm = document.getElementById('reset-password-form');
+
+        signupForm.style.display = 'none';
+        loginForm.style.display = 'none';
+        forgotForm.style.display = 'none';
+        resetForm.style.display = 'none';
+
+        if (tab === 'forgot') {
+            forgotForm.style.display = 'block';
+            document.getElementById('membership-title').textContent = '비밀번호 찾기';
+        } else if (tab === 'reset') {
+            resetForm.style.display = 'block';
+            document.getElementById('membership-title').textContent = '비밀번호 재설정';
+        } else if (tab === 'login') {
+            loginForm.style.display = 'block';
+            document.getElementById('membership-title').textContent = '로그인';
+        } else {
+            signupForm.style.display = 'block';
+            document.getElementById('membership-title').textContent = '멤버 가입';
+        }
     }
 }
 
@@ -80,6 +100,14 @@ document.getElementById('switch-to-login').addEventListener('click', (e) => {
 document.getElementById('switch-to-signup').addEventListener('click', (e) => {
     e.preventDefault();
     openModal('signup');
+});
+document.getElementById('switch-to-forgot').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('forgot');
+});
+document.getElementById('switch-to-login-from-forgot').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('login');
 });
 
 // ========== Phone number: strip non-digits ==========
@@ -132,6 +160,11 @@ async function initAuth() {
     if (currentUser) checkAttendance();
 
     Auth.onAuthStateChange(async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            // 이메일 재설정 링크를 통해 돌아온 경우 → 비밀번호 재설정 폼 표시
+            openModal('reset');
+            return;
+        }
         if (event === 'SIGNED_IN' && session) {
             currentUser = session.user;
             try {
@@ -654,6 +687,74 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         setTimeout(closeModal, 1000);
     } catch (err) {
         setStatus(statusEl, '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// ========== Forgot Password ==========
+document.getElementById('forgot-password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('forgot-status');
+    const btn = e.target.querySelector('.form-submit');
+    const email = document.getElementById('fp-email').value.trim();
+
+    if (!email) {
+        setStatus(statusEl, '이메일을 입력해주세요.', 'error');
+        return;
+    }
+
+    setStatus(statusEl, '메일 발송 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        await Auth.sendPasswordResetEmail(email);
+        setStatus(statusEl, '비밀번호 재설정 링크가 이메일로 발송되었습니다. 메일함을 확인해주세요.', 'success');
+    } catch (err) {
+        const errMsg = err.message || '메일 발송 중 오류가 발생했습니다.';
+        if (errMsg.includes('rate') || errMsg.includes('limit')) {
+            setStatus(statusEl, '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', 'error');
+        } else {
+            setStatus(statusEl, '메일 발송 중 오류: ' + errMsg, 'error');
+        }
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// ========== Reset Password (from email link) ==========
+document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('reset-status');
+    const btn = e.target.querySelector('.form-submit');
+
+    const newPw = document.getElementById('rp-new').value;
+    const confirmPw = document.getElementById('rp-confirm').value;
+
+    if (newPw.length < 6) {
+        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+        return;
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(newPw)) {
+        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+        return;
+    }
+    if (newPw !== confirmPw) {
+        setStatus(statusEl, '비밀번호가 일치하지 않습니다.', 'error');
+        return;
+    }
+
+    setStatus(statusEl, '변경 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        await Auth.updatePassword(newPw);
+        setStatus(statusEl, '비밀번호가 변경되었습니다. 잠시 후 자동으로 닫힙니다.', 'success');
+        e.target.reset();
+        setTimeout(closeModal, 2000);
+    } catch (err) {
+        const msg = err.message || '비밀번호 변경 중 오류가 발생했습니다.';
+        setStatus(statusEl, msg, 'error');
     } finally {
         btn.disabled = false;
     }
