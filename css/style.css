@@ -2218,6 +2218,18 @@ body.speakup-light .comment-input {
 body.speakup-light .comment-input::placeholder { color: #999; }
 body.speakup-light .comment-input:focus { border-color: var(--accent-blue); }
 
+body.speakup-light .btn-secondary {
+    color: #333;
+    border-color: #ccc;
+    background: #f0f0f0;
+}
+
+body.speakup-light .btn-secondary:hover {
+    color: #000;
+    border-color: #999;
+    background: #e0e0e0;
+}
+
 body.speakup-light .post-login-prompt {
     background: rgba(77, 124, 255, 0.04);
     border-color: rgba(77, 124, 255, 0.2);

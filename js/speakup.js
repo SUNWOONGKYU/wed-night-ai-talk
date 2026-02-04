@@ -549,39 +549,51 @@ if (postForm) {
         submitBtn.disabled = true;
         spSetStatus(statusEl, editId ? '수정 중...' : '등록 중...', 'loading');
 
-        try {
-            if (editId) {
-                // Update
-                console.log('Updating post:', editId);
-                await DB.updatePost(parseInt(editId), title, content);
-                console.log('Post updated');
-                // 폼 초기화 먼저
+        if (editId) {
+            // Update
+            try {
+                console.log('Updating post id=' + editId);
+                var { error } = await _supabase
+                    .from('posts')
+                    .update({ title: title, content: content, updated_at: new Date().toISOString() })
+                    .eq('id', parseInt(editId));
+                if (error) throw error;
+                console.log('Post updated OK');
                 postForm.reset();
                 postEditId.value = '';
                 document.querySelector('.post-submit-btn').textContent = '등록';
                 document.getElementById('post-form-wrap').style.display = 'none';
                 document.getElementById('post-write-btn-wrap').style.display = 'block';
+                submitBtn.disabled = false;
                 spPostOffset = 0;
                 await loadPosts(true);
                 alert('수정되었습니다.');
-            } else {
-                // Create
-                console.log('Creating post:', { userId: spCurrentUser.id, title: title });
-                await DB.createPost(spCurrentUser.id, title, content);
-                console.log('Post created');
+            } catch (err) {
+                console.error('Update error:', err);
+                alert('수정 오류: ' + ((err && err.message) || err));
+                submitBtn.disabled = false;
+            }
+        } else {
+            // Create
+            try {
+                console.log('Creating post, userId=' + spCurrentUser.id);
+                var { error } = await _supabase
+                    .from('posts')
+                    .insert({ user_id: spCurrentUser.id, title: title, content: content });
+                if (error) throw error;
+                console.log('Post created OK');
                 postForm.reset();
                 document.getElementById('post-form-wrap').style.display = 'none';
                 document.getElementById('post-write-btn-wrap').style.display = 'block';
+                submitBtn.disabled = false;
                 spPostOffset = 0;
                 await loadPosts(true);
                 alert('게시글이 등록되었습니다.');
+            } catch (err) {
+                console.error('Create error:', err);
+                alert('등록 오류: ' + ((err && err.message) || err));
+                submitBtn.disabled = false;
             }
-        } catch (err) {
-            console.error('Post submit error:', err);
-            var errMsg = (err && err.message) || String(err);
-            alert('오류: ' + errMsg);
-        } finally {
-            submitBtn.disabled = false;
         }
     });
 }
