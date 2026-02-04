@@ -2374,11 +2374,11 @@ body.speakup-light .nav-links.show {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 1.2rem 1.5rem 0.8rem;
 }
 
 .post-form .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .post-form input,
@@ -2409,11 +2409,25 @@ body.speakup-light .nav-links.show {
 .post-form-actions {
     display: flex;
     gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.post-form-actions .btn-primary,
+.post-form-actions .btn-secondary {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
 }
 
 .post-submit-btn {
-    padding: 0.7rem 1.5rem;
+    padding: 0.5rem 1rem;
     font-size: 0.9rem;
+}
+
+.post-form .form-status {
+    margin-top: 0.3rem;
+    min-height: 0;
 }
 
 .post-login-prompt {
