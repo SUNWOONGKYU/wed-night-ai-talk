@@ -582,20 +582,35 @@ async function renderSpeakUpPreview() {
             return;
         }
 
-        var html = '';
-        for (var i = 0; i < posts.length; i++) {
-            var post = posts[i];
-            var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
+        var post = posts[0];
+        var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
 
-            html += '<a href="speakup.html" class="speakup-preview-row">' +
-                '<span class="spr-title">' + escapeHtml(post.title) + '</span>' +
-                '<span class="spr-meta">' +
-                    '<span class="spr-author">' + escapeHtml(authorName) + '</span>' +
-                    '<span class="spr-time">' + timeAgoShort(post.created_at) + '</span>' +
-                '</span>' +
-            '</a>';
+        var reactionData, commentCount;
+        try {
+            var results = await Promise.all([
+                DB.getReactionCounts(post.id),
+                DB.getCommentCount(post.id)
+            ]);
+            reactionData = results[0];
+            commentCount = results[1];
+        } catch (e) {
+            reactionData = { likes: 0, dislikes: 0 };
+            commentCount = 0;
         }
-        container.innerHTML = html;
+
+        container.innerHTML =
+            '<a href="speakup.html" class="speakup-preview-card">' +
+                '<div class="spc-header">' +
+                    '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
+                    '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
+                '</div>' +
+                '<h4 class="spc-title">' + escapeHtml(post.title) + '</h4>' +
+                '<div class="spc-stats">' +
+                    '<span>👍 ' + reactionData.likes + '</span>' +
+                    '<span>👎 ' + reactionData.dislikes + '</span>' +
+                    '<span>💬 ' + commentCount + '</span>' +
+                '</div>' +
+            '</a>';
     } catch (e) {
         console.error('renderSpeakUpPreview error:', e);
         container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류</div>';

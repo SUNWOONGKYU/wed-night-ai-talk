@@ -2281,60 +2281,61 @@ body.speakup-light .nav-links.show {
 }
 
 .speakup-preview-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    max-width: 600px;
     margin-bottom: 2rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
 }
 
-.speakup-preview-row {
+.speakup-preview-card {
+    display: block;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.speakup-preview-card:hover {
+    border-color: rgba(0, 229, 255, 0.3);
+    background: var(--bg-card-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.spc-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.9rem 1.2rem;
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: background 0.2s ease;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.8rem;
 }
 
-.speakup-preview-row:last-child {
-    border-bottom: none;
-}
-
-.speakup-preview-row:hover {
-    background: var(--bg-card-hover);
-}
-
-.spr-title {
-    font-size: 0.95rem;
+.spc-author {
+    font-size: 0.85rem;
     font-weight: 600;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 1rem;
-}
-
-.spr-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    flex-shrink: 0;
-}
-
-.spr-author {
-    font-size: 0.8rem;
     color: var(--accent-cyan);
-    font-weight: 500;
 }
 
-.spr-time {
+.spc-time {
     font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.spc-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.spc-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
@@ -2744,7 +2745,7 @@ body.speakup-light .nav-links.show {
 
 /* Responsive — Board page */
 @media (max-width: 768px) {
-    .speakup-preview-row { padding: 0.8rem 1rem; }
+    .speakup-preview-grid { max-width: 100%; }
     .speakup-page { padding-top: 5rem; }
     .post-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     .post-footer { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
