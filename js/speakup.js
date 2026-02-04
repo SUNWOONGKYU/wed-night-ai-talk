@@ -556,15 +556,22 @@ if (postSubmitBtn) {
         if (editId) {
             // 수정
             try {
+                console.log('Updating post:', editId, 'User:', spCurrentUser.id);
                 var resp = await _supabase
                     .from('posts')
                     .update({ title: title, content: content, updated_at: new Date().toISOString() })
                     .eq('id', Number(editId));
+                console.log('Update response:', resp);
                 if (resp.error) {
+                    console.error('Update error:', resp.error);
                     alert('수정 오류: ' + resp.error.message);
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '수정';
                     return;
+                }
+                // 성공 시 affected rows 확인
+                if (resp.status === 204 || resp.statusText === 'No Content') {
+                    console.log('Update successful (204 No Content)');
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
