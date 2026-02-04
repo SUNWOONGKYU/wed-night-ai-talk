@@ -2169,39 +2169,45 @@ body.speakup-light .post-footer { border-top-color: #eee; }
 
 body.speakup-light .reaction-btn,
 body.speakup-light .comment-toggle-btn {
-    border-color: #d0d0d0;
-    color: #888;
+    border-color: #ccc;
+    color: #333;
 }
 
 body.speakup-light .reaction-btn:hover,
 body.speakup-light .comment-toggle-btn:hover {
-    border-color: var(--accent-blue);
-    color: #333;
+    border-color: #999;
+    color: #000;
 }
 
 body.speakup-light .like-btn.active {
-    border-color: var(--accent-blue);
-    background: rgba(77, 124, 255, 0.08);
-    color: var(--accent-blue);
+    border-color: #333;
+    background: rgba(0, 0, 0, 0.06);
+    color: #000;
 }
 
 body.speakup-light .dislike-btn.active {
-    border-color: var(--accent-pink);
-    background: rgba(255, 61, 139, 0.08);
-    color: var(--accent-pink);
+    border-color: #333;
+    background: rgba(0, 0, 0, 0.06);
+    color: #000;
 }
 
 body.speakup-light .comments-section { border-top-color: #eee; }
 body.speakup-light .comment-item { border-bottom-color: #f0f0f0; }
 body.speakup-light .comment-reply { border-left-color: #ddd; }
-body.speakup-light .comment-author { color: var(--accent-blue); }
-body.speakup-light .comment-time { color: #999; }
-body.speakup-light .comment-body { color: #444; }
+body.speakup-light .comment-author { color: #333; font-weight: 700; }
+body.speakup-light .comment-time { color: #666; }
+body.speakup-light .comment-body { color: #333; }
 
 body.speakup-light .comment-reply-btn,
 body.speakup-light .comment-delete-btn {
-    border-color: #d0d0d0;
+    border-color: #ccc;
     color: #333;
+}
+
+body.speakup-light .comment-reply-btn:hover,
+body.speakup-light .comment-delete-btn:hover {
+    border-color: #999;
+    color: #000;
 }
 
 body.speakup-light .comment-input {
