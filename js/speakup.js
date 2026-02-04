@@ -526,7 +526,9 @@ if (postForm) {
                 await loadPosts(true);
             } else {
                 // Create
-                await DB.createPost(spCurrentUser.id, title, content);
+                console.log('Creating post:', { userId: spCurrentUser.id, title: title });
+                var newPost = await DB.createPost(spCurrentUser.id, title, content);
+                console.log('Post created:', newPost);
                 spSetStatus(statusEl, '게시글이 등록되었습니다.', 'success');
                 postForm.reset();
                 spPostOffset = 0;
@@ -534,7 +536,15 @@ if (postForm) {
             }
             setTimeout(function() { spSetStatus(statusEl, '', ''); }, 2000);
         } catch (err) {
-            spSetStatus(statusEl, '오류: ' + (err.message || err), 'error');
+            console.error('Post submit error:', err);
+            var errMsg = (err && err.message) || String(err);
+            if (errMsg.includes('violates row-level security') || errMsg.includes('RLS')) {
+                spSetStatus(statusEl, '권한 오류: 게시글 작성 권한이 없습니다. 다시 로그인해주세요.', 'error');
+            } else if (errMsg.includes('foreign key') || errMsg.includes('violates foreign key')) {
+                spSetStatus(statusEl, '프로필 오류: 프로필 정보가 없습니다. 메인 페이지에서 프로필을 확인해주세요.', 'error');
+            } else {
+                spSetStatus(statusEl, '오류: ' + errMsg, 'error');
+            }
         } finally {
             submitBtn.disabled = false;
         }

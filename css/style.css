@@ -2072,6 +2072,170 @@ footer {
     .comment-form .comment-submit-btn { width: 100%; }
 }
 
+/* ========== SPEAK UP — LIGHT THEME ========== */
+body.speakup-light {
+    background: #ffffff;
+    color: #1a1a2e;
+}
+
+body.speakup-light nav {
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+body.speakup-light .nav-logo .sc { color: #1a1a2e; }
+body.speakup-light .nav-links a { color: #555; }
+body.speakup-light .nav-links a:hover { color: var(--accent-blue); }
+body.speakup-light .nav-user-btn {
+    background: rgba(77, 124, 255, 0.08);
+    border-color: rgba(77, 124, 255, 0.2);
+    color: var(--accent-blue);
+}
+body.speakup-light .nav-dropdown {
+    background: #fff;
+    border-color: #e0e0e0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+body.speakup-light .dropdown-item { color: #555; }
+body.speakup-light .dropdown-item:hover {
+    background: rgba(77, 124, 255, 0.06);
+    color: var(--accent-blue);
+}
+
+body.speakup-light .speakup-page { background: #ffffff; }
+
+body.speakup-light .section-label { color: var(--accent-blue); }
+body.speakup-light .section-title { color: #1a1a2e; }
+body.speakup-light .section-desc { color: #666; }
+
+body.speakup-light .post-form {
+    background: #f8f9fa;
+    border-color: #e0e0e0;
+}
+
+body.speakup-light .post-form input,
+body.speakup-light .post-form textarea {
+    background: #ffffff;
+    border-color: #d0d0d0;
+    color: #1a1a2e;
+}
+
+body.speakup-light .post-form input::placeholder,
+body.speakup-light .post-form textarea::placeholder { color: #999; }
+
+body.speakup-light .post-form input:focus,
+body.speakup-light .post-form textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(77, 124, 255, 0.1);
+}
+
+body.speakup-light .post-card {
+    background: #ffffff;
+    border-color: #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.speakup-light .post-card:hover {
+    border-color: rgba(77, 124, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body.speakup-light .post-avatar {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: #fff;
+}
+
+body.speakup-light .post-author { color: #1a1a2e; }
+body.speakup-light .post-time { color: #999; }
+body.speakup-light .post-title { color: #1a1a2e; }
+body.speakup-light .post-content { color: #444; }
+
+body.speakup-light .post-action-btn {
+    border-color: #d0d0d0;
+    color: #888;
+}
+body.speakup-light .post-action-btn:hover {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+body.speakup-light .post-delete-btn:hover {
+    border-color: var(--accent-pink);
+    color: var(--accent-pink);
+}
+
+body.speakup-light .post-footer { border-top-color: #eee; }
+
+body.speakup-light .reaction-btn,
+body.speakup-light .comment-toggle-btn {
+    border-color: #d0d0d0;
+    color: #888;
+}
+
+body.speakup-light .reaction-btn:hover,
+body.speakup-light .comment-toggle-btn:hover {
+    border-color: var(--accent-blue);
+    color: #333;
+}
+
+body.speakup-light .like-btn.active {
+    border-color: var(--accent-blue);
+    background: rgba(77, 124, 255, 0.08);
+    color: var(--accent-blue);
+}
+
+body.speakup-light .dislike-btn.active {
+    border-color: var(--accent-pink);
+    background: rgba(255, 61, 139, 0.08);
+    color: var(--accent-pink);
+}
+
+body.speakup-light .comments-section { border-top-color: #eee; }
+body.speakup-light .comment-item { border-bottom-color: #f0f0f0; }
+body.speakup-light .comment-reply { border-left-color: #ddd; }
+body.speakup-light .comment-author { color: var(--accent-blue); }
+body.speakup-light .comment-time { color: #999; }
+body.speakup-light .comment-body { color: #444; }
+
+body.speakup-light .comment-reply-btn,
+body.speakup-light .comment-delete-btn {
+    border-color: #d0d0d0;
+    color: #999;
+}
+
+body.speakup-light .comment-input {
+    background: #f8f9fa;
+    border-color: #d0d0d0;
+    color: #1a1a2e;
+}
+body.speakup-light .comment-input::placeholder { color: #999; }
+body.speakup-light .comment-input:focus { border-color: var(--accent-blue); }
+
+body.speakup-light .post-login-prompt {
+    background: rgba(77, 124, 255, 0.04);
+    border-color: rgba(77, 124, 255, 0.2);
+    color: #666;
+}
+
+body.speakup-light .speakup-empty { color: #999; }
+
+body.speakup-light .form-status.success { color: var(--accent-green); }
+body.speakup-light .form-status.error { color: var(--accent-pink); }
+body.speakup-light .form-status.loading { color: var(--accent-blue); }
+
+body.speakup-light footer {
+    background: #f8f9fa;
+    border-top-color: #e0e0e0;
+}
+body.speakup-light .footer-logo .ai { color: var(--accent-blue); }
+body.speakup-light .footer-text,
+body.speakup-light .footer-since { color: #888; }
+
+body.speakup-light .mobile-menu-btn { color: #1a1a2e; }
+body.speakup-light .nav-links.show {
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom-color: #e0e0e0;
+}
+
 /* ========== SPEAK UP — MAIN PREVIEW ========== */
 .speakup-preview-section {
     background: var(--bg-secondary);
