@@ -303,24 +303,18 @@ var DB = {
     },
 
     async createPost(userId, title, content) {
-        var { data, error } = await _supabase
+        var { error } = await _supabase
             .from('posts')
-            .insert({ user_id: userId, title: title, content: content })
-            .select()
-            .single();
+            .insert({ user_id: userId, title: title, content: content });
         if (error) throw error;
-        return data;
     },
 
     async updatePost(postId, title, content) {
-        var { data, error } = await _supabase
+        var { error } = await _supabase
             .from('posts')
             .update({ title: title, content: content, updated_at: new Date().toISOString() })
-            .eq('id', postId)
-            .select()
-            .single();
+            .eq('id', postId);
         if (error) throw error;
-        return data;
     },
 
     async deletePost(postId) {
@@ -345,13 +339,10 @@ var DB = {
     async createComment(postId, userId, content, parentId) {
         var row = { post_id: postId, user_id: userId, content: content };
         if (parentId) row.parent_id = parentId;
-        var { data, error } = await _supabase
+        var { error } = await _supabase
             .from('comments')
-            .insert(row)
-            .select()
-            .single();
+            .insert(row);
         if (error) throw error;
-        return data;
     },
 
     async deleteComment(commentId) {
@@ -398,25 +389,19 @@ var DB = {
                 return null;
             } else {
                 // Different type: update
-                var { data, error } = await _supabase
+                var { error } = await _supabase
                     .from('post_reactions')
                     .update({ reaction_type: type })
                     .eq('post_id', postId)
-                    .eq('user_id', userId)
-                    .select()
-                    .single();
+                    .eq('user_id', userId);
                 if (error) throw error;
-                return data;
             }
         } else {
             // New reaction
-            var { data, error } = await _supabase
+            var { error } = await _supabase
                 .from('post_reactions')
-                .insert({ post_id: postId, user_id: userId, reaction_type: type })
-                .select()
-                .single();
+                .insert({ post_id: postId, user_id: userId, reaction_type: type });
             if (error) throw error;
-            return data;
         }
     },
 
