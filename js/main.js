@@ -582,24 +582,26 @@ async function renderSpeakUpPreview() {
             return;
         }
 
-        var post = posts[0];
-        var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
+        var html = '';
+        var count = Math.min(posts.length, 2);
+        for (var i = 0; i < count; i++) {
+            var post = posts[i];
+            var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
 
-        var reactionData, commentCount;
-        try {
-            var results = await Promise.all([
-                DB.getReactionCounts(post.id),
-                DB.getCommentCount(post.id)
-            ]);
-            reactionData = results[0];
-            commentCount = results[1];
-        } catch (e) {
-            reactionData = { likes: 0, dislikes: 0 };
-            commentCount = 0;
-        }
+            var reactionData, commentCount;
+            try {
+                var results = await Promise.all([
+                    DB.getReactionCounts(post.id),
+                    DB.getCommentCount(post.id)
+                ]);
+                reactionData = results[0];
+                commentCount = results[1];
+            } catch (e) {
+                reactionData = { likes: 0, dislikes: 0 };
+                commentCount = 0;
+            }
 
-        container.innerHTML =
-            '<a href="speakup.html" class="speakup-preview-card">' +
+            html += '<a href="speakup.html" class="speakup-preview-card">' +
                 '<div class="spc-header">' +
                     '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
                     '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
@@ -611,6 +613,8 @@ async function renderSpeakUpPreview() {
                     '<span>💬 ' + commentCount + '</span>' +
                 '</div>' +
             '</a>';
+        }
+        container.innerHTML = html;
     } catch (e) {
         console.error('renderSpeakUpPreview error:', e);
         container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류</div>';

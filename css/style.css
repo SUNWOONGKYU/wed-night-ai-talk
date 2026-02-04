@@ -2281,7 +2281,9 @@ body.speakup-light .nav-links.show {
 }
 
 .speakup-preview-grid {
-    max-width: 600px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
@@ -2327,7 +2329,7 @@ body.speakup-light .nav-links.show {
     margin-bottom: 0.8rem;
     line-height: 1.5;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -2745,7 +2747,7 @@ body.speakup-light .nav-links.show {
 
 /* Responsive — Board page */
 @media (max-width: 768px) {
-    .speakup-preview-grid { max-width: 100%; }
+    .speakup-preview-grid { grid-template-columns: 1fr; }
     .speakup-page { padding-top: 5rem; }
     .post-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     .post-footer { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
