@@ -618,7 +618,10 @@ function startEditPost(postId, title, content) {
     document.querySelector('.post-submit-btn').textContent = '수정';
     document.getElementById('post-form-wrap').style.display = 'block';
     document.getElementById('post-write-btn-wrap').style.display = 'none';
-    document.getElementById('post-form-wrap').scrollIntoView({ behavior: 'smooth' });
+    var formEl = document.getElementById('post-form-wrap');
+    var navHeight = document.querySelector('nav').offsetHeight || 70;
+    var top = formEl.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+    window.scrollTo({ top: top, behavior: 'smooth' });
 }
 
 function cancelEditPost() {
