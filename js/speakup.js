@@ -563,7 +563,7 @@ function startEditPost(postId, title, content) {
 function cancelEditPost() {
     postForm.reset();
     postEditId.value = '';
-    document.querySelector('.post-submit-btn').textContent = '글쓰기';
+    document.querySelector('.post-submit-btn').textContent = '등록';
     postCancelBtn.style.display = 'none';
 }
 
