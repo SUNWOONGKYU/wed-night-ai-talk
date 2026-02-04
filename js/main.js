@@ -1055,7 +1055,11 @@ function startApp() {
         .then(function() { return initAuth(); })
         .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
-    renderSpeakUpPreview().catch(function(e) { console.error('SpeakUp preview error:', e); });
+    renderSpeakUpPreview().catch(function(e) {
+        console.error('SpeakUp preview error:', e);
+        var c = document.getElementById('speakup-preview-container');
+        if (c) c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">미리보기 로드 오류: ' + (e.message || e) + '</div>';
+    });
 }
 
 // ========== 참여 신청 메모 팝업 ==========
