@@ -563,7 +563,7 @@ if (postSubmitBtn) {
                 if (resp.error) {
                     alert('수정 오류: ' + resp.error.message);
                     postSubmitBtn.disabled = false;
-                    postSubmitBtn.textContent = '수정하기';
+                    postSubmitBtn.textContent = '수정';
                     return;
                 }
                 document.getElementById('post-title').value = '';
@@ -579,7 +579,7 @@ if (postSubmitBtn) {
             } catch (err) {
                 alert('수정 오류: ' + (err.message || err));
                 postSubmitBtn.disabled = false;
-                postSubmitBtn.textContent = '수정하기';
+                postSubmitBtn.textContent = '수정';
             }
         } else {
             // 등록
@@ -615,7 +615,7 @@ function startEditPost(postId, title, content) {
     document.getElementById('post-title').value = title;
     document.getElementById('post-content').value = content;
     postEditId.value = postId;
-    document.querySelector('.post-submit-btn').textContent = '수정하기';
+    document.querySelector('.post-submit-btn').textContent = '수정';
     document.getElementById('post-form-wrap').style.display = 'block';
     document.getElementById('post-write-btn-wrap').style.display = 'none';
     document.getElementById('post-form-wrap').scrollIntoView({ behavior: 'smooth' });
