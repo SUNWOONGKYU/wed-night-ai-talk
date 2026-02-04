@@ -2722,10 +2722,6 @@ body.speakup-light .nav-links.show {
 }
 
 /* Responsive — Board page */
-@media (max-width: 1024px) {
-    .speakup-preview-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
 @media (max-width: 768px) {
     .speakup-preview-grid { grid-template-columns: 1fr; }
     .speakup-page { padding-top: 5rem; }
