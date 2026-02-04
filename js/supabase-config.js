@@ -279,6 +279,165 @@ var DB = {
     },
 
     // -- Admin: Attendance by event --
+    // -- Posts --
+    async getPosts(limit, offset) {
+        limit = limit || 10;
+        offset = offset || 0;
+        var { data, error } = await _supabase
+            .from('posts')
+            .select('*, profiles:user_id(id, name)')
+            .order('created_at', { ascending: false })
+            .range(offset, offset + limit - 1);
+        if (error) throw error;
+        return data;
+    },
+
+    async getPost(postId) {
+        var { data, error } = await _supabase
+            .from('posts')
+            .select('*, profiles:user_id(id, name)')
+            .eq('id', postId)
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async createPost(userId, title, content) {
+        var { data, error } = await _supabase
+            .from('posts')
+            .insert({ user_id: userId, title: title, content: content })
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async updatePost(postId, title, content) {
+        var { data, error } = await _supabase
+            .from('posts')
+            .update({ title: title, content: content, updated_at: new Date().toISOString() })
+            .eq('id', postId)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async deletePost(postId) {
+        var { error } = await _supabase
+            .from('posts')
+            .delete()
+            .eq('id', postId);
+        if (error) throw error;
+    },
+
+    // -- Comments --
+    async getComments(postId) {
+        var { data, error } = await _supabase
+            .from('comments')
+            .select('*, profiles:user_id(id, name)')
+            .eq('post_id', postId)
+            .order('created_at', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
+
+    async createComment(postId, userId, content, parentId) {
+        var row = { post_id: postId, user_id: userId, content: content };
+        if (parentId) row.parent_id = parentId;
+        var { data, error } = await _supabase
+            .from('comments')
+            .insert(row)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteComment(commentId) {
+        var { error } = await _supabase
+            .from('comments')
+            .delete()
+            .eq('id', commentId);
+        if (error) throw error;
+    },
+
+    // -- Reactions --
+    async getReactionCounts(postId) {
+        var { data, error } = await _supabase
+            .from('post_reactions')
+            .select('reaction_type')
+            .eq('post_id', postId);
+        if (error) throw error;
+        var likes = 0, dislikes = 0;
+        (data || []).forEach(function(r) {
+            if (r.reaction_type === 'like') likes++;
+            else if (r.reaction_type === 'dislike') dislikes++;
+        });
+        return { likes: likes, dislikes: dislikes };
+    },
+
+    async getMyReaction(postId, userId) {
+        var { data, error } = await _supabase
+            .from('post_reactions')
+            .select('*')
+            .eq('post_id', postId)
+            .eq('user_id', userId)
+            .maybeSingle();
+        if (error) throw error;
+        return data;
+    },
+
+    async upsertReaction(postId, userId, type) {
+        // Check existing
+        var existing = await this.getMyReaction(postId, userId);
+        if (existing) {
+            if (existing.reaction_type === type) {
+                // Same type: remove
+                await this.removeReaction(postId, userId);
+                return null;
+            } else {
+                // Different type: update
+                var { data, error } = await _supabase
+                    .from('post_reactions')
+                    .update({ reaction_type: type })
+                    .eq('post_id', postId)
+                    .eq('user_id', userId)
+                    .select()
+                    .single();
+                if (error) throw error;
+                return data;
+            }
+        } else {
+            // New reaction
+            var { data, error } = await _supabase
+                .from('post_reactions')
+                .insert({ post_id: postId, user_id: userId, reaction_type: type })
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        }
+    },
+
+    async removeReaction(postId, userId) {
+        var { error } = await _supabase
+            .from('post_reactions')
+            .delete()
+            .eq('post_id', postId)
+            .eq('user_id', userId);
+        if (error) throw error;
+    },
+
+    async getCommentCount(postId) {
+        var { count, error } = await _supabase
+            .from('comments')
+            .select('*', { count: 'exact', head: true })
+            .eq('post_id', postId);
+        if (error) throw error;
+        return count || 0;
+    },
+
     async getEventAttendees(eventId) {
         // 참여 기록 가져오기
         var { data: attendances, error } = await _supabase

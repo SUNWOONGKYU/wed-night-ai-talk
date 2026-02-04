@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speak Up — AI Study Circle 110</title>
+    <meta name="description" content="AI Study Circle 110 커뮤니티 게시판 - 자유롭게 의견을 나누세요">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" style="text-decoration:none;">
+                <span class="ai">AI</span>
+                <span class="sc">Study Circle</span>
+                <span class="brand-num">110</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#about">소개</a></li>
+                <li><a href="index.html#activities">활동영역</a></li>
+                <li><a href="index.html#schedule">모임일정</a></li>
+                <li><a href="speakup.html" class="speakup-nav-active">Speak Up</a></li>
+                <li><a href="index.html#location">장소</a></li>
+                <!-- 비로그인 상태 -->
+                <li id="nav-login-link"><a href="index.html" class="nav-login-btn" data-open-modal="login">로그인</a></li>
+                <li id="nav-signup-link"><a href="index.html" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
+                <!-- 로그인 상태 (숨김) -->
+                <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
+                    <button class="nav-user-btn" id="nav-user-btn">
+                        <span id="nav-user-name">사용자</span> ▼
+                    </button>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="index.html" class="dropdown-item" data-action="profile">내 프로필</a>
+                        <a href="admin.html" class="dropdown-item" id="nav-admin-link" style="display:none;">관리자 페이지</a>
+                        <button class="dropdown-item" data-action="logout">로그아웃</button>
+                    </div>
+                </li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+        </div>
+    </nav>
+
+    <!-- Board Content -->
+    <section class="speakup-page">
+        <div class="section-inner">
+            <div class="section-label">// SPEAK UP</div>
+            <h2 class="section-title">커뮤니티 게시판</h2>
+            <p class="section-desc">자유롭게 의견을 나누고, 정보를 공유하세요.</p>
+
+            <!-- 글쓰기 폼 (로그인 시만) -->
+            <div id="post-form-wrap" class="post-form-wrap" style="display:none;">
+                <form id="post-form" class="site-form post-form">
+                    <div class="form-group">
+                        <input type="text" id="post-title" placeholder="제목을 입력하세요" required maxlength="200">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="post-content" rows="4" placeholder="내용을 입력하세요" required maxlength="5000"></textarea>
+                    </div>
+                    <div class="post-form-actions">
+                        <button type="submit" class="btn-primary post-submit-btn">글쓰기</button>
+                        <button type="button" class="btn-secondary" id="post-cancel-btn" style="display:none;">취소</button>
+                    </div>
+                    <input type="hidden" id="post-edit-id" value="">
+                    <div class="form-status" id="post-status"></div>
+                </form>
+            </div>
+
+            <!-- 비로그인 안내 -->
+            <div id="post-login-prompt" class="post-login-prompt" style="display:none;">
+                <p>글을 작성하려면 <a href="index.html" class="speakup-login-link">로그인</a>이 필요합니다.</p>
+            </div>
+
+            <!-- 게시글 목록 -->
+            <div id="posts-container" class="posts-container">
+                <div class="admin-loading">게시글을 불러오는 중...</div>
+            </div>
+
+            <!-- 더 불러오기 -->
+            <div id="load-more-wrap" class="load-more-wrap" style="display:none;">
+                <button class="btn-secondary" id="load-more-btn">더 불러오기</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <span class="ai">AI</span> Study Circle <span class="brand-num">110</span>
+            </div>
+            <p class="footer-text"><strong>자율과 창의성 안에서 즐겁게 — 리앤컴퍼니 이미경</strong></p>
+            <p class="footer-since"><strong>Since 2026. 1. 10</strong></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=20260204c"></script>
+    <script src="js/speakup.js?v=20260204a"></script>
+</body>
+</html>
