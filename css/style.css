@@ -2218,6 +2218,15 @@ body.speakup-light .post-login-prompt {
 
 body.speakup-light .speakup-empty { color: #999; }
 
+body.speakup-light .post-link { color: var(--accent-blue); word-break: break-all; }
+body.speakup-light .post-link:hover { text-decoration: underline; }
+
+.post-link { color: var(--accent-cyan); text-decoration: none; word-break: break-all; }
+.post-link:hover { text-decoration: underline; }
+
+.post-write-btn-wrap { margin-bottom: 2rem; }
+.post-write-open-btn { padding: 0.8rem 2rem; font-size: 1rem; }
+
 body.speakup-light .form-status.success { color: var(--accent-green); }
 body.speakup-light .form-status.error { color: var(--accent-pink); }
 body.speakup-light .form-status.loading { color: var(--accent-blue); }

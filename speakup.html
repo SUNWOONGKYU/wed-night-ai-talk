@@ -50,7 +50,12 @@
             <h2 class="section-title">커뮤니티</h2>
             <p class="section-desc">AI 관련 아이디어, 의견, 경험, 질문 등을 누구나 자유롭게 이야기해 봅시다.</p>
 
-            <!-- 글쓰기 폼 (로그인 시만) -->
+            <!-- 글쓰기 버튼 (로그인 시만) -->
+            <div id="post-write-btn-wrap" class="post-write-btn-wrap" style="display:none;">
+                <button type="button" class="btn-primary post-write-open-btn" id="post-write-open-btn">글쓰기</button>
+            </div>
+
+            <!-- 글쓰기 폼 (글쓰기 버튼 클릭 시 펼침) -->
             <div id="post-form-wrap" class="post-form-wrap" style="display:none;">
                 <form id="post-form" class="site-form post-form">
                     <div class="form-group">
@@ -61,7 +66,7 @@
                     </div>
                     <div class="post-form-actions">
                         <button type="submit" class="btn-primary post-submit-btn">등록</button>
-                        <button type="button" class="btn-secondary" id="post-cancel-btn" style="display:none;">취소</button>
+                        <button type="button" class="btn-secondary" id="post-cancel-btn">취소</button>
                     </div>
                     <input type="hidden" id="post-edit-id" value="">
                     <div class="form-status" id="post-status"></div>

@@ -25,6 +25,15 @@ function timeAgo(dateStr) {
     return m + '월 ' + d + '일';
 }
 
+// ========== Linkify URLs ==========
+function linkify(text) {
+    var escaped = spEscape(text);
+    return escaped.replace(
+        /(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer" class="post-link">$1</a>'
+    );
+}
+
 // ========== Status Helper ==========
 function spSetStatus(el, message, type) {
     if (!el) return;
@@ -81,19 +90,22 @@ function spUpdateAuthUI() {
     var postFormWrap = document.getElementById('post-form-wrap');
     var postLoginPrompt = document.getElementById('post-login-prompt');
 
+    var postWriteBtnWrap = document.getElementById('post-write-btn-wrap');
+
     if (spCurrentUser) {
         navLoginLink.style.display = 'none';
         navSignupLink.style.display = 'none';
         navUserMenu.style.display = 'block';
         navUserName.textContent = (spCurrentProfile && spCurrentProfile.name) || spCurrentUser.email;
         navAdminLink.style.display = (spCurrentProfile && spCurrentProfile.role === 'admin') ? 'block' : 'none';
-        postFormWrap.style.display = 'block';
+        postWriteBtnWrap.style.display = 'block';
         postLoginPrompt.style.display = 'none';
     } else {
         navLoginLink.style.display = 'block';
         navSignupLink.style.display = 'block';
         navUserMenu.style.display = 'none';
         navAdminLink.style.display = 'none';
+        postWriteBtnWrap.style.display = 'none';
         postFormWrap.style.display = 'none';
         postLoginPrompt.style.display = 'block';
     }
@@ -237,7 +249,7 @@ async function renderPostCard(post) {
         '</div>' +
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
-            '<div class="post-content">' + spEscape(post.content).replace(/\n/g, '<br>') + '</div>' +
+            '<div class="post-content">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
         '</div>' +
         '<div class="post-footer">' +
             '<div class="post-reactions">' +
@@ -315,11 +327,11 @@ function bindPostCardEvents(card, post) {
         });
     }
 
-    // Comment form
+    // Comment form — submit 이벤트 + 버튼 클릭 이벤트 모두 바인딩
     var commentForm = card.querySelector('.comment-form');
     if (commentForm) {
-        commentForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        var commentSubmitHandler = async function(e) {
+            if (e) e.preventDefault();
             var postId = parseInt(commentForm.dataset.postId);
             var input = commentForm.querySelector('.comment-input');
             var content = input.value.trim();
@@ -327,18 +339,28 @@ function bindPostCardEvents(card, post) {
             var submitBtn = commentForm.querySelector('.comment-submit-btn');
             submitBtn.disabled = true;
             try {
+                console.log('Creating comment:', { postId: postId, userId: spCurrentUser.id });
                 await DB.createComment(postId, spCurrentUser.id, content, null);
                 input.value = '';
                 await loadComments(postId, card);
-                // Update count
                 var count = await DB.getCommentCount(postId);
                 card.querySelector('.comment-count').textContent = count;
             } catch (err) {
+                console.error('Comment error:', err);
                 alert('댓글 등록 오류: ' + (err.message || err));
             } finally {
                 submitBtn.disabled = false;
             }
-        });
+        };
+        commentForm.addEventListener('submit', commentSubmitHandler);
+        // 버튼 직접 클릭도 처리
+        var cSubmitBtn = commentForm.querySelector('.comment-submit-btn');
+        if (cSubmitBtn) {
+            cSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                commentSubmitHandler(e);
+            });
+        }
     }
 
     // Edit button
@@ -494,6 +516,17 @@ function renderComment(comment, postId, postCard, isReply) {
     return el;
 }
 
+// ========== Write Button Toggle ==========
+var postWriteOpenBtn = document.getElementById('post-write-open-btn');
+if (postWriteOpenBtn) {
+    postWriteOpenBtn.addEventListener('click', function() {
+        var wrap = document.getElementById('post-form-wrap');
+        wrap.style.display = 'block';
+        document.getElementById('post-write-btn-wrap').style.display = 'none';
+        document.getElementById('post-title').focus();
+    });
+}
+
 // ========== Post Form (Create / Edit) ==========
 var postForm = document.getElementById('post-form');
 var postEditId = document.getElementById('post-edit-id');
@@ -531,6 +564,8 @@ if (postForm) {
                 console.log('Post created:', newPost);
                 spSetStatus(statusEl, '게시글이 등록되었습니다.', 'success');
                 postForm.reset();
+                document.getElementById('post-form-wrap').style.display = 'none';
+                document.getElementById('post-write-btn-wrap').style.display = 'block';
                 spPostOffset = 0;
                 await loadPosts(true);
             }
@@ -556,7 +591,8 @@ function startEditPost(postId, title, content) {
     document.getElementById('post-content').value = content;
     postEditId.value = postId;
     document.querySelector('.post-submit-btn').textContent = '수정하기';
-    postCancelBtn.style.display = 'inline-flex';
+    document.getElementById('post-form-wrap').style.display = 'block';
+    document.getElementById('post-write-btn-wrap').style.display = 'none';
     document.getElementById('post-form-wrap').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -564,7 +600,8 @@ function cancelEditPost() {
     postForm.reset();
     postEditId.value = '';
     document.querySelector('.post-submit-btn').textContent = '등록';
-    postCancelBtn.style.display = 'none';
+    document.getElementById('post-form-wrap').style.display = 'none';
+    document.getElementById('post-write-btn-wrap').style.display = 'block';
 }
 
 if (postCancelBtn) {
