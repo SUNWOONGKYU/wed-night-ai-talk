@@ -2218,16 +2218,26 @@ body.speakup-light .comment-input {
 body.speakup-light .comment-input::placeholder { color: #999; }
 body.speakup-light .comment-input:focus { border-color: var(--accent-blue); }
 
+body.speakup-light .btn-primary {
+    background: #222;
+    color: #fff;
+}
+
+body.speakup-light .btn-primary:hover {
+    background: #000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 body.speakup-light .btn-secondary {
     color: #333;
-    border-color: #ccc;
-    background: #f0f0f0;
+    border: 2px solid #333;
+    background: #fff;
 }
 
 body.speakup-light .btn-secondary:hover {
     color: #000;
-    border-color: #999;
-    background: #e0e0e0;
+    border-color: #000;
+    background: #f0f0f0;
 }
 
 body.speakup-light .post-login-prompt {
