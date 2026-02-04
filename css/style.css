@@ -2151,15 +2151,18 @@ body.speakup-light .post-content { color: #444; }
 
 body.speakup-light .post-action-btn {
     border-color: #d0d0d0;
-    color: #888;
+    color: #333;
 }
 body.speakup-light .post-action-btn:hover {
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
+    border-color: #333;
+    color: #000;
+}
+body.speakup-light .post-delete-btn {
+    color: #333;
 }
 body.speakup-light .post-delete-btn:hover {
-    border-color: var(--accent-pink);
-    color: var(--accent-pink);
+    border-color: #333;
+    color: #000;
 }
 
 body.speakup-light .post-footer { border-top-color: #eee; }
@@ -2198,7 +2201,7 @@ body.speakup-light .comment-body { color: #444; }
 body.speakup-light .comment-reply-btn,
 body.speakup-light .comment-delete-btn {
     border-color: #d0d0d0;
-    color: #999;
+    color: #333;
 }
 
 body.speakup-light .comment-input {

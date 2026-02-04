@@ -552,34 +552,34 @@ if (postForm) {
         try {
             if (editId) {
                 // Update
+                console.log('Updating post:', editId);
                 await DB.updatePost(parseInt(editId), title, content);
-                spSetStatus(statusEl, '수정되었습니다.', 'success');
-                cancelEditPost();
+                console.log('Post updated');
+                // 폼 초기화 먼저
+                postForm.reset();
+                postEditId.value = '';
+                document.querySelector('.post-submit-btn').textContent = '등록';
+                document.getElementById('post-form-wrap').style.display = 'none';
+                document.getElementById('post-write-btn-wrap').style.display = 'block';
                 spPostOffset = 0;
                 await loadPosts(true);
+                alert('수정되었습니다.');
             } else {
                 // Create
                 console.log('Creating post:', { userId: spCurrentUser.id, title: title });
-                var newPost = await DB.createPost(spCurrentUser.id, title, content);
-                console.log('Post created:', newPost);
-                spSetStatus(statusEl, '게시글이 등록되었습니다.', 'success');
+                await DB.createPost(spCurrentUser.id, title, content);
+                console.log('Post created');
                 postForm.reset();
                 document.getElementById('post-form-wrap').style.display = 'none';
                 document.getElementById('post-write-btn-wrap').style.display = 'block';
                 spPostOffset = 0;
                 await loadPosts(true);
+                alert('게시글이 등록되었습니다.');
             }
-            setTimeout(function() { spSetStatus(statusEl, '', ''); }, 2000);
         } catch (err) {
             console.error('Post submit error:', err);
             var errMsg = (err && err.message) || String(err);
-            if (errMsg.includes('violates row-level security') || errMsg.includes('RLS')) {
-                spSetStatus(statusEl, '권한 오류: 게시글 작성 권한이 없습니다. 다시 로그인해주세요.', 'error');
-            } else if (errMsg.includes('foreign key') || errMsg.includes('violates foreign key')) {
-                spSetStatus(statusEl, '프로필 오류: 프로필 정보가 없습니다. 메인 페이지에서 프로필을 확인해주세요.', 'error');
-            } else {
-                spSetStatus(statusEl, '오류: ' + errMsg, 'error');
-            }
+            alert('오류: ' + errMsg);
         } finally {
             submitBtn.disabled = false;
         }
