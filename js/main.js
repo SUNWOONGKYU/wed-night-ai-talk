@@ -569,6 +569,19 @@ async function renderLocations() {
     }
 }
 
+// ========== Member Count ==========
+async function loadMemberCount() {
+    var el = document.getElementById('member-count-display');
+    if (!el) return;
+    try {
+        var count = await DB.getMemberCount();
+        el.textContent = count + '명';
+    } catch (e) {
+        console.error('loadMemberCount error:', e);
+        el.textContent = '-';
+    }
+}
+
 // ========== Speak Up Preview ==========
 async function renderSpeakUpPreview() {
     var container = document.getElementById('speakup-preview-container');
@@ -1058,6 +1071,7 @@ function startApp() {
         .then(function() { return initAuth(); })
         .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
+    loadMemberCount();
     renderSpeakUpPreview().catch(function(e) {
         console.error('SpeakUp preview error:', e);
         var c = document.getElementById('speakup-preview-container');

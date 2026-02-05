@@ -95,6 +95,14 @@ var DB = {
         return data;
     },
 
+    async getMemberCount() {
+        var { count, error } = await _supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
+        if (error) throw error;
+        return count;
+    },
+
     // -- Events --
     async getEvents() {
         var { data, error } = await _supabase
