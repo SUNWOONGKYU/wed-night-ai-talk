@@ -6,7 +6,7 @@
     <title>AI Study Circle 110 — 110 모임 | 바이브코딩 & AI 활용 스터디</title>
     <meta name="description" content="바이브 코딩, AI 활용, 테크 트렌드, 경제 전망까지 — 함께 배우고, 만들고, 공유하는 장벽 없는 스터디 서클">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260205g">
+    <link rel="stylesheet" href="css/style.css?v=20260205j">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -444,6 +444,12 @@
                         <label for="s-message">한마디 (선택)</label>
                         <textarea id="s-message" name="message" rows="3" placeholder="자기소개, 기대하는 점, 하고 싶은 말 등"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label class="privacy-agree-label">
+                            <input type="checkbox" id="s-privacy-agree" required>
+                            <a href="privacy.html" target="_blank" style="color: var(--accent-cyan); text-decoration: none;">개인정보 처리방침</a>에 동의합니다 <span class="required">*</span>
+                        </label>
+                    </div>
                     <button type="submit" class="btn-primary form-submit">멤버 가입 신청 →</button>
                     <div class="form-status" id="signup-status"></div>
                     <p class="auth-switch">이미 가입하셨나요? <a href="#" id="switch-to-login">로그인</a></p>
@@ -607,6 +613,7 @@
             </div>
             <p class="footer-text"><strong>자율과 창의성 안에서 즐겁게 — 리앤컴퍼니 이미경</strong></p>
             <p class="footer-since"><strong>Since 2026. 1. 10</strong></p>
+            <p class="footer-privacy"><a href="privacy.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">개인정보 처리방침</a></p>
         </div>
     </footer>
 
