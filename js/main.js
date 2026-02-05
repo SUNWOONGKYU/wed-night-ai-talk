@@ -677,6 +677,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     const password = document.getElementById('s-password').value;
     const name = document.getElementById('s-name').value.trim();
     const phone = sanitizePhone(document.getElementById('s-contact').value);
+    const currentJob = document.getElementById('s-current-job').value.trim();
     const memberType = document.getElementById('s-type').value;
     const message = document.getElementById('s-message').value.trim();
     const checked = e.target.querySelectorAll('input[name="interests"]:checked');
@@ -723,6 +724,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
                         name,
                         phone,
                         email,
+                        current_job: currentJob,
                         interests,
                         member_type: memberType,
                         message

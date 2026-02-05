@@ -76,7 +76,7 @@
 
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <div class="number">50+</div>
+                    <div class="number" id="member-count-display">-</div>
                     <div class="label">가입 멤버</div>
                 </div>
                 <div class="hero-stat">
@@ -414,6 +414,11 @@
                             <label for="s-contact">전화번호 <span class="required">*</span></label>
                             <input type="tel" id="s-contact" name="contact" required placeholder="[masked-phone]" maxlength="11">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="s-current-job">현재 하는 일 (선택)</label>
+                        <input type="text" id="s-current-job" name="currentJob" placeholder="예: 삼성전자 근무, 프리랜서, 학생 등" maxlength="100">
+                        <span class="form-hint">소속, 직업, 직무 등을 간단히 적어주세요</span>
                     </div>
                     <div class="form-group">
                         <label>관심 분야 (복수 선택 가능)</label>

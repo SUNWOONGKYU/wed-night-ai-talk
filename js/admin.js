@@ -90,7 +90,7 @@ async function loadMembers() {
 function renderMembers(members) {
     const tbody = document.getElementById('members-tbody');
     if (members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
         document.getElementById('member-count').textContent = '';
         return;
     }
@@ -102,6 +102,7 @@ function renderMembers(members) {
             <td>${escapeHtml(m.name || '-')}</td>
             <td>${escapeHtml(m.phone || '-')}</td>
             <td>${escapeHtml(m.email || '-')}</td>
+            <td>${escapeHtml(m.current_job || '-')}</td>
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.member_type || '-')}</td>
             <td>${date}</td>
