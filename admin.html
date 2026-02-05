@@ -6,6 +6,45 @@
     <title>관리자 — AI Study Circle 110</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 멤버 테이블 칼럼 너비 조정 */
+        #members-table th:nth-child(1),
+        #members-table td:nth-child(1) { width: 80px; min-width: 80px; } /* 이름 */
+
+        #members-table th:nth-child(2),
+        #members-table td:nth-child(2) { width: 110px; min-width: 110px; } /* 전화번호 */
+
+        #members-table th:nth-child(3),
+        #members-table td:nth-child(3) { width: 180px; min-width: 180px; } /* 이메일 */
+
+        #members-table th:nth-child(4),
+        #members-table td:nth-child(4) { width: 250px; min-width: 250px; } /* 현재 하는 일 */
+
+        #members-table th:nth-child(5),
+        #members-table td:nth-child(5) { width: 250px; min-width: 250px; } /* 관심 분야 */
+
+        #members-table th:nth-child(6),
+        #members-table td:nth-child(6) { width: 100px; min-width: 100px; } /* 유형 */
+
+        #members-table th:nth-child(7),
+        #members-table td:nth-child(7) { width: 100px; min-width: 100px; } /* 가입일 */
+
+        #members-table th:nth-child(8),
+        #members-table td:nth-child(8) { width: 80px; min-width: 80px; } /* 관리 */
+
+        #members-table td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 현재 하는 일, 관심 분야는 줄바꿈 허용 */
+        #members-table td:nth-child(4),
+        #members-table td:nth-child(5) {
+            white-space: normal;
+            word-break: break-word;
+        }
+    </style>
 </head>
 <body>
     <!-- Background Effects -->
