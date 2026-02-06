@@ -23,7 +23,7 @@
                 <li><a href="index.html#activities">활동영역</a></li>
                 <li><a href="index.html#schedule">모임일정</a></li>
                 <li><a href="speakup.html" class="speakup-nav-active">Speak Up</a></li>
-                <li><a href="index.html#inquiry">문의하기</a></li>
+                <li><a href="#" id="nav-inquiry-link">문의하기</a></li>
                 <!-- 비로그인 상태 -->
                 <li id="nav-login-link"><a href="index.html" class="nav-login-btn" data-open-modal="login">로그인</a></li>
                 <li id="nav-signup-link"><a href="index.html" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
@@ -90,6 +90,41 @@
         </div>
     </section>
 
+    <!-- 문의하기 모달 -->
+    <div id="inquiry-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="inquiry-close-btn">&times;</button>
+            <h2 class="modal-title">문의하기</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">궁금한 점이나 제안사항을 보내주세요.</p>
+            <form id="inquiry-form" class="site-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="inq-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="inq-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inq-phone">전화번호</label>
+                        <input type="tel" id="inq-phone" name="phone" placeholder="[masked-phone]" maxlength="11">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inq-email">이메일</label>
+                    <input type="email" id="inq-email" name="email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="inq-subject">제목 <span class="required">*</span></label>
+                    <input type="text" id="inq-subject" name="subject" required placeholder="문의 제목">
+                </div>
+                <div class="form-group">
+                    <label for="inq-message">내용 <span class="required">*</span></label>
+                    <textarea id="inq-message" name="message" rows="5" required maxlength="500" placeholder="문의 내용을 입력해주세요"></textarea>
+                </div>
+                <button type="submit" class="btn-primary form-submit">문의 보내기 →</button>
+                <div class="form-status" id="inquiry-status"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -105,5 +140,77 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js?v=20260205g"></script>
     <script src="js/speakup.js?v=20260205i"></script>
+    <script>
+        // 문의하기 모달
+        const inquiryModal = document.getElementById('inquiry-modal');
+        const inquiryCloseBtn = document.getElementById('inquiry-close-btn');
+        const navInquiryLink = document.getElementById('nav-inquiry-link');
+
+        if (navInquiryLink) {
+            navInquiryLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                inquiryModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (inquiryCloseBtn) {
+            inquiryCloseBtn.addEventListener('click', () => {
+                inquiryModal.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (inquiryModal) {
+            inquiryModal.addEventListener('click', (e) => {
+                if (e.target === inquiryModal) {
+                    inquiryModal.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // 문의하기 폼 제출
+        const inquiryForm = document.getElementById('inquiry-form');
+        if (inquiryForm) {
+            inquiryForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById('inquiry-status');
+                const btn = e.target.querySelector('.form-submit');
+
+                const name = document.getElementById('inq-name').value.trim();
+                const phone = document.getElementById('inq-phone').value.replace(/[^0-9]/g, '');
+                const email = document.getElementById('inq-email').value.trim();
+                const subject = document.getElementById('inq-subject').value.trim();
+                const message = document.getElementById('inq-message').value.trim();
+
+                if (!name || !subject || !message) {
+                    statusEl.textContent = '이름, 제목, 내용은 필수입니다.';
+                    statusEl.className = 'form-status error';
+                    return;
+                }
+
+                statusEl.textContent = '문의 접수 중...';
+                statusEl.className = 'form-status loading';
+                btn.disabled = true;
+
+                try {
+                    await DB.createInquiry({
+                        name, phone, email, subject, message,
+                        user_id: null
+                    });
+                    statusEl.textContent = '문의가 접수되었습니다. 감사합니다!';
+                    statusEl.className = 'form-status success';
+                    document.getElementById('inq-subject').value = '';
+                    document.getElementById('inq-message').value = '';
+                } catch (err) {
+                    statusEl.textContent = '문의 접수 중 오류가 발생했습니다.';
+                    statusEl.className = 'form-status error';
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        }
+    </script>
 </body>
 </html>
