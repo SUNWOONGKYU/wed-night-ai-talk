@@ -327,19 +327,20 @@ function bindPostCardEvents(card, post) {
         });
     }
 
-    // Comment form — submit 이벤트 + 버튼 클릭 이벤트 모두 바인딩
+    // Comment form submit
     var commentForm = card.querySelector('.comment-form');
     if (commentForm) {
-        var commentSubmitHandler = async function(e) {
-            if (e) e.preventDefault();
+        commentForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             var postId = parseInt(commentForm.dataset.postId);
             var input = commentForm.querySelector('.comment-input');
             var content = input.value.trim();
             if (!content) return;
             var submitBtn = commentForm.querySelector('.comment-submit-btn');
+            if (submitBtn.disabled) return; // 중복 방지
             submitBtn.disabled = true;
             try {
-                console.log('Creating comment:', { postId: postId, userId: spCurrentUser.id });
                 await DB.createComment(postId, spCurrentUser.id, content, null);
                 input.value = '';
                 await loadComments(postId, card);
@@ -351,16 +352,7 @@ function bindPostCardEvents(card, post) {
             } finally {
                 submitBtn.disabled = false;
             }
-        };
-        commentForm.addEventListener('submit', commentSubmitHandler);
-        // 버튼 직접 클릭도 처리
-        var cSubmitBtn = commentForm.querySelector('.comment-submit-btn');
-        if (cSubmitBtn) {
-            cSubmitBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                commentSubmitHandler(e);
-            });
-        }
+        });
     }
 
     // Edit button
@@ -474,10 +466,12 @@ function renderComment(comment, postId, postCard, isReply) {
             var form = wrap.querySelector('.reply-form');
             form.addEventListener('submit', async function(ev) {
                 ev.preventDefault();
+                ev.stopPropagation();
                 var input = form.querySelector('.reply-input');
                 var content = input.value.trim();
                 if (!content) return;
                 var submitBtn = form.querySelector('.comment-submit-btn');
+                if (submitBtn.disabled) return; // 중복 방지
                 submitBtn.disabled = true;
                 try {
                     await DB.createComment(postId, spCurrentUser.id, content, comment.id);
