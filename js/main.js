@@ -903,15 +903,10 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
         setStatus(statusEl, '프로필이 저장되었습니다.', 'success');
 
         // 2초 후 모달 자동 닫기
-        console.log('프로필 저장 성공 - 2초 후 모달 닫기 예약됨');
         setTimeout(() => {
-            console.log('모달 닫기 실행 중...');
             if (authModal) {
                 authModal.classList.remove('open');
                 document.body.style.overflow = '';
-                console.log('프로필 모달 닫힘');
-            } else {
-                console.error('authModal이 null입니다');
             }
         }, 2000);
     } catch (err) {
@@ -953,15 +948,10 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
         e.target.reset();
 
         // 2초 후 모달 자동 닫기
-        console.log('비밀번호 변경 성공 - 2초 후 모달 닫기 예약됨');
         setTimeout(() => {
-            console.log('모달 닫기 실행 중...');
             if (authModal) {
                 authModal.classList.remove('open');
                 document.body.style.overflow = '';
-                console.log('비밀번호 변경 모달 닫힘');
-            } else {
-                console.error('authModal이 null입니다');
             }
         }, 2000);
     } catch (err) {
@@ -1031,15 +1021,10 @@ document.getElementById('inquiry-form').addEventListener('submit', async (e) => 
         document.getElementById('inq-message').value = '';
 
         // 2초 후 모달 자동 닫기
-        console.log('문의하기 성공 - 2초 후 모달 닫기 예약됨');
         setTimeout(() => {
-            console.log('모달 닫기 실행 중...');
             if (inquiryModal) {
                 inquiryModal.classList.remove('open');
                 document.body.style.overflow = '';
-                console.log('문의하기 모달 닫힘');
-            } else {
-                console.error('inquiryModal이 null입니다');
             }
         }, 2000);
     } catch (err) {

@@ -147,19 +147,14 @@
             const inquiryCloseBtn = document.getElementById('inquiry-close-btn');
             const navInquiryLink = document.getElementById('nav-inquiry-link');
 
-            console.log('Inquiry modal elements:', { inquiryModal, inquiryCloseBtn, navInquiryLink });
-
             if (navInquiryLink) {
                 navInquiryLink.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Opening inquiry modal');
                     if (inquiryModal) {
                         inquiryModal.classList.add('open');
                         document.body.style.overflow = 'hidden';
                     }
                 });
-            } else {
-                console.error('nav-inquiry-link not found');
             }
 
             if (inquiryCloseBtn) {
@@ -226,7 +221,6 @@
                             }
                         }, 2000);
                     } catch (err) {
-                        console.error('Inquiry submission error:', err);
                         statusEl.textContent = '문의 접수 중 오류가 발생했습니다.';
                         statusEl.className = 'form-status error';
                     } finally {
