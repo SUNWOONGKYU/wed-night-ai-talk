@@ -142,75 +142,91 @@
     <script src="js/speakup.js?v=20260205i"></script>
     <script>
         // 문의하기 모달
-        const inquiryModal = document.getElementById('inquiry-modal');
-        const inquiryCloseBtn = document.getElementById('inquiry-close-btn');
-        const navInquiryLink = document.getElementById('nav-inquiry-link');
+        document.addEventListener('DOMContentLoaded', function() {
+            const inquiryModal = document.getElementById('inquiry-modal');
+            const inquiryCloseBtn = document.getElementById('inquiry-close-btn');
+            const navInquiryLink = document.getElementById('nav-inquiry-link');
 
-        if (navInquiryLink) {
-            navInquiryLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                inquiryModal.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            });
-        }
+            console.log('Inquiry modal elements:', { inquiryModal, inquiryCloseBtn, navInquiryLink });
 
-        if (inquiryCloseBtn) {
-            inquiryCloseBtn.addEventListener('click', () => {
-                inquiryModal.classList.remove('open');
-                document.body.style.overflow = '';
-            });
-        }
+            if (navInquiryLink) {
+                navInquiryLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Opening inquiry modal');
+                    if (inquiryModal) {
+                        inquiryModal.classList.add('open');
+                        document.body.style.overflow = 'hidden';
+                    }
+                });
+            } else {
+                console.error('nav-inquiry-link not found');
+            }
 
-        if (inquiryModal) {
-            inquiryModal.addEventListener('click', (e) => {
-                if (e.target === inquiryModal) {
-                    inquiryModal.classList.remove('open');
-                    document.body.style.overflow = '';
-                }
-            });
-        }
+            if (inquiryCloseBtn) {
+                inquiryCloseBtn.addEventListener('click', function() {
+                    if (inquiryModal) {
+                        inquiryModal.classList.remove('open');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
 
-        // 문의하기 폼 제출
-        const inquiryForm = document.getElementById('inquiry-form');
-        if (inquiryForm) {
-            inquiryForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const statusEl = document.getElementById('inquiry-status');
-                const btn = e.target.querySelector('.form-submit');
+            if (inquiryModal) {
+                inquiryModal.addEventListener('click', function(e) {
+                    if (e.target === inquiryModal) {
+                        inquiryModal.classList.remove('open');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
 
-                const name = document.getElementById('inq-name').value.trim();
-                const phone = document.getElementById('inq-phone').value.replace(/[^0-9]/g, '');
-                const email = document.getElementById('inq-email').value.trim();
-                const subject = document.getElementById('inq-subject').value.trim();
-                const message = document.getElementById('inq-message').value.trim();
+            // 문의하기 폼 제출
+            const inquiryForm = document.getElementById('inquiry-form');
+            if (inquiryForm) {
+                inquiryForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const statusEl = document.getElementById('inquiry-status');
+                    const btn = e.target.querySelector('.form-submit');
 
-                if (!name || !subject || !message) {
-                    statusEl.textContent = '이름, 제목, 내용은 필수입니다.';
-                    statusEl.className = 'form-status error';
-                    return;
-                }
+                    const name = document.getElementById('inq-name').value.trim();
+                    const phone = document.getElementById('inq-phone').value.replace(/[^0-9]/g, '');
+                    const email = document.getElementById('inq-email').value.trim();
+                    const subject = document.getElementById('inq-subject').value.trim();
+                    const message = document.getElementById('inq-message').value.trim();
 
-                statusEl.textContent = '문의 접수 중...';
-                statusEl.className = 'form-status loading';
-                btn.disabled = true;
+                    if (!name || !subject || !message) {
+                        statusEl.textContent = '이름, 제목, 내용은 필수입니다.';
+                        statusEl.className = 'form-status error';
+                        return;
+                    }
 
-                try {
-                    await DB.createInquiry({
-                        name, phone, email, subject, message,
-                        user_id: null
-                    });
-                    statusEl.textContent = '문의가 접수되었습니다. 감사합니다!';
-                    statusEl.className = 'form-status success';
-                    document.getElementById('inq-subject').value = '';
-                    document.getElementById('inq-message').value = '';
-                } catch (err) {
-                    statusEl.textContent = '문의 접수 중 오류가 발생했습니다.';
-                    statusEl.className = 'form-status error';
-                } finally {
-                    btn.disabled = false;
-                }
-            });
-        }
+                    statusEl.textContent = '문의 접수 중...';
+                    statusEl.className = 'form-status loading';
+                    btn.disabled = true;
+
+                    try {
+                        await DB.createInquiry({
+                            name: name,
+                            phone: phone,
+                            email: email,
+                            subject: subject,
+                            message: message,
+                            user_id: null
+                        });
+                        statusEl.textContent = '문의가 접수되었습니다. 감사합니다!';
+                        statusEl.className = 'form-status success';
+                        document.getElementById('inq-subject').value = '';
+                        document.getElementById('inq-message').value = '';
+                    } catch (err) {
+                        console.error('Inquiry submission error:', err);
+                        statusEl.textContent = '문의 접수 중 오류가 발생했습니다.';
+                        statusEl.className = 'form-status error';
+                    } finally {
+                        btn.disabled = false;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
