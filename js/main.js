@@ -901,6 +901,12 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
         document.getElementById('nav-user-name').textContent = name;
         fillProfileAll();
         setStatus(statusEl, '프로필이 저장되었습니다.', 'success');
+
+        // 2초 후 모달 자동 닫기
+        setTimeout(() => {
+            authModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }, 2000);
     } catch (err) {
         setStatus(statusEl, '저장 중 오류가 발생했습니다.', 'error');
     } finally {
@@ -938,6 +944,12 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
         if (error) throw error;
         setStatus(statusEl, '비밀번호가 변경되었습니다.', 'success');
         e.target.reset();
+
+        // 2초 후 모달 자동 닫기
+        setTimeout(() => {
+            authModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }, 2000);
     } catch (err) {
         const msg = err.message || '비밀번호 변경 중 오류가 발생했습니다.';
         setStatus(statusEl, msg, 'error');
@@ -1003,6 +1015,12 @@ document.getElementById('inquiry-form').addEventListener('submit', async (e) => 
         setStatus(statusEl, '문의가 접수되었습니다. 감사합니다!', 'success');
         document.getElementById('inq-subject').value = '';
         document.getElementById('inq-message').value = '';
+
+        // 2초 후 모달 자동 닫기
+        setTimeout(() => {
+            inquiryModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }, 2000);
     } catch (err) {
         setStatus(statusEl, '문의 접수 중 오류가 발생했습니다.', 'error');
     } finally {

@@ -217,6 +217,14 @@
                         statusEl.className = 'form-status success';
                         document.getElementById('inq-subject').value = '';
                         document.getElementById('inq-message').value = '';
+
+                        // 2초 후 모달 자동 닫기
+                        setTimeout(function() {
+                            if (inquiryModal) {
+                                inquiryModal.classList.remove('open');
+                                document.body.style.overflow = '';
+                            }
+                        }, 2000);
                     } catch (err) {
                         console.error('Inquiry submission error:', err);
                         statusEl.textContent = '문의 접수 중 오류가 발생했습니다.';
