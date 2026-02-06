@@ -530,6 +530,13 @@
                     <input type="hidden" id="p-name">
                     <input type="hidden" id="p-contact">
 
+                    <!-- 현재 하는 일 (수정 가능) -->
+                    <div class="form-group">
+                        <label for="p-current-job">현재 하는 일 (선택)</label>
+                        <input type="text" id="p-current-job" name="currentJob" placeholder="예: 삼성전자 근무, 프리랜서, 학생 등" maxlength="100">
+                        <span class="form-hint">소속, 직업, 직무 등을 간단히 적어주세요</span>
+                    </div>
+
                     <!-- 멤버 유형 (수정 가능) -->
                     <div class="form-group">
                         <label for="p-type">멤버 유형</label>
@@ -627,6 +634,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260205g"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260205g"></script>
+    <script src="js/main.js?v=20260206a"></script>
 </body>
 </html>

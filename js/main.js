@@ -265,6 +265,7 @@ function fillProfileAll() {
     document.getElementById('p-name').value = currentProfile.name || '';
     document.getElementById('p-contact').value = currentProfile.phone || '';
     // 수정 가능 필드
+    document.getElementById('p-current-job').value = currentProfile.current_job || '';
     document.getElementById('p-type').value = currentProfile.member_type || '';
     document.getElementById('p-message').value = currentProfile.message || '';
     // 관심분야 체크
@@ -879,6 +880,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 
     const name = document.getElementById('p-name').value.trim();
     const phone = sanitizePhone(document.getElementById('p-contact').value);
+    const currentJob = document.getElementById('p-current-job').value.trim();
     const memberType = document.getElementById('p-type').value;
     const message = document.getElementById('p-message').value.trim();
     const checked = e.target.querySelectorAll('input[name="interests"]:checked');
@@ -891,6 +893,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
         currentProfile = await DB.updateProfile(currentUser.id, {
             name,
             phone,
+            current_job: currentJob,
             interests,
             member_type: memberType,
             message
