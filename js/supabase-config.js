@@ -96,11 +96,9 @@ var DB = {
     },
 
     async getMemberCount() {
-        var { count, error } = await _supabase
-            .from('profiles')
-            .select('*', { count: 'exact', head: true });
+        var { data, error } = await _supabase.rpc('get_member_count');
         if (error) throw error;
-        return count;
+        return data;
     },
 
     // -- Events --
