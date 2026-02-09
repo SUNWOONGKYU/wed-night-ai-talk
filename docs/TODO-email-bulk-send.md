@@ -111,7 +111,7 @@ serve(async (req) => {
           "Authorization": `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: "AI Study Circle 110 <onboarding@resend.dev>",  // 도메인 인증 후 변경
+          from: "AI Study 110 <onboarding@resend.dev>",  // 도메인 인증 후 변경
           to: [email],
           subject: subject,
           html: html,

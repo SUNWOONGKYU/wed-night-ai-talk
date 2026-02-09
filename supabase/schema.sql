@@ -1,5 +1,5 @@
 -- =============================================
--- AI Study Circle — Supabase DB Schema
+-- AI Study — Supabase DB Schema
 -- Supabase SQL Editor에서 이 파일을 실행하세요
 -- =============================================
 
