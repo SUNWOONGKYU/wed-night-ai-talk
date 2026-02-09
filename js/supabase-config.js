@@ -56,7 +56,7 @@ var Auth = {
 
     async sendPasswordResetEmail(email) {
         var { error } = await _supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: 'https://sunwoongkyu.github.io/AI_Study_Circle/'
+            redirectTo: 'https://study110.ai.kr/'
         });
         if (error) throw error;
     },
