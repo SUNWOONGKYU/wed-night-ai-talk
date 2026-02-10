@@ -576,7 +576,8 @@ async function loadMemberCount() {
     if (!el) return;
     try {
         var count = await DB.getMemberCount();
-        el.textContent = count + '명';
+        var roundedCount = Math.floor(count / 10) * 10;
+        el.textContent = roundedCount + '+';
     } catch (e) {
         console.error('loadMemberCount error:', e);
         el.textContent = '-';
