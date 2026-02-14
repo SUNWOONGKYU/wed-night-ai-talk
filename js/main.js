@@ -865,11 +865,15 @@ document.getElementById('reset-password-form').addEventListener('submit', async 
     btn.disabled = true;
 
     try {
+        console.log('비밀번호 재설정 시도 - currentUser:', currentUser);
+        console.log('세션 확인:', await Auth.getSession());
         await Auth.updatePassword(newPw);
         setStatus(statusEl, '비밀번호가 변경되었습니다. 잠시 후 자동으로 닫힙니다.', 'success');
         e.target.reset();
         setTimeout(closeModal, 2000);
     } catch (err) {
+        console.error('Reset password error:', err);
+        console.error('Full error object:', JSON.stringify(err, null, 2));
         const msg = err.message || '비밀번호 변경 중 오류가 발생했습니다.';
         setStatus(statusEl, msg, 'error');
     } finally {
