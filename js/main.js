@@ -182,6 +182,10 @@ async function initAuth() {
 
     Auth.onAuthStateChange(async (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
+            // 비밀번호 재설정 세션도 저장해야 updatePassword가 작동함
+            if (session) {
+                currentUser = session.user;
+            }
             showResetPasswordModal();
             return;
         }
