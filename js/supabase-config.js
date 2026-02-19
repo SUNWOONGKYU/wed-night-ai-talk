@@ -15,6 +15,17 @@ try {
     console.error('Supabase createClient 실패:', e);
 }
 
+// PKCE 비밀번호 재설정: PASSWORD_RECOVERY 이벤트를 조기에 캡처
+// initAuth()가 renderScheduleEvents() 완료 후 실행되므로, 그 전에 이벤트가 유실될 수 있음
+var _recoverySession = null;
+if (_supabase) {
+    _supabase.auth.onAuthStateChange(function(event, session) {
+        if (event === 'PASSWORD_RECOVERY') {
+            _recoverySession = session;
+        }
+    });
+}
+
 // ========== Admin Emails ==========
 var ADMIN_EMAILS = [
     'wksun999@gmail.com',
@@ -304,6 +315,11 @@ var DB = {
             .single();
         if (error) throw error;
         return data;
+    },
+
+    async incrementViewCount(postId) {
+        var { error } = await _supabase.rpc('increment_post_view', { p_post_id: postId });
+        if (error) throw error;
     },
 
     async createPost(userId, title, content) {

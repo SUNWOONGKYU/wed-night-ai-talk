@@ -4,6 +4,17 @@ let spCurrentProfile = null;
 let spPostOffset = 0;
 const SP_PAGE_SIZE = 10;
 
+// ========== View Count Tracking (세션 당 1회) ==========
+var _viewedPosts = [];
+try { _viewedPosts = JSON.parse(sessionStorage.getItem('sp_viewed') || '[]'); } catch(e) {}
+
+async function trackPostView(postId) {
+    if (_viewedPosts.indexOf(postId) !== -1) return;
+    _viewedPosts.push(postId);
+    try { sessionStorage.setItem('sp_viewed', JSON.stringify(_viewedPosts)); } catch(e) {}
+    try { await DB.incrementViewCount(postId); } catch(e) {}
+}
+
 // ========== Escape HTML ==========
 function spEscape(str) {
     var div = document.createElement('div');
@@ -260,9 +271,13 @@ async function renderPostCard(post) {
                     '👎 <span class="dislike-count">' + reactionData.dislikes + '</span>' +
                 '</button>' +
             '</div>' +
-            '<button class="comment-toggle-btn" data-post-id="' + post.id + '">' +
-                '💬 댓글 <span class="comment-count">' + commentCount + '</span>' +
-            '</button>' +
+            '<div class="post-footer-right">' +
+                '<span class="post-view-count">👁 <span class="view-count-num">' + (post.view_count || 0) + '</span></span>' +
+                '<button class="post-share-btn" data-post-id="' + post.id + '" title="링크 복사">🔗</button>' +
+                '<button class="comment-toggle-btn" data-post-id="' + post.id + '">' +
+                    '💬 댓글 <span class="comment-count">' + commentCount + '</span>' +
+                '</button>' +
+            '</div>' +
         '</div>' +
         '<div class="comments-section" id="comments-' + post.id + '" style="display:none;">' +
             '<div class="comments-list" id="comments-list-' + post.id + '"></div>' +
@@ -274,6 +289,9 @@ async function renderPostCard(post) {
                     '</form>' +
                 '</div>' : '') +
         '</div>';
+
+    // 조회수 트래킹 (fire and forget)
+    trackPostView(post.id);
 
     // Bind events
     bindPostCardEvents(card, post);
@@ -351,6 +369,30 @@ function bindPostCardEvents(card, post) {
                 alert('댓글 등록 오류: ' + (err.message || err));
             } finally {
                 submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Share button
+    var shareBtn = card.querySelector('.post-share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            var postId = shareBtn.dataset.postId;
+            var url = window.location.origin + window.location.pathname + '?post=' + postId;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(function() {
+                    shareBtn.textContent = '✅';
+                    setTimeout(function() { shareBtn.textContent = '🔗'; }, 1500);
+                });
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = url;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                shareBtn.textContent = '✅';
+                setTimeout(function() { shareBtn.textContent = '🔗'; }, 1500);
             }
         });
     }
@@ -665,6 +707,20 @@ function startSpeakUp() {
 
     spInitAuth().then(function() {
         return loadPosts(true);
+    }).then(function() {
+        // 공유 링크로 접속 시 해당 게시글로 스크롤
+        var params = new URLSearchParams(window.location.search);
+        var sharedPostId = params.get('post');
+        if (sharedPostId) {
+            var target = document.querySelector('[data-post-id="' + sharedPostId + '"]');
+            if (target) {
+                setTimeout(function() {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    target.classList.add('post-highlighted');
+                    setTimeout(function() { target.classList.remove('post-highlighted'); }, 3000);
+                }, 300);
+            }
+        }
     }).catch(function(e) {
         console.error('SpeakUp init error:', e);
     });
