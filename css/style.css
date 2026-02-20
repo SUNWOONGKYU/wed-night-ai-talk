@@ -2837,7 +2837,11 @@ body.speakup-light .nav-links.show {
     .speakup-preview-grid { grid-template-columns: 1fr; }
     .speakup-page { padding-top: 5rem; }
     .post-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-    .post-footer { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
-    .post-footer-right { flex-wrap: wrap; }
+    .post-footer { flex-direction: row; align-items: center; gap: 0.3rem; flex-wrap: nowrap; overflow-x: auto; }
+    .post-footer-right { gap: 0.3rem; flex-shrink: 0; }
+    .reaction-btn { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+    .comment-toggle-btn { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+    .post-share-btn { padding: 0.3rem 0.45rem; font-size: 0.78rem; }
+    .post-view-count { font-size: 0.75rem; padding: 0.3rem 0.3rem; }
     .comment-reply { margin-left: 1rem; }
 }
