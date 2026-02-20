@@ -273,7 +273,7 @@ async function renderPostCard(post) {
             '</div>' +
             '<div class="post-footer-right">' +
                 '<span class="post-view-count">👁 <span class="view-count-num">' + (post.view_count || 0) + '</span></span>' +
-                '<button class="post-share-btn" data-post-id="' + post.id + '" title="링크 복사">🔗</button>' +
+                '<button class="post-share-btn" data-post-id="' + post.id + '" title="링크 복사">공유</button>' +
                 '<button class="comment-toggle-btn" data-post-id="' + post.id + '">' +
                     '💬 댓글 <span class="comment-count">' + commentCount + '</span>' +
                 '</button>' +
@@ -381,8 +381,8 @@ function bindPostCardEvents(card, post) {
             var url = window.location.origin + window.location.pathname + '?post=' + postId;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(url).then(function() {
-                    shareBtn.textContent = '✅';
-                    setTimeout(function() { shareBtn.textContent = '🔗'; }, 1500);
+                    shareBtn.textContent = '복사됨';
+                    setTimeout(function() { shareBtn.textContent = '공유'; }, 1500);
                 });
             } else {
                 var ta = document.createElement('textarea');
