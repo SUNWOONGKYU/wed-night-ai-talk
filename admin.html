@@ -107,6 +107,8 @@
                     <h3>전체 멤버 목록</h3>
                     <div class="admin-actions">
                         <input type="text" class="admin-search" id="member-search" placeholder="이름 또는 전화번호로 검색...">
+                        <button class="btn-secondary btn-small" onclick="exportMembersExcel()" title="Excel 파일로 다운로드">📥 Excel 다운로드</button>
+                        <button class="btn-secondary btn-small" onclick="exportMembersCsv()" title="CSV 파일로 다운로드">📥 CSV 다운로드</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table" id="members-table">
@@ -387,6 +389,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script src="js/supabase-config.js?v=20260204b"></script>
     <script src="js/admin.js?v=20260205a"></script>
 </body>
