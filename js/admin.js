@@ -574,6 +574,50 @@ async function deleteInquiry(id) {
     }
 }
 
+// ========== Export Members ==========
+function getMembersExportData() {
+    const members = allMembers.length > 0 ? allMembers : [];
+    return members.map(m => ({
+        '이름': m.name || '',
+        '전화번호': m.phone || '',
+        '이메일': m.email || '',
+        '현재 하는 일': m.current_job || '',
+        '관심분야': (m.interests || []).join(', '),
+        '유형': m.member_type || '',
+        '가입일': m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : ''
+    }));
+}
+
+function exportMembersExcel() {
+    const data = getMembersExportData();
+    if (data.length === 0) { alert('다운로드할 멤버 데이터가 없습니다.'); return; }
+    const ws = XLSX.utils.json_to_sheet(data);
+    // 열 너비 설정
+    ws['!cols'] = [
+        { wch: 10 }, { wch: 15 }, { wch: 25 },
+        { wch: 30 }, { wch: 30 }, { wch: 10 }, { wch: 12 }
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '멤버목록');
+    const today = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `AI_Study_110_멤버목록_${today}.xlsx`);
+}
+
+function exportMembersCsv() {
+    const data = getMembersExportData();
+    if (data.length === 0) { alert('다운로드할 멤버 데이터가 없습니다.'); return; }
+    const ws = XLSX.utils.json_to_sheet(data);
+    const csv = '\uFEFF' + XLSX.utils.sheet_to_csv(ws); // BOM for Excel Korean support
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const today = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `AI_Study_110_멤버목록_${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 // ========== Helpers ==========
 function escapeHtml(str) {
     const div = document.createElement('div');
