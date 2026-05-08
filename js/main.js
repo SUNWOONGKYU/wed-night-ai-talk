@@ -174,9 +174,15 @@ async function initAuth() {
     updateAttendUI();
     if (currentUser) checkAttendance();
 
-    // URL 해시에서 recovery 감지 시 → 재설정 폼 즉시 표시
-    if (_pendingPasswordRecovery) {
+    // recovery 감지 시 → 재설정 폼 표시
+    // _pendingPasswordRecovery: 구 implicit 방식 (해시 #type=recovery)
+    // _recoverySession: 신 PKCE 방식 (?code=XYZ) — initAuth() 실행 전에 이벤트가 유실되므로 조기 캡처
+    if (_pendingPasswordRecovery || _recoverySession) {
+        if (_recoverySession) {
+            currentUser = _recoverySession.user;
+        }
         _pendingPasswordRecovery = false;
+        _recoverySession = null;
         showResetPasswordModal();
     }
 
