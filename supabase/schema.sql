@@ -154,8 +154,8 @@ CREATE TABLE locations (
 -- 장소 시드 데이터
 INSERT INTO locations (name, address, map_url, note, loc_type, sort_order)
 VALUES
-  ('옐로펀치 성수메사', '서울특별시 성동구 성수일로 8길 5 A동 607호 (성수동2가 248-55)', 'https://naver.me/5duYsK0I', 'AI 연구, 바이브코딩, 서비스 개발/창업 모임, 네트워킹에 딱 맞는 공간', 'primary', 1),
-  ('고척동 공간', '', '', '아담하고 포근한 공간 (주 1회 활용 가능)', 'secondary', 2);
+  ('선명회계법인', '서울 강남구 테헤란로70길 16, 7층', 'https://naver.me/FoR3lmoG', '강남 테헤란로 일대, 평일 오후 모임 베이스', 'primary', 1),
+  ('로얄파크컨벤션', '서울 용산구 이태원로 29', 'https://naver.me/GlmnhduK', '용산·이태원 권역, 대규모 모임 가능', 'secondary', 2);
 
 -- 장소 RLS
 ALTER TABLE locations ENABLE ROW LEVEL SECURITY;

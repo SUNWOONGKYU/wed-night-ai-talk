@@ -1,32 +1,34 @@
-/* ========== TOMORROW NIGHT BLUE THEME ========== */
+/* ========== WAAT — OAT-WHITE / DEEP-NAVY / GOLD THEME ========== */
 :root {
-    /* Tomorrow Night Blue palette */
-    --bg-primary: #002451;
-    --bg-secondary: #001a3a;
-    --bg-card: #003070;
-    --bg-card-hover: #003d8f;
-    --bg-nav: rgba(0, 36, 81, 0.85);
-    --bg-nav-scroll: rgba(0, 36, 81, 0.95);
+    /* Backgrounds — warm oat tone */
+    --bg-primary: #FAF7F2;
+    --bg-secondary: #F2EDE2;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F8F4EC;
+    --bg-nav: rgba(250, 247, 242, 0.88);
+    --bg-nav-scroll: rgba(250, 247, 242, 0.96);
 
-    /* Accents */
-    --accent-cyan: #00e5ff;
-    --accent-blue: #4d7cff;
-    --accent-purple: #a855f7;
-    --accent-pink: #ff3d8b;
-    --accent-green: #10b981;
-    --accent-orange: #f59e0b;
+    /* Accents — navy + gold (ax-on.net 계열 톤매너) */
+    --accent-cyan: #1A2238;       /* deep navy — primary accent */
+    --accent-blue: #2E3A5F;       /* navy variant */
+    --accent-purple: #6B7BA0;
+    --accent-pink: #C9A961;       /* warm gold */
+    --accent-green: #5B8A72;
+    --accent-orange: #C9A961;
+    --accent-gold: #C9A961;
+    --accent-gold-soft: #E8D9B0;
 
     /* Text */
-    --text-primary: #f0f0f5;
-    --text-secondary: #a0b3d0;
-    --text-muted: #6b82a8;
+    --text-primary: #1A2238;
+    --text-secondary: #4A5670;
+    --text-muted: #8A8F9E;
 
     /* Border */
-    --border: #0a4a8a;
+    --border: #E5DFD2;
 
     /* Glows */
-    --glow-cyan: rgba(0, 229, 255, 0.15);
-    --glow-blue: rgba(77, 124, 255, 0.15);
+    --glow-cyan: rgba(26, 34, 56, 0.08);
+    --glow-blue: rgba(201, 169, 97, 0.18);
 }
 
 * {
@@ -2844,4 +2846,171 @@ body.speakup-light .nav-links.show {
     .post-share-btn { padding: 0.3rem 0.45rem; font-size: 0.78rem; }
     .post-view-count { font-size: 0.75rem; padding: 0.3rem 0.3rem; }
     .comment-reply { margin-left: 1rem; }
+}
+
+/* ========== WAAT 2026-05-09 — light theme overrides + new components ========== */
+
+/* Buttons that previously used dark-on-light contrast — now navy bg needs white text */
+.btn-primary,
+.nav-cta {
+    color: #fff !important;
+}
+.hero-actions .btn-primary { color: #fff !important; }
+
+/* Background grid/orbs muted on light theme */
+.bg-grid { opacity: 0.35; }
+.bg-orb { opacity: 0.18; }
+
+/* Nav — 3-zone layout */
+nav {
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+.nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.nav-logo {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+.nav-logo-img {
+    height: 44px;
+    width: auto;
+    display: block;
+    border-radius: 8px;
+}
+.nav-links-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+.nav-links-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+.nav-links-center li,
+.nav-links-right li {
+    list-style: none;
+}
+.nav-links-center a {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.nav-links-center a:hover {
+    color: var(--accent-gold);
+}
+
+/* Section title — 영문 + 한글 병기 */
+.section-title .title-ko {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.7em;
+    margin-left: 0.4em;
+    letter-spacing: 0;
+}
+
+/* Section label — gold tint for ax-on tone */
+.section-label {
+    color: var(--accent-gold) !important;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+}
+
+/* Hero badge — softer */
+.hero-badge {
+    background: rgba(26, 34, 56, 0.04);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+.hero-badge .dot {
+    background: var(--accent-gold);
+}
+
+/* Hero gradient text — navy → gold */
+.hero h1 .gradient {
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Footer — 4 line stack */
+footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 1.5rem;
+    margin-top: 4rem;
+}
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.footer-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+}
+.footer-links {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.footer-links a:hover {
+    color: var(--accent-gold);
+}
+.footer-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+.footer-meta a {
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-muted);
+}
+.footer-meta a:hover {
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
+}
+.footer-sep {
+    color: var(--text-muted);
+    margin: 0 0.4rem;
+    opacity: 0.6;
+}
+.footer-since {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-top: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .nav-inner { gap: 0.75rem; }
+    .nav-logo-img { height: 36px; }
+    .nav-links-center { display: none; }
+    .nav-links-right { gap: 0.4rem; }
+    .footer-links,
+    .footer-meta { font-size: 0.8rem; }
+    .section-title .title-ko { display: block; margin-left: 0; font-size: 0.55em; margin-top: 0.3rem; }
 }

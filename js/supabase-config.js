@@ -110,6 +110,14 @@ var DB = {
         return data;
     },
 
+    async getPostCount() {
+        var { count, error } = await _supabase
+            .from('posts')
+            .select('*', { count: 'exact', head: true });
+        if (error) throw error;
+        return count || 0;
+    },
+
     // -- Events --
     async getEvents() {
         var { data, error } = await _supabase

@@ -594,6 +594,18 @@ async function loadMemberCount() {
     }
 }
 
+async function loadFreeTalkCount() {
+    var el = document.getElementById('freetalk-count-display');
+    if (!el) return;
+    try {
+        var count = await DB.getPostCount();
+        el.textContent = count;
+    } catch (e) {
+        console.error('loadFreeTalkCount error:', e);
+        el.textContent = '-';
+    }
+}
+
 // ========== Speak Up Preview ==========
 async function renderSpeakUpPreview() {
     var container = document.getElementById('speakup-preview-container');
@@ -980,12 +992,15 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
 // ========== Inquiry Modal ==========
 const inquiryModal = document.getElementById('inquiry-modal');
 
-document.getElementById('nav-inquiry-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    fillInquiryForm();
-    inquiryModal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-});
+var _inquiryTrigger = document.getElementById('footer-inquiry-link') || document.getElementById('nav-inquiry-link');
+if (_inquiryTrigger) {
+    _inquiryTrigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        fillInquiryForm();
+        inquiryModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    });
+}
 
 document.getElementById('inquiry-close-btn').addEventListener('click', () => {
     inquiryModal.classList.remove('open');
@@ -1114,6 +1129,7 @@ function startApp() {
         .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
     loadMemberCount();
+    loadFreeTalkCount();
     renderSpeakUpPreview().catch(function(e) {
         console.error('SpeakUp preview error:', e);
         var c = document.getElementById('speakup-preview-container');

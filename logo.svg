@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="bg" cx="40%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#3a4a6b"/>
+      <stop offset="100%" stop-color="#1a1f2e"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4a853"/>
+      <stop offset="50%" stop-color="#f0c87a"/>
+      <stop offset="100%" stop-color="#b8891e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bg)"/>
+
+  <!-- 수요일 오후 -->
+  <text x="200" y="155" text-anchor="middle"
+    font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif"
+    font-size="48" font-weight="600" fill="white" letter-spacing="2">
+    수요일 오후
+  </text>
+
+  <!-- AI 수다 — AI in gold, 수다 in white -->
+  <text x="200" y="225" text-anchor="middle"
+    font-family="'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif"
+    font-size="58" font-weight="700" letter-spacing="4">
+    <tspan fill="url(#gold)">AI</tspan><tspan fill="white"> 수다</tspan>
+  </text>
+
+  <!-- Wednesday Afternoon AI Talk -->
+  <text x="200" y="278" text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="18" font-weight="400" font-style="italic"
+    fill="rgba(255,255,255,0.6)" letter-spacing="1">
+    Wednesday Afternoon AI Talk
+  </text>
+
+  <!-- WAAT -->
+  <text x="200" y="315" text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="13" font-weight="400"
+    fill="rgba(212,168,83,0.7)" letter-spacing="4">
+    WAAT
+  </text>
+</svg>
