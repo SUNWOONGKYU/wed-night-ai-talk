@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 56" width="200" height="56">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C9A961"/>
+      <stop offset="50%" stop-color="#E8D9B0"/>
+      <stop offset="100%" stop-color="#A88838"/>
+    </linearGradient>
+  </defs>
+
+  <!-- WAAT wordmark -->
+  <text x="0" y="32"
+    font-family="'Outfit', 'Inter', system-ui, sans-serif"
+    font-size="34" font-weight="900"
+    letter-spacing="2"
+    fill="#1A2238">W<tspan fill="url(#goldGrad)">AA</tspan>T</text>
+
+  <!-- Caption -->
+  <text x="2" y="48"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="8" font-weight="400" font-style="italic"
+    fill="#8A8F9E" letter-spacing="0.8">Wednesday Afternoon AI Talk</text>
+</svg>

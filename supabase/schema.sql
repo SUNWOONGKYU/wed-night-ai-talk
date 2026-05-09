@@ -154,8 +154,8 @@ CREATE TABLE locations (
 -- 장소 시드 데이터
 INSERT INTO locations (name, address, map_url, note, loc_type, sort_order)
 VALUES
-  ('선명회계법인', '서울 강남구 테헤란로70길 16, 7층', 'https://naver.me/FoR3lmoG', '강남 테헤란로 일대, 평일 오후 모임 베이스', 'primary', 1),
-  ('로얄파크컨벤션', '서울 용산구 이태원로 29', 'https://naver.me/GlmnhduK', '용산·이태원 권역, 대규모 모임 가능', 'secondary', 2);
+  ('선명회계법인', '서울 강남구 테헤란로70길 16, 7층', 'https://naver.me/FoR3lmoG', '', 'primary', 1),
+  ('로얄파크컨벤션', '서울 용산구 이태원로 29', 'https://naver.me/GlmnhduK', '', 'secondary', 2);
 
 -- 장소 RLS
 ALTER TABLE locations ENABLE ROW LEVEL SECURITY;

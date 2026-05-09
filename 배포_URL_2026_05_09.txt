@@ -1,0 +1,15 @@
+WAAT 리브랜딩 배포 완료 (2026-05-09)
+
+★ 메인 URL (이거 사용):
+https://wed-night-ai-talk.vercel.app
+
+★ 배포 인스턴스 URL:
+https://wed-night-ai-talk-i0t2vz6fp-finder-world.vercel.app
+
+GitHub 리포지터리:
+https://github.com/SUNWOONGKYU/wed-night-ai-talk
+
+DB 마이그레이션: 이미 실행 완료 (Success. No rows returned)
+
+[참고] GitHub Pages는 계정 Actions 비활성화로 빌드 안 됨 → Vercel로 전환.
+이후 main 푸시 시 Vercel이 자동으로 GitHub 리포지터리와 연결되어 재배포된다.

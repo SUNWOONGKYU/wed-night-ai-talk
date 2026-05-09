@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAAT — Wednesday Afternoon AI Talk | 수요일 오후 AI 수다</title>
     <meta name="description" content="AI를 주제로 자유롭게 수다를 떠는 자리. 매주 수요일 오후, AI를 가지고 말 잔치를 벌립니다.">
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260509a">
+    <link rel="stylesheet" href="css/style.css?v=20260509b">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -22,7 +22,7 @@
     <nav>
         <div class="nav-inner">
             <a href="/" class="nav-logo">
-                <img src="logo.png" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
+                <img src="logo-waat.svg" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
             </a>
             <ul class="nav-links nav-links-center">
                 <li><a href="#schedule">Schedule</a></li>
@@ -53,20 +53,23 @@
     <section class="hero">
         <canvas id="hero-canvas"></canvas>
         <div class="hero-inner">
-            <div class="hero-badge">
-                <span class="dot"></span>
-                WAAT — Wednesday Afternoon AI Talk
+            <div class="hero-brandline">
+                <span class="hero-brand-mark">WAAT</span>
+                <span class="hero-brand-divider">—</span>
+                <span class="hero-brand-text">Wednesday Afternoon AI Talk</span>
             </div>
 
-            <h1>
-                <span class="gradient">AI를 주제로 자유롭게 수다를 떠는 자리</span>
+            <h1 class="hero-headline">
+                AI를 주제로<br>
+                자유롭게 <span class="hero-accent">수다</span>를 떠는 자리
             </h1>
 
-            <p class="hero-subtitle">
-                궁금한 것 묻고, 만든 것 자랑하고,<br>
-                협력할 거리 찾고, 토론으로 인사이트 얻고.<br><br>
-                AI를 가지고 말 잔치를 벌려봅시다.
+            <p class="hero-lead">
+                궁금한 것을 묻고, 만든 것을 자랑하고,<br>
+                협력할 거리를 찾고, 토론으로 인사이트를 얻습니다.
             </p>
+
+            <p class="hero-tagline">AI를 가지고 말 잔치를 벌려봅시다.</p>
 
             <div class="hero-actions">
                 <a href="#" class="btn-primary" data-open-modal id="hero-signup-btn">매주 수요일 오후에 만나기 →</a>
@@ -92,8 +95,7 @@
     <!-- Schedule -->
     <section id="schedule">
         <div class="section-inner">
-            <div class="section-label">// SCHEDULE · 모임 일정</div>
-            <h2 class="section-title">Schedule <span class="title-ko">· 다가오는 모임</span></h2>
+            <h2 class="section-title">모임 일정</h2>
             <p class="section-desc">매주 수요일 오후, 정기적으로 만납니다.</p>
 
             <!-- 동적 이벤트 목록 (DB에서 로드) -->
@@ -113,8 +115,7 @@
     <!-- Location -->
     <section id="location" class="location-section">
         <div class="section-inner">
-            <div class="section-label">// LOCATION · 모임 장소</div>
-            <h2 class="section-title">Location <span class="title-ko">· 모임 장소</span></h2>
+            <h2 class="section-title">모임 장소</h2>
             <p class="section-desc">서울 강남·용산을 중심으로 만납니다.</p>
 
             <!-- 동적 장소 목록 (DB에서 로드) -->
@@ -134,8 +135,7 @@
     <!-- Free Talk (Speakup Preview) -->
     <section id="speakup" class="speakup-preview-section">
         <div class="section-inner">
-            <div class="section-label">// FREE TALK · 자유발언</div>
-            <h2 class="section-title">Free Talk <span class="title-ko">· 자유발언</span></h2>
+            <h2 class="section-title">자유발언</h2>
             <p class="section-desc">AI 관련 아이디어, 의견, 경험, 질문을 누구나 자유롭게 나눕니다.</p>
 
             <div id="speakup-preview-container" class="speakup-preview-grid">
@@ -422,7 +422,7 @@
         <div class="footer-inner">
             <div class="footer-brand">Wednesday Afternoon AI Talk</div>
             <div class="footer-links">
-                <a href="#">이용약관</a>
+                <a href="terms.html">이용약관</a>
                 <span class="footer-sep">·</span>
                 <a href="privacy.html">개인정보처리방침</a>
                 <span class="footer-sep">·</span>
