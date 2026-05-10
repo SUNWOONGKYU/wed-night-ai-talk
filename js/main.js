@@ -706,6 +706,18 @@ async function renderScheduleEvents() {
                         </div>
                     </div>`;
             }
+            // 모임 정원 (장소 바로 다음)
+            {
+                const _cap = Number(ev.capacity) || 20;
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">👥</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">모임 정원</div>
+                            <div class="info-value">${_cap}명</div>
+                        </div>
+                    </div>`;
+            }
             if (ev.description) {
                 detailItems += `
                     <div class="schedule-info-item">
@@ -726,21 +738,6 @@ async function renderScheduleEvents() {
                         </div>
                     </div>`;
             }
-            // 모임 정원 항목
-            {
-                const _cap = Number(ev.capacity) || 20;
-                const _tot = slots.reduce((sum, s) => sum + (Number(s.count) || 0), 0);
-                const _rem = Math.max(0, _cap - _tot);
-                detailItems += `
-                    <div class="schedule-info-item">
-                        <div class="schedule-info-icon">👥</div>
-                        <div class="schedule-info-text">
-                            <div class="info-label">모임 정원</div>
-                            <div class="info-value">선착순 ${_cap}명 <span style="color:var(--text-muted); font-weight:400;">(현재 ${_tot}명 · 잔여 ${_rem}석)</span></div>
-                        </div>
-                    </div>`;
-            }
-
             if (ev.youtube_url) {
                 detailItems += `
                     <div class="schedule-info-item">
