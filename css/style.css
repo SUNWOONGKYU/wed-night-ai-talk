@@ -2943,10 +2943,10 @@ nav {
     align-items: center;
 }
 .nav-logo-img {
-    height: 36px;
+    height: 26px;
     width: auto;
     display: block;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 .nav-links-center {
     flex: 1 1 auto;
@@ -3028,11 +3028,11 @@ footer {
 }
 .footer-poster {
     width: 100%;
-    max-width: 720px;
-    margin: 0 auto 1.4rem;
-    border-radius: 14px;
+    max-width: 280px;
+    margin: 0 auto 1rem;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 .footer-poster img {
     display: block;
@@ -3040,7 +3040,7 @@ footer {
     height: auto;
 }
 @media (max-width: 768px) {
-    .footer-poster { max-width: 100%; border-radius: 10px; margin-bottom: 1rem; }
+    .footer-poster { max-width: 220px; border-radius: 8px; margin-bottom: 0.8rem; }
 }
 .footer-brand {
     font-family: 'Outfit', sans-serif;
@@ -3089,7 +3089,7 @@ footer {
 
 @media (max-width: 768px) {
     .nav-inner { gap: 0.75rem; }
-    .nav-logo-img { height: 28px; }
+    .nav-logo-img { height: 22px; }
     .nav-links-center { display: none; }
     .nav-links-right { gap: 0.4rem; }
     .footer-links,
