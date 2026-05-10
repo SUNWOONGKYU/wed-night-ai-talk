@@ -289,6 +289,7 @@ eventForm.addEventListener('submit', async (e) => {
         address: document.getElementById('ev-address').value.trim(),
         map_url: document.getElementById('ev-map-url').value.trim(),
         description: document.getElementById('ev-desc').value.trim(),
+        capacity: parseInt(document.getElementById('ev-capacity').value, 10) || 20,
         provision: document.getElementById('ev-provision').value.trim(),
         youtube_url: document.getElementById('ev-youtube').value.trim() || null
     };
@@ -345,6 +346,7 @@ async function editEvent(id) {
     const matchedLoc = locationOptions.find(l => l.name === ev.location);
     document.getElementById('ev-location-select').value = matchedLoc ? matchedLoc.id : '';
     document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('ev-capacity').value = ev.capacity || 20;
     document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-youtube').value = ev.youtube_url || '';
 
@@ -377,6 +379,8 @@ function resetEventForm() {
     renderSlotRows(DEFAULT_SLOTS);
     // 제공사항 디폴트 값 채우기
     document.getElementById('ev-provision').value = DEFAULT_PROVISION;
+    // 정원 디폴트
+    document.getElementById('ev-capacity').value = 20;
 }
 
 // 페이지 로드 시 디폴트 슬롯 row + 제공사항 디폴트 렌더링

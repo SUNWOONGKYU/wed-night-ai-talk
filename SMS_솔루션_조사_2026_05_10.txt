@@ -1,0 +1,29 @@
+WAAT SMS + 알림톡 솔루션 조사 (2026-05-10)
+==========================================
+
+[결론] 알리고(Aligo) 추천 — 소량 수시 발송 최저가
+
+[가격]
+- 알리고: SMS 8.4원, 알림톡 6.5~8원
+- 뿌리오: SMS 8~9원, 알림톡 6.5원~
+- 올톡: 알림톡 4.8원~ (최저가)
+- 솔라피(쿨SMS): SMS 9~10원, 알림톡 13원
+
+[추천 사이트]
+- 알리고: https://smartsms.aligo.in/
+- 알리고 알림톡 안내: https://smartsms.aligo.in/aligoxkakao.html
+- 알리고 SMS API: https://smartsms.aligo.in/smsapi.html
+- 알리고 알림톡 API: https://smartsms.aligo.in/alimapi.html
+- 뿌리오: https://www.ppurio.com/send-api/guide
+- 솔라피 가격: https://solapi.com/pricing
+- 쿨SMS 알림톡 API: https://coolsms.co.kr/alimtalk-api
+
+[셋업 순서]
+1. 알리고 가입 → 사업자/개인 인증
+2. 발신번호 등록 (휴대폰 인증, 1일 소요)
+3. 카카오 비즈채널 생성 (@WAAT) + 비즈 인증
+4. 알림톡 템플릿 등록 (카카오 검수 1~2일)
+5. API 키 발급 → Supabase Edge Function 연동
+
+[WAAT 발송 시나리오 비용 추산]
+회원 50명 × 월 4회 알림톡 = 200건 × 7원 = 약 1,400원/월

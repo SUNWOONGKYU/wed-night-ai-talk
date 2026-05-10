@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260510p">
+    <link rel="stylesheet" href="css/style.css?v=20260510t">
     <style>
         /* 멤버 테이블 칼럼 너비 조정 */
         #members-table th:nth-child(1),
@@ -183,6 +183,10 @@
                         <div class="form-group">
                             <label for="ev-desc">모임 내용</label>
                             <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ev-capacity">모집 정원 (선착순)</label>
+                            <input type="number" id="ev-capacity" value="20" min="1" max="200" placeholder="20">
                         </div>
                         <div class="form-group">
                             <label for="ev-provision">제공사항 및 참가비</label>
@@ -402,6 +406,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script src="js/supabase-config.js?v=20260510f"></script>
-    <script src="js/admin.js?v=20260510g"></script>
+    <script src="js/admin.js?v=20260510h"></script>
 </body>
 </html>
