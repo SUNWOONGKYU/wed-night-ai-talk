@@ -706,15 +706,26 @@ async function renderScheduleEvents() {
                         </div>
                     </div>`;
             }
-            // 모임 정원 (장소 바로 다음)
+            // 모임 정원 (장소 바로 다음) — 슬롯별 정원 나열
             {
-                const _cap = Number(ev.capacity) || 20;
+                const _evCap = Number(ev.capacity) || 20;
+                let capValue = '';
+                if (slots && slots.length) {
+                    capValue = slots.map(s => {
+                        const sCap = (s.capacity != null) ? Number(s.capacity) : _evCap;
+                        const emoji = escapeHtml(s.slot_emoji || '');
+                        const label = escapeHtml(s.slot_label || '');
+                        return `${emoji} ${label} ${sCap}명`;
+                    }).join(' · ');
+                } else {
+                    capValue = `${_evCap}명`;
+                }
                 detailItems += `
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">👥</div>
                         <div class="schedule-info-text">
                             <div class="info-label">모임 정원</div>
-                            <div class="info-value">${_cap}명</div>
+                            <div class="info-value">${capValue}</div>
                         </div>
                     </div>`;
             }

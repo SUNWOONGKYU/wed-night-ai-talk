@@ -184,6 +184,7 @@ var DB = {
                 slot_emoji: r.slot_emoji,
                 slot_time: r.slot_time,
                 slot_end_time: r.slot_end_time,
+                capacity: (r.capacity != null ? Number(r.capacity) : null),
                 sort_order: r.sort_order,
                 is_active: r.is_active,
                 count: Number(r.member_count || 0) + Number(r.guest_count || 0),
