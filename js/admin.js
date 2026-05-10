@@ -96,7 +96,7 @@ function renderMembers(members) {
     }
 
     tbody.innerHTML = members.map(m => {
-        const interests = (m.interests || []).join(', ');
+        const interests = Array.isArray(m.interests) ? m.interests.join(', ') : (m.interests || '');
         const date = m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-';
         return `<tr>
             <td>${escapeHtml(m.name || '-')}</td>
@@ -104,7 +104,7 @@ function renderMembers(members) {
             <td>${escapeHtml(m.email || '-')}</td>
             <td>${escapeHtml(m.current_job || '-')}</td>
             <td>${escapeHtml(interests || '-')}</td>
-            <td>${escapeHtml(m.member_type || '-')}</td>
+            <td>${escapeHtml(m.message || '-')}</td>
             <td>${date}</td>
             <td><button class="btn-secondary btn-small" onclick="deleteMember('${m.id}', '${escapeHtml(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
         </tr>`;
@@ -213,13 +213,13 @@ const eventFormReset = document.getElementById('event-form-reset');
 
 // ----- Slot Rows UI -----
 const DEFAULT_SLOTS = [
-    { slot_emoji: '☀️', slot_label: '햇살', slot_time: '13:00' },
-    { slot_emoji: '🌅', slot_label: '노을', slot_time: '16:00' },
-    { slot_emoji: '🌙', slot_label: '달빛', slot_time: '19:00' }
+    { slot_emoji: '☀️', slot_label: '햇살', slot_time: '15:00', slot_end_time: '17:00' },
+    { slot_emoji: '🌅', slot_label: '노을', slot_time: '17:30', slot_end_time: '19:30' },
+    { slot_emoji: '🌙', slot_label: '달빛', slot_time: '20:00', slot_end_time: '22:00' }
 ];
 
 // 제공사항 및 참가비 디폴트
-const DEFAULT_PROVISION = '제공사항: 커피/생수 포함 다과   참가비 1만원(입금계좌: 하나은행 620-241128-571 선웅규) * 음료 지참의 불편함 해소 및 노쇼 방지 목적';
+const DEFAULT_PROVISION = '제공사항: 커피/생수 포함 다과\n참가비: 1만원\n입금계좌: 하나은행 620-241128-571 선웅규\n* 음료 지참의 불편함 해소 및 노쇼 방지 목적';
 
 function renderSlotRows(slots) {
     const list = document.getElementById('ev-slots-list');
@@ -236,11 +236,14 @@ function addSlotRow(s) {
     const emoji = s ? (s.slot_emoji || '') : '';
     const label = s ? (s.slot_label || '') : '';
     const time = s && s.slot_time ? String(s.slot_time).slice(0, 5) : '';
+    const endTime = s && s.slot_end_time ? String(s.slot_end_time).slice(0, 5) : '';
     const id = s && s.id ? s.id : '';
     row.innerHTML =
         '<input type="text" class="slot-emoji" placeholder="🌟" maxlength="4" value="' + escapeHtml(emoji) + '">' +
         '<input type="text" class="slot-label" placeholder="라벨 (예: 햇살)" value="' + escapeHtml(label) + '">' +
-        '<input type="time" class="slot-time" value="' + escapeHtml(time) + '">' +
+        '<input type="time" class="slot-time" value="' + escapeHtml(time) + '" title="시작">' +
+        '<span class="ev-slot-tilde">~</span>' +
+        '<input type="time" class="slot-end-time" value="' + escapeHtml(endTime) + '" title="종료">' +
         '<button type="button" class="ev-slot-del">삭제</button>' +
         '<input type="hidden" class="slot-id" value="' + escapeHtml(String(id)) + '">';
     row.querySelector('.ev-slot-del').addEventListener('click', function() {
@@ -256,11 +259,13 @@ function readSlotRows() {
         const label = (row.querySelector('.slot-label').value || '').trim();
         const emoji = (row.querySelector('.slot-emoji').value || '').trim();
         const time = (row.querySelector('.slot-time').value || '').trim();
+        const endTime = (row.querySelector('.slot-end-time').value || '').trim();
         if (!label) return; // 라벨 비어있으면 스킵
         out.push({
             slot_label: label,
             slot_emoji: emoji,
             slot_time: time || null,
+            slot_end_time: endTime || null,
             sort_order: idx + 1
         });
     });
@@ -734,8 +739,8 @@ function getMembersExportData() {
         '전화번호': m.phone || '',
         '이메일': m.email || '',
         '현재 하는 일': m.current_job || '',
-        '관심분야': (m.interests || []).join(', '),
-        '유형': m.member_type || '',
+        '관심분야': Array.isArray(m.interests) ? m.interests.join(', ') : (m.interests || ''),
+        '하고 싶은 말': m.message || '',
         '가입일': m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : ''
     }));
 }

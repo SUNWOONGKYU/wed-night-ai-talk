@@ -183,6 +183,7 @@ var DB = {
                 slot_label: r.slot_label,
                 slot_emoji: r.slot_emoji,
                 slot_time: r.slot_time,
+                slot_end_time: r.slot_end_time,
                 sort_order: r.sort_order,
                 is_active: r.is_active,
                 count: Number(r.member_count || 0) + Number(r.guest_count || 0),
@@ -252,6 +253,7 @@ var DB = {
                 slot_label: s.slot_label,
                 slot_emoji: s.slot_emoji || null,
                 slot_time: s.slot_time || null,
+                slot_end_time: s.slot_end_time || null,
                 sort_order: s.sort_order || (j + 1),
                 is_active: s.is_active !== false
             };
@@ -583,7 +585,7 @@ var DB = {
         try {
             var { data: slotRows } = await _supabase
                 .from('event_slots')
-                .select('id, slot_label, slot_emoji, slot_time, sort_order')
+                .select('id, slot_label, slot_emoji, slot_time, slot_end_time, sort_order')
                 .eq('event_id', eventId);
             if (slotRows) {
                 slotRows.forEach(function(s) { slotMap[s.id] = s; });

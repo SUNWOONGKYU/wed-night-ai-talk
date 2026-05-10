@@ -811,6 +811,19 @@ section {
     font-size: 0.95rem;
 }
 
+.schedule-info-text .info-value.provision-value,
+.schedule-info-text .info-value.description-value {
+    font-weight: 500;
+    line-height: 1.6;
+}
+.schedule-info-text .provision-line {
+    margin: 0.15rem 0;
+    line-height: 1.5;
+}
+.schedule-info-text .provision-line.provision-note {
+    font-weight: 400;
+}
+
 .schedule-info-text .info-value a {
     color: var(--accent-cyan);
     text-decoration: none;
@@ -3510,7 +3523,7 @@ footer {
 }
 .ev-slot-row {
     display: grid;
-    grid-template-columns: 70px 1fr 110px auto;
+    grid-template-columns: 70px 1fr 100px 14px 100px auto;
     gap: 0.5rem;
     align-items: center;
     background: rgba(255,255,255,0.03);
@@ -3540,6 +3553,13 @@ footer {
 .ev-slot-row .ev-slot-del:hover {
     background: rgba(255,107,107,0.1);
 }
+.ev-slot-row .ev-slot-tilde {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
 @media (max-width: 600px) {
-    .ev-slot-row { grid-template-columns: 60px 1fr 90px auto; }
+    .ev-slot-row { grid-template-columns: 60px 1fr 80px 12px 80px auto; gap: 0.3rem; }
+    .ev-slot-row input[type="text"],
+    .ev-slot-row input[type="time"] { padding: 0.3rem 0.4rem; font-size: 0.85rem; }
 }

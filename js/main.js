@@ -21,8 +21,69 @@ function slotDisplayName(slot) {
 }
 function slotTimeStr(slot) {
     if (!slot || !slot.slot_time) return '';
-    // slot_time: 'HH:MM:SS' 또는 'HH:MM' → 'HH:MM'
-    return String(slot.slot_time).slice(0, 5);
+    // slot_time/slot_end_time: 'HH:MM:SS' 또는 'HH:MM' → 'HH:MM ~ HH:MM'
+    var start = String(slot.slot_time).slice(0, 5);
+    if (slot.slot_end_time) {
+        var end = String(slot.slot_end_time).slice(0, 5);
+        return start + ' ~ ' + end;
+    }
+    return start;
+}
+
+// 제공사항/참가비 본문을 줄바꿈 + 이모지 prefix로 포맷
+function formatProvision(text) {
+    if (!text) return '';
+    var lines = [];
+    // 줄바꿈이 이미 있으면 그대로 사용
+    if (text.indexOf('\n') >= 0) {
+        lines = text.split(/\n+/).map(function(s) { return s.trim(); }).filter(Boolean);
+    } else {
+        // 단일 라인 → "참가비"/"입금계좌"/"*" 기준으로 분리
+        var t = text;
+        var parts = [];
+        // "* ..." 부가설명 분리
+        var noteIdx = t.indexOf('*');
+        var noteStr = '';
+        if (noteIdx > 0) {
+            noteStr = t.slice(noteIdx + 1).trim();
+            t = t.slice(0, noteIdx).trim();
+        }
+        // 입금계좌 분리
+        var bankIdx = t.indexOf('입금계좌');
+        var bankStr = '';
+        if (bankIdx > 0) {
+            bankStr = t.slice(bankIdx).trim().replace(/^[(\s]+/, '').replace(/[)\s]+$/, '');
+            t = t.slice(0, bankIdx).trim().replace(/[(\s]+$/, '');
+        }
+        // 참가비 기준 분리
+        var feeIdx = t.indexOf('참가비');
+        if (feeIdx > 0) {
+            parts.push(t.slice(0, feeIdx).trim());
+            parts.push(t.slice(feeIdx).trim());
+        } else {
+            parts.push(t);
+        }
+        if (bankStr) parts.push(bankStr);
+        if (noteStr) parts.push('* ' + noteStr);
+        lines = parts.filter(Boolean);
+    }
+    // 라인별 이모지 prefix
+    return lines.map(function(line) {
+        var prefixed = line;
+        var cls = 'provision-line';
+        if (/^제공사항/.test(line)) {
+            prefixed = '🎁 ' + line;
+        } else if (/^참가비/.test(line)) {
+            prefixed = '💵 ' + line;
+        } else if (/^입금계좌/.test(line)) {
+            prefixed = '※ ' + line;
+            cls += ' provision-note';
+        } else if (/^\*/.test(line)) {
+            prefixed = '※ ' + line.replace(/^\*\s*/, '');
+            cls += ' provision-note';
+        }
+        return '<div class="' + cls + '">' + escapeHtml(prefixed) + '</div>';
+    }).join('');
 }
 
 // ========== Scroll Reveal & Nav scroll are handled by js/animations.js (GSAP) ==========
@@ -648,8 +709,8 @@ async function renderScheduleEvents() {
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">📋</div>
                         <div class="schedule-info-text">
-                            <div class="info-label">모임 설명</div>
-                            <div class="info-value">${escapeHtml(ev.description)}</div>
+                            <div class="info-label">모임 내용</div>
+                            <div class="info-value description-value">${escapeHtml(ev.description).replace(/\n/g, '<br>')}</div>
                         </div>
                     </div>`;
             }
@@ -659,7 +720,7 @@ async function renderScheduleEvents() {
                         <div class="schedule-info-icon">🎁</div>
                         <div class="schedule-info-text">
                             <div class="info-label">제공사항 및 참가비</div>
-                            <div class="info-value">${escapeHtml(ev.provision)}</div>
+                            <div class="info-value provision-value">${formatProvision(ev.provision)}</div>
                         </div>
                     </div>`;
             }
@@ -1024,6 +1085,12 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     // 관심분야 — textarea 자유입력
     var interestsRaw = (document.getElementById('s-interests') || {}).value || '';
     const interests = interestsRaw.trim();
+
+    // 전화번호 필수
+    if (!phone || phone.length < 10) {
+        setStatus(statusEl, '전화번호를 정확히 입력해주세요. (10~11자리 숫자)', 'error');
+        return;
+    }
 
     // 비밀번호 유효성: 영문+숫자만, 6자 이상
     if (password.length < 6) {

@@ -7,7 +7,7 @@
     <meta name="description" content="AI를 주제로 자유롭게 수다를 나누는 모임. AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.">
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260510o">
+    <link rel="stylesheet" href="css/style.css?v=20260510s">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -205,8 +205,8 @@
                             <input type="text" id="s-name" name="name" required placeholder="홍길동">
                         </div>
                         <div class="form-group">
-                            <label for="s-contact">전화번호 (선택)</label>
-                            <input type="tel" id="s-contact" name="contact" placeholder="[masked-phone]" maxlength="11">
+                            <label for="s-contact">전화번호 <span class="required">*</span></label>
+                            <input type="tel" id="s-contact" name="contact" required placeholder="[masked-phone]" maxlength="11">
                         </div>
                     </div>
                     <div class="form-group">
@@ -408,8 +408,7 @@
             <h2 class="modal-title">모임 참여 신청</h2>
             <div id="ga-selected-slot" class="ga-selected-slot"></div>
             <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.92rem;">
-                멤버 가입 없이도 신청할 수 있습니다.<br>
-                운영자가 확인 후 연락드립니다.
+                멤버 가입 없이도 신청할 수 있습니다.
             </p>
             <form id="guest-attend-form" class="site-form">
                 <div class="form-group">
@@ -465,8 +464,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260510e"></script>
+    <script src="js/supabase-config.js?v=20260510f"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260510o"></script>
+    <script src="js/main.js?v=20260510s"></script>
 </body>
 </html>

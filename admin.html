@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260510o">
+    <link rel="stylesheet" href="css/style.css?v=20260510p">
     <style>
         /* 멤버 테이블 칼럼 너비 조정 */
         #members-table th:nth-child(1),
@@ -24,7 +24,7 @@
         #members-table td:nth-child(5) { width: 250px; min-width: 250px; } /* 관심 분야 */
 
         #members-table th:nth-child(6),
-        #members-table td:nth-child(6) { width: 80px; min-width: 80px; } /* 유형 */
+        #members-table td:nth-child(6) { width: 200px; min-width: 200px; } /* 하고 싶은 말 */
 
         #members-table th:nth-child(7),
         #members-table td:nth-child(7) { width: 85px; min-width: 85px; } /* 가입일 */
@@ -38,9 +38,10 @@
             white-space: nowrap;
         }
 
-        /* 현재 하는 일, 관심 분야는 줄바꿈 허용 */
+        /* 현재 하는 일, 관심 분야, 하고 싶은 말은 줄바꿈 허용 */
         #members-table td:nth-child(4),
-        #members-table td:nth-child(5) {
+        #members-table td:nth-child(5),
+        #members-table td:nth-child(6) {
             white-space: normal;
             word-break: break-word;
         }
@@ -115,7 +116,7 @@
                                     <th>이메일</th>
                                     <th>현재 하는 일</th>
                                     <th>관심분야</th>
-                                    <th>유형</th>
+                                    <th>하고 싶은 말</th>
                                     <th>가입일</th>
                                     <th>관리</th>
                                 </tr>
@@ -180,7 +181,7 @@
                         <input type="hidden" id="ev-address" value="">
                         <input type="hidden" id="ev-map-url" value="">
                         <div class="form-group">
-                            <label for="ev-desc">모임 설명</label>
+                            <label for="ev-desc">모임 내용</label>
                             <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
                         </div>
                         <div class="form-group">
@@ -400,7 +401,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260510e"></script>
-    <script src="js/admin.js?v=20260510d"></script>
+    <script src="js/supabase-config.js?v=20260510f"></script>
+    <script src="js/admin.js?v=20260510g"></script>
 </body>
 </html>
