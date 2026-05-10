@@ -738,6 +738,12 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
+            // 선착순 정원 — 슬롯별 인원 합산해서 잔여석 표기
+            const capacity = Number(ev.capacity) || 20;
+            const totalAttendees = slots.reduce((sum, s) => sum + (Number(s.count) || 0), 0);
+            const remaining = Math.max(0, capacity - totalAttendees);
+            const capacityHtml = `<div class="schedule-capacity">선착순 ${capacity}명 이내 <span class="capacity-remaining">(현재 ${totalAttendees}명 · 잔여 ${remaining}석)</span></div>`;
+
             // 타임 슬롯 카드 (이벤트별, DB의 event_slots 동적 렌더)
             const slotsHtml = (slots && slots.length) ? `
                 <div class="waat-slots">
@@ -759,17 +765,11 @@ async function renderScheduleEvents() {
                         </div>`;
                     }).join('')}
                 </div>
-                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
+                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요. 선착순 ${capacity}명입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
             // 모임 회차: DB가 event_date ASC로 정렬돼 있으므로 idx+1 = 회차
             const meetingNo = idx + 1;
-
-            // 선착순 정원 — 슬롯별 인원 합산해서 잔여석 표기
-            const capacity = Number(ev.capacity) || 20;
-            const totalAttendees = slots.reduce((sum, s) => sum + (Number(s.count) || 0), 0);
-            const remaining = Math.max(0, capacity - totalAttendees);
-            const capacityHtml = `<div class="schedule-capacity">선착순 ${capacity}명 이내 <span class="capacity-remaining">(현재 ${totalAttendees}명 · 잔여 ${remaining}석)</span></div>`;
 
             return `
                 <div class="schedule-card reveal">
