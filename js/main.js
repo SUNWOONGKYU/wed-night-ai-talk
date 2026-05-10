@@ -760,9 +760,8 @@ async function renderScheduleEvents() {
                 <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
-            // 모임 회차: 역순 인덱스로 계산 — DB는 최신순으로 들어있으므로 (전체 - idx)차
-            const total = events.length;
-            const meetingNo = total - idx;
+            // 모임 회차: DB가 event_date ASC로 정렬돼 있으므로 idx+1 = 회차
+            const meetingNo = idx + 1;
 
             return `
                 <div class="schedule-card reveal">
