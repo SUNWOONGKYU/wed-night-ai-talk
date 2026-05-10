@@ -779,7 +779,7 @@ async function renderScheduleEvents() {
                         </div>`;
                     }).join('')}
                 </div>
-                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요. 선착순 ${capacity}명입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
+                <p class="waat-slots-note">원하는 시간대 하나를 골라서 신청하고 오시면 돼요. 선착순 ${capacity}명입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
             // 모임 회차: DB가 event_date ASC로 정렬돼 있으므로 idx+1 = 회차
