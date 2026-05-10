@@ -375,13 +375,12 @@ var DB = {
 
     // -- Inquiries --
     async createInquiry(inquiry) {
-        var { data, error } = await _supabase
+        // 비로그인/비관리자는 SELECT가 RLS로 막혀있으므로 .select() 빼고 INSERT만
+        var { error } = await _supabase
             .from('inquiries')
-            .insert(inquiry)
-            .select()
-            .single();
+            .insert(inquiry);
         if (error) throw error;
-        return data;
+        return true;
     },
 
     async getAllInquiries() {
