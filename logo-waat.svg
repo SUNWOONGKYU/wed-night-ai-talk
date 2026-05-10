@@ -14,20 +14,31 @@
     letter-spacing="2"
     fill="#1A2238">W<tspan fill="url(#goldGrad)">AA</tspan>T</text>
 
-  <!-- AI 마크: 네트워크 노드 패턴 (WAAT 우측) -->
-  <g transform="translate(196, 8)" fill="none" stroke="url(#goldGrad)" stroke-width="1.6" stroke-linecap="round">
-    <!-- 연결선 -->
-    <line x1="4"  y1="6"  x2="16" y2="2"/>
-    <line x1="4"  y1="6"  x2="14" y2="14"/>
-    <line x1="4"  y1="6"  x2="20" y2="20"/>
-    <line x1="16" y1="2"  x2="20" y2="20"/>
-    <line x1="14" y1="14" x2="20" y2="20"/>
-  </g>
-  <g transform="translate(196, 8)" fill="url(#goldGrad)" stroke="none">
-    <!-- 노드 4개 -->
-    <circle cx="4"  cy="6"  r="2.2"/>
-    <circle cx="16" cy="2"  r="2.2"/>
-    <circle cx="14" cy="14" r="2.2"/>
-    <circle cx="20" cy="20" r="2.2"/>
+  <!-- AI 마크: 말풍선 + 신경망 노드 (대화하는 AI) -->
+  <g transform="translate(192, 6)">
+    <!-- 말풍선 (rounded rect + tail) -->
+    <path d="M 4,2
+             L 36,2
+             Q 40,2 40,6
+             L 40,24
+             Q 40,28 36,28
+             L 14,28
+             L 8,34
+             L 10,28
+             L 4,28
+             Q 0,28 0,24
+             L 0,6
+             Q 0,2 4,2 Z"
+          fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linejoin="round"/>
+    <!-- 신경망 노드 3개 + 연결선 -->
+    <line x1="10" y1="15" x2="20" y2="9"  stroke="url(#goldGrad)" stroke-width="1.5"/>
+    <line x1="10" y1="15" x2="20" y2="21" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    <line x1="20" y1="9"  x2="30" y2="15" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    <line x1="20" y1="21" x2="30" y2="15" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    <line x1="20" y1="9"  x2="20" y2="21" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    <circle cx="10" cy="15" r="2.4" fill="url(#goldGrad)"/>
+    <circle cx="20" cy="9"  r="2.4" fill="url(#goldGrad)"/>
+    <circle cx="20" cy="21" r="2.4" fill="url(#goldGrad)"/>
+    <circle cx="30" cy="15" r="2.4" fill="url(#goldGrad)"/>
   </g>
 </svg>
