@@ -3501,3 +3501,45 @@ footer {
     transform: translateX(-50%) translateY(0);
 }
 .app-toast.error { border-color: #ff6b6b; }
+
+/* ===== Admin: Event slot rows ===== */
+.ev-slots-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.ev-slot-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 110px auto;
+    gap: 0.5rem;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+.ev-slot-row input[type="text"],
+.ev-slot-row input[type="time"] {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
+    color: inherit;
+    font-size: 0.9rem;
+}
+.ev-slot-row .ev-slot-del {
+    background: transparent;
+    color: #ff6b6b;
+    border: 1px solid rgba(255,107,107,0.4);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.ev-slot-row .ev-slot-del:hover {
+    background: rgba(255,107,107,0.1);
+}
+@media (max-width: 600px) {
+    .ev-slot-row { grid-template-columns: 60px 1fr 90px auto; }
+}

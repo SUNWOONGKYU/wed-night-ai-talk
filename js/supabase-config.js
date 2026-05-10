@@ -152,37 +152,115 @@ var DB = {
     },
 
     // -- Attendance --
-    async attendEvent(userId, eventId, note, slotId) {
-        // RPC 함수로 RLS 우회 (SECURITY DEFINER)
+    async attendEvent(userId, eventId, note, eventSlotId) {
+        if (!eventSlotId) throw new Error('타임 슬롯을 먼저 선택해주세요.');
         var { error } = await _supabase.rpc('attend_event', {
             p_event_id: eventId,
-            p_slot_id: slotId || null,
+            p_event_slot_id: eventSlotId,
             p_note: note || ''
         });
         if (error) throw error;
     },
 
-    async cancelAttendance(userId, eventId, slotId) {
-        // RPC로 RLS 우회 (SECURITY DEFINER) — slotId 명시 시 해당 슬롯만 취소
+    async cancelAttendance(userId, eventId, eventSlotId) {
         var { error } = await _supabase.rpc('cancel_attendance', {
             p_event_id: eventId,
-            p_slot_id: slotId || null
+            p_event_slot_id: eventSlotId || null
         });
         if (error) throw error;
     },
 
     async getSlotCounts(eventId) {
-        // 슬롯별 신청자 수 (회원 + 게스트 합산용 데이터)
+        // get_slot_counts RPC가 슬롯 정보 + 카운트를 모두 반환
+        // [{ event_slot_id, slot_label, slot_emoji, slot_time, sort_order, is_active, member_count, guest_count }, ...]
         var { data, error } = await _supabase.rpc('get_slot_counts', {
             p_event_id: eventId
         });
         if (error) throw error;
-        // [{ slot_id, member_count, guest_count }, ...] → { sun: total, dusk: total, moon: total }
-        var counts = { sun: 0, dusk: 0, moon: 0 };
-        (data || []).forEach(function(r) {
-            counts[r.slot_id] = Number(r.member_count || 0) + Number(r.guest_count || 0);
+        return (data || []).map(function(r) {
+            return {
+                id: r.event_slot_id,
+                slot_label: r.slot_label,
+                slot_emoji: r.slot_emoji,
+                slot_time: r.slot_time,
+                sort_order: r.sort_order,
+                is_active: r.is_active,
+                count: Number(r.member_count || 0) + Number(r.guest_count || 0),
+                member_count: Number(r.member_count || 0),
+                guest_count: Number(r.guest_count || 0)
+            };
         });
-        return counts;
+    },
+
+    // -- Event Slots (admin & 메인 공용) --
+    async getEventSlots(eventId) {
+        var { data, error } = await _supabase
+            .from('event_slots')
+            .select('*')
+            .eq('event_id', eventId)
+            .order('sort_order', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
+
+    async createEventSlot(slot) {
+        var { data, error } = await _supabase
+            .from('event_slots')
+            .insert(slot)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async updateEventSlot(slotId, updates) {
+        var { data, error } = await _supabase
+            .from('event_slots')
+            .update(updates)
+            .eq('id', slotId)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteEventSlot(slotId) {
+        var { error } = await _supabase
+            .from('event_slots')
+            .delete()
+            .eq('id', slotId);
+        if (error) throw error;
+    },
+
+    async replaceEventSlots(eventId, slots) {
+        // 기존 슬롯 모두 비활성화 후 새로 입력 (참여자 보존을 위해 delete가 아닌 deactivate)
+        // slots: [{ id?, slot_label, slot_emoji, slot_time, sort_order, is_active }]
+        var existing = await this.getEventSlots(eventId);
+        var keepIds = slots.filter(function(s) { return s.id; }).map(function(s) { return s.id; });
+        // 새 폼에 없는 기존 슬롯 → 비활성화 (delete 시 attendance CASCADE 위험)
+        for (var i = 0; i < existing.length; i++) {
+            var ex = existing[i];
+            if (keepIds.indexOf(ex.id) === -1) {
+                await this.updateEventSlot(ex.id, { is_active: false });
+            }
+        }
+        // 업데이트 또는 생성
+        for (var j = 0; j < slots.length; j++) {
+            var s = slots[j];
+            var payload = {
+                event_id: eventId,
+                slot_label: s.slot_label,
+                slot_emoji: s.slot_emoji || null,
+                slot_time: s.slot_time || null,
+                sort_order: s.sort_order || (j + 1),
+                is_active: s.is_active !== false
+            };
+            if (s.id) {
+                await this.updateEventSlot(s.id, payload);
+            } else {
+                await this.createEventSlot(payload);
+            }
+        }
     },
 
     async getMyAttendance(userId) {
@@ -500,8 +578,21 @@ var DB = {
             profiles.forEach(function(p) { profileMap[p.id] = p; });
         }
 
+        // 이벤트 슬롯 매핑 (event_slot_id → label/emoji)
+        var slotMap = {};
+        try {
+            var { data: slotRows } = await _supabase
+                .from('event_slots')
+                .select('id, slot_label, slot_emoji, slot_time, sort_order')
+                .eq('event_id', eventId);
+            if (slotRows) {
+                slotRows.forEach(function(s) { slotMap[s.id] = s; });
+            }
+        } catch (e) { /* ignore */ }
+
         return attendances.map(function(a) {
             a.profiles = profileMap[a.user_id] || null;
+            a.slot = a.event_slot_id ? (slotMap[a.event_slot_id] || null) : null;
             return a;
         });
     }

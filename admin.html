@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=20260510o">
     <style>
         /* 멤버 테이블 칼럼 너비 조정 */
         #members-table th:nth-child(1),
@@ -148,15 +148,12 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="ev-times">시간 (3 타임 가능, 콤마로 구분)</label>
-                            <input type="text" id="ev-times" placeholder="예: 13:00, 16:00, 19:00 또는 오후 1시, 오후 4시, 오후 7시">
-                            <span class="form-hint">콤마(,) 또는 슬래시(/)로 구분. 단일 타임도 가능.</span>
+                            <label>타임 슬롯 (각 타임이 별도 세부 모임이 됨)</label>
+                            <div id="ev-slots-list" class="ev-slots-list"></div>
+                            <button type="button" id="ev-slots-add" class="btn-secondary btn-small" style="margin-top:0.5rem;">＋ 타임 추가</button>
+                            <span class="form-hint">예: ☀️ 햇살 13:00 / 🌅 노을 16:00 / 🌙 달빛 19:00. 라벨/이모지/시간 자유롭게 변경 가능.</span>
                         </div>
                         <div class="form-grid">
-                            <div class="form-group">
-                                <label for="ev-time">대표 시간 (선택)</label>
-                                <input type="time" id="ev-time" value="">
-                            </div>
                             <div class="form-group">
                                 <label for="ev-day-label">요일 표시</label>
                                 <select id="ev-day-label">
@@ -183,12 +180,12 @@
                         <input type="hidden" id="ev-address" value="">
                         <input type="hidden" id="ev-map-url" value="">
                         <div class="form-group">
-                            <label for="ev-provision">제공 사항</label>
-                            <input type="text" id="ev-provision" placeholder="간단한 샌드위치 & 음료">
+                            <label for="ev-desc">모임 설명</label>
+                            <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="ev-desc">설명</label>
-                            <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
+                            <label for="ev-provision">제공사항 및 참가비</label>
+                            <input type="text" id="ev-provision" placeholder="예: 샌드위치 + 음료 / 참가비 1만원">
                         </div>
                         <div class="form-group">
                             <label for="ev-youtube">유튜브 라이브 URL</label>
@@ -403,7 +400,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260510b"></script>
-    <script src="js/admin.js?v=20260510a"></script>
+    <script src="js/supabase-config.js?v=20260510e"></script>
+    <script src="js/admin.js?v=20260510d"></script>
 </body>
 </html>

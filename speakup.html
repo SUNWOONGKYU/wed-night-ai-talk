@@ -6,7 +6,7 @@
     <title>Free Talk — WAAT</title>
     <meta name="description" content="WAAT 커뮤니티 게시판 — AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 나눠봅시다.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260220b">
+    <link rel="stylesheet" href="css/style.css?v=20260510o">
 </head>
 <body class="speakup-light">
 
@@ -16,15 +16,15 @@
             <a href="index.html" class="nav-logo">
                 <img src="logo-waat.svg?v=20260510a" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
             </a>
-            <ul class="nav-links">
-                <li><a href="index.html#about">소개</a></li>
-                <li><a href="index.html#activities">활동영역</a></li>
-                <li><a href="index.html#schedule">모임일정</a></li>
-                <li><a href="speakup.html" class="speakup-nav-active">Speak Up</a></li>
-                <li><a href="#" id="nav-inquiry-link">문의하기</a></li>
+            <ul class="nav-links nav-links-center">
+                <li><a href="index.html#schedule">Schedule</a></li>
+                <li><a href="index.html#location">Location</a></li>
+                <li><a href="speakup.html" class="speakup-nav-active">Free Talk</a></li>
+            </ul>
+            <ul class="nav-links nav-links-right">
                 <!-- 비로그인 상태 -->
-                <li id="nav-login-link"><a href="index.html" class="nav-login-btn" data-open-modal="login">로그인</a></li>
-                <li id="nav-signup-link"><a href="index.html" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
+                <li id="nav-login-link"><a href="index.html" class="nav-login-btn" data-open-modal="login">Login</a></li>
+                <li id="nav-signup-link"><a href="index.html" class="nav-cta" data-open-modal="signup">Sign Up</a></li>
                 <!-- 로그인 상태 (숨김) -->
                 <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
                     <button class="nav-user-btn" id="nav-user-btn">
@@ -44,9 +44,9 @@
     <!-- Board Content -->
     <section class="speakup-page">
         <div class="section-inner">
-            <div class="section-label">// SPEAK UP</div>
-            <h2 class="section-title">커뮤니티</h2>
-            <p class="section-desc">AI 관련 아이디어, 의견, 경험, 질문 등을 누구나 자유롭게 이야기해 봅시다.</p>
+            <div class="section-label">// FREE TALK</div>
+            <h2 class="section-title">자유발언 <span class="section-title-en">Free Talk</span></h2>
+            <p class="section-desc">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
 
             <!-- 글쓰기 버튼 (로그인 시만) -->
             <div id="post-write-btn-wrap" class="post-write-btn-wrap" style="display:none;">
@@ -146,7 +146,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260220a"></script>
+    <script src="js/supabase-config.js?v=20260510e"></script>
     <script src="js/speakup.js?v=20260220a"></script>
     <script>
         // 문의하기 모달

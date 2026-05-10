@@ -2,17 +2,27 @@
 let currentUser = null;
 let currentProfile = null;
 let currentEventId = null; // 첫 번째 활성 이벤트 ID (참여 신청용)
-let currentSlotId = null;  // 게스트 모달이 열릴 때 선택된 타임 슬롯
-let pendingAttend = null;  // 비로그인 → 로그인 모달 → 로그인 후 자동 신청용: { eventId, slotId }
+let currentEventSlotId = null;  // 선택된 event_slots.id (정수, DB FK)
+let currentSlots = [];     // 현재 이벤트의 슬롯 배열 (DB getSlotCounts 결과)
+let pendingAttend = null;  // 비로그인 → 로그인 모달 → 로그인 후 자동 신청용: { eventId, eventSlotId }
 
-// ========== WAAT 3-Time Slots (브랜드 고정 — DB 아님) ==========
-const WAAT_SLOTS = [
-    { id: 'sun',  emoji: '☀️', name: '햇살타임', time: '15:00–17:00' },
-    { id: 'dusk', emoji: '🌅', name: '노을타임', time: '17:30–19:30' },
-    { id: 'moon', emoji: '🌙', name: '달빛타임', time: '20:00–22:00' }
-];
+// 슬롯 헬퍼 — currentSlots 배열에서 id로 조회
 function getSlotById(id) {
-    return WAAT_SLOTS.find(s => s.id === id) || null;
+    if (id == null) return null;
+    var n = Number(id);
+    return currentSlots.find(function(s) { return Number(s.id) === n; }) || null;
+}
+// 슬롯 표시 라벨 (이모지 + 라벨, 시간 포함)
+function slotDisplayName(slot) {
+    if (!slot) return '슬롯';
+    var emoji = slot.slot_emoji || '';
+    var label = slot.slot_label || '';
+    return (emoji + ' ' + label).trim();
+}
+function slotTimeStr(slot) {
+    if (!slot || !slot.slot_time) return '';
+    // slot_time: 'HH:MM:SS' 또는 'HH:MM' → 'HH:MM'
+    return String(slot.slot_time).slice(0, 5);
 }
 
 // ========== Scroll Reveal & Nav scroll are handled by js/animations.js (GSAP) ==========
@@ -189,9 +199,13 @@ bindGoogleAuth('login-google-btn');
 
         // 이벤트/슬롯 정보
         var eventId = (typeof currentEventId !== 'undefined' && currentEventId) ? currentEventId : null;
-        var slotId = (typeof currentSlotId !== 'undefined' && currentSlotId) ? currentSlotId : null;
-        var slot = slotId ? getSlotById(slotId) : null;
-        var slotLabel = slot ? (' / ' + slot.name) : '';
+        var eventSlotId = (typeof currentEventSlotId !== 'undefined' && currentEventSlotId) ? currentEventSlotId : null;
+        if (!eventSlotId) {
+            setStatus(statusEl, '먼저 모임 카드의 타임 슬롯을 선택해주세요.', 'error');
+            return;
+        }
+        var slot = getSlotById(eventSlotId);
+        var slotLabel = slot ? (' / ' + slotDisplayName(slot)) : '';
 
         var subject = '[모임 참여 신청] ' + name + slotLabel;
         var body = '이름: ' + name +
@@ -199,7 +213,7 @@ bindGoogleAuth('login-google-btn');
                    '\n핸드폰: ' + phone +
                    '\n메모: ' + (memo || '(없음)') +
                    (eventId ? ('\n[이벤트 ID]: ' + eventId) : '') +
-                   (slot ? ('\n[타임]: ' + slot.emoji + ' ' + slot.name + ' (' + slot.time + ')') : '') +
+                   (slot ? ('\n[타임]: ' + slotDisplayName(slot) + ' (' + slotTimeStr(slot) + ')') : '') +
                    '\n신청일: ' + new Date().toISOString();
 
         setStatus(statusEl, '신청 처리 중...', 'loading');
@@ -212,9 +226,9 @@ bindGoogleAuth('login-google-btn');
                 subject: subject,
                 message: body,
                 event_id: eventId,
-                slot_id: slotId
+                event_slot_id: eventSlotId
             });
-            setStatus(statusEl, '신청이 접수되었습니다. 운영자가 곧 연락드립니다.', 'success');
+            setStatus(statusEl, '신청이 접수되었습니다.', 'success');
             setTimeout(close, 2000);
         } catch (err) {
             console.error('Guest attend error:', err);
@@ -240,12 +254,11 @@ function showToast(msg, type) {
 }
 
 // ========== 회원 슬롯 신청 ==========
-async function memberAttendSlot(eventId, slotId, slot) {
-    if (!eventId || !slotId || !currentUser) return;
+async function memberAttendSlot(eventId, eventSlotId, slot) {
+    if (!eventId || !eventSlotId || !currentUser) return;
     try {
-        await DB.attendEvent(currentUser.id, eventId, '', slotId);
-        var label = slot ? (slot.emoji + ' ' + slot.name) : '슬롯';
-        showToast('✅ ' + label + ' 신청 완료');
+        await DB.attendEvent(currentUser.id, eventId, '', eventSlotId);
+        showToast('✅ ' + slotDisplayName(slot) + ' 신청 완료');
         if (typeof checkAttendance === 'function') checkAttendance();
         if (typeof renderScheduleEvents === 'function') await renderScheduleEvents();
     } catch (err) {
@@ -260,12 +273,11 @@ async function memberAttendSlot(eventId, slotId, slot) {
 }
 
 // ========== 회원 슬롯 취소 ==========
-async function memberCancelSlot(eventId, slotId, slot) {
-    if (!eventId || !slotId || !currentUser) return;
+async function memberCancelSlot(eventId, eventSlotId, slot) {
+    if (!eventId || !eventSlotId || !currentUser) return;
     try {
-        await DB.cancelAttendance(currentUser.id, eventId, slotId);
-        var label = slot ? (slot.emoji + ' ' + slot.name) : '슬롯';
-        showToast('❎ ' + label + ' 신청 취소됨');
+        await DB.cancelAttendance(currentUser.id, eventId, eventSlotId);
+        showToast('❎ ' + slotDisplayName(slot) + ' 신청 취소됨');
         if (typeof checkAttendance === 'function') checkAttendance();
         if (typeof renderScheduleEvents === 'function') await renderScheduleEvents();
     } catch (err) {
@@ -280,7 +292,10 @@ function showIdentityChoiceModal(slot) {
     if (!m) return;
     var slotEl = document.getElementById('ic-selected-slot');
     if (slotEl && slot) {
-        slotEl.innerHTML = slot.emoji + ' <strong>' + slot.name + '</strong> (' + slot.time + ')';
+        var emoji = slot.slot_emoji || '';
+        var label = slot.slot_label || '';
+        var t = slotTimeStr(slot);
+        slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
     }
     m.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -301,8 +316,8 @@ function closeIdentityChoiceModal() {
 
     var memberBtn = document.getElementById('ic-member-btn');
     if (memberBtn) memberBtn.addEventListener('click', function() {
-        if (currentEventId && currentSlotId) {
-            pendingAttend = { eventId: currentEventId, slotId: currentSlotId };
+        if (currentEventId && currentEventSlotId) {
+            pendingAttend = { eventId: currentEventId, eventSlotId: currentEventSlotId };
         }
         closeIdentityChoiceModal();
         openModal('login');
@@ -311,7 +326,7 @@ function closeIdentityChoiceModal() {
     var guestBtn = document.getElementById('ic-guest-btn');
     if (guestBtn) guestBtn.addEventListener('click', function() {
         closeIdentityChoiceModal();
-        var slot = getSlotById(currentSlotId);
+        var slot = getSlotById(currentEventSlotId);
         var ga = document.getElementById('guest-attend-modal');
         if (!ga) return;
         var f = document.getElementById('guest-attend-form');
@@ -319,7 +334,12 @@ function closeIdentityChoiceModal() {
         var s = document.getElementById('ga-status');
         if (s) { s.textContent = ''; s.className = 'form-status'; }
         var slotEl = document.getElementById('ga-selected-slot');
-        if (slotEl && slot) slotEl.innerHTML = slot.emoji + ' <strong>' + slot.name + '</strong> (' + slot.time + ')';
+        if (slotEl && slot) {
+            var emoji = slot.slot_emoji || '';
+            var label = slot.slot_label || '';
+            var t = slotTimeStr(slot);
+            slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
+        }
         ga.classList.add('open');
         document.body.style.overflow = 'hidden';
     });
@@ -329,7 +349,7 @@ function closeIdentityChoiceModal() {
 async function tryPendingSlotAttend() {
     if (!pendingAttend || !currentUser) return;
     var ev = pendingAttend.eventId;
-    var sl = pendingAttend.slotId;
+    var sl = pendingAttend.eventSlotId;
     pendingAttend = null;
     var slot = getSlotById(sl);
     await memberAttendSlot(ev, sl, slot);
@@ -590,17 +610,18 @@ async function renderScheduleEvents() {
         // 첫 번째 활성 이벤트를 참여 신청용으로 설정
         currentEventId = events[0].id;
 
-        // 슬롯별 인원수 + 본인이 신청한 슬롯 조회 (첫 이벤트 기준)
-        let slotCounts = { sun: 0, dusk: 0, moon: 0 };
-        let myAttendedSlots = new Set();
+        // 슬롯 정보 + 인원수 (DB에서 동적 로드) + 본인이 신청한 슬롯 조회
+        let slots = [];
+        let myAttendedSlotIds = new Set();
         try {
-            slotCounts = await DB.getSlotCounts(events[0].id);
+            slots = await DB.getSlotCounts(events[0].id);
         } catch (e) { console.warn('getSlotCounts failed:', e); }
+        currentSlots = slots;
         if (currentUser) {
             try {
                 const myAtt = await DB.getMyAttendance(currentUser.id);
-                myAtt.filter(a => a.event_id == events[0].id && a.slot_id)
-                     .forEach(a => myAttendedSlots.add(a.slot_id));
+                myAtt.filter(a => a.event_id == events[0].id && a.event_slot_id)
+                     .forEach(a => myAttendedSlotIds.add(Number(a.event_slot_id)));
             } catch (e) { console.warn('getMyAttendance failed:', e); }
         }
 
@@ -627,8 +648,18 @@ async function renderScheduleEvents() {
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">📋</div>
                         <div class="schedule-info-text">
-                            <div class="info-label">내용</div>
+                            <div class="info-label">모임 설명</div>
                             <div class="info-value">${escapeHtml(ev.description)}</div>
+                        </div>
+                    </div>`;
+            }
+            if (ev.provision) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">🎁</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">제공사항 및 참가비</div>
+                            <div class="info-value">${escapeHtml(ev.provision)}</div>
                         </div>
                     </div>`;
             }
@@ -644,24 +675,28 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
-            // 3 타임 슬롯 카드 (첫 이벤트만)
-            const slotsHtml = isFirst ? `
+            // 타임 슬롯 카드 (첫 이벤트만, DB의 event_slots 동적 렌더)
+            const slotsHtml = (isFirst && slots && slots.length) ? `
                 <div class="waat-slots">
-                    ${WAAT_SLOTS.map(s => {
-                        const count = slotCounts[s.id] || 0;
-                        const attended = myAttendedSlots.has(s.id);
+                    ${slots.map(s => {
+                        const sid = Number(s.id);
+                        const count = Number(s.count || 0);
+                        const attended = myAttendedSlotIds.has(sid);
                         const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
                         const btnText = attended ? '✓ 신청됨 — 취소' : '이 타임 신청 →';
+                        const emoji = escapeHtml(s.slot_emoji || '');
+                        const label = escapeHtml(s.slot_label || '');
+                        const tStr = slotTimeStr(s);
                         return `
-                        <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-slot-id="${s.id}">
-                            <div class="waat-slot-emoji">${s.emoji}</div>
-                            <div class="waat-slot-name">${s.name} <span class="slot-count">(${count}명)</span></div>
-                            <div class="waat-slot-time">${s.time}</div>
-                            <button type="button" class="${btnClass}" data-slot-id="${s.id}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
+                        <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-event-slot-id="${sid}">
+                            <div class="waat-slot-emoji">${emoji}</div>
+                            <div class="waat-slot-name">${label} <span class="slot-count">(${count}명)</span></div>
+                            <div class="waat-slot-time">${escapeHtml(tStr)}</div>
+                            <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
                         </div>`;
                     }).join('')}
                 </div>
-                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요.<br>사이사이 30분의 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
+                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
             // 모임 회차: 역순 인덱스로 계산 — DB는 최신순으로 들어있으므로 (전체 - idx)차
@@ -726,26 +761,26 @@ document.addEventListener('click', function(e) {
 
 // ========== Rebind attend buttons after dynamic render ==========
 function rebindAttendButtons() {
-    // 3 타임 슬롯 버튼: 로그인 상태 + 신청 상태 분기
+    // 타임 슬롯 버튼: 로그인 상태 + 신청 상태 분기
     document.querySelectorAll('.waat-slot-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
-            const slotId = btn.getAttribute('data-slot-id');
+            const eventSlotId = Number(btn.getAttribute('data-event-slot-id'));
             const attended = btn.getAttribute('data-attended') === '1';
-            currentSlotId = slotId;
-            const slot = getSlotById(slotId);
+            currentEventSlotId = eventSlotId;
+            const slot = getSlotById(eventSlotId);
 
             if (attended && currentUser) {
                 // 이미 신청 → 취소 확인
-                const ok = confirm((slot ? slot.emoji + ' ' + slot.name : '') + ' 신청을 취소하시겠습니까?');
+                const ok = confirm(slotDisplayName(slot) + ' 신청을 취소하시겠습니까?');
                 if (!ok) return;
-                await memberCancelSlot(currentEventId, slotId, slot);
+                await memberCancelSlot(currentEventId, eventSlotId, slot);
                 return;
             }
 
             if (currentUser) {
                 // 회원: 즉시 신청
-                await memberAttendSlot(currentEventId, slotId, slot);
+                await memberAttendSlot(currentEventId, eventSlotId, slot);
             } else {
                 // 비로그인: 신원 선택 모달
                 showIdentityChoiceModal(slot);
@@ -857,8 +892,7 @@ async function loadMemberCount() {
     if (!el) return;
     try {
         var count = await DB.getMemberCount();
-        var roundedCount = Math.floor(count / 10) * 10;
-        el.textContent = roundedCount + '+';
+        el.textContent = count;
     } catch (e) {
         console.error('loadMemberCount error:', e);
         el.textContent = '-';

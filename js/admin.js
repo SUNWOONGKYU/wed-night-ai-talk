@@ -133,6 +133,20 @@ let allEvents = [];
 async function loadEvents() {
     try {
         allEvents = await DB.getAllEvents();
+        // 각 이벤트의 슬롯 요약 (시간만 모아서 한 줄)
+        await Promise.all(allEvents.map(async function(ev) {
+            try {
+                var slots = await DB.getEventSlots(ev.id);
+                ev._slots = slots;
+                ev._slotsSummary = slots
+                    .filter(function(s) { return s.is_active !== false; })
+                    .map(function(s) {
+                        var t = s.slot_time ? String(s.slot_time).slice(0,5) : '';
+                        return ((s.slot_emoji || '') + ' ' + t).trim();
+                    })
+                    .join(' / ');
+            } catch (e) { ev._slots = []; ev._slotsSummary = ''; }
+        }));
         renderEvents(allEvents);
         await loadLocationSelect();
     } catch (e) {
@@ -172,7 +186,7 @@ function renderEvents(events) {
 
     tbody.innerHTML = events.map(ev => {
         const date = ev.event_date || '-';
-        const time = ev.event_time ? ev.event_time.slice(0, 5) : '-';
+        const time = (ev._slotsSummary && ev._slotsSummary.length) ? ev._slotsSummary : '-';
         const status = ev.is_active
             ? '<span class="admin-badge active">활성</span>'
             : '<span class="admin-badge inactive">비활성</span>';
@@ -197,6 +211,65 @@ function renderEvents(events) {
 const eventForm = document.getElementById('event-form');
 const eventFormReset = document.getElementById('event-form-reset');
 
+// ----- Slot Rows UI -----
+const DEFAULT_SLOTS = [
+    { slot_emoji: '☀️', slot_label: '햇살', slot_time: '13:00' },
+    { slot_emoji: '🌅', slot_label: '노을', slot_time: '16:00' },
+    { slot_emoji: '🌙', slot_label: '달빛', slot_time: '19:00' }
+];
+
+// 제공사항 및 참가비 디폴트
+const DEFAULT_PROVISION = '제공사항: 커피/생수 포함 다과   참가비 1만원(입금계좌: 하나은행 620-241128-571 선웅규) * 음료 지참의 불편함 해소 및 노쇼 방지 목적';
+
+function renderSlotRows(slots) {
+    const list = document.getElementById('ev-slots-list');
+    if (!list) return;
+    list.innerHTML = '';
+    (slots || []).forEach(function(s) { addSlotRow(s); });
+}
+
+function addSlotRow(s) {
+    const list = document.getElementById('ev-slots-list');
+    if (!list) return;
+    const row = document.createElement('div');
+    row.className = 'ev-slot-row';
+    const emoji = s ? (s.slot_emoji || '') : '';
+    const label = s ? (s.slot_label || '') : '';
+    const time = s && s.slot_time ? String(s.slot_time).slice(0, 5) : '';
+    const id = s && s.id ? s.id : '';
+    row.innerHTML =
+        '<input type="text" class="slot-emoji" placeholder="🌟" maxlength="4" value="' + escapeHtml(emoji) + '">' +
+        '<input type="text" class="slot-label" placeholder="라벨 (예: 햇살)" value="' + escapeHtml(label) + '">' +
+        '<input type="time" class="slot-time" value="' + escapeHtml(time) + '">' +
+        '<button type="button" class="ev-slot-del">삭제</button>' +
+        '<input type="hidden" class="slot-id" value="' + escapeHtml(String(id)) + '">';
+    row.querySelector('.ev-slot-del').addEventListener('click', function() {
+        row.remove();
+    });
+    list.appendChild(row);
+}
+
+function readSlotRows() {
+    const rows = document.querySelectorAll('#ev-slots-list .ev-slot-row');
+    const out = [];
+    rows.forEach(function(row, idx) {
+        const label = (row.querySelector('.slot-label').value || '').trim();
+        const emoji = (row.querySelector('.slot-emoji').value || '').trim();
+        const time = (row.querySelector('.slot-time').value || '').trim();
+        if (!label) return; // 라벨 비어있으면 스킵
+        out.push({
+            slot_label: label,
+            slot_emoji: emoji,
+            slot_time: time || null,
+            sort_order: idx + 1
+        });
+    });
+    return out;
+}
+
+const slotsAddBtn = document.getElementById('ev-slots-add');
+if (slotsAddBtn) slotsAddBtn.addEventListener('click', function() { addSlotRow(); });
+
 eventForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const statusEl = document.getElementById('event-form-status');
@@ -206,47 +279,59 @@ eventForm.addEventListener('submit', async (e) => {
     const eventData = {
         title: document.getElementById('ev-title').value.trim(),
         event_date: document.getElementById('ev-date').value,
-        event_time: document.getElementById('ev-time').value || null,
         day_label: document.getElementById('ev-day-label').value,
         location: document.getElementById('ev-location').value.trim(),
         address: document.getElementById('ev-address').value.trim(),
         map_url: document.getElementById('ev-map-url').value.trim(),
-        provision: document.getElementById('ev-provision').value.trim(),
         description: document.getElementById('ev-desc').value.trim(),
+        provision: document.getElementById('ev-provision').value.trim(),
         youtube_url: document.getElementById('ev-youtube').value.trim() || null
     };
+
+    const slotInputs = readSlotRows();
+    if (slotInputs.length === 0) {
+        statusEl.textContent = '최소 한 개의 타임 슬롯이 필요합니다.';
+        statusEl.className = 'form-status error';
+        return;
+    }
 
     statusEl.textContent = '저장 중...';
     statusEl.className = 'form-status loading';
     btn.disabled = true;
 
     try {
+        let evId;
         if (editId) {
             await DB.updateEvent(parseInt(editId), eventData);
-            statusEl.textContent = '모임이 수정되었습니다.';
+            evId = parseInt(editId);
         } else {
-            await DB.createEvent(eventData);
-            statusEl.textContent = '모임이 등록되었습니다.';
+            const created = await DB.createEvent(eventData);
+            evId = created.id;
         }
+
+        // 슬롯 동기화 (소프트 삭제 + 신규/업데이트)
+        await DB.replaceEventSlots(evId, slotInputs);
+
+        statusEl.textContent = editId ? '모임이 수정되었습니다.' : '모임이 등록되었습니다.';
         statusEl.className = 'form-status success';
         resetEventForm();
         loadEvents();
     } catch (err) {
-        statusEl.textContent = '저장 중 오류가 발생했습니다.';
+        console.error('Event save error:', err);
+        statusEl.textContent = '저장 중 오류: ' + (err.message || err);
         statusEl.className = 'form-status error';
     } finally {
         btn.disabled = false;
     }
 });
 
-function editEvent(id) {
+async function editEvent(id) {
     const ev = allEvents.find(e => e.id === id);
     if (!ev) return;
 
     document.getElementById('edit-event-id').value = ev.id;
     document.getElementById('ev-title').value = ev.title;
     document.getElementById('ev-date').value = ev.event_date;
-    document.getElementById('ev-time').value = ev.event_time ? ev.event_time.slice(0, 5) : '';
     document.getElementById('ev-day-label').value = ev.day_label || '';
     document.getElementById('ev-location').value = ev.location || '';
     document.getElementById('ev-address').value = ev.address || '';
@@ -254,9 +339,17 @@ function editEvent(id) {
     // 장소 select에서 이름 매칭으로 선택
     const matchedLoc = locationOptions.find(l => l.name === ev.location);
     document.getElementById('ev-location-select').value = matchedLoc ? matchedLoc.id : '';
-    document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-youtube').value = ev.youtube_url || '';
+
+    // 슬롯 row 채우기 (캐시된 _slots 우선, 없으면 fetch)
+    let slots = ev._slots;
+    if (!slots) {
+        try { slots = await DB.getEventSlots(ev.id); } catch (e) { slots = []; }
+    }
+    renderSlotRows(slots && slots.length ? slots : DEFAULT_SLOTS);
+
     document.getElementById('event-form-title').textContent = '모임 수정';
     eventForm.querySelector('.form-submit').textContent = '모임 수정 →';
     eventFormReset.style.display = 'inline-flex';
@@ -275,7 +368,18 @@ function resetEventForm() {
     eventForm.querySelector('.form-submit').textContent = '모임 등록 →';
     eventFormReset.style.display = 'none';
     document.getElementById('event-form-status').textContent = '';
+    // 슬롯 row 디폴트 3개로 초기화
+    renderSlotRows(DEFAULT_SLOTS);
+    // 제공사항 디폴트 값 채우기
+    document.getElementById('ev-provision').value = DEFAULT_PROVISION;
 }
+
+// 페이지 로드 시 디폴트 슬롯 row + 제공사항 디폴트 렌더링
+renderSlotRows(DEFAULT_SLOTS);
+(function() {
+    var p = document.getElementById('ev-provision');
+    if (p && !p.value) p.value = DEFAULT_PROVISION;
+})();
 
 eventFormReset.addEventListener('click', resetEventForm);
 
@@ -316,8 +420,6 @@ async function viewAttendees(eventId, eventTitle) {
     tbody.innerHTML = '<tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>';
     countEl.textContent = '';
 
-    const SLOT_LABELS = { sun: '☀️ 햇살', dusk: '🌅 노을', moon: '🌙 달빛' };
-
     try {
         const attendees = await DB.getEventAttendees(eventId);
 
@@ -325,23 +427,67 @@ async function viewAttendees(eventId, eventTitle) {
             tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
             countEl.textContent = '';
         } else {
-            tbody.innerHTML = attendees.map(a => {
-                const name = a.profiles ? a.profiles.name : '-';
-                const phone = a.profiles ? a.profiles.phone : '-';
-                const email = a.profiles ? (a.profiles.email || '-') : '-';
-                const slotLabel = a.slot_id ? (SLOT_LABELS[a.slot_id] || a.slot_id) : '-';
-                const date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
-                return `<tr>
-                    <td>${escapeHtml(name)}</td>
-                    <td>${slotLabel}</td>
-                    <td>${escapeHtml(phone)}</td>
-                    <td>${escapeHtml(email)}</td>
-                    <td>${escapeHtml(a.note || '-')}</td>
-                    <td>${date}</td>
-                    <td><button class="btn-secondary btn-small" onclick="deleteAttendee('${a.user_id}', '${a.event_id}', '${escapeHtml(name)}')" style="color:var(--accent-pink);">삭제</button></td>
-                </tr>`;
-            }).join('');
-            countEl.textContent = `총 ${attendees.length}명`;
+            // 타임 슬롯 우선순위로 정렬 (sort_order → slot_time → 미배정 마지막)
+            attendees.sort(function(a, b) {
+                var sa = a.slot, sb = b.slot;
+                // 미배정(슬롯 없음)은 맨 뒤
+                if (!sa && !sb) return new Date(a.created_at) - new Date(b.created_at);
+                if (!sa) return 1;
+                if (!sb) return -1;
+                var oa = sa.sort_order != null ? sa.sort_order : 999;
+                var ob = sb.sort_order != null ? sb.sort_order : 999;
+                if (oa !== ob) return oa - ob;
+                var ta = sa.slot_time || '';
+                var tb = sb.slot_time || '';
+                if (ta !== tb) return ta < tb ? -1 : 1;
+                return new Date(a.created_at) - new Date(b.created_at);
+            });
+
+            // 슬롯별 그룹 렌더 (그룹 헤더 row + 멤버 row)
+            var html = '';
+            var currentSlotKey = null;
+            var slotMemberCounts = {};
+            // 그룹별 카운트 미리 계산
+            attendees.forEach(function(a) {
+                var k = a.slot ? a.slot.id : '__none__';
+                slotMemberCounts[k] = (slotMemberCounts[k] || 0) + 1;
+            });
+
+            attendees.forEach(function(a) {
+                var slotKey = a.slot ? a.slot.id : '__none__';
+                if (slotKey !== currentSlotKey) {
+                    currentSlotKey = slotKey;
+                    var headerLabel;
+                    if (a.slot) {
+                        var emoji = a.slot.slot_emoji || '';
+                        var label = a.slot.slot_label || '';
+                        var t = a.slot.slot_time ? String(a.slot.slot_time).slice(0,5) : '';
+                        headerLabel = (emoji + ' ' + label + (t ? ' (' + t + ')' : '')).trim();
+                    } else {
+                        headerLabel = '슬롯 미배정';
+                    }
+                    html += '<tr class="attendees-slot-header"><td colspan="7" style="background:rgba(255,212,107,0.08); font-weight:600; padding:0.6rem 0.75rem; border-top:1px solid rgba(255,212,107,0.3);">' +
+                        escapeHtml(headerLabel) + ' — ' + slotMemberCounts[slotKey] + '명</td></tr>';
+                }
+                var name = a.profiles ? a.profiles.name : '-';
+                var phone = a.profiles ? a.profiles.phone : '-';
+                var email = a.profiles ? (a.profiles.email || '-') : '-';
+                var slotLabelCell = a.slot
+                    ? ((a.slot.slot_emoji || '') + ' ' + (a.slot.slot_label || '')).trim()
+                    : '-';
+                var date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
+                html += '<tr>' +
+                    '<td>' + escapeHtml(name) + '</td>' +
+                    '<td>' + escapeHtml(slotLabelCell) + '</td>' +
+                    '<td>' + escapeHtml(phone) + '</td>' +
+                    '<td>' + escapeHtml(email) + '</td>' +
+                    '<td>' + escapeHtml(a.note || '-') + '</td>' +
+                    '<td>' + date + '</td>' +
+                    '<td><button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + a.user_id + '\', \'' + a.event_id + '\', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button></td>' +
+                '</tr>';
+            });
+            tbody.innerHTML = html;
+            countEl.textContent = '총 ' + attendees.length + '명';
         }
     } catch (e) {
         console.error('viewAttendees error:', e);
@@ -524,11 +670,9 @@ function renderInquiries(inquiries) {
         return;
     }
 
-    const SLOT_LABELS = { sun: '☀️ 햇살', dusk: '🌅 노을', moon: '🌙 달빛' };
-
     tbody.innerHTML = inquiries.map(inq => {
         const date = inq.created_at ? new Date(inq.created_at).toLocaleDateString('ko-KR') : '-';
-        const slotLabel = inq.slot_id ? (SLOT_LABELS[inq.slot_id] || inq.slot_id) : '-';
+        const slotLabel = inq.event_slot_id ? ('#' + inq.event_slot_id) : '-';
         return `<tr>
             <td>${escapeHtml(inq.name || '-')}</td>
             <td>${slotLabel}</td>
