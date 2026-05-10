@@ -671,17 +671,19 @@ async function renderScheduleEvents() {
         // 첫 번째 활성 이벤트를 참여 신청용으로 설정
         currentEventId = events[0].id;
 
-        // 슬롯 정보 + 인원수 (DB에서 동적 로드) + 본인이 신청한 슬롯 조회
-        let slots = [];
-        let myAttendedSlotIds = new Set();
+        // 슬롯 정보 + 인원수 (이벤트별로 동적 로드) + 본인이 신청한 슬롯 조회
+        const slotsByEvent = {};
+        const myAttendedSlotIds = new Set();
         try {
-            slots = await DB.getSlotCounts(events[0].id);
+            const slotResults = await Promise.all(events.map(ev => DB.getSlotCounts(ev.id).catch(() => [])));
+            events.forEach((ev, i) => { slotsByEvent[ev.id] = slotResults[i] || []; });
         } catch (e) { console.warn('getSlotCounts failed:', e); }
-        currentSlots = slots;
+        // currentSlots: 전체 이벤트 슬롯 합침 (getSlotById가 모든 이벤트에서 찾을 수 있게)
+        currentSlots = events.flatMap(ev => (slotsByEvent[ev.id] || []).map(s => ({ ...s, event_id: ev.id })));
         if (currentUser) {
             try {
                 const myAtt = await DB.getMyAttendance(currentUser.id);
-                myAtt.filter(a => a.event_id == events[0].id && a.event_slot_id)
+                myAtt.filter(a => a.event_slot_id)
                      .forEach(a => myAttendedSlotIds.add(Number(a.event_slot_id)));
             } catch (e) { console.warn('getMyAttendance failed:', e); }
         }
@@ -689,7 +691,7 @@ async function renderScheduleEvents() {
         container.innerHTML = events.map((ev, idx) => {
             const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
             const timeDisplay = formatEventTimes(ev.event_times, ev.event_time);
-            const isFirst = idx === 0;
+            const slots = slotsByEvent[ev.id] || [];
 
             // 상세 정보 항목들 — 장소는 이름 하나만 (Location 섹션 카드로 연결)
             let detailItems = '';
@@ -736,15 +738,15 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
-            // 타임 슬롯 카드 (첫 이벤트만, DB의 event_slots 동적 렌더)
-            const slotsHtml = (isFirst && slots && slots.length) ? `
+            // 타임 슬롯 카드 (이벤트별, DB의 event_slots 동적 렌더)
+            const slotsHtml = (slots && slots.length) ? `
                 <div class="waat-slots">
                     ${slots.map(s => {
                         const sid = Number(s.id);
                         const count = Number(s.count || 0);
                         const attended = myAttendedSlotIds.has(sid);
                         const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
-                        const btnText = attended ? '✓ 신청됨 — 취소' : '신청';
+                        const btnText = attended ? '✓ 신청됨 — 취소' : '신청하기';
                         const emoji = escapeHtml(s.slot_emoji || '');
                         const label = escapeHtml(s.slot_label || '');
                         const tStr = slotTimeStr(s);
@@ -829,18 +831,19 @@ function rebindAttendButtons() {
             const attended = btn.getAttribute('data-attended') === '1';
             currentEventSlotId = eventSlotId;
             const slot = getSlotById(eventSlotId);
+            const eventIdForSlot = (slot && slot.event_id) ? slot.event_id : currentEventId;
 
             if (attended && currentUser) {
                 // 이미 신청 → 취소 확인
                 const ok = confirm(slotDisplayName(slot) + ' 신청을 취소하시겠습니까?');
                 if (!ok) return;
-                await memberCancelSlot(currentEventId, eventSlotId, slot);
+                await memberCancelSlot(eventIdForSlot, eventSlotId, slot);
                 return;
             }
 
             if (currentUser) {
                 // 회원: 즉시 신청
-                await memberAttendSlot(currentEventId, eventSlotId, slot);
+                await memberAttendSlot(eventIdForSlot, eventSlotId, slot);
             } else {
                 // 비로그인: 신원 선택 모달
                 showIdentityChoiceModal(slot);
