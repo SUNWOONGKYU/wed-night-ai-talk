@@ -744,7 +744,7 @@ async function renderScheduleEvents() {
                         const count = Number(s.count || 0);
                         const attended = myAttendedSlotIds.has(sid);
                         const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
-                        const btnText = attended ? '✓ 신청됨 — 취소' : '이 타임 신청 →';
+                        const btnText = attended ? '✓ 신청됨 — 취소' : '신청';
                         const emoji = escapeHtml(s.slot_emoji || '');
                         const label = escapeHtml(s.slot_label || '');
                         const tStr = slotTimeStr(s);
