@@ -749,11 +749,8 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
-            // 선착순 정원 — 슬롯별 인원 합산해서 잔여석 표기
+            // 정원 — 슬롯 안내문 문구에만 사용
             const capacity = Number(ev.capacity) || 20;
-            const totalAttendees = slots.reduce((sum, s) => sum + (Number(s.count) || 0), 0);
-            const remaining = Math.max(0, capacity - totalAttendees);
-            const capacityHtml = `<div class="schedule-capacity">선착순 ${capacity}명 이내 <span class="capacity-remaining">(현재 ${totalAttendees}명 · 잔여 ${remaining}석)</span></div>`;
 
             // 타임 슬롯 카드 (이벤트별, DB의 event_slots 동적 렌더)
             const slotsHtml = (slots && slots.length) ? `
@@ -789,7 +786,6 @@ async function renderScheduleEvents() {
                         <div class="schedule-date-line">
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
-                        ${capacityHtml}
                         ${slotsHtml}
                     </div>
                     ${detailItems ? `
