@@ -218,12 +218,13 @@ nav {
 }
 
 .nav-cta {
-    padding: 0.32rem 0.78rem;
+    padding: 0.3rem 0.7rem !important;
     background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
     color: var(--bg-primary) !important;
     border-radius: 6px;
     font-weight: 600 !important;
-    font-size: 0.7rem;
+    font-size: 0.72rem !important;
+    line-height: 1.1 !important;
     letter-spacing: 0.01em;
 }
 
@@ -235,11 +236,12 @@ nav {
 .nav-cta::after { display: none !important; }
 
 .nav-login-btn {
-    padding: 0.32rem 0.78rem;
+    padding: 0.3rem 0.7rem !important;
     border: 1px solid rgba(168, 85, 247, 0.4);
     border-radius: 6px;
     font-weight: 600 !important;
-    font-size: 0.7rem;
+    font-size: 0.72rem !important;
+    line-height: 1.1 !important;
     letter-spacing: 0.01em;
     color: var(--accent-purple) !important;
     background: rgba(168, 85, 247, 0.08);
