@@ -758,6 +758,7 @@ async function renderScheduleEvents() {
                     ${slots.map(s => {
                         const sid = Number(s.id);
                         const count = Number(s.count || 0);
+                        const slotCap = (s.capacity != null) ? Number(s.capacity) : capacity;
                         const attended = myAttendedSlotIds.has(sid);
                         const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
                         const btnText = attended ? '✓ 신청됨 — 취소' : '신청하기';
@@ -767,13 +768,13 @@ async function renderScheduleEvents() {
                         return `
                         <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-event-slot-id="${sid}">
                             <div class="waat-slot-emoji">${emoji}</div>
-                            <div class="waat-slot-name">${label} <span class="slot-count">(${count}명)</span></div>
+                            <div class="waat-slot-name">${label} <span class="slot-count">(${count}/${slotCap}명)</span></div>
                             <div class="waat-slot-time">${escapeHtml(tStr)}</div>
                             <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
                         </div>`;
                     }).join('')}
                 </div>
-                <p class="waat-slots-note">원하는 시간대 하나를 골라서 신청하고 오시면 돼요. 선착순 ${capacity}명입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
+                <p class="waat-slots-note">원하는 시간대 하나를 골라서 신청하고 오시면 돼요. 슬롯마다 선착순 모집입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
             // 모임 회차: DB가 event_date ASC로 정렬돼 있으므로 idx+1 = 회차
@@ -1444,7 +1445,9 @@ document.getElementById('inquiry-form').addEventListener('submit', async (e) => 
             }
         }, 2000);
     } catch (err) {
-        setStatus(statusEl, '문의 접수 중 오류가 발생했습니다.', 'error');
+        console.error('[inquiry] createInquiry failed:', err);
+        var msg = err && (err.message || err.error_description || err.hint) ? (err.message || err.error_description || err.hint) : '알 수 없는 오류';
+        setStatus(statusEl, '문의 접수 실패: ' + msg, 'error');
     } finally {
         btn.disabled = false;
     }

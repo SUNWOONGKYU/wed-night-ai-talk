@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 44" width="240" height="44">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 154 44" width="154" height="44">
   <defs>
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#C9A961"/>
-      <stop offset="50%" stop-color="#E8D9B0"/>
+      <stop offset="0%" stop-color="#E8D9B0"/>
+      <stop offset="50%" stop-color="#D4B560"/>
       <stop offset="100%" stop-color="#A88838"/>
     </linearGradient>
   </defs>
@@ -14,31 +14,33 @@
     letter-spacing="2"
     fill="#1A2238">W<tspan fill="url(#goldGrad)">AA</tspan>T</text>
 
-  <!-- AI 마크: 말풍선 + 신경망 노드 (대화하는 AI) -->
-  <g transform="translate(192, 6)">
-    <!-- 말풍선 (rounded rect + tail) -->
-    <path d="M 4,2
-             L 36,2
-             Q 40,2 40,6
-             L 40,24
-             Q 40,28 36,28
-             L 14,28
-             L 8,34
-             L 10,28
-             L 4,28
-             Q 0,28 0,24
-             L 0,6
-             Q 0,2 4,2 Z"
-          fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linejoin="round"/>
-    <!-- 신경망 노드 3개 + 연결선 -->
-    <line x1="10" y1="15" x2="20" y2="9"  stroke="url(#goldGrad)" stroke-width="1.5"/>
-    <line x1="10" y1="15" x2="20" y2="21" stroke="url(#goldGrad)" stroke-width="1.5"/>
-    <line x1="20" y1="9"  x2="30" y2="15" stroke="url(#goldGrad)" stroke-width="1.5"/>
-    <line x1="20" y1="21" x2="30" y2="15" stroke="url(#goldGrad)" stroke-width="1.5"/>
-    <line x1="20" y1="9"  x2="20" y2="21" stroke="url(#goldGrad)" stroke-width="1.5"/>
-    <circle cx="10" cy="15" r="2.4" fill="url(#goldGrad)"/>
-    <circle cx="20" cy="9"  r="2.4" fill="url(#goldGrad)"/>
-    <circle cx="20" cy="21" r="2.4" fill="url(#goldGrad)"/>
-    <circle cx="30" cy="15" r="2.4" fill="url(#goldGrad)"/>
+  <!-- AI 마크: 채움 말풍선 + 신경망 노드 (WAAT 바짝 옆) -->
+  <g transform="translate(112, 10)">
+    <!-- 채움 말풍선 (rounded + tail) -->
+    <path d="M 3,0
+             L 33,0
+             Q 36,0 36,3
+             L 36,21
+             Q 36,24 33,24
+             L 14,24
+             L 9,30
+             L 10,24
+             L 3,24
+             Q 0,24 0,21
+             L 0,3
+             Q 0,0 3,0 Z"
+          fill="url(#goldGrad)"/>
+    <!-- 신경망 노드 (말풍선 안쪽, 다크블루로 펀치) -->
+    <g fill="#1A2238" stroke="#1A2238" stroke-width="1.4" stroke-linecap="round">
+      <line x1="9"  y1="12" x2="18" y2="7"/>
+      <line x1="9"  y1="12" x2="18" y2="17"/>
+      <line x1="18" y1="7"  x2="27" y2="12"/>
+      <line x1="18" y1="17" x2="27" y2="12"/>
+      <line x1="18" y1="7"  x2="18" y2="17"/>
+      <circle cx="9"  cy="12" r="2.2"/>
+      <circle cx="18" cy="7"  r="2.2"/>
+      <circle cx="18" cy="17" r="2.2"/>
+      <circle cx="27" cy="12" r="2.2"/>
+    </g>
   </g>
 </svg>
