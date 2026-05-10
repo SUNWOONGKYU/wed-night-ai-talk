@@ -3029,7 +3029,7 @@ footer {
 .footer-brand {
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     letter-spacing: 0.04em;
     color: var(--text-primary);
 }
