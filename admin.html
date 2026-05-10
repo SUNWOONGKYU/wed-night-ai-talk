@@ -151,10 +151,15 @@
                                 <input type="date" id="ev-date" required>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="ev-times">시간 (3 타임 가능, 콤마로 구분)</label>
+                            <input type="text" id="ev-times" placeholder="예: 13:00, 16:00, 19:00 또는 오후 1시, 오후 4시, 오후 7시">
+                            <span class="form-hint">콤마(,) 또는 슬래시(/)로 구분. 단일 타임도 가능.</span>
+                        </div>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="ev-time">시간</label>
-                                <input type="time" id="ev-time" value="19:00">
+                                <label for="ev-time">대표 시간 (선택)</label>
+                                <input type="time" id="ev-time" value="">
                             </div>
                             <div class="form-group">
                                 <label for="ev-day-label">요일 표시</label>
@@ -233,6 +238,7 @@
                                 <thead>
                                     <tr>
                                         <th>이름</th>
+                                        <th>타임</th>
                                         <th>전화번호</th>
                                         <th>이메일</th>
                                         <th>메모</th>
@@ -325,6 +331,7 @@
                             <thead>
                                 <tr>
                                     <th>이름</th>
+                                    <th>타임</th>
                                     <th>전화번호</th>
                                     <th>이메일</th>
                                     <th>제목</th>
@@ -334,7 +341,7 @@
                                 </tr>
                             </thead>
                             <tbody id="inquiries-tbody">
-                                <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
+                                <tr><td colspan="8" class="admin-loading">로딩 중...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -390,7 +397,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260204b"></script>
-    <script src="js/admin.js?v=20260205a"></script>
+    <script src="js/supabase-config.js?v=20260510b"></script>
+    <script src="js/admin.js?v=20260510a"></script>
 </body>
 </html>

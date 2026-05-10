@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAAT — Wednesday Afternoon AI Talk | 수요일 오후 AI 수다</title>
-    <meta name="description" content="AI를 주제로 자유롭게 수다를 떠는 자리. 매주 수요일 오후, AI를 가지고 말 잔치를 벌립니다.">
+    <meta name="description" content="AI를 주제로 자유롭게 수다를 나누는 모임. AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.">
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260509b">
+    <link rel="stylesheet" href="css/style.css?v=20260510l">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -22,7 +22,7 @@
     <nav>
         <div class="nav-inner">
             <a href="/" class="nav-logo">
-                <img src="logo-waat.svg" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
+                <img src="logo-waat.svg?v=20260510a" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
             </a>
             <ul class="nav-links nav-links-center">
                 <li><a href="#schedule">Schedule</a></li>
@@ -54,26 +54,21 @@
         <canvas id="hero-canvas"></canvas>
         <div class="hero-inner">
             <div class="hero-brandline">
-                <span class="hero-brand-mark">WAAT</span>
-                <span class="hero-brand-divider">—</span>
-                <span class="hero-brand-text">Wednesday Afternoon AI Talk</span>
+                <div class="hero-brand-mark">WAAT</div>
+                <div class="hero-brand-text">Wednesday Afternoon AI Talk</div>
             </div>
 
             <h1 class="hero-headline">
                 AI를 주제로<br>
-                자유롭게 <span class="hero-accent">수다</span>를 떠는 자리
+                자유롭게 <span class="hero-accent">수다</span>를 나누는 모임
             </h1>
 
             <p class="hero-lead">
-                궁금한 것을 묻고, 만든 것을 자랑하고,<br>
-                협력할 거리를 찾고, 토론으로 인사이트를 얻습니다.
+                궁금한 것을 <span class="lead-accent">묻고</span>, 만든 것을 <span class="lead-accent">자랑하고</span>,<br>
+                협력할 거리를 <span class="lead-accent">찾고</span>, 토론으로 인사이트를 <span class="lead-accent">얻습니다</span>.
             </p>
 
-            <p class="hero-tagline">AI를 가지고 말 잔치를 벌려봅시다.</p>
-
-            <div class="hero-actions">
-                <a href="#" class="btn-primary" data-open-modal id="hero-signup-btn">매주 수요일 오후에 만나기 →</a>
-            </div>
+            <p class="hero-tagline">AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.</p>
 
             <div class="hero-stats">
                 <div class="hero-stat">
@@ -95,8 +90,8 @@
     <!-- Schedule -->
     <section id="schedule">
         <div class="section-inner">
-            <h2 class="section-title">모임 일정</h2>
-            <p class="section-desc">매주 수요일 오후, 정기적으로 만납니다.</p>
+            <h2 class="section-title">모임 일정 <span class="section-title-en">Schedule</span></h2>
+            <p class="section-desc">매주 수요일 오후에 모임이 열립니다.</p>
 
             <!-- 동적 이벤트 목록 (DB에서 로드) -->
             <div id="events-container">
@@ -115,8 +110,7 @@
     <!-- Location -->
     <section id="location" class="location-section">
         <div class="section-inner">
-            <h2 class="section-title">모임 장소</h2>
-            <p class="section-desc">서울 강남·용산을 중심으로 만납니다.</p>
+            <h2 class="section-title">모임 장소 <span class="section-title-en">Location</span></h2>
 
             <!-- 동적 장소 목록 (DB에서 로드) -->
             <div class="location-grid" id="locations-container">
@@ -135,8 +129,8 @@
     <!-- Free Talk (Speakup Preview) -->
     <section id="speakup" class="speakup-preview-section">
         <div class="section-inner">
-            <h2 class="section-title">자유발언</h2>
-            <p class="section-desc">AI 관련 아이디어, 의견, 경험, 질문을 누구나 자유롭게 나눕니다.</p>
+            <h2 class="section-title">자유발언 <span class="section-title-en">Free Talk</span></h2>
+            <p class="section-desc">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
 
             <div id="speakup-preview-container" class="speakup-preview-grid">
                 <div class="admin-loading">게시글을 불러오는 중...</div>
@@ -211,8 +205,8 @@
                             <input type="text" id="s-name" name="name" required placeholder="홍길동">
                         </div>
                         <div class="form-group">
-                            <label for="s-contact">전화번호 <span class="required">*</span></label>
-                            <input type="tel" id="s-contact" name="contact" required placeholder="[masked-phone]" maxlength="11">
+                            <label for="s-contact">전화번호 (선택)</label>
+                            <input type="tel" id="s-contact" name="contact" placeholder="[masked-phone]" maxlength="11">
                         </div>
                     </div>
                     <div class="form-group">
@@ -221,32 +215,11 @@
                         <span class="form-hint">소속, 직업, 직무 등을 간단히 적어주세요</span>
                     </div>
                     <div class="form-group">
-                        <label>관심 분야 (복수 선택 가능)</label>
-                        <div class="checkbox-grid">
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="바이브코딩"> 바이브코딩/개발</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="서비스기획"> 앱/웹 서비스 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="AI툴활용"> AI 툴 활용</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="콘텐츠제작"> 콘텐츠 제작</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="사업기획"> 사업 아이디어 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="테크트렌드"> Tech Trend</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="경제투자"> 경제전망/투자</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="마케팅"> AI 마케팅</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="네트워킹"> 네트워킹</label>
-                        </div>
+                        <label for="s-interests">관심 분야 (선택)</label>
+                        <textarea id="s-interests" name="interests" rows="2" placeholder="예: 바이브코딩, AI 마케팅, 사업 아이디어 등 자유롭게 적어주세요" maxlength="200"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="s-type">멤버 유형</label>
-                        <select id="s-type" name="memberType">
-                            <option value="">선택해주세요</option>
-                            <option value="메이커">🔥 메이커 — 당장 만들고 부딪히고 싶다</option>
-                            <option value="러너">📚 러너 — 배우면서 천천히 참여하고 싶다</option>
-                            <option value="옵저버">👀 옵저버 — 분위기와 흐름을 보고 싶다</option>
-                            <option value="컨트리뷰터">🎤 컨트리뷰터 — AI 지식을 공유하고 기여하고 싶다</option>
-                            <option value="쇼케이서">🚀 쇼케이서 — 개발한 서비스를 소개하고 싶다</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="s-message">한마디 (선택)</label>
+                        <label for="s-message">하고 싶은 말 (선택)</label>
                         <textarea id="s-message" name="message" rows="3" placeholder="자기소개, 기대하는 점, 하고 싶은 말 등"></textarea>
                     </div>
                     <div class="form-group">
@@ -257,6 +230,13 @@
                     </div>
                     <button type="submit" class="btn-primary form-submit">멤버 가입 신청 →</button>
                     <div class="form-status" id="signup-status"></div>
+
+                    <div class="auth-divider"><span>또는</span></div>
+                    <button type="button" class="btn-google" id="signup-google-btn">
+                        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+                        Google로 계속하기
+                    </button>
+
                     <p class="auth-switch">이미 가입하셨나요? <a href="#" id="switch-to-login">로그인</a></p>
                 </form>
 
@@ -274,6 +254,13 @@
                     </div>
                     <button type="submit" class="btn-primary form-submit">로그인 →</button>
                     <div class="form-status" id="login-status"></div>
+
+                    <div class="auth-divider"><span>또는</span></div>
+                    <button type="button" class="btn-google" id="login-google-btn">
+                        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+                        Google로 로그인
+                    </button>
+
                     <p class="auth-switch"><a href="#" id="switch-to-forgot">비밀번호를 잊으셨나요?</a></p>
                     <p class="auth-switch">아직 멤버가 아니신가요? <a href="#" id="switch-to-signup">멤버 가입</a></p>
                 </form>
@@ -337,38 +324,15 @@
                         <span class="form-hint">소속, 직업, 직무 등을 간단히 적어주세요</span>
                     </div>
 
-                    <!-- 멤버 유형 (수정 가능) -->
+                    <!-- 관심 분야 (수정 가능) — 자유 텍스트 -->
                     <div class="form-group">
-                        <label for="p-type">멤버 유형</label>
-                        <select id="p-type" name="memberType">
-                            <option value="">선택해주세요</option>
-                            <option value="메이커">메이커 — 당장 만들고 부딪히고 싶다</option>
-                            <option value="러너">러너 — 배우면서 천천히 참여하고 싶다</option>
-                            <option value="옵저버">옵저버 — 분위기와 흐름을 보고 싶다</option>
-                            <option value="컨트리뷰터">컨트리뷰터 — AI 지식을 공유하고 기여하고 싶다</option>
-                            <option value="쇼케이서">쇼케이서 — 개발한 서비스를 소개하고 싶다</option>
-                        </select>
+                        <label for="p-interests">관심 분야 (선택)</label>
+                        <textarea id="p-interests" name="interests" rows="2" maxlength="200" placeholder="예: 바이브코딩, AI 마케팅, 사업 아이디어 등 자유롭게 적어주세요"></textarea>
                     </div>
 
-                    <!-- 관심 분야 (수정 가능) -->
+                    <!-- 하고 싶은 말 (수정 가능) -->
                     <div class="form-group">
-                        <label>관심 분야 (복수 선택 가능)</label>
-                        <div class="checkbox-grid" id="profile-interests">
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="바이브코딩"> 바이브코딩/개발</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="서비스기획"> 앱/웹 서비스 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="AI툴활용"> AI 툴 활용</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="콘텐츠제작"> 콘텐츠 제작</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="사업기획"> 사업 아이디어 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="테크트렌드"> Tech Trend</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="경제투자"> 경제전망/투자</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="마케팅"> AI 마케팅</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="네트워킹"> 네트워킹</label>
-                        </div>
-                    </div>
-
-                    <!-- 한마디 (수정 가능) -->
-                    <div class="form-group">
-                        <label for="p-message">한마디 (선택)</label>
+                        <label for="p-message">하고 싶은 말 (선택)</label>
                         <textarea id="p-message" name="message" rows="3"></textarea>
                     </div>
 
@@ -417,6 +381,65 @@
         </div>
     </div>
 
+    <!-- 게스트(비회원) 참여 신청 모달 -->
+    <!-- Identity Choice Modal — 슬롯 신청 시 회원/비회원 분기 -->
+    <div id="identity-choice-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 420px;">
+            <button class="modal-close" id="ic-close-btn">&times;</button>
+            <h2 class="modal-title">신청 방식 선택</h2>
+            <div id="ic-selected-slot" class="ga-selected-slot"></div>
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem; text-align:center;">
+                회원이세요? 처음이세요?
+            </p>
+            <div class="identity-choice-buttons">
+                <button type="button" class="btn-primary identity-btn-member" id="ic-member-btn">
+                    회원이에요 — 로그인 →
+                </button>
+                <button type="button" class="identity-btn-guest" id="ic-guest-btn">
+                    처음이에요 — 게스트 신청 →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="guest-attend-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" id="guest-attend-close-btn">&times;</button>
+            <h2 class="modal-title">모임 참여 신청</h2>
+            <div id="ga-selected-slot" class="ga-selected-slot"></div>
+            <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.92rem;">
+                멤버 가입 없이도 신청할 수 있습니다.<br>
+                운영자가 확인 후 연락드립니다.
+            </p>
+            <form id="guest-attend-form" class="site-form">
+                <div class="form-group">
+                    <label for="ga-name">이름 <span class="required">*</span></label>
+                    <input type="text" id="ga-name" name="name" required maxlength="50" placeholder="홍길동">
+                </div>
+                <div class="form-group">
+                    <label for="ga-email">이메일 <span class="required">*</span></label>
+                    <input type="email" id="ga-email" name="email" required maxlength="100" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="ga-phone">핸드폰 번호 <span class="required">*</span></label>
+                    <input type="tel" id="ga-phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="[masked-phone]">
+                </div>
+                <div class="form-group">
+                    <label for="ga-memo">하고 싶은 말 (선택)</label>
+                    <textarea id="ga-memo" name="memo" rows="3" maxlength="300" placeholder="처음 참여합니다 / 관심 분야 / 질문 등"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="privacy-agree-label">
+                        <input type="checkbox" id="ga-agree" required>
+                        <a href="privacy.html" target="_blank" style="color: var(--accent-gold); text-decoration: none;">개인정보 처리방침</a>에 동의합니다 <span class="required">*</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary form-submit">참여 신청 보내기 →</button>
+                <div class="form-status" id="ga-status"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -442,8 +465,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260509a"></script>
+    <script src="js/supabase-config.js?v=20260510b"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260509a"></script>
+    <script src="js/main.js?v=20260510m"></script>
 </body>
 </html>

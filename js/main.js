@@ -2,6 +2,18 @@
 let currentUser = null;
 let currentProfile = null;
 let currentEventId = null; // 첫 번째 활성 이벤트 ID (참여 신청용)
+let currentSlotId = null;  // 게스트 모달이 열릴 때 선택된 타임 슬롯
+let pendingAttend = null;  // 비로그인 → 로그인 모달 → 로그인 후 자동 신청용: { eventId, slotId }
+
+// ========== WAAT 3-Time Slots (브랜드 고정 — DB 아님) ==========
+const WAAT_SLOTS = [
+    { id: 'sun',  emoji: '☀️', name: '햇살타임', time: '15:00–17:00' },
+    { id: 'dusk', emoji: '🌅', name: '노을타임', time: '17:30–19:30' },
+    { id: 'moon', emoji: '🌙', name: '달빛타임', time: '20:00–22:00' }
+];
+function getSlotById(id) {
+    return WAAT_SLOTS.find(s => s.id === id) || null;
+}
 
 // ========== Scroll Reveal & Nav scroll are handled by js/animations.js (GSAP) ==========
 
@@ -110,11 +122,224 @@ document.getElementById('switch-to-login-from-forgot').addEventListener('click',
     openModal('login');
 });
 
+// ========== Google OAuth 로그인 ==========
+function bindGoogleAuth(btnId) {
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener('click', async function() {
+        try {
+            btn.disabled = true;
+            btn.textContent = '구글 로그인 페이지로 이동...';
+            await Auth.signInWithGoogle();
+        } catch (err) {
+            console.error('Google sign-in error:', err);
+            alert('구글 로그인 실패: ' + (err.message || err));
+            btn.disabled = false;
+        }
+    });
+}
+bindGoogleAuth('signup-google-btn');
+bindGoogleAuth('login-google-btn');
+
+// ========== Guest Attend (비회원 참여 신청) ==========
+(function() {
+    var modal = document.getElementById('guest-attend-modal');
+    if (!modal) return;
+
+    function close() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    var closeBtn = document.getElementById('guest-attend-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
+
+    var form = document.getElementById('guest-attend-form');
+    if (!form) return;
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var statusEl = document.getElementById('ga-status');
+        var btn = form.querySelector('.form-submit');
+
+        var name = document.getElementById('ga-name').value.trim();
+        var email = document.getElementById('ga-email').value.trim();
+        var phoneRaw = document.getElementById('ga-phone').value.trim();
+        var memo = document.getElementById('ga-memo').value.trim();
+
+        // 검증 1: 빈 필드
+        if (!name || !email || !phoneRaw) {
+            setStatus(statusEl, '이름·이메일·핸드폰 번호를 모두 입력해주세요.', 'error');
+            return;
+        }
+
+        // 검증 2: 이메일 형식
+        var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRe.test(email)) {
+            setStatus(statusEl, '이메일 형식이 올바르지 않습니다.', 'error');
+            return;
+        }
+
+        // 검증 3: 핸드폰 번호 (010/011 + 10~11자리)
+        var phone = phoneRaw.replace(/[^0-9]/g, '');
+        if (!/^01[016789]\d{7,8}$/.test(phone)) {
+            setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
+            return;
+        }
+
+        // 이벤트/슬롯 정보
+        var eventId = (typeof currentEventId !== 'undefined' && currentEventId) ? currentEventId : null;
+        var slotId = (typeof currentSlotId !== 'undefined' && currentSlotId) ? currentSlotId : null;
+        var slot = slotId ? getSlotById(slotId) : null;
+        var slotLabel = slot ? (' / ' + slot.name) : '';
+
+        var subject = '[모임 참여 신청] ' + name + slotLabel;
+        var body = '이름: ' + name +
+                   '\n이메일: ' + email +
+                   '\n핸드폰: ' + phone +
+                   '\n메모: ' + (memo || '(없음)') +
+                   (eventId ? ('\n[이벤트 ID]: ' + eventId) : '') +
+                   (slot ? ('\n[타임]: ' + slot.emoji + ' ' + slot.name + ' (' + slot.time + ')') : '') +
+                   '\n신청일: ' + new Date().toISOString();
+
+        setStatus(statusEl, '신청 처리 중...', 'loading');
+        btn.disabled = true;
+        try {
+            await DB.createInquiry({
+                name: name,
+                phone: phone,
+                email: email,
+                subject: subject,
+                message: body,
+                event_id: eventId,
+                slot_id: slotId
+            });
+            setStatus(statusEl, '신청이 접수되었습니다. 운영자가 곧 연락드립니다.', 'success');
+            setTimeout(close, 2000);
+        } catch (err) {
+            console.error('Guest attend error:', err);
+            setStatus(statusEl, '신청 실패: ' + (err.message || err), 'error');
+            btn.disabled = false;
+        }
+    });
+})();
+
+// ========== Toast helper ==========
+function showToast(msg, type) {
+    var t = document.getElementById('app-toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'app-toast';
+        t.className = 'app-toast';
+        document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.className = 'app-toast show' + (type ? ' ' + type : '');
+    clearTimeout(showToast._tid);
+    showToast._tid = setTimeout(function() { t.className = 'app-toast'; }, 3200);
+}
+
+// ========== 회원 슬롯 신청 ==========
+async function memberAttendSlot(eventId, slotId, slot) {
+    if (!eventId || !slotId || !currentUser) return;
+    try {
+        await DB.attendEvent(currentUser.id, eventId, '', slotId);
+        var label = slot ? (slot.emoji + ' ' + slot.name) : '슬롯';
+        showToast('✅ ' + label + ' 신청 완료');
+        if (typeof checkAttendance === 'function') checkAttendance();
+        if (typeof renderScheduleEvents === 'function') await renderScheduleEvents();
+    } catch (err) {
+        var msg = err.message || String(err);
+        if (/duplicate|unique/i.test(msg)) {
+            showToast('이미 신청하셨습니다.');
+        } else {
+            console.error('Member attend error:', err);
+            showToast('신청 실패: ' + msg, 'error');
+        }
+    }
+}
+
+// ========== 회원 슬롯 취소 ==========
+async function memberCancelSlot(eventId, slotId, slot) {
+    if (!eventId || !slotId || !currentUser) return;
+    try {
+        await DB.cancelAttendance(currentUser.id, eventId, slotId);
+        var label = slot ? (slot.emoji + ' ' + slot.name) : '슬롯';
+        showToast('❎ ' + label + ' 신청 취소됨');
+        if (typeof checkAttendance === 'function') checkAttendance();
+        if (typeof renderScheduleEvents === 'function') await renderScheduleEvents();
+    } catch (err) {
+        console.error('Member cancel error:', err);
+        showToast('취소 실패: ' + (err.message || err), 'error');
+    }
+}
+
+// ========== Identity Choice Modal ==========
+function showIdentityChoiceModal(slot) {
+    var m = document.getElementById('identity-choice-modal');
+    if (!m) return;
+    var slotEl = document.getElementById('ic-selected-slot');
+    if (slotEl && slot) {
+        slotEl.innerHTML = slot.emoji + ' <strong>' + slot.name + '</strong> (' + slot.time + ')';
+    }
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeIdentityChoiceModal() {
+    var m = document.getElementById('identity-choice-modal');
+    if (m) {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+}
+(function() {
+    var m = document.getElementById('identity-choice-modal');
+    if (!m) return;
+    var closeBtn = document.getElementById('ic-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closeIdentityChoiceModal);
+    m.addEventListener('click', function(e) { if (e.target === m) closeIdentityChoiceModal(); });
+
+    var memberBtn = document.getElementById('ic-member-btn');
+    if (memberBtn) memberBtn.addEventListener('click', function() {
+        if (currentEventId && currentSlotId) {
+            pendingAttend = { eventId: currentEventId, slotId: currentSlotId };
+        }
+        closeIdentityChoiceModal();
+        openModal('login');
+    });
+
+    var guestBtn = document.getElementById('ic-guest-btn');
+    if (guestBtn) guestBtn.addEventListener('click', function() {
+        closeIdentityChoiceModal();
+        var slot = getSlotById(currentSlotId);
+        var ga = document.getElementById('guest-attend-modal');
+        if (!ga) return;
+        var f = document.getElementById('guest-attend-form');
+        if (f) f.reset();
+        var s = document.getElementById('ga-status');
+        if (s) { s.textContent = ''; s.className = 'form-status'; }
+        var slotEl = document.getElementById('ga-selected-slot');
+        if (slotEl && slot) slotEl.innerHTML = slot.emoji + ' <strong>' + slot.name + '</strong> (' + slot.time + ')';
+        ga.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    });
+})();
+
+// 로그인 후 pending slot 자동 신청
+async function tryPendingSlotAttend() {
+    if (!pendingAttend || !currentUser) return;
+    var ev = pendingAttend.eventId;
+    var sl = pendingAttend.slotId;
+    pendingAttend = null;
+    var slot = getSlotById(sl);
+    await memberAttendSlot(ev, sl, slot);
+}
+
 // ========== Phone number: strip non-digits ==========
 function sanitizePhone(value) {
     return value.replace(/[^0-9]/g, '');
 }
-document.querySelectorAll('#s-contact, #inq-phone').forEach(function(el) {
+document.querySelectorAll('#s-contact, #inq-phone, #ga-phone').forEach(function(el) {
     el.addEventListener('input', function() {
         var pos = el.selectionStart;
         var before = el.value.length;
@@ -207,6 +432,8 @@ async function initAuth() {
             // 로그인 후 참여 UI만 업데이트 (카드 전체 재렌더링 불필요)
             updateAttendUI();
             if (currentUser) checkAttendance();
+            // 비로그인 상태에서 슬롯 신청 시도 후 로그인했으면 자동 신청
+            await tryPendingSlotAttend();
         } else if (event === 'SIGNED_OUT') {
             currentUser = null;
             currentProfile = null;
@@ -276,14 +503,17 @@ function fillProfileAll() {
     document.getElementById('p-contact').value = currentProfile.phone || '';
     // 수정 가능 필드
     document.getElementById('p-current-job').value = currentProfile.current_job || '';
-    document.getElementById('p-type').value = currentProfile.member_type || '';
     document.getElementById('p-message').value = currentProfile.message || '';
-    // 관심분야 체크
-    const checkboxes = document.querySelectorAll('#profile-interests input[type="checkbox"]');
-    const interests = currentProfile.interests || [];
-    checkboxes.forEach(cb => {
-        cb.checked = interests.includes(cb.value);
-    });
+    // 관심 분야 — textarea (배열이면 join, 문자열이면 그대로)
+    var interestsEl = document.getElementById('p-interests');
+    if (interestsEl) {
+        var raw = currentProfile.interests;
+        if (Array.isArray(raw)) {
+            interestsEl.value = raw.join(', ');
+        } else {
+            interestsEl.value = raw || '';
+        }
+    }
 }
 
 // ========== Helper: escape HTML ==========
@@ -297,6 +527,7 @@ function escapeHtml(str) {
 function formatEventDate(dateStr, dayLabel) {
     // dateStr: "2025-02-06" 형태
     const parts = dateStr.split('-');
+    const year = parseInt(parts[0]);
     const month = parseInt(parts[1]);
     const day = parseInt(parts[2]);
     // 영어→한글 요일 매핑
@@ -305,23 +536,44 @@ function formatEventDate(dateStr, dayLabel) {
     if (dayLabel) {
         dayEng = dayLabel;
     } else {
-        var year = parseInt(parts[0]);
         var date = new Date(year, month - 1, day);
         var dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
         dayEng = dayNames[date.getDay()];
     }
     var dayName = engToKor[dayEng] || dayEng;
-    return { display: `${month}.${day}`, dayName };
+    // 풀 날짜: "2026년 5월 13일 (수요일)"
+    return {
+        display: `${year}년 ${month}월 ${day}일`,
+        dayName,
+        compact: `${month}.${day}`
+    };
 }
 
-// ========== Helper: format event time ==========
-function formatEventTime(timeStr) {
+// ========== Helper: format event time (3 타임 지원) ==========
+function formatSingleTime(timeStr) {
     if (!timeStr) return '';
-    const [h, m] = timeStr.split(':');
-    const hour = parseInt(h);
-    const period = hour < 12 ? '오전' : '저녁';
-    const displayHour = hour > 12 ? hour - 12 : hour;
-    return `${period} ${displayHour}:${m}`;
+    var s = String(timeStr).trim();
+    // 이미 한글 표기면 그대로
+    if (/오전|오후|저녁/.test(s)) return s;
+    var m = s.match(/^(\d{1,2}):?(\d{0,2})/);
+    if (!m) return s;
+    var hour = parseInt(m[1]);
+    var min = m[2] || '00';
+    var period = hour < 12 ? '오전' : '오후';
+    var displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+    return min === '00' ? `${period} ${displayHour}시` : `${period} ${displayHour}:${min}`;
+}
+function formatEventTimes(eventTimes, eventTime) {
+    // 우선 event_times (콤마 또는 슬래시 구분), 없으면 단일 event_time
+    var raw = eventTimes && String(eventTimes).trim() ? eventTimes : (eventTime || '');
+    if (!raw) return '';
+    var parts = String(raw).split(/[,/]|\s\/\s/).map(function(t) { return t.trim(); }).filter(Boolean);
+    if (parts.length === 0) return '';
+    return parts.map(formatSingleTime).join(' · ');
+}
+// 호환용 (기존 호출자)
+function formatEventTime(timeStr) {
+    return formatSingleTime(timeStr);
 }
 
 // ========== Render events from DB ==========
@@ -338,50 +590,35 @@ async function renderScheduleEvents() {
         // 첫 번째 활성 이벤트를 참여 신청용으로 설정
         currentEventId = events[0].id;
 
+        // 슬롯별 인원수 + 본인이 신청한 슬롯 조회 (첫 이벤트 기준)
+        let slotCounts = { sun: 0, dusk: 0, moon: 0 };
+        let myAttendedSlots = new Set();
+        try {
+            slotCounts = await DB.getSlotCounts(events[0].id);
+        } catch (e) { console.warn('getSlotCounts failed:', e); }
+        if (currentUser) {
+            try {
+                const myAtt = await DB.getMyAttendance(currentUser.id);
+                myAtt.filter(a => a.event_id == events[0].id && a.slot_id)
+                     .forEach(a => myAttendedSlots.add(a.slot_id));
+            } catch (e) { console.warn('getMyAttendance failed:', e); }
+        }
+
         container.innerHTML = events.map((ev, idx) => {
             const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
-            const timeDisplay = formatEventTime(ev.event_time);
+            const timeDisplay = formatEventTimes(ev.event_times, ev.event_time);
             const isFirst = idx === 0;
 
-            // 상세 정보 항목들
+            // 상세 정보 항목들 — 장소는 이름 하나만 (Location 섹션 카드로 연결)
             let detailItems = '';
             if (ev.location) {
+                const locSlug = encodeURIComponent(ev.location);
                 detailItems += `
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">📍</div>
                         <div class="schedule-info-text">
                             <div class="info-label">장소</div>
-                            <div class="info-value">${escapeHtml(ev.location)}</div>
-                        </div>
-                    </div>`;
-            }
-            if (ev.address) {
-                detailItems += `
-                    <div class="schedule-info-item">
-                        <div class="schedule-info-icon">🗺️</div>
-                        <div class="schedule-info-text">
-                            <div class="info-label">주소</div>
-                            <div class="info-value">${escapeHtml(ev.address)}</div>
-                        </div>
-                    </div>`;
-            }
-            if (ev.map_url) {
-                detailItems += `
-                    <div class="schedule-info-item">
-                        <div class="schedule-info-icon">🔗</div>
-                        <div class="schedule-info-text">
-                            <div class="info-label">네이버 지도</div>
-                            <div class="info-value"><a href="${escapeHtml(ev.map_url)}" target="_blank" rel="noopener noreferrer">지도에서 보기 →</a></div>
-                        </div>
-                    </div>`;
-            }
-            if (ev.provision) {
-                detailItems += `
-                    <div class="schedule-info-item">
-                        <div class="schedule-info-icon">🥪</div>
-                        <div class="schedule-info-text">
-                            <div class="info-label">제공</div>
-                            <div class="info-value">${escapeHtml(ev.provision)}</div>
+                            <div class="info-value"><a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a></div>
                         </div>
                     </div>`;
             }
@@ -390,7 +627,7 @@ async function renderScheduleEvents() {
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">📋</div>
                         <div class="schedule-info-text">
-                            <div class="info-label">상세 내용</div>
+                            <div class="info-label">내용</div>
                             <div class="info-value">${escapeHtml(ev.description)}</div>
                         </div>
                     </div>`;
@@ -407,39 +644,46 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
-            // 참여 버튼 (schedule-highlight 안)
-            const attendBtns = isFirst ? `
-                <div class="attend-btn-wrap" id="attend-section">
-                    <button type="button" class="btn-primary" id="attend-guest-btn">멤버 가입 후 참여 신청하기 →</button>
-                    <div id="attend-logged-in" style="display:none;">
-                        <button type="button" class="btn-primary" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
-                        <div class="form-status" id="attend-status" style="margin-top:0.5rem;"></div>
-                    </div>
-                    <div id="attend-already" style="display:none;" class="attend-already-msg">
-                        ✅ 이 모임에 참여 신청 완료!
-                        <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
-                    </div>
-                </div>` : '';
-            const attendForm = '';
+            // 3 타임 슬롯 카드 (첫 이벤트만)
+            const slotsHtml = isFirst ? `
+                <div class="waat-slots">
+                    ${WAAT_SLOTS.map(s => {
+                        const count = slotCounts[s.id] || 0;
+                        const attended = myAttendedSlots.has(s.id);
+                        const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
+                        const btnText = attended ? '✓ 신청됨 — 취소' : '이 타임 신청 →';
+                        return `
+                        <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-slot-id="${s.id}">
+                            <div class="waat-slot-emoji">${s.emoji}</div>
+                            <div class="waat-slot-name">${s.name} <span class="slot-count">(${count}명)</span></div>
+                            <div class="waat-slot-time">${s.time}</div>
+                            <button type="button" class="${btnClass}" data-slot-id="${s.id}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <p class="waat-slots-note">원하는 시간대 하나를 골라서 오시면 돼요.<br>사이사이 30분의 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
+            ` : '';
+
+            // 모임 회차: 역순 인덱스로 계산 — DB는 최신순으로 들어있으므로 (전체 - idx)차
+            const total = events.length;
+            const meetingNo = total - idx;
 
             return `
                 <div class="schedule-card reveal">
                     <div class="schedule-highlight">
-                        <div class="schedule-date-label" style="font-size:1.82rem;font-weight:700;">✨ ${escapeHtml(ev.title)}</div>
-                        <div class="schedule-date">
+                        <div class="schedule-meeting-no">제${meetingNo}회 모임</div>
+                        <div class="schedule-date-line">
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
-                        ${timeDisplay ? `<div class="schedule-time">${timeDisplay}</div>` : ''}
-                        ${attendBtns}
+                        ${slotsHtml}
                     </div>
                     ${detailItems ? `
                     <div class="schedule-details">
-                        <h3>${escapeHtml(ev.title)} 상세 정보</h3>
+                        <h3>모임 정보</h3>
                         <div class="schedule-info">
                             ${detailItems}
                         </div>
                     </div>` : ''}
-                    ${attendForm}
                 </div>`;
         }).join('');
 
@@ -460,16 +704,54 @@ async function renderScheduleEvents() {
     }
 }
 
+// ========== Schedule → Location 점프 링크 ==========
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('.location-jump-link');
+    if (!link) return;
+    e.preventDefault();
+    const targetName = link.getAttribute('data-location-name');
+    const section = document.getElementById('location');
+    if (!section) return;
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // 매칭 카드 강조 (300ms 뒤에 시작 — 스크롤 후)
+    setTimeout(function() {
+        document.querySelectorAll('.location-card').forEach(function(card) {
+            if (card.getAttribute('data-location-name') === targetName) {
+                card.classList.add('loc-highlight');
+                setTimeout(function() { card.classList.remove('loc-highlight'); }, 2400);
+            }
+        });
+    }, 350);
+});
+
 // ========== Rebind attend buttons after dynamic render ==========
 function rebindAttendButtons() {
-    // 비회원용 버튼: 가입 모달 열기
-    const guestBtn = document.getElementById('attend-guest-btn');
-    if (guestBtn) {
-        guestBtn.addEventListener('click', (e) => {
+    // 3 타임 슬롯 버튼: 로그인 상태 + 신청 상태 분기
+    document.querySelectorAll('.waat-slot-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
             e.preventDefault();
-            openModal('signup', { showNotice: true });
+            const slotId = btn.getAttribute('data-slot-id');
+            const attended = btn.getAttribute('data-attended') === '1';
+            currentSlotId = slotId;
+            const slot = getSlotById(slotId);
+
+            if (attended && currentUser) {
+                // 이미 신청 → 취소 확인
+                const ok = confirm((slot ? slot.emoji + ' ' + slot.name : '') + ' 신청을 취소하시겠습니까?');
+                if (!ok) return;
+                await memberCancelSlot(currentEventId, slotId, slot);
+                return;
+            }
+
+            if (currentUser) {
+                // 회원: 즉시 신청
+                await memberAttendSlot(currentEventId, slotId, slot);
+            } else {
+                // 비로그인: 신원 선택 모달
+                showIdentityChoiceModal(slot);
+            }
         });
-    }
+    });
 
     // 참여 신청 버튼: 클릭 시 메모 팝업 열기
     const toggleBtn = document.getElementById('attend-toggle-btn');
@@ -541,36 +823,25 @@ async function renderLocations() {
         }
 
         const icons = { primary: '🟡', secondary: '🏠' };
-        const badges = { primary: '메인', secondary: '보조' };
+        const badges = { primary: 'Primary', secondary: 'Secondary' };
 
         container.innerHTML = locations.map(loc => {
             const icon = icons[loc.loc_type] || '📍';
-            const badge = badges[loc.loc_type] || '장소';
-            const isPrimary = loc.loc_type === 'primary';
+            const badge = badges[loc.loc_type] || 'Location';
 
             const mapLink = loc.map_url
-                ? `<a href="${escapeHtml(loc.map_url)}" target="_blank" rel="noopener noreferrer" class="loc-link">네이버 지도 →</a>`
+                ? `<a href="${escapeHtml(loc.map_url)}" target="_blank" rel="noopener noreferrer" class="loc-link">지도 →</a>`
                 : '';
 
-            const noteStyle = isPrimary
-                ? ''
-                : ' style="background: rgba(168, 85, 247, 0.05);"';
-
-            const noteHtml = loc.note
-                ? `<div class="loc-note"${noteStyle}>${escapeHtml(loc.note)}</div>`
-                : '';
-
-            const addressHtml = loc.address
-                ? `<p class="loc-address">${escapeHtml(loc.address)}</p>`
-                : '';
+            const addressLine = loc.address
+                ? `<p class="loc-address">${escapeHtml(loc.address)}${mapLink ? ' &nbsp;·&nbsp; ' + mapLink : ''}</p>`
+                : (mapLink ? `<p class="loc-address">${mapLink}</p>` : '');
 
             return `
-                <div class="location-card ${escapeHtml(loc.loc_type)}">
+                <div class="location-card ${escapeHtml(loc.loc_type)}" data-location-name="${encodeURIComponent(loc.name)}">
                     <span class="loc-badge">${escapeHtml(badge)}</span>
                     <h3>${icon} ${escapeHtml(loc.name)}</h3>
-                    ${addressHtml}
-                    ${mapLink}
-                    ${noteHtml}
+                    ${addressLine}
                 </div>`;
         }).join('');
 
@@ -715,10 +986,10 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     const name = document.getElementById('s-name').value.trim();
     const phone = sanitizePhone(document.getElementById('s-contact').value);
     const currentJob = document.getElementById('s-current-job').value.trim();
-    const memberType = document.getElementById('s-type').value;
     const message = document.getElementById('s-message').value.trim();
-    const checked = e.target.querySelectorAll('input[name="interests"]:checked');
-    const interests = Array.from(checked).map(c => c.value);
+    // 관심분야 — textarea 자유입력
+    var interestsRaw = (document.getElementById('s-interests') || {}).value || '';
+    const interests = interestsRaw.trim();
 
     // 비밀번호 유효성: 영문+숫자만, 6자 이상
     if (password.length < 6) {
@@ -763,7 +1034,6 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
                         email,
                         current_job: currentJob,
                         interests,
-                        member_type: memberType,
                         message
                     });
                     break;
@@ -908,10 +1178,10 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     const name = document.getElementById('p-name').value.trim();
     const phone = sanitizePhone(document.getElementById('p-contact').value);
     const currentJob = document.getElementById('p-current-job').value.trim();
-    const memberType = document.getElementById('p-type').value;
     const message = document.getElementById('p-message').value.trim();
-    const checked = e.target.querySelectorAll('input[name="interests"]:checked');
-    const interests = Array.from(checked).map(c => c.value);
+    // 관심분야 — textarea 자유입력
+    var interestsRaw = (document.getElementById('p-interests') || {}).value || '';
+    const interests = interestsRaw.trim();
 
     setStatus(statusEl, '저장 중...', 'loading');
     btn.disabled = true;
@@ -922,7 +1192,6 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
             phone,
             current_job: currentJob,
             interests,
-            member_type: memberType,
             message
         });
         document.getElementById('nav-user-name').textContent = name;

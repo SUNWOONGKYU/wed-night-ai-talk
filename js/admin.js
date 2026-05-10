@@ -313,23 +313,27 @@ async function viewAttendees(eventId, eventTitle) {
 
     card.style.display = 'block';
     titleEl.textContent = `"${eventTitle}" 참여자 명단`;
-    tbody.innerHTML = '<tr><td colspan="6" class="admin-loading">로딩 중...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>';
     countEl.textContent = '';
+
+    const SLOT_LABELS = { sun: '☀️ 햇살', dusk: '🌅 노을', moon: '🌙 달빛' };
 
     try {
         const attendees = await DB.getEventAttendees(eventId);
 
         if (attendees.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
             countEl.textContent = '';
         } else {
             tbody.innerHTML = attendees.map(a => {
                 const name = a.profiles ? a.profiles.name : '-';
                 const phone = a.profiles ? a.profiles.phone : '-';
                 const email = a.profiles ? (a.profiles.email || '-') : '-';
+                const slotLabel = a.slot_id ? (SLOT_LABELS[a.slot_id] || a.slot_id) : '-';
                 const date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
                 return `<tr>
                     <td>${escapeHtml(name)}</td>
+                    <td>${slotLabel}</td>
                     <td>${escapeHtml(phone)}</td>
                     <td>${escapeHtml(email)}</td>
                     <td>${escapeHtml(a.note || '-')}</td>
@@ -341,7 +345,7 @@ async function viewAttendees(eventId, eventTitle) {
         }
     } catch (e) {
         console.error('viewAttendees error:', e);
-        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -508,22 +512,26 @@ async function loadInquiries() {
         renderInquiries(allInquiries);
     } catch (e) {
         document.getElementById('inquiries-tbody').innerHTML =
-            '<tr><td colspan="7" class="admin-empty">문의 목록을 불러올 수 없습니다.</td></tr>';
+            '<tr><td colspan="8" class="admin-empty">문의 목록을 불러올 수 없습니다.</td></tr>';
     }
 }
 
 function renderInquiries(inquiries) {
     const tbody = document.getElementById('inquiries-tbody');
     if (inquiries.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">접수된 문의가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty">접수된 문의가 없습니다.</td></tr>';
         document.getElementById('inquiry-count').textContent = '';
         return;
     }
 
+    const SLOT_LABELS = { sun: '☀️ 햇살', dusk: '🌅 노을', moon: '🌙 달빛' };
+
     tbody.innerHTML = inquiries.map(inq => {
         const date = inq.created_at ? new Date(inq.created_at).toLocaleDateString('ko-KR') : '-';
+        const slotLabel = inq.slot_id ? (SLOT_LABELS[inq.slot_id] || inq.slot_id) : '-';
         return `<tr>
             <td>${escapeHtml(inq.name || '-')}</td>
+            <td>${slotLabel}</td>
             <td>${escapeHtml(inq.phone || '-')}</td>
             <td>${escapeHtml(inq.email || '-')}</td>
             <td>${escapeHtml(inq.subject || '-')}</td>

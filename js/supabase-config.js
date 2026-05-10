@@ -50,6 +50,18 @@ var Auth = {
         return data;
     },
 
+    async signInWithGoogle() {
+        var { data, error } = await _supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname,
+                queryParams: { access_type: 'offline', prompt: 'consent' }
+            }
+        });
+        if (error) throw error;
+        return data;
+    },
+
     async signOut() {
         var { error } = await _supabase.auth.signOut();
         if (error) throw error;
@@ -140,22 +152,37 @@ var DB = {
     },
 
     // -- Attendance --
-    async attendEvent(userId, eventId, note) {
+    async attendEvent(userId, eventId, note, slotId) {
         // RPC 함수로 RLS 우회 (SECURITY DEFINER)
         var { error } = await _supabase.rpc('attend_event', {
             p_event_id: eventId,
+            p_slot_id: slotId || null,
             p_note: note || ''
         });
         if (error) throw error;
     },
 
-    async cancelAttendance(userId, eventId) {
-        var { error } = await _supabase
-            .from('attendance')
-            .delete()
-            .eq('user_id', userId)
-            .eq('event_id', eventId);
+    async cancelAttendance(userId, eventId, slotId) {
+        // RPC로 RLS 우회 (SECURITY DEFINER) — slotId 명시 시 해당 슬롯만 취소
+        var { error } = await _supabase.rpc('cancel_attendance', {
+            p_event_id: eventId,
+            p_slot_id: slotId || null
+        });
         if (error) throw error;
+    },
+
+    async getSlotCounts(eventId) {
+        // 슬롯별 신청자 수 (회원 + 게스트 합산용 데이터)
+        var { data, error } = await _supabase.rpc('get_slot_counts', {
+            p_event_id: eventId
+        });
+        if (error) throw error;
+        // [{ slot_id, member_count, guest_count }, ...] → { sun: total, dusk: total, moon: total }
+        var counts = { sun: 0, dusk: 0, moon: 0 };
+        (data || []).forEach(function(r) {
+            counts[r.slot_id] = Number(r.member_count || 0) + Number(r.guest_count || 0);
+        });
+        return counts;
     },
 
     async getMyAttendance(userId) {
