@@ -773,17 +773,32 @@ async function renderScheduleEvents() {
                         const count = Number(s.count || 0);
                         const slotCap = (s.capacity != null) ? Number(s.capacity) : capacity;
                         const attended = myAttendedSlotIds.has(sid);
-                        const btnClass = attended ? 'waat-slot-btn slot-attended' : 'btn-primary waat-slot-btn';
-                        const btnText = attended ? '✓ 신청됨 — 취소' : '신청하기';
+                        const isFull = !attended && count >= slotCap;
+                        let btnClass, btnText, btnDisabled;
+                        if (attended) {
+                            btnClass = 'waat-slot-btn slot-attended';
+                            btnText = '✓ 신청됨 — 취소';
+                            btnDisabled = '';
+                        } else if (isFull) {
+                            btnClass = 'waat-slot-btn slot-full';
+                            btnText = '마감';
+                            btnDisabled = 'disabled';
+                        } else {
+                            btnClass = 'btn-primary waat-slot-btn';
+                            btnText = '신청하기';
+                            btnDisabled = '';
+                        }
                         const emoji = escapeHtml(s.slot_emoji || '');
                         const label = escapeHtml(s.slot_label || '');
                         const tStr = slotTimeStr(s);
+                        const cardStateClass = attended ? ' is-attended' : (isFull ? ' is-full' : '');
+                        const countClass = isFull ? 'slot-count slot-count-full' : 'slot-count';
                         return `
-                        <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-event-slot-id="${sid}">
+                        <div class="waat-slot-card${cardStateClass}" data-event-slot-id="${sid}">
                             <div class="waat-slot-emoji">${emoji}</div>
-                            <div class="waat-slot-name">${label} <span class="slot-count">(${count}/${slotCap}명)</span></div>
+                            <div class="waat-slot-name">${label} <span class="${countClass}">(${count}/${slotCap}명)${isFull ? ' · 마감' : ''}</span></div>
                             <div class="waat-slot-time">${escapeHtml(tStr)}</div>
-                            <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
+                            <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}" data-full="${isFull ? '1' : '0'}" ${btnDisabled}>${btnText}</button>
                         </div>`;
                     }).join('')}
                 </div>
@@ -857,6 +872,7 @@ function rebindAttendButtons() {
             e.preventDefault();
             const eventSlotId = Number(btn.getAttribute('data-event-slot-id'));
             const attended = btn.getAttribute('data-attended') === '1';
+            const isFull = btn.getAttribute('data-full') === '1';
             currentEventSlotId = eventSlotId;
             const slot = getSlotById(eventSlotId);
             const eventIdForSlot = (slot && slot.event_id) ? slot.event_id : currentEventId;
@@ -866,6 +882,11 @@ function rebindAttendButtons() {
                 const ok = confirm(slotDisplayName(slot) + ' 신청을 취소하시겠습니까?');
                 if (!ok) return;
                 await memberCancelSlot(eventIdForSlot, eventSlotId, slot);
+                return;
+            }
+
+            if (isFull) {
+                showToast(slotDisplayName(slot) + ' 마감되었습니다. 다른 시간대를 선택해주세요.', 'error');
                 return;
             }
 
