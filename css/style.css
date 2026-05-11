@@ -3389,6 +3389,12 @@ footer {
     color: var(--accent-cyan);
     letter-spacing: 0.02em;
 }
+.waat-slot-room {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted, #6b7280);
+    margin-top: 0.15rem;
+}
 .waat-slot-tag {
     font-size: 0.78rem;
     color: var(--text-muted);
