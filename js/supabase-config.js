@@ -592,10 +592,39 @@ var DB = {
             }
         } catch (e) { /* ignore */ }
 
-        return attendances.map(function(a) {
+        var memberRows = attendances.map(function(a) {
             a.profiles = profileMap[a.user_id] || null;
             a.slot = a.event_slot_id ? (slotMap[a.event_slot_id] || null) : null;
+            a.is_guest = false;
             return a;
         });
+
+        // 게스트(비회원) 신청: inquiries 테이블에서 가져와 attendee 형태로 변환
+        var guestRows = [];
+        try {
+            var { data: guests } = await _supabase
+                .from('inquiries')
+                .select('id, name, phone, email, message, event_id, event_slot_id, created_at')
+                .eq('event_id', eventId)
+                .order('created_at', { ascending: true });
+            if (guests) {
+                guestRows = guests.map(function(g) {
+                    return {
+                        id: 'g_' + g.id,
+                        inquiry_id: g.id,
+                        is_guest: true,
+                        user_id: null,
+                        event_id: g.event_id,
+                        event_slot_id: g.event_slot_id,
+                        note: g.message || '',
+                        created_at: g.created_at,
+                        profiles: { name: g.name || '', phone: g.phone || '', email: g.email || '' },
+                        slot: g.event_slot_id ? (slotMap[g.event_slot_id] || null) : null
+                    };
+                });
+            }
+        } catch (e) { console.warn('guest inquiries fetch failed:', e); }
+
+        return memberRows.concat(guestRows);
     }
 };

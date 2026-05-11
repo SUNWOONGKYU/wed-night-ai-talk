@@ -491,14 +491,19 @@ async function viewAttendees(eventId, eventTitle) {
                     ? ((a.slot.slot_emoji || '') + ' ' + (a.slot.slot_label || '')).trim()
                     : '-';
                 var date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
+                var isGuest = !!a.is_guest;
+                var nameDisplay = isGuest ? (escapeHtml(name) + ' <span style="color:var(--accent-pink); font-size:0.78rem; margin-left:0.3rem;">[게스트]</span>') : escapeHtml(name);
+                var deleteBtn = isGuest
+                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.inquiry_id + ', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
+                    : '<button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + a.user_id + '\', \'' + a.event_id + '\', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>';
                 html += '<tr>' +
-                    '<td>' + escapeHtml(name) + '</td>' +
+                    '<td>' + nameDisplay + '</td>' +
                     '<td>' + escapeHtml(slotLabelCell) + '</td>' +
                     '<td>' + escapeHtml(phone) + '</td>' +
                     '<td>' + escapeHtml(email) + '</td>' +
                     '<td>' + escapeHtml(a.note || '-') + '</td>' +
                     '<td>' + date + '</td>' +
-                    '<td><button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + a.user_id + '\', \'' + a.event_id + '\', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button></td>' +
+                    '<td>' + deleteBtn + '</td>' +
                 '</tr>';
             });
             tbody.innerHTML = html;
@@ -517,6 +522,17 @@ async function deleteAttendee(userId, eventId, displayName) {
     try {
         await DB.adminDeleteAttendance(userId, eventId);
         alert('참여 신청이 삭제되었습니다.');
+        await viewAttendees(currentAttendEventId, currentAttendEventTitle);
+    } catch (e) {
+        alert('삭제 중 오류가 발생했습니다: ' + (e.message || e));
+    }
+}
+
+async function deleteGuestAttendee(inquiryId, displayName) {
+    if (!confirm(`"${displayName}" (게스트) 님의 참여 신청을 삭제하시겠습니까?`)) return;
+    try {
+        await DB.deleteInquiry(inquiryId);
+        alert('게스트 참여 신청이 삭제되었습니다.');
         await viewAttendees(currentAttendEventId, currentAttendEventTitle);
     } catch (e) {
         alert('삭제 중 오류가 발생했습니다: ' + (e.message || e));
