@@ -796,7 +796,7 @@ async function renderScheduleEvents() {
                         return `
                         <div class="waat-slot-card${cardStateClass}" data-event-slot-id="${sid}">
                             <div class="waat-slot-emoji">${emoji}</div>
-                            <div class="waat-slot-name">${label} <span class="${countClass}">(${count}/${slotCap}명)${isFull ? ' · 마감' : ''}</span></div>
+                            <div class="waat-slot-name">${label} <span class="${countClass}">(${count}/${slotCap}명)</span>${isFull ? '<span class="slot-full-badge">마감</span>' : ''}</div>
                             <div class="waat-slot-time">${escapeHtml(tStr)}</div>
                             <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}" data-full="${isFull ? '1' : '0'}" ${btnDisabled}>${btnText}</button>
                         </div>`;
