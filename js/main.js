@@ -703,6 +703,7 @@ async function renderScheduleEvents() {
                         <div class="schedule-info-text">
                             <div class="info-label">장소</div>
                             <div class="info-value"><a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a></div>
+                            <div class="info-rooms">☀️ 햇살: 2번 회의실 · 🌅 노을 / 🌙 달빛: 5번 회의실</div>
                         </div>
                     </div>`;
             }
@@ -776,15 +777,11 @@ async function renderScheduleEvents() {
                         const emoji = escapeHtml(s.slot_emoji || '');
                         const label = escapeHtml(s.slot_label || '');
                         const tStr = slotTimeStr(s);
-                        var roomLabel = '';
-                        if (s.slot_label === '햇살') roomLabel = '2번 회의실';
-                        else if (s.slot_label === '노을' || s.slot_label === '달빛') roomLabel = '5번 회의실';
                         return `
                         <div class="waat-slot-card${attended ? ' is-attended' : ''}" data-event-slot-id="${sid}">
                             <div class="waat-slot-emoji">${emoji}</div>
                             <div class="waat-slot-name">${label} <span class="slot-count">(${count}/${slotCap}명)</span></div>
                             <div class="waat-slot-time">${escapeHtml(tStr)}</div>
-                            ${roomLabel ? `<div class="waat-slot-room">${roomLabel}</div>` : ''}
                             <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}">${btnText}</button>
                         </div>`;
                     }).join('')}
