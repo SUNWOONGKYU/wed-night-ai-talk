@@ -702,8 +702,10 @@ async function renderScheduleEvents() {
                         <div class="schedule-info-icon">📍</div>
                         <div class="schedule-info-text">
                             <div class="info-label">장소</div>
-                            <div class="info-value"><a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a></div>
-                            <div class="info-rooms">☀️ 햇살: 2번 회의실 · 🌅 노을 / 🌙 달빛: 5번 회의실</div>
+                            <div class="info-value">
+                                <a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>
+                                <span class="info-rooms">(☀️ 햇살: 2번 회의실 · 🌅 노을 / 🌙 달빛: 5번 회의실)</span>
+                            </div>
                         </div>
                     </div>`;
             }

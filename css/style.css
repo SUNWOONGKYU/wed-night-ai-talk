@@ -3390,10 +3390,11 @@ footer {
     letter-spacing: 0.02em;
 }
 .info-rooms {
+    display: inline-block;
     font-size: 0.85rem;
     color: var(--text-muted, #6b7280);
-    margin-top: 0.2rem;
-    line-height: 1.5;
+    margin-left: 0.4rem;
+    font-weight: 400;
 }
 .waat-slot-tag {
     font-size: 0.78rem;
