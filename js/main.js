@@ -317,6 +317,16 @@ function showToast(msg, type) {
 // ========== 회원 슬롯 신청 ==========
 async function memberAttendSlot(eventId, eventSlotId, slot) {
     if (!eventId || !eventSlotId || !currentUser) return;
+    // 핸드폰 번호 등록 필수
+    var phone = ((currentProfile && currentProfile.phone) || '').replace(/[^0-9]/g, '');
+    if (!/^01[016789]\d{7,8}$/.test(phone)) {
+        showToast('핸드폰 번호 등록이 필요합니다. 프로필에서 입력해주세요.', 'error');
+        var membership = document.getElementById('membership');
+        if (membership) membership.scrollIntoView({ behavior: 'smooth' });
+        var pc = document.getElementById('p-contact');
+        if (pc) setTimeout(function() { pc.focus(); }, 600);
+        return;
+    }
     try {
         await DB.attendEvent(currentUser.id, eventId, '', eventSlotId);
         showToast('✅ ' + slotDisplayName(slot) + ' 신청 완료');
@@ -577,11 +587,18 @@ function fillProfileAll() {
     if (!currentProfile) return;
     // 읽기전용 정보
     document.getElementById('pv-name').textContent = currentProfile.name || '-';
-    document.getElementById('pv-phone').textContent = currentProfile.phone || '-';
+    var pvPhone = document.getElementById('pv-phone');
+    if (pvPhone) pvPhone.textContent = currentProfile.phone || '-';
     document.getElementById('pv-email').textContent = (currentUser && currentUser.email) || '-';
-    // 숨겨진 input (저장용)
+    // 이름은 hidden, 핸드폰은 편집 가능 input
     document.getElementById('p-name').value = currentProfile.name || '';
     document.getElementById('p-contact').value = currentProfile.phone || '';
+    // 핸드폰 누락 배너
+    var banner = document.getElementById('phone-missing-banner');
+    if (banner) {
+        var phone = (currentProfile.phone || '').replace(/[^0-9]/g, '');
+        banner.style.display = (phone.length < 10) ? 'block' : 'none';
+    }
     // 수정 가능 필드
     document.getElementById('p-current-job').value = currentProfile.current_job || '';
     document.getElementById('p-message').value = currentProfile.message || '';
@@ -1334,6 +1351,12 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     // 관심분야 — textarea 자유입력
     var interestsRaw = (document.getElementById('p-interests') || {}).value || '';
     const interests = interestsRaw.trim();
+
+    // 핸드폰 번호 필수 검증
+    if (!/^01[016789]\d{7,8}$/.test(phone)) {
+        setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
+        return;
+    }
 
     setStatus(statusEl, '저장 중...', 'loading');
     btn.disabled = true;

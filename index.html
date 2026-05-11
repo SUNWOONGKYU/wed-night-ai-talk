@@ -304,18 +304,25 @@
                             <span class="profile-value" id="pv-name">-</span>
                         </div>
                         <div class="profile-info-item">
-                            <span class="profile-label">전화번호</span>
-                            <span class="profile-value" id="pv-phone">-</span>
-                        </div>
-                        <div class="profile-info-item">
                             <span class="profile-label">이메일</span>
                             <span class="profile-value" id="pv-email">-</span>
                         </div>
                     </div>
 
-                    <!-- 숨겨진 input (저장용) -->
+                    <!-- 핸드폰 번호 안내 배너 (번호 없을 때만 표시) -->
+                    <div id="phone-missing-banner" style="display:none; background:rgba(255,90,90,0.12); border:1px solid rgba(255,90,90,0.45); border-radius:8px; padding:0.8rem 1rem; margin-bottom:1.2rem; color:#ffb4b4; font-size:0.92rem;">
+                        ⚠️ 모임 참여 신청을 위해 <strong>핸드폰 번호 등록이 필요</strong>합니다. 아래에 입력 후 저장해주세요.
+                    </div>
+
+                    <!-- 숨겨진 input (이름) -->
                     <input type="hidden" id="p-name">
-                    <input type="hidden" id="p-contact">
+
+                    <!-- 핸드폰 번호 (수정 가능, 필수) -->
+                    <div class="form-group">
+                        <label for="p-contact">핸드폰 번호 <span class="required">*</span></label>
+                        <input type="tel" id="p-contact" name="phone" required maxlength="13" inputmode="numeric" placeholder="[masked-phone]">
+                        <span class="form-hint">모임 참여·연락용 (10~11자리 숫자)</span>
+                    </div>
 
                     <!-- 현재 하는 일 (수정 가능) -->
                     <div class="form-group">
@@ -469,6 +476,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260511g"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260511i"></script>
+    <script src="js/main.js?v=20260511j"></script>
 </body>
 </html>

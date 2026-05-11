@@ -685,7 +685,11 @@ let allInquiries = [];
 
 async function loadInquiries() {
     try {
-        allInquiries = await DB.getAllInquiries();
+        var rows = await DB.getAllInquiries();
+        // 모임 참여 신청(event_id가 있는 행)은 참석자 명단에서 따로 보여주므로 문의 관리에서 제외
+        allInquiries = (rows || []).filter(function(r) {
+            return !r.event_id && !r.event_slot_id;
+        });
         renderInquiries(allInquiries);
     } catch (e) {
         document.getElementById('inquiries-tbody').innerHTML =
