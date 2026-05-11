@@ -260,14 +260,18 @@ function readSlotRows() {
         const emoji = (row.querySelector('.slot-emoji').value || '').trim();
         const time = (row.querySelector('.slot-time').value || '').trim();
         const endTime = (row.querySelector('.slot-end-time').value || '').trim();
+        const idEl = row.querySelector('.slot-id');
+        const rawId = idEl ? (idEl.value || '').trim() : '';
         if (!label) return; // 라벨 비어있으면 스킵
-        out.push({
+        const entry = {
             slot_label: label,
             slot_emoji: emoji,
             slot_time: time || null,
             slot_end_time: endTime || null,
             sort_order: idx + 1
-        });
+        };
+        if (rawId) entry.id = parseInt(rawId, 10);
+        out.push(entry);
     });
     return out;
 }
@@ -355,7 +359,9 @@ async function editEvent(id) {
     if (!slots) {
         try { slots = await DB.getEventSlots(ev.id); } catch (e) { slots = []; }
     }
-    renderSlotRows(slots && slots.length ? slots : DEFAULT_SLOTS);
+    // 활성 슬롯만 표시 (비활성/소프트삭제 슬롯 제외)
+    const activeSlots = (slots || []).filter(function(s) { return s.is_active !== false; });
+    renderSlotRows(activeSlots.length ? activeSlots : DEFAULT_SLOTS);
 
     document.getElementById('event-form-title').textContent = '모임 수정';
     eventForm.querySelector('.form-submit').textContent = '모임 수정 →';
