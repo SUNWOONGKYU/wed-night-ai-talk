@@ -400,6 +400,29 @@ var DB = {
         if (error) throw error;
     },
 
+    // -- Guest Attendance (게스트 모임 참여 신청) --
+    async createGuestAttendance(payload) {
+        // payload: { name, phone, email, message, event_id, event_slot_id }
+        var { data, error } = await _supabase.rpc('create_guest_attendance', {
+            p_name: payload.name,
+            p_phone: payload.phone,
+            p_email: payload.email || null,
+            p_message: payload.message || null,
+            p_event_id: payload.event_id,
+            p_event_slot_id: payload.event_slot_id
+        });
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteGuestAttendance(id) {
+        var { error } = await _supabase
+            .from('guest_attendance')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+    },
+
     async adminDeleteAttendance(userId, eventId) {
         var { error } = await _supabase.rpc('admin_delete_attendance', {
             p_user_id: userId,
@@ -599,11 +622,11 @@ var DB = {
             return a;
         });
 
-        // 게스트(비회원) 신청: inquiries 테이블에서 가져와 attendee 형태로 변환
+        // 게스트(비회원) 신청: guest_attendance 테이블에서 조회
         var guestRows = [];
         try {
             var { data: guests } = await _supabase
-                .from('inquiries')
+                .from('guest_attendance')
                 .select('id, name, phone, email, message, event_id, event_slot_id, created_at')
                 .eq('event_id', eventId)
                 .order('created_at', { ascending: true });
@@ -611,7 +634,7 @@ var DB = {
                 guestRows = guests.map(function(g) {
                     return {
                         id: 'g_' + g.id,
-                        inquiry_id: g.id,
+                        guest_id: g.id,
                         is_guest: true,
                         user_id: null,
                         event_id: g.event_id,
@@ -623,7 +646,7 @@ var DB = {
                     };
                 });
             }
-        } catch (e) { console.warn('guest inquiries fetch failed:', e); }
+        } catch (e) { console.warn('guest_attendance fetch failed:', e); }
 
         return memberRows.concat(guestRows);
     }

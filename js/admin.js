@@ -494,7 +494,7 @@ async function viewAttendees(eventId, eventTitle) {
                 var isGuest = !!a.is_guest;
                 var nameDisplay = isGuest ? (escapeHtml(name) + ' <span style="color:var(--accent-pink); font-size:0.78rem; margin-left:0.3rem;">[게스트]</span>') : escapeHtml(name);
                 var deleteBtn = isGuest
-                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.inquiry_id + ', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
+                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.guest_id + ', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
                     : '<button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + a.user_id + '\', \'' + a.event_id + '\', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>';
                 html += '<tr>' +
                     '<td>' + nameDisplay + '</td>' +
@@ -528,10 +528,10 @@ async function deleteAttendee(userId, eventId, displayName) {
     }
 }
 
-async function deleteGuestAttendee(inquiryId, displayName) {
+async function deleteGuestAttendee(guestId, displayName) {
     if (!confirm(`"${displayName}" (게스트) 님의 참여 신청을 삭제하시겠습니까?`)) return;
     try {
-        await DB.deleteInquiry(inquiryId);
+        await DB.deleteGuestAttendance(guestId);
         alert('게스트 참여 신청이 삭제되었습니다.');
         await viewAttendees(currentAttendEventId, currentAttendEventTitle);
     } catch (e) {

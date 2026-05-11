@@ -268,24 +268,14 @@ bindGoogleAuth('login-google-btn');
         var slot = getSlotById(eventSlotId);
         var slotLabel = slot ? (' / ' + slotDisplayName(slot)) : '';
 
-        var subject = '[모임 참여 신청] ' + name + slotLabel;
-        var body = '이름: ' + name +
-                   '\n이메일: ' + email +
-                   '\n핸드폰: ' + phone +
-                   '\n메모: ' + (memo || '(없음)') +
-                   (eventId ? ('\n[이벤트 ID]: ' + eventId) : '') +
-                   (slot ? ('\n[타임]: ' + slotDisplayName(slot) + ' (' + slotTimeStr(slot) + ')') : '') +
-                   '\n신청일: ' + new Date().toISOString();
-
         setStatus(statusEl, '신청 처리 중...', 'loading');
         btn.disabled = true;
         try {
-            await DB.createInquiry({
+            await DB.createGuestAttendance({
                 name: name,
                 phone: phone,
                 email: email,
-                subject: subject,
-                message: body,
+                message: memo,
                 event_id: eventId,
                 event_slot_id: eventSlotId
             });
@@ -293,7 +283,12 @@ bindGoogleAuth('login-google-btn');
             setTimeout(close, 2000);
         } catch (err) {
             console.error('Guest attend error:', err);
-            setStatus(statusEl, '신청 실패: ' + (err.message || err), 'error');
+            var msg = err.message || String(err);
+            if (/이미 같은/i.test(msg)) {
+                setStatus(statusEl, '이미 같은 핸드폰 번호로 신청되어 있습니다.', 'error');
+            } else {
+                setStatus(statusEl, '신청 실패: ' + msg, 'error');
+            }
             btn.disabled = false;
         }
     });
