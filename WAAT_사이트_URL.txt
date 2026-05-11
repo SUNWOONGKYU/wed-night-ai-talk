@@ -1,0 +1,7 @@
+WAAT — 수요일 오후 AI 수다 (Wednesday Afternoon AI Talk)
+
+배포 URL:
+https://wed-night-ai-talk.vercel.app
+
+어드민:
+https://wed-night-ai-talk.vercel.app/admin.html
