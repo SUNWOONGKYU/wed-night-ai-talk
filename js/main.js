@@ -72,9 +72,9 @@ function formatProvision(text) {
         var prefixed = line;
         var cls = 'provision-line';
         if (/^제공사항/.test(line)) {
-            prefixed = '🎁 ' + line;
+            prefixed = line;
         } else if (/^참가비/.test(line)) {
-            prefixed = '💵 ' + line;
+            prefixed = line;
         } else if (/^입금계좌/.test(line)) {
             prefixed = '※ ' + line;
             cls += ' provision-note';
@@ -704,7 +704,7 @@ async function renderScheduleEvents() {
                             <div class="info-label">장소</div>
                             <div class="info-value">
                                 <a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>
-                                <span class="info-rooms">(☀️ 햇살: 2번 회의실 · 🌅 노을 / 🌙 달빛: 5번 회의실)</span>
+                                <span class="info-rooms">(햇살: 2번 회의실 · 노을/달빛: 5번 회의실)</span>
                             </div>
                         </div>
                     </div>`;
@@ -716,9 +716,8 @@ async function renderScheduleEvents() {
                 if (slots && slots.length) {
                     capValue = slots.map(s => {
                         const sCap = (s.capacity != null) ? Number(s.capacity) : _evCap;
-                        const emoji = escapeHtml(s.slot_emoji || '');
                         const label = escapeHtml(s.slot_label || '');
-                        return `${emoji} ${label} ${sCap}명`;
+                        return `${label} ${sCap}명`;
                     }).join(' · ');
                 } else {
                     capValue = `${_evCap}명`;
