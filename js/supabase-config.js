@@ -589,25 +589,26 @@ var DB = {
     },
 
     async getEventAttendees(eventId) {
-        // 참여 기록 가져오기
+        // 회원 참여 기록 (없을 수 있음)
         var { data: attendances, error } = await _supabase
             .from('attendance')
             .select('*')
             .eq('event_id', eventId)
             .order('created_at', { ascending: true });
         if (error) throw error;
-        if (!attendances || attendances.length === 0) return [];
+        attendances = attendances || [];
 
-        // 참여자 프로필 개별 조회 (FK 조인 실패 방지)
-        var userIds = attendances.map(function(a) { return a.user_id; });
-        var { data: profiles } = await _supabase
-            .from('profiles')
-            .select('id, name, phone, email')
-            .in('id', userIds);
-
+        // 회원 프로필 매핑
         var profileMap = {};
-        if (profiles) {
-            profiles.forEach(function(p) { profileMap[p.id] = p; });
+        if (attendances.length > 0) {
+            var userIds = attendances.map(function(a) { return a.user_id; });
+            var { data: profiles } = await _supabase
+                .from('profiles')
+                .select('id, name, phone, email')
+                .in('id', userIds);
+            if (profiles) {
+                profiles.forEach(function(p) { profileMap[p.id] = p; });
+            }
         }
 
         // 이벤트 슬롯 매핑 (event_slot_id → label/emoji)
