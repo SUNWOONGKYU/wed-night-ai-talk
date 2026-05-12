@@ -597,12 +597,9 @@ function fillProfileAll() {
     // 이름은 hidden, 핸드폰은 편집 가능 input
     document.getElementById('p-name').value = currentProfile.name || '';
     document.getElementById('p-contact').value = currentProfile.phone || '';
-    // 핸드폰 누락 배너
+    // 핸드폰 누락 배너 — 차단 정책 해제로 더 이상 표시 안 함
     var banner = document.getElementById('phone-missing-banner');
-    if (banner) {
-        var phone = (currentProfile.phone || '').replace(/[^0-9]/g, '');
-        banner.style.display = (phone.length < 10) ? 'block' : 'none';
-    }
+    if (banner) banner.style.display = 'none';
     // 수정 가능 필드
     document.getElementById('p-current-job').value = currentProfile.current_job || '';
     document.getElementById('p-message').value = currentProfile.message || '';
