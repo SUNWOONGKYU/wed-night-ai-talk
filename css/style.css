@@ -1800,6 +1800,10 @@ footer {
     .admin-horizontal {
         grid-template-columns: 1fr;
     }
+    .admin-horizontal .event-form-card {
+        position: static;
+        top: auto;
+    }
 }
 
 .attendee-list {
@@ -2104,6 +2108,11 @@ footer {
     .admin-table { font-size: 0.8rem; }
     .admin-table th,
     .admin-table td { padding: 0.5rem; }
+
+    /* 모임 관리: 모바일에서는 목록을 위로, 등록 폼은 아래로 */
+    .admin-horizontal { display: flex; flex-direction: column; }
+    .admin-horizontal > div:first-child { order: 2; }
+    .admin-horizontal > div:not(:first-child) { order: 1; }
 
     /* 사용자 드롭다운 모바일 */
     .nav-user-menu { width: 100%; }
