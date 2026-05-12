@@ -1366,9 +1366,9 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     var interestsRaw = (document.getElementById('p-interests') || {}).value || '';
     const interests = interestsRaw.trim();
 
-    // 핸드폰 번호 필수 검증
-    if (!/^01[016789]\d{7,8}$/.test(phone)) {
-        setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
+    // 핸드폰 번호 — 빈 값은 허용 (Google 가입 직후 등), 입력했을 때만 형식 검증
+    if (phone && !/^01[016789]\d{7,8}$/.test(phone)) {
+        setStatus(statusEl, '핸드폰 번호 형식이 올바르지 않습니다. (예: [masked-phone])', 'error');
         return;
     }
 
