@@ -331,16 +331,6 @@ function showToast(msg, type) {
 // ========== 회원 슬롯 신청 ==========
 async function memberAttendSlot(eventId, eventSlotId, slot) {
     if (!eventId || !eventSlotId || !currentUser) return;
-    // 핸드폰 번호 등록 필수
-    var phone = ((currentProfile && currentProfile.phone) || '').replace(/[^0-9]/g, '');
-    if (!/^01[016789]\d{7,8}$/.test(phone)) {
-        showToast('핸드폰 번호 등록이 필요합니다. 프로필에서 입력해주세요.', 'error');
-        var membership = document.getElementById('membership');
-        if (membership) membership.scrollIntoView({ behavior: 'smooth' });
-        var pc = document.getElementById('p-contact');
-        if (pc) setTimeout(function() { pc.focus(); }, 600);
-        return;
-    }
     try {
         await DB.attendEvent(currentUser.id, eventId, '', eventSlotId);
         showToast('✅ ' + slotDisplayName(slot) + ' 신청 완료');
