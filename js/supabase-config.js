@@ -51,14 +51,21 @@ var Auth = {
     },
 
     async signInWithGoogle() {
+        // origin만 사용 (pathname/쿼리 제거) — Supabase Redirect URL 허용목록 매칭을 단순화
+        var redirectTo = window.location.origin + '/';
+        console.log('[Google OAuth] redirectTo =', redirectTo);
         var { data, error } = await _supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + window.location.pathname,
+                redirectTo: redirectTo,
                 queryParams: { access_type: 'offline', prompt: 'consent' }
             }
         });
-        if (error) throw error;
+        if (error) {
+            console.error('[Google OAuth] signInWithOAuth error:', error);
+            throw error;
+        }
+        console.log('[Google OAuth] response data:', data);
         return data;
     },
 

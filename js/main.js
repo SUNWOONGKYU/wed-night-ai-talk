@@ -196,16 +196,35 @@ document.getElementById('switch-to-login-from-forgot').addEventListener('click',
 // ========== Google OAuth 로그인 ==========
 function bindGoogleAuth(btnId) {
     var btn = document.getElementById(btnId);
-    if (!btn) return;
+    if (!btn) {
+        console.warn('[Google OAuth] 버튼을 찾을 수 없음:', btnId);
+        return;
+    }
     btn.addEventListener('click', async function() {
+        console.log('[Google OAuth] 버튼 클릭됨:', btnId);
+        if (typeof Auth === 'undefined' || !Auth.signInWithGoogle) {
+            alert('Auth 모듈이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
+            return;
+        }
         try {
             btn.disabled = true;
             btn.textContent = '구글 로그인 페이지로 이동...';
-            await Auth.signInWithGoogle();
+            var result = await Auth.signInWithGoogle();
+            console.log('[Google OAuth] result:', result);
+            // signInWithOAuth는 정상이면 브라우저가 자동 리다이렉트됨
+            // 3초 후에도 페이지가 그대로면 리다이렉트 실패로 판단
+            setTimeout(function() {
+                if (document.body) {
+                    btn.disabled = false;
+                    btn.textContent = btnId === 'login-google-btn' ? 'Google로 로그인' : 'Google로 계속하기';
+                    console.warn('[Google OAuth] 3초 후에도 페이지가 그대로임 — 팝업 차단 or 브라우저 보안 정책 의심');
+                }
+            }, 3000);
         } catch (err) {
-            console.error('Google sign-in error:', err);
+            console.error('[Google OAuth] 실패:', err);
             alert('구글 로그인 실패: ' + (err.message || err));
             btn.disabled = false;
+            btn.textContent = btnId === 'login-google-btn' ? 'Google로 로그인' : 'Google로 계속하기';
         }
     });
 }
