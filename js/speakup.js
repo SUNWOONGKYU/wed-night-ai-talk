@@ -357,6 +357,19 @@ function bindPostCardEvents(card, post) {
             if (!content) return;
             var submitBtn = commentForm.querySelector('.comment-submit-btn');
             if (submitBtn.disabled) return; // 중복 방지
+
+            // 세션 재확인 (모바일 토큰 만료 대비)
+            if (!spCurrentUser) {
+                try {
+                    var session = await Auth.getSession();
+                    if (session) spCurrentUser = session.user;
+                } catch (e) {}
+            }
+            if (!spCurrentUser) {
+                alert('로그인이 필요합니다. 다시 로그인해주세요.');
+                return;
+            }
+
             submitBtn.disabled = true;
             try {
                 await DB.createComment(postId, spCurrentUser.id, content, null);
@@ -559,7 +572,13 @@ if (postWriteOpenBtn) {
         var wrap = document.getElementById('post-form-wrap');
         wrap.style.display = 'block';
         document.getElementById('post-write-btn-wrap').style.display = 'none';
-        document.getElementById('post-title').focus();
+        // 폼으로 스크롤 (모바일에서 폼이 화면 아래라서 못 보는 경우 방지)
+        var navHeight = (document.querySelector('nav') && document.querySelector('nav').offsetHeight) || 70;
+        var top = wrap.getBoundingClientRect().top + window.pageYOffset - navHeight - 12;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+        setTimeout(function() {
+            document.getElementById('post-title').focus();
+        }, 250);
     });
 }
 
@@ -577,37 +596,44 @@ if (postForm) {
 // 등록/수정 버튼 클릭
 if (postSubmitBtn) {
     postSubmitBtn.addEventListener('click', async function() {
+        var statusEl = document.getElementById('post-status');
         var title = document.getElementById('post-title').value.trim();
         var content = document.getElementById('post-content').value.trim();
         var editId = postEditId.value;
 
         if (!title || !content) {
-            alert('제목과 내용을 모두 입력해주세요.');
+            spSetStatus(statusEl, '제목과 내용을 모두 입력해주세요.', 'error');
+            return;
+        }
+
+        // 세션 재확인 (모바일에서 토큰 만료된 경우 방지)
+        if (!spCurrentUser) {
+            try {
+                var session = await Auth.getSession();
+                if (session) spCurrentUser = session.user;
+            } catch (e) {}
+        }
+        if (!spCurrentUser) {
+            spSetStatus(statusEl, '로그인이 필요합니다. 다시 로그인해주세요.', 'error');
             return;
         }
 
         postSubmitBtn.disabled = true;
         postSubmitBtn.textContent = editId ? '수정 중...' : '등록 중...';
+        spSetStatus(statusEl, editId ? '수정 중...' : '등록 중...', 'loading');
 
         if (editId) {
             // 수정
             try {
-                console.log('Updating post:', editId, 'User:', spCurrentUser.id);
                 var resp = await _supabase
                     .from('posts')
                     .update({ title: title, content: content, updated_at: new Date().toISOString() })
                     .eq('id', Number(editId));
-                console.log('Update response:', resp);
                 if (resp.error) {
-                    console.error('Update error:', resp.error);
-                    alert('수정 오류: ' + resp.error.message);
+                    spSetStatus(statusEl, '수정 오류: ' + resp.error.message, 'error');
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '수정';
                     return;
-                }
-                // 성공 시 affected rows 확인
-                if (resp.status === 204 || resp.statusText === 'No Content') {
-                    console.log('Update successful (204 No Content)');
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
@@ -616,11 +642,11 @@ if (postSubmitBtn) {
                 postSubmitBtn.disabled = false;
                 document.getElementById('post-form-wrap').style.display = 'none';
                 document.getElementById('post-write-btn-wrap').style.display = 'block';
+                spSetStatus(statusEl, '', '');
                 spPostOffset = 0;
                 await loadPosts(true);
-                alert('수정되었습니다.');
             } catch (err) {
-                alert('수정 오류: ' + (err.message || err));
+                spSetStatus(statusEl, '수정 오류: ' + (err.message || err), 'error');
                 postSubmitBtn.disabled = false;
                 postSubmitBtn.textContent = '수정';
             }
@@ -631,7 +657,7 @@ if (postSubmitBtn) {
                     .from('posts')
                     .insert({ user_id: spCurrentUser.id, title: title, content: content });
                 if (resp.error) {
-                    alert('등록 오류: ' + resp.error.message);
+                    spSetStatus(statusEl, '등록 오류: ' + resp.error.message, 'error');
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '등록';
                     return;
@@ -642,11 +668,11 @@ if (postSubmitBtn) {
                 postSubmitBtn.disabled = false;
                 document.getElementById('post-form-wrap').style.display = 'none';
                 document.getElementById('post-write-btn-wrap').style.display = 'block';
+                spSetStatus(statusEl, '', '');
                 spPostOffset = 0;
                 await loadPosts(true);
-                alert('게시글이 등록되었습니다.');
             } catch (err) {
-                alert('등록 오류: ' + (err.message || err));
+                spSetStatus(statusEl, '등록 오류: ' + (err.message || err), 'error');
                 postSubmitBtn.disabled = false;
                 postSubmitBtn.textContent = '등록';
             }

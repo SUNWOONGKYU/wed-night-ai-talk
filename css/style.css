@@ -2155,10 +2155,53 @@ footer {
     footer { padding: 1.5rem 1rem; }
 
     /* Speak Up 모바일 */
-    .post-card { padding: 1.2rem; }
-    .post-form { padding: 1.2rem; }
-    .comment-form { flex-direction: column; }
-    .comment-form .comment-submit-btn { width: 100%; }
+    .post-card { padding: 1rem; }
+    .post-form { padding: 1rem; }
+    .post-form input,
+    .post-form textarea {
+        padding: 0.9rem 0.8rem;
+        font-size: 16px;
+    }
+    .post-form textarea { min-height: 120px; }
+    .post-form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .post-form-actions .btn-primary,
+    .post-form-actions .btn-secondary {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+    .post-write-open-btn {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1rem;
+        min-height: 48px;
+    }
+    .comment-form,
+    .reply-form {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .comment-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 16px;
+    }
+    .comment-form .comment-submit-btn,
+    .reply-form .comment-submit-btn {
+        width: 100%;
+        padding: 0.7rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+    .post-title { font-size: 1.1rem; word-break: break-word; }
+    .post-content { font-size: 0.95rem; word-break: break-word; }
+    .post-header { flex-wrap: wrap; gap: 0.5rem; }
+    .post-actions { flex-shrink: 0; }
 }
 
 /* ========== SPEAK UP — LIGHT THEME ========== */
@@ -2480,9 +2523,11 @@ body.speakup-light .nav-links.show {
     border-radius: 10px;
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 16px; /* iOS Safari가 포커스 시 자동 줌 하지 않도록 */
     outline: none;
     transition: border-color 0.3s ease;
+    -webkit-appearance: none;
+    box-sizing: border-box;
 }
 
 .post-form input:focus,
@@ -2844,15 +2889,18 @@ body.speakup-light .nav-links.show {
 
 .comment-input {
     flex: 1;
+    min-width: 0;
     padding: 0.6rem 0.8rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 16px; /* iOS Safari 자동 줌 방지 */
     outline: none;
     transition: border-color 0.3s ease;
+    -webkit-appearance: none;
+    box-sizing: border-box;
 }
 
 .comment-input:focus {
