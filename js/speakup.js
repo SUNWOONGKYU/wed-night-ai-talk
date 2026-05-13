@@ -429,9 +429,17 @@ function bindPostCardEvents(card, post) {
     // Edit button
     var editBtn = card.querySelector('.post-edit-btn');
     if (editBtn) {
-        editBtn.addEventListener('click', function() {
+        editBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             var postId = parseInt(editBtn.dataset.postId);
-            startEditPost(postId, post.title, post.content, post.fb_url || '');
+            console.log('[edit] click postId=', postId, 'title=', post.title);
+            try {
+                startEditPost(postId, post.title, post.content, post.fb_url || '');
+            } catch (err) {
+                console.error('[edit] startEditPost error:', err);
+                alert('수정 모드 진입 오류: ' + (err.message || err));
+            }
         });
     }
 
@@ -652,16 +660,19 @@ if (postSubmitBtn) {
         if (editId) {
             // 수정
             try {
+                console.log('[edit submit] editId=', editId, 'title=', title, 'fb_url=', fbUrl);
                 var resp = await _supabase
                     .from('posts')
                     .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
                     .eq('id', Number(editId));
                 if (resp.error) {
+                    console.error('[edit submit] supabase error:', resp.error);
                     spSetStatus(statusEl, '수정 오류: ' + resp.error.message, 'error');
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '수정';
                     return;
                 }
+                console.log('[edit submit] success', resp);
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
@@ -710,17 +721,26 @@ if (postSubmitBtn) {
 }
 
 function startEditPost(postId, title, content, fbUrl) {
-    document.getElementById('post-title').value = title;
-    document.getElementById('post-content').value = content;
+    document.getElementById('post-title').value = title || '';
+    document.getElementById('post-content').value = content || '';
     if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = fbUrl || '';
     postEditId.value = postId;
-    document.querySelector('.post-submit-btn').textContent = '수정';
+    var submitBtn = document.querySelector('.post-submit-btn');
+    if (submitBtn) submitBtn.textContent = '수정';
     document.getElementById('post-form-wrap').style.display = 'block';
-    document.getElementById('post-write-btn-wrap').style.display = 'none';
+    var writeBtnWrap = document.getElementById('post-write-btn-wrap');
+    if (writeBtnWrap) writeBtnWrap.style.display = 'none';
+    var statusEl = document.getElementById('post-status');
+    spSetStatus(statusEl, '✏️ 수정 모드 — 내용을 고친 후 "수정" 버튼을 누르세요', 'loading');
     var formEl = document.getElementById('post-form-wrap');
-    var navHeight = document.querySelector('nav').offsetHeight || 70;
-    var top = formEl.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+    var navEl = document.querySelector('nav');
+    var navHeight = (navEl && navEl.offsetHeight) || 70;
+    var top = formEl.getBoundingClientRect().top + window.pageYOffset - navHeight - 12;
     window.scrollTo({ top: top, behavior: 'smooth' });
+    setTimeout(function() {
+        var titleInput = document.getElementById('post-title');
+        if (titleInput) titleInput.focus();
+    }, 350);
 }
 
 function cancelEditPost() {
