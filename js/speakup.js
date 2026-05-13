@@ -249,10 +249,16 @@ async function renderPostCard(post) {
 
     var fbBadgeHtml = '';
     if (post.fb_url) {
+        var isThreads = /threads\.(net|com)/i.test(post.fb_url);
+        var badgeClass = isThreads ? 'post-fb-badge post-threads-badge' : 'post-fb-badge';
+        var badgeLabel = isThreads ? '쓰레드 원본 보기' : '페이스북 원본 보기';
+        var badgeIcon = isThreads
+            ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.7 11.1c-.1 0-.1-.1-.2-.1-.1-1.8-1.1-2.9-2.7-2.9-1 0-1.8.4-2.3 1.2l.9.6c.4-.6.9-.7 1.4-.7.6 0 1 .2 1.3.5.2.3.4.6.4 1-.5-.1-1-.2-1.5-.2-1.7 0-2.7.9-2.7 2.2 0 .6.2 1.1.7 1.5.4.4 1 .6 1.7.6.9 0 1.5-.3 2-.9.4-.5.5-1.1.6-1.5.5.3.8.7 1 1.2.2.6.2 1.4-.1 2.1-.5 1.3-1.8 2.2-3.5 2.2-1.9 0-3.4-.7-4.3-2.1-.9-1.3-1.3-3.2-1.3-5.4 0-2.2.4-4 1.3-5.4.9-1.4 2.3-2 4.3-2 1.9 0 3.4.7 4.4 2 .5.7.9 1.5 1.1 2.5l1.1-.3c-.3-1.2-.7-2.2-1.4-3-1.2-1.5-2.9-2.4-5.1-2.4S6.7 4.6 5.5 6.3C4.4 8 3.9 10.1 3.9 12.4c0 2.4.5 4.4 1.6 6 1.2 1.7 2.9 2.5 5.1 2.5 2.1 0 3.7-.8 4.6-2.4.4-.7.7-1.5.8-2.4.1-.5 0-1 0-1.5-.1-.6-.4-1.1-1-1.5zm-3 2.4c-.1.3-.3.6-.5.7-.3.2-.6.3-1 .3-.4 0-.7-.1-.9-.3-.2-.2-.3-.4-.3-.7 0-.7.7-1.1 1.6-1.1.4 0 .8 0 1.2.1 0 .4-.1.7-.1 1z"/></svg>'
+            : '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>';
         fbBadgeHtml =
-            '<a href="' + spEscape(post.fb_url) + '" target="_blank" rel="noopener noreferrer" class="post-fb-badge" title="페이스북 원본 보기">' +
-                '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>' +
-                '<span>페이스북 원본 보기</span>' +
+            '<a href="' + spEscape(post.fb_url) + '" target="_blank" rel="noopener noreferrer" class="' + badgeClass + '" title="' + badgeLabel + '">' +
+                badgeIcon +
+                '<span>' + badgeLabel + '</span>' +
             '</a>';
     }
 
@@ -617,11 +623,11 @@ if (postSubmitBtn) {
             return;
         }
 
-        // 페이스북 링크 검증 (선택 입력 — 비어있으면 통과)
+        // 페이스북 / 쓰레드 링크 검증 (선택 입력 — 비어있으면 통과)
         var fbUrl = null;
         if (fbUrlRaw) {
-            if (!/^https?:\/\/(www\.|m\.|web\.|business\.)?(facebook\.com|fb\.com|fb\.watch)\//i.test(fbUrlRaw)) {
-                spSetStatus(statusEl, '페이스북 링크 형식이 올바르지 않습니다. (facebook.com / fb.com / fb.watch)', 'error');
+            if (!/^https?:\/\/(www\.|m\.|web\.|business\.)?(facebook\.com|fb\.com|fb\.watch|threads\.net|threads\.com)\//i.test(fbUrlRaw)) {
+                spSetStatus(statusEl, '페이스북 또는 쓰레드 링크만 가능합니다. (facebook.com / fb.com / fb.watch / threads.net)', 'error');
                 return;
             }
             fbUrl = fbUrlRaw;

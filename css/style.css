@@ -3819,6 +3819,12 @@ footer {
     background: #166fe5;
     text-decoration: none;
 }
+.post-fb-badge.post-threads-badge {
+    background: #000;
+}
+.post-fb-badge.post-threads-badge:hover {
+    background: #222;
+}
 .post-fb-badge svg {
     flex-shrink: 0;
 }
