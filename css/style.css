@@ -3798,3 +3798,35 @@ footer {
     .speakup-page .section-title { font-size: 20px !important; }
     .speakup-page .section-desc { font-size: 13px !important; }
 }
+
+/* ========== 페이스북 원본 링크 배지 ========== */
+.post-fb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: #1877f2;
+    color: #fff !important;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.2;
+    transition: background 0.15s;
+}
+.post-fb-badge:hover {
+    background: #166fe5;
+    text-decoration: none;
+}
+.post-fb-badge svg {
+    flex-shrink: 0;
+}
+@media (max-width: 768px) {
+    .post-fb-badge {
+        font-size: 13px;
+        padding: 6px 10px;
+        margin-top: 10px;
+    }
+}
+

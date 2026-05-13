@@ -247,6 +247,15 @@ async function renderPostCard(post) {
             '</div>';
     }
 
+    var fbBadgeHtml = '';
+    if (post.fb_url) {
+        fbBadgeHtml =
+            '<a href="' + spEscape(post.fb_url) + '" target="_blank" rel="noopener noreferrer" class="post-fb-badge" title="페이스북 원본 보기">' +
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>' +
+                '<span>페이스북 원본 보기</span>' +
+            '</a>';
+    }
+
     card.innerHTML =
         '<div class="post-header">' +
             '<div class="post-author-info">' +
@@ -261,6 +270,7 @@ async function renderPostCard(post) {
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
             '<div class="post-content">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
+            fbBadgeHtml +
         '</div>' +
         '<div class="post-footer">' +
             '<div class="post-reactions">' +
@@ -415,7 +425,7 @@ function bindPostCardEvents(card, post) {
     if (editBtn) {
         editBtn.addEventListener('click', function() {
             var postId = parseInt(editBtn.dataset.postId);
-            startEditPost(postId, post.title, post.content);
+            startEditPost(postId, post.title, post.content, post.fb_url || '');
         });
     }
 
@@ -599,11 +609,22 @@ if (postSubmitBtn) {
         var statusEl = document.getElementById('post-status');
         var title = document.getElementById('post-title').value.trim();
         var content = document.getElementById('post-content').value.trim();
+        var fbUrlRaw = (document.getElementById('post-fb-url') && document.getElementById('post-fb-url').value.trim()) || '';
         var editId = postEditId.value;
 
         if (!title || !content) {
             spSetStatus(statusEl, '제목과 내용을 모두 입력해주세요.', 'error');
             return;
+        }
+
+        // 페이스북 링크 검증 (선택 입력 — 비어있으면 통과)
+        var fbUrl = null;
+        if (fbUrlRaw) {
+            if (!/^https?:\/\/(www\.|m\.|web\.|business\.)?(facebook\.com|fb\.com|fb\.watch)\//i.test(fbUrlRaw)) {
+                spSetStatus(statusEl, '페이스북 링크 형식이 올바르지 않습니다. (facebook.com / fb.com / fb.watch)', 'error');
+                return;
+            }
+            fbUrl = fbUrlRaw;
         }
 
         // 세션 재확인 (모바일에서 토큰 만료된 경우 방지)
@@ -627,7 +648,7 @@ if (postSubmitBtn) {
             try {
                 var resp = await _supabase
                     .from('posts')
-                    .update({ title: title, content: content, updated_at: new Date().toISOString() })
+                    .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
                     .eq('id', Number(editId));
                 if (resp.error) {
                     spSetStatus(statusEl, '수정 오류: ' + resp.error.message, 'error');
@@ -637,6 +658,7 @@ if (postSubmitBtn) {
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
+                if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
                 postEditId.value = '';
                 postSubmitBtn.textContent = '등록';
                 postSubmitBtn.disabled = false;
@@ -655,7 +677,7 @@ if (postSubmitBtn) {
             try {
                 var resp = await _supabase
                     .from('posts')
-                    .insert({ user_id: spCurrentUser.id, title: title, content: content });
+                    .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl });
                 if (resp.error) {
                     spSetStatus(statusEl, '등록 오류: ' + resp.error.message, 'error');
                     postSubmitBtn.disabled = false;
@@ -664,6 +686,7 @@ if (postSubmitBtn) {
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
+                if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
                 postSubmitBtn.textContent = '등록';
                 postSubmitBtn.disabled = false;
                 document.getElementById('post-form-wrap').style.display = 'none';
@@ -680,9 +703,10 @@ if (postSubmitBtn) {
     });
 }
 
-function startEditPost(postId, title, content) {
+function startEditPost(postId, title, content, fbUrl) {
     document.getElementById('post-title').value = title;
     document.getElementById('post-content').value = content;
+    if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = fbUrl || '';
     postEditId.value = postId;
     document.querySelector('.post-submit-btn').textContent = '수정';
     document.getElementById('post-form-wrap').style.display = 'block';
