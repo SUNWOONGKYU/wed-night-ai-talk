@@ -3772,3 +3772,29 @@ footer {
     .ev-slot-row input[type="text"],
     .ev-slot-row input[type="time"] { padding: 0.3rem 0.4rem; font-size: 0.85rem; }
 }
+
+/* ============================================================
+   Free Talk — Facebook for Mobile 타이포 (cascade 우선순위 확보)
+   파일 후반에서 정의되는 데스크탑 기본값을 확실히 덮어쓰기 위해
+   파일 끝에 배치한다.
+   ============================================================ */
+@media (max-width: 768px) {
+    .post-card .post-title { font-size: 17px !important; line-height: 1.3; font-weight: 700; }
+    .post-card .post-content { font-size: 15px !important; line-height: 1.3333; }
+    .post-card .post-author { font-size: 15px !important; font-weight: 600; line-height: 1.2; }
+    .post-card .post-time { font-size: 13px !important; }
+    .post-card .post-avatar { width: 40px; height: 40px; font-size: 15px !important; }
+    .post-card .reaction-btn { font-size: 15px !important; font-weight: 600; padding: 8px 10px; min-height: 36px; }
+    .post-card .comment-toggle-btn { font-size: 15px !important; font-weight: 600; padding: 8px 10px; min-height: 36px; }
+    .post-card .post-share-btn { font-size: 15px !important; font-weight: 600; padding: 8px 10px; min-height: 36px; }
+    .post-card .post-view-count { font-size: 13px !important; }
+    .post-card .post-action-btn { font-size: 13px !important; }
+    .comment-item .comment-author { font-size: 13px !important; font-weight: 600; }
+    .comment-item .comment-time { font-size: 12px !important; }
+    .comment-item .comment-body { font-size: 15px !important; line-height: 1.3333; }
+    .comment-item .comment-reply-btn,
+    .comment-item .comment-delete-btn { font-size: 12px !important; font-weight: 600; }
+    .comment-input { font-size: 16px !important; }
+    .speakup-page .section-title { font-size: 20px !important; }
+    .speakup-page .section-desc { font-size: 13px !important; }
+}
