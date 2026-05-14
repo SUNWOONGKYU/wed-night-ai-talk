@@ -740,28 +740,8 @@ async function renderScheduleEvents() {
                         </div>
                     </div>`;
             }
-            // 모임 정원 (장소 바로 다음) — 슬롯별 정원 나열
-            {
-                const _evCap = Number(ev.capacity) || 20;
-                let capValue = '';
-                if (slots && slots.length) {
-                    capValue = slots.map(s => {
-                        const sCap = (s.capacity != null) ? Number(s.capacity) : _evCap;
-                        const label = escapeHtml(s.slot_label || '');
-                        return `${label} ${sCap}명`;
-                    }).join(' · ');
-                } else {
-                    capValue = `${_evCap}명`;
-                }
-                detailItems += `
-                    <div class="schedule-info-item">
-                        <div class="schedule-info-icon">👥</div>
-                        <div class="schedule-info-text">
-                            <div class="info-label">모임 정원</div>
-                            <div class="info-value">${capValue}</div>
-                        </div>
-                    </div>`;
-            }
+            // 모임 정원 표시는 신청하기 슬롯 카드에 이미 (n/n명) 형태로 나오므로 중복 제거
+            // (제거됨 — 슬롯 카드에서 확인 가능)
             if (ev.description) {
                 detailItems += `
                     <div class="schedule-info-item">
