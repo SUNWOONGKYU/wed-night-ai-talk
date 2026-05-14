@@ -278,14 +278,9 @@ nav {
 }
 
 /* ========== HERO ========== */
-/* hero brand text — 데스크톱 "Wednesday Afternoon / AI Talk" 한 줄,
-   모바일은 슬래시 숨기고 두 줄로 분리 */
-.hbt-mobile-break { display: none; }
-@media (max-width: 600px) {
-    .hbt-sep { display: none; }
-    .hbt-mobile-break { display: inline; }
-    .hero-brand-text { line-height: 1.3; }
-}
+/* hero brand text — 모바일/데스크톱 무조건 두 줄
+   (Wednesday Afternoon / AI Talk) */
+.hero-brand-text { line-height: 1.3; }
 
 .hero {
     position: relative;
