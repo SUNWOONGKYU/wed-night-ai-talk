@@ -1210,7 +1210,7 @@ async function renderSpeakUpPreview() {
                 commentCount = 0;
             }
 
-            html += '<a href="speakup.html" class="speakup-preview-card">' +
+            html += '<a href="speakup.html?post=' + encodeURIComponent(post.id) + '" class="speakup-preview-card">' +
                 '<div class="spc-header">' +
                     '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
                     '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
