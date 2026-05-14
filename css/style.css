@@ -278,6 +278,13 @@ nav {
 }
 
 /* ========== HERO ========== */
+/* hero brand text — 데스크톱 한 줄, 모바일 두 줄 (Wednesday Afternoon / AI Talk) */
+.hbt-mobile-break { display: none; }
+@media (max-width: 600px) {
+    .hbt-mobile-break { display: inline; }
+    .hero-brand-text { line-height: 1.3; }
+}
+
 .hero {
     position: relative;
     z-index: 1;
