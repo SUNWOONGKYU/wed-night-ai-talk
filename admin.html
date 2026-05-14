@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260514j">
+    <link rel="stylesheet" href="css/style.css?v=20260514m">
     <style>
         /* 멤버 테이블 칼럼 너비 조정 */
         #members-table th:nth-child(1),
@@ -96,6 +96,7 @@
                 <button class="admin-tab" data-tab="events">모임 관리</button>
                 <button class="admin-tab" data-tab="locations">장소 관리</button>
                 <button class="admin-tab" data-tab="inquiries">문의 관리</button>
+                <button class="admin-tab" data-tab="email">📧 이메일 발송</button>
             </div>
 
             <!-- 멤버 관리 -->
@@ -345,6 +346,116 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 이메일 발송 -->
+            <div id="panel-email" class="admin-panel">
+                <div class="admin-horizontal">
+                    <!-- 좌측: 작성 -->
+                    <div class="admin-card event-form-card">
+                        <h3>이메일 일괄 발송</h3>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1rem;">
+                            Resend 무료 플랜: 일 100건 / 월 3,000건. 한 번에 최대 200명.
+                        </p>
+
+                        <form id="email-form" class="site-form">
+                            <!-- 수신자 모드 -->
+                            <div class="form-group">
+                                <label>수신자</label>
+                                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                                    <label style="display:flex; align-items:center; gap:0.3rem; font-weight:normal;">
+                                        <input type="radio" name="em-recipient-mode" value="all" checked> 전체 회원
+                                    </label>
+                                    <label style="display:flex; align-items:center; gap:0.3rem; font-weight:normal;">
+                                        <input type="radio" name="em-recipient-mode" value="event"> 특정 모임 참석자
+                                    </label>
+                                    <label style="display:flex; align-items:center; gap:0.3rem; font-weight:normal;">
+                                        <input type="radio" name="em-recipient-mode" value="manual"> 직접 입력
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 모임 선택 (event 모드일 때만) -->
+                            <div class="form-group" id="em-event-group" style="display:none;">
+                                <label for="em-event-select">참석자를 발송 대상으로 할 모임</label>
+                                <select id="em-event-select">
+                                    <option value="">-- 모임을 선택하세요 --</option>
+                                </select>
+                            </div>
+
+                            <!-- 직접 입력 (manual 모드일 때만) -->
+                            <div class="form-group" id="em-manual-group" style="display:none;">
+                                <label for="em-manual-emails">이메일 주소 (쉼표 또는 줄바꿈으로 구분)</label>
+                                <textarea id="em-manual-emails" rows="3" placeholder="a@example.com, b@example.com"></textarea>
+                            </div>
+
+                            <!-- 수신자 미리보기 -->
+                            <div class="form-group">
+                                <div id="em-recipient-preview" style="padding:0.6rem; background:var(--bg-card); border-radius:6px; font-size:0.85rem; color:var(--text-muted);">
+                                    수신자: 0명
+                                </div>
+                            </div>
+
+                            <!-- 제목 -->
+                            <div class="form-group">
+                                <label for="em-subject">제목 <span class="required">*</span></label>
+                                <input type="text" id="em-subject" required maxlength="200" placeholder="[WAAT] 다음 모임 안내">
+                            </div>
+
+                            <!-- 본문 -->
+                            <div class="form-group">
+                                <label for="em-body">본문 (HTML 가능) <span class="required">*</span></label>
+                                <textarea id="em-body" rows="10" required placeholder="안녕하세요, {이름}님...&#10;&#10;HTML 태그(&lt;p&gt;, &lt;a&gt;, &lt;strong&gt; 등) 사용 가능합니다."></textarea>
+                                <span class="form-hint">개행은 자동으로 &lt;br&gt; 처리됩니다.</span>
+                            </div>
+
+                            <!-- 버튼 -->
+                            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                                <button type="button" id="em-preview-btn" class="btn-secondary">미리보기</button>
+                                <button type="button" id="em-test-btn" class="btn-secondary" title="본인 이메일로만 테스트 발송">🧪 나에게 테스트</button>
+                                <button type="submit" class="btn-primary form-submit">📨 전체 발송</button>
+                            </div>
+                            <div class="form-status" id="em-status" style="margin-top:0.6rem;"></div>
+                        </form>
+                    </div>
+
+                    <!-- 우측: 미리보기 + 발송 이력 -->
+                    <div>
+                        <div class="admin-card" id="em-preview-card" style="display:none;">
+                            <h3>미리보기</h3>
+                            <div style="background:white; color:#222; padding:1rem; border-radius:6px; border:1px solid #ddd;">
+                                <div style="font-size:0.8rem; color:#666; margin-bottom:0.5rem;">
+                                    <strong>From:</strong> <span id="em-pv-from">WAAT 운영자 선웅규 &lt;onboarding@resend.dev&gt;</span><br>
+                                    <strong>Reply-To:</strong> wksun999@gmail.com<br>
+                                    <strong>제목:</strong> <span id="em-pv-subject">-</span>
+                                </div>
+                                <hr style="border:none; border-top:1px solid #eee; margin:0.6rem 0;">
+                                <div id="em-pv-body" style="font-size:0.9rem; line-height:1.6;"></div>
+                            </div>
+                        </div>
+
+                        <div class="admin-card">
+                            <h3>최근 발송 이력 (최근 30건)</h3>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table" id="email-logs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>일시</th>
+                                            <th>제목</th>
+                                            <th>수신자</th>
+                                            <th>성공</th>
+                                            <th>실패</th>
+                                            <th>발송자</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="email-logs-tbody">
+                                        <tr><td colspan="6" class="admin-loading">로딩 중...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /admin-horizontal -->
+            </div>
         </div>
     </div>
 
@@ -408,7 +519,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260514b"></script>
-    <script src="js/admin.js?v=20260511d"></script>
+    <script src="js/supabase-config.js?v=20260514k"></script>
+    <script src="js/admin.js?v=20260514k"></script>
 </body>
 </html>

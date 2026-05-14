@@ -7,7 +7,7 @@
     <meta name="description" content="AI를 주제로 자유롭게 수다를 나누는 모임. AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.">
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260514k">
+    <link rel="stylesheet" href="css/style.css?v=20260514m">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -409,6 +409,26 @@
         </div>
     </div>
 
+    <!-- Phone Required Modal — 회원이 모임 신청 시 phone 없으면 강제 입력 -->
+    <div id="phone-required-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 420px;">
+            <button class="modal-close" id="prq-close-btn">&times;</button>
+            <h2 class="modal-title">핸드폰 번호 등록</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; text-align:center; font-size:0.92rem;">
+                모임 신청을 위해 연락 가능한 핸드폰 번호를<br>등록해 주세요.<br>
+                <span style="color:var(--text-muted); font-size:0.82rem;">긴급 연락·일정 변경 안내에만 사용됩니다.</span>
+            </p>
+            <form id="phone-required-form" class="site-form" style="margin-bottom:0;">
+                <div class="form-group">
+                    <label for="prq-phone">핸드폰 번호 <span class="required">*</span></label>
+                    <input type="tel" id="prq-phone" name="phone" placeholder="[masked-phone]" maxlength="11" required inputmode="numeric" autocomplete="tel">
+                </div>
+                <div class="form-status" id="prq-status" style="margin-bottom:0.5rem;"></div>
+                <button type="submit" class="btn-primary form-submit" id="prq-submit-btn">저장하고 신청하기 →</button>
+            </form>
+        </div>
+    </div>
+
     <div id="guest-attend-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="modal-close" id="guest-attend-close-btn">&times;</button>
@@ -474,8 +494,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260514b"></script>
+    <script src="js/supabase-config.js?v=20260514l"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260514f"></script>
+    <script src="js/main.js?v=20260514m"></script>
 </body>
 </html>

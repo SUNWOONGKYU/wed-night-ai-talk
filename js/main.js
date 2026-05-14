@@ -343,9 +343,66 @@ function showToast(msg, type) {
     showToast._tid = setTimeout(function() { t.className = 'app-toast'; }, 3200);
 }
 
+// ========== Phone Required Modal ==========
+// Google OAuth 등으로 가입한 회원이 phone 없이 모임 신청을 시도할 때,
+// 핸드폰 번호 입력을 강제하기 위한 모달 헬퍼.
+function isValidPhone(v) {
+    return /^01[016789]\d{7,8}$/.test(v || '');
+}
+function showPhoneRequiredModal(onSaved) {
+    var m = document.getElementById('phone-required-modal');
+    if (!m) { if (onSaved) onSaved(false); return; }
+    var inp = document.getElementById('prq-phone');
+    var status = document.getElementById('prq-status');
+    var form = document.getElementById('phone-required-form');
+    var closeBtn = document.getElementById('prq-close-btn');
+    if (status) { status.textContent = ''; status.className = 'form-status'; }
+    if (inp) { inp.value = ''; }
+
+    function close(saved) {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+        form.onsubmit = null;
+        closeBtn.onclick = null;
+        m.onclick = null;
+        if (onSaved) onSaved(!!saved);
+    }
+    closeBtn.onclick = function() { close(false); };
+    m.onclick = function(e) { if (e.target === m) close(false); };
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        var phone = sanitizePhone(inp.value);
+        if (!isValidPhone(phone)) {
+            status.textContent = '핸드폰 번호 형식이 올바르지 않습니다. (예: [masked-phone])';
+            status.className = 'form-status error';
+            return;
+        }
+        status.textContent = '저장 중...';
+        status.className = 'form-status loading';
+        try {
+            currentProfile = await DB.updateProfile(currentUser.id, { phone: phone });
+            close(true);
+        } catch (err) {
+            status.textContent = '저장 실패: ' + (err.message || err);
+            status.className = 'form-status error';
+        }
+    };
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function() { if (inp) inp.focus(); }, 100);
+}
+
 // ========== 회원 슬롯 신청 ==========
 async function memberAttendSlot(eventId, eventSlotId, slot) {
     if (!eventId || !eventSlotId || !currentUser) return;
+    // 핸드폰 번호 가드 — phone 없거나 형식 불일치 시 모달로 강제 입력
+    var phone = currentProfile && currentProfile.phone;
+    if (!isValidPhone(phone)) {
+        showPhoneRequiredModal(function(saved) {
+            if (saved) memberAttendSlot(eventId, eventSlotId, slot);
+        });
+        return;
+    }
     try {
         await DB.attendEvent(currentUser.id, eventId, '', eventSlotId);
         showToast('✅ ' + slotDisplayName(slot) + ' 신청 완료');
