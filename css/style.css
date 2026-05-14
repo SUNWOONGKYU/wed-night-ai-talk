@@ -2210,10 +2210,10 @@ footer {
         touch-action: manipulation;
     }
 
-    /* 게시글 본문 — FB 표준 */
+    /* 게시글 본문 — 제목·본문 동일 크기, 제목만 볼드 */
     .post-body { margin-bottom: 8px; }
-    .post-title { font-size: 17px; line-height: 1.3; font-weight: 700; margin-bottom: 4px; word-break: break-word; }
-    .post-content { font-size: 15px; line-height: 1.3333; word-break: break-word; }
+    .post-title { font-size: 15px; line-height: 1.25; font-weight: 700; margin-bottom: 4px; word-break: break-word; }
+    .post-content { font-size: 15px; line-height: 1.25; font-weight: 400; word-break: break-word; }
 
     /* 푸터 (좋아요/댓글/공유) */
     .post-footer {
@@ -2252,7 +2252,7 @@ footer {
     .comment-time { font-size: 12px; }
     .comment-reply-btn,
     .comment-delete-btn { padding: 2px 8px; font-size: 12px; font-weight: 600; }
-    .comment-body { font-size: 15px; line-height: 1.3333; }
+    .comment-body { font-size: 15px; line-height: 1.25; }
     .comment-reply { margin-left: 24px; padding-left: 12px; }
 
     /* 댓글/답글 폼 */
@@ -3787,8 +3787,9 @@ footer {
    파일 끝에 배치한다.
    ============================================================ */
 @media (max-width: 768px) {
-    .post-card .post-title { font-size: 17px !important; line-height: 1.3; font-weight: 700; }
-    .post-card .post-content { font-size: 15px !important; line-height: 1.3333; }
+    /* 제목·본문 동일 크기 (15px), 제목만 볼드. line-height 페북 매칭 */
+    .post-card .post-title { font-size: 15px !important; line-height: 1.25 !important; font-weight: 700 !important; margin-bottom: 4px !important; }
+    .post-card .post-content { font-size: 15px !important; line-height: 1.25 !important; font-weight: 400 !important; }
     .post-card .post-author { font-size: 15px !important; font-weight: 600; line-height: 1.2; }
     .post-card .post-time { font-size: 13px !important; }
     .post-card .post-avatar { width: 40px; height: 40px; font-size: 15px !important; }
@@ -3799,7 +3800,7 @@ footer {
     .post-card .post-action-btn { font-size: 13px !important; }
     .comment-item .comment-author { font-size: 13px !important; font-weight: 600; }
     .comment-item .comment-time { font-size: 12px !important; }
-    .comment-item .comment-body { font-size: 15px !important; line-height: 1.3333; }
+    .comment-item .comment-body { font-size: 15px !important; line-height: 1.25 !important; font-weight: 400 !important; }
     .comment-item .comment-reply-btn,
     .comment-item .comment-delete-btn { font-size: 12px !important; font-weight: 600; }
     .comment-input { font-size: 15px !important; padding: 8px 12px !important; line-height: 1.3 !important; }
