@@ -3805,6 +3805,34 @@ footer {
     .comment-input { font-size: 16px !important; }
     .speakup-page .section-title { font-size: 20px !important; }
     .speakup-page .section-desc { font-size: 13px !important; }
+
+    /* ===== 입력박스 가로폭 최대화 + 페북 작성칸 글씨 크기 ===== */
+    /* 1) 페이지 좌우 패딩 최소화 (자유발언 페이지 한정) */
+    body section.speakup-page { padding-left: 8px !important; padding-right: 8px !important; }
+    .speakup-page .section-inner { padding-left: 0 !important; padding-right: 0 !important; }
+
+    /* 2) 글쓰기 폼 박스 패딩 축소 */
+    .post-form { padding: 12px !important; border-radius: 8px !important; }
+    .post-form-wrap { margin-left: 0 !important; margin-right: 0 !important; }
+
+    /* 3) input / textarea 가로폭 100% + FB 작성 박스 글씨 크기(17px) */
+    .post-form .form-group { margin-bottom: 10px !important; }
+    .post-form input[type="text"],
+    .post-form input[type="url"],
+    .post-form textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 14px !important;
+        font-size: 17px !important;
+        line-height: 1.4 !important;
+        border-radius: 8px !important;
+    }
+    .post-form input#post-title { font-weight: 600 !important; }
+    .post-form input#post-fb-url { font-size: 15px !important; }
+    .post-form textarea { min-height: 160px !important; }
+
+    /* 4) 게시글 카드 좌우 패딩도 살짝 축소 */
+    .post-card { padding-left: 12px !important; padding-right: 12px !important; }
 }
 
 /* ========== 페이스북 원본 링크 배지 ========== */
