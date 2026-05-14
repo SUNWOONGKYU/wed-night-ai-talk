@@ -37,6 +37,12 @@
     box-sizing: border-box;
 }
 
+/* 글로벌 이미지 반응형 — 모바일에서 가로 오버플로 방지 */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -264,6 +270,11 @@ nav {
     color: var(--text-primary);
     font-size: 1.5rem;
     cursor: pointer;
+    /* 모바일 터치 타겟 44x44 확보 */
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.4rem 0.6rem;
+    line-height: 1;
 }
 
 /* ========== HERO ========== */
@@ -1312,6 +1323,9 @@ footer {
     padding: 2.5rem;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
     animation: modalSlideIn 0.3s ease;
+    /* 모바일에서 긴 폼 스크롤 가능하도록 */
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
 }
 
 @keyframes modalSlideIn {
@@ -1321,8 +1335,8 @@ footer {
 
 .modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1.2rem;
+    top: 0.4rem;
+    right: 0.6rem;
     background: none;
     border: none;
     color: var(--text-muted);
@@ -1331,6 +1345,10 @@ footer {
     line-height: 1;
     transition: color 0.2s ease;
     z-index: 1;
+    /* 모바일 터치 타겟 44x44 확보 */
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.5rem 0.7rem;
 }
 
 .modal-close:hover {
@@ -2126,6 +2144,13 @@ footer {
 
 @media (max-width: 480px) {
     section { padding: 2.5rem 1rem; }
+
+    /* iOS Safari 자동 줌 차단: 모바일에서 폼 입력 폰트 16px 이상 보장 */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+    }
 
     .member-types { grid-template-columns: 1fr; }
     /* hero-stats: 모바일에서도 가로 유지 (3열 균등) */

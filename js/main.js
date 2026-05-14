@@ -89,9 +89,24 @@ function formatProvision(text) {
 // ========== Scroll Reveal & Nav scroll are handled by js/animations.js (GSAP) ==========
 
 // ========== Mobile menu toggle ==========
-document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
-    document.querySelector('.nav-links').classList.toggle('show');
-});
+(function() {
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var navLinks = document.querySelector('.nav-links');
+    if (!menuBtn || !navLinks) return;
+    menuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navLinks.classList.toggle('show');
+    });
+    // 외부 클릭으로 닫기
+    document.addEventListener('click', function(e) {
+        if (!navLinks.classList.contains('show')) return;
+        if (!e.target.closest('.nav-inner')) navLinks.classList.remove('show');
+    });
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') navLinks.classList.remove('show');
+    });
+})();
 
 // ========== Modal ==========
 const authModal = document.getElementById('auth-modal');

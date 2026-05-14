@@ -12,6 +12,8 @@ async function trackPostView(postId) {
     if (_viewedPosts.indexOf(postId) !== -1) return;
     _viewedPosts.push(postId);
     try { sessionStorage.setItem('sp_viewed', JSON.stringify(_viewedPosts)); } catch(e) {}
+    // 서버 측에서 비로그인은 무시되므로 로그인 시에만 호출 (불필요한 요청 절약)
+    if (!spCurrentUser) return;
     try { await DB.incrementViewCount(postId); } catch(e) {}
 }
 
@@ -53,9 +55,22 @@ function spSetStatus(el, message, type) {
 }
 
 // ========== Mobile Menu ==========
-document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-    document.querySelector('.nav-links').classList.toggle('show');
-});
+(function() {
+    var menuBtn = document.querySelector('.mobile-menu-btn');
+    var navLinks = document.querySelector('.nav-links');
+    if (!menuBtn || !navLinks) return;
+    menuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        navLinks.classList.toggle('show');
+    });
+    document.addEventListener('click', function(e) {
+        if (!navLinks.classList.contains('show')) return;
+        if (!e.target.closest('.nav-inner')) navLinks.classList.remove('show');
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') navLinks.classList.remove('show');
+    });
+})();
 
 // ========== Nav User Dropdown ==========
 var spNavUserBtn = document.getElementById('nav-user-btn');
