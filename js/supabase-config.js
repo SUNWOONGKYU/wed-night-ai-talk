@@ -53,7 +53,6 @@ var Auth = {
     async signInWithGoogle() {
         // origin만 사용 (pathname/쿼리 제거) — Supabase Redirect URL 허용목록 매칭을 단순화
         var redirectTo = window.location.origin + '/';
-        console.log('[Google OAuth] redirectTo =', redirectTo);
         var { data, error } = await _supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -61,11 +60,7 @@ var Auth = {
                 queryParams: { access_type: 'offline', prompt: 'consent' }
             }
         });
-        if (error) {
-            console.error('[Google OAuth] signInWithOAuth error:', error);
-            throw error;
-        }
-        console.log('[Google OAuth] response data:', data);
+        if (error) throw error;
         return data;
     },
 
@@ -290,6 +285,20 @@ var DB = {
             .eq('user_id', userId);
         if (error) throw error;
         return data;
+    },
+
+    // 슬롯별 신청자 명단 (회원·게스트 통합, name만)
+    async getSlotAttendees(eventId) {
+        var { data, error } = await _supabase.rpc('get_slot_attendees', { p_event_id: eventId });
+        if (error) throw error;
+        return data || [];
+    },
+
+    // 내 신청 전체 (프로필 페이지용) — 이벤트·슬롯 정보 포함
+    async getMyAttendancesFull() {
+        var { data, error } = await _supabase.rpc('get_my_attendances');
+        if (error) throw error;
+        return data || [];
     },
 
     // -- Admin: Members --

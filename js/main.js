@@ -451,14 +451,10 @@ function setStatus(el, message, type) {
 }
 
 // ========== Admin Role Sync ==========
+// 보안: 클라이언트가 직접 profile.role 을 'admin' 으로 쓰는 행위는 차단됨
+// (DB 트리거/RLS WITH CHECK 가 role 컬럼 변경을 금지)
+// 관리자 판별은 JWT 기반 is_admin() RPC + 클라이언트 ADMIN_EMAILS UX 가드로만 수행
 async function syncAdminRole(user, profile) {
-    if (!user || !profile) return profile;
-    const isAdminEmail = ADMIN_EMAILS.includes(user.email.toLowerCase());
-    if (isAdminEmail && profile.role !== 'admin') {
-        try {
-            profile = await DB.updateProfile(user.id, { role: 'admin' });
-        } catch (e) { /* ignore */ }
-    }
     return profile;
 }
 
@@ -705,10 +701,16 @@ async function renderScheduleEvents() {
         // 슬롯 정보 + 인원수 (이벤트별로 동적 로드) + 본인이 신청한 슬롯 조회
         const slotsByEvent = {};
         const myAttendedSlotIds = new Set();
+        const attendeesByEvent = {};
         try {
             const slotResults = await Promise.all(events.map(ev => DB.getSlotCounts(ev.id).catch(() => [])));
             events.forEach((ev, i) => { slotsByEvent[ev.id] = slotResults[i] || []; });
         } catch (e) { console.warn('getSlotCounts failed:', e); }
+        // 슬롯별 신청자 명단 (회원·게스트 통합, name만)
+        try {
+            const attResults = await Promise.all(events.map(ev => DB.getSlotAttendees(ev.id).catch(() => [])));
+            events.forEach((ev, i) => { attendeesByEvent[ev.id] = attResults[i] || []; });
+        } catch (e) { console.warn('getSlotAttendees failed:', e); }
         // currentSlots: 전체 이벤트 슬롯 합침 (getSlotById가 모든 이벤트에서 찾을 수 있게)
         currentSlots = events.flatMap(ev => (slotsByEvent[ev.id] || []).map(s => ({ ...s, event_id: ev.id })));
         if (currentUser) {
@@ -776,8 +778,47 @@ async function renderScheduleEvents() {
             // 정원 — 슬롯 안내문 문구에만 사용
             const capacity = Number(ev.capacity) || 20;
 
+            // 슬롯별 신청자 명단 그룹핑
+            const attendees = attendeesByEvent[ev.id] || [];
+            const attendeesBySlot = {};
+            attendees.forEach(a => {
+                const sid = Number(a.event_slot_id);
+                if (!attendeesBySlot[sid]) attendeesBySlot[sid] = [];
+                attendeesBySlot[sid].push(a);
+            });
+
+            // "내 신청 현황" 박스 — 로그인 사용자 한정
+            let myStatusHtml = '';
+            if (currentUser) {
+                const mySlotsInEvent = (slots || []).filter(s => myAttendedSlotIds.has(Number(s.id)));
+                if (mySlotsInEvent.length > 0) {
+                    const slotInfo = mySlotsInEvent.map(s => {
+                        const sid = Number(s.id);
+                        const list = attendeesBySlot[sid] || [];
+                        const myName = (currentProfile && currentProfile.name) || '';
+                        const myIdx = list.findIndex(a => !a.is_guest && a.name === myName);
+                        const order = myIdx >= 0 ? (myIdx + 1) : list.length;
+                        const total = list.length;
+                        return `<span class="my-status-slot-tag">${escapeHtml(s.slot_emoji || '')} ${escapeHtml(s.slot_label || '')} — ${order}/${total}번째</span>`;
+                    }).join(' ');
+                    myStatusHtml = `
+                        <div class="my-attend-status attended">
+                            <div class="my-attend-status-label">✓ 신청 완료</div>
+                            <div class="my-attend-status-value">${slotInfo}</div>
+                            <a href="profile.html" class="my-attend-status-link">내 신청 내역 보기 →</a>
+                        </div>`;
+                } else {
+                    myStatusHtml = `
+                        <div class="my-attend-status not-attended">
+                            <div class="my-attend-status-label">📌 아직 신청 안 함</div>
+                            <div class="my-attend-status-value">아래 시간대 중 원하는 것을 선택해 신청해주세요.</div>
+                        </div>`;
+                }
+            }
+
             // 타임 슬롯 카드 (이벤트별, DB의 event_slots 동적 렌더)
             const slotsHtml = (slots && slots.length) ? `
+                ${myStatusHtml}
                 <div class="waat-slots">
                     ${slots.map(s => {
                         const sid = Number(s.id);
@@ -804,12 +845,30 @@ async function renderScheduleEvents() {
                         const tStr = slotTimeStr(s);
                         const cardStateClass = attended ? ' is-attended' : (isFull ? ' is-full' : '');
                         const countClass = isFull ? 'slot-count slot-count-full' : 'slot-count';
+
+                        // 슬롯별 신청자 명단 (회원·게스트 통합)
+                        const slotAttendees = attendeesBySlot[sid] || [];
+                        const myName = (currentProfile && currentProfile.name) || '';
+                        const attendeesHtml = slotAttendees.length ? `
+                            <div class="slot-attendees">
+                                <div class="slot-attendees-label">참가자 ${slotAttendees.length}명</div>
+                                <div class="slot-attendees-list">
+                                    ${slotAttendees.map(a => {
+                                        const isMe = !a.is_guest && a.name === myName;
+                                        const tagCls = 'attendee-tag' + (isMe ? ' is-me' : '') + (a.is_guest ? ' is-guest' : '');
+                                        const suffix = a.is_guest ? '<span class="attendee-guest-mark">게스트</span>' : '';
+                                        return `<span class="${tagCls}">${escapeHtml(a.name)}${suffix}${isMe ? ' (나)' : ''}</span>`;
+                                    }).join('')}
+                                </div>
+                            </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요. 첫 번째 신청자가 되어주세요!</div>';
+
                         return `
                         <div class="waat-slot-card${cardStateClass}" data-event-slot-id="${sid}">
                             <div class="waat-slot-emoji">${emoji}</div>
                             <div class="waat-slot-name">${label} <span class="${countClass}">(${count}/${slotCap}명)</span>${isFull ? '<span class="slot-full-badge">마감</span>' : ''}</div>
                             <div class="waat-slot-time">${escapeHtml(tStr)}</div>
                             <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}" data-full="${isFull ? '1' : '0'}" ${btnDisabled}>${btnText}</button>
+                            ${attendeesHtml}
                         </div>`;
                     }).join('')}
                 </div>

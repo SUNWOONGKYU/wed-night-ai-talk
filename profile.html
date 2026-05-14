@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>내 프로필 — WAAT</title>
+    <meta name="description" content="WAAT 내 신청 내역">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260514i">
+</head>
+<body class="speakup-light">
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
+            </a>
+            <ul class="nav-links nav-links-center">
+                <li><a href="index.html#schedule">Schedule</a></li>
+                <li><a href="index.html#location">Location</a></li>
+                <li><a href="speakup.html">Free Talk</a></li>
+            </ul>
+            <ul class="nav-links nav-links-right">
+                <li id="nav-login-link"><a href="index.html" class="nav-login-btn">Login</a></li>
+                <li id="nav-signup-link"><a href="index.html" class="nav-cta">Sign Up</a></li>
+                <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
+                    <button class="nav-user-btn" id="nav-user-btn">
+                        <span id="nav-user-name">사용자</span> ▼
+                    </button>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="profile.html" class="dropdown-item">내 프로필</a>
+                        <a href="admin.html" class="dropdown-item" id="nav-admin-link" style="display:none;">관리자 페이지</a>
+                        <button class="dropdown-item" data-action="logout">로그아웃</button>
+                    </div>
+                </li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <section class="speakup-page">
+        <div class="section-inner">
+            <h2 class="section-title">내 프로필 <span class="section-title-en">My Profile</span></h2>
+
+            <!-- 비로그인 안내 -->
+            <div id="profile-login-prompt" class="post-login-prompt" style="display:none;">
+                <p><a href="index.html" class="speakup-login-link">로그인</a>이 필요합니다.</p>
+            </div>
+
+            <!-- 프로필 카드 -->
+            <div id="profile-card" class="profile-card" style="display:none;">
+                <div class="profile-row"><span class="profile-key">이름</span><span class="profile-val" id="pf-name">—</span></div>
+                <div class="profile-row"><span class="profile-key">이메일</span><span class="profile-val" id="pf-email">—</span></div>
+                <div class="profile-row"><span class="profile-key">전화번호</span><span class="profile-val" id="pf-phone">—</span></div>
+                <div class="profile-row"><span class="profile-key">가입일</span><span class="profile-val" id="pf-created">—</span></div>
+            </div>
+
+            <h3 class="profile-section-title">📅 내 신청 내역</h3>
+            <div id="my-attendances" class="my-attendances-list">
+                <div class="admin-loading">불러오는 중...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">Wednesday Afternoon AI Talk</div>
+            <div class="footer-links">
+                <a href="terms.html">이용약관</a>
+                <span class="footer-sep">·</span>
+                <a href="privacy.html">개인정보처리방침</a>
+            </div>
+            <div class="footer-meta">운영자: Sunny <span class="footer-sep">|</span> 선웅규</div>
+            <div class="footer-since">Since 2026.05.09</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=20260514b"></script>
+    <script src="js/profile.js?v=20260514a"></script>
+</body>
+</html>
