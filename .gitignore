@@ -4,3 +4,9 @@
 supabase/.temp/
 *.jpg
 WAAT — 수요일 오후 AI 수다.txt
+
+# 환경변수 (절대 커밋 금지)
+.env
+.env.local
+.env.*.local
+supabase/functions/**/.env

@@ -676,5 +676,60 @@ var DB = {
         } catch (e) { console.warn('guest_attendance fetch failed:', e); }
 
         return memberRows.concat(guestRows);
+    },
+
+    // ========== Email (Resend via Edge Function) ==========
+    async sendBulkEmail(opts) {
+        // opts: { to: string[], subject: string, html: string, test?: boolean }
+        if (!opts || !Array.isArray(opts.to) || !opts.subject || !opts.html) {
+            throw new Error('to, subject, html 필수');
+        }
+        var { data, error } = await _supabase.functions.invoke('send-email', {
+            body: {
+                to: opts.to,
+                subject: opts.subject,
+                html: opts.html,
+                test: !!opts.test
+            }
+        });
+        if (error) throw error;
+        if (data && data.success === false) {
+            throw new Error(data.error || '발송 실패');
+        }
+        return data; // { success, sent, failed, details, test_mode }
+    },
+
+    async getEmailLogs(limit) {
+        var lim = Math.min(Math.max(parseInt(limit) || 30, 1), 200);
+        var { data, error } = await _supabase
+            .from('email_logs')
+            .select('id, subject, recipients_count, success_count, fail_count, sent_by_email, created_at')
+            .order('created_at', { ascending: false })
+            .limit(lim);
+        if (error) throw error;
+        return data || [];
+    },
+
+    async getEventsForEmail() {
+        // 이메일 발송 대상 회차 선택용 (최근 6개월 + 활성/비활성 모두)
+        var sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        var { data, error } = await _supabase
+            .from('events')
+            .select('id, title, event_date, location, is_active')
+            .gte('event_date', sixMonthsAgo.toISOString().slice(0, 10))
+            .order('event_date', { ascending: false })
+            .limit(50);
+        if (error) throw error;
+        // active 라는 약식 이름으로 admin.js에 노출
+        return (data || []).map(function(e) {
+            return {
+                id: e.id,
+                title: e.title,
+                event_date: e.event_date,
+                location_name: e.location || '',
+                active: !!e.is_active
+            };
+        });
     }
 };

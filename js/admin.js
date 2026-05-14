@@ -53,6 +53,11 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.classList.add('active');
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+
+        // 이메일 탭 첫 클릭 시 lazy load
+        if (tab.dataset.tab === 'email') {
+            initEmailPanel();
+        }
     });
 });
 
@@ -810,6 +815,241 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+
+// =============================================
+// ========== Email Send Panel ==========
+// =============================================
+let _emailPanelInitialized = false;
+let _emailEvents = [];                // 회차 캐시
+let _emailEventAttendees = {};        // event_id → email[]
+
+async function initEmailPanel() {
+    if (_emailPanelInitialized) return;
+    _emailPanelInitialized = true;
+
+    // 모드 라디오 변경 이벤트
+    document.querySelectorAll('input[name="em-recipient-mode"]').forEach(r => {
+        r.addEventListener('change', onEmailModeChange);
+    });
+    // 모임 선택 변경
+    document.getElementById('em-event-select').addEventListener('change', refreshEmailRecipientPreview);
+    // 직접 입력 변경
+    document.getElementById('em-manual-emails').addEventListener('input', refreshEmailRecipientPreview);
+    // 본문 변경 (미리보기는 버튼 클릭 시에만 실행)
+    document.getElementById('em-preview-btn').addEventListener('click', showEmailPreview);
+    document.getElementById('em-test-btn').addEventListener('click', sendTestEmail);
+    document.getElementById('email-form').addEventListener('submit', onEmailFormSubmit);
+
+    // 회차 목록 로드
+    try {
+        _emailEvents = await DB.getEventsForEmail();
+        const sel = document.getElementById('em-event-select');
+        sel.innerHTML = '<option value="">-- 모임을 선택하세요 --</option>' +
+            _emailEvents.map(e => {
+                const label = `${e.event_date} · ${escapeHtml(e.title || '')} ${e.active ? '' : '(비활성)'}`;
+                return `<option value="${e.id}">${label}</option>`;
+            }).join('');
+    } catch (e) {
+        console.error('회차 로드 실패:', e);
+    }
+
+    // 발송 이력 로드
+    loadEmailLogs();
+
+    // 초기 수신자 미리보기
+    refreshEmailRecipientPreview();
+}
+
+function onEmailModeChange() {
+    const mode = document.querySelector('input[name="em-recipient-mode"]:checked').value;
+    document.getElementById('em-event-group').style.display = (mode === 'event') ? '' : 'none';
+    document.getElementById('em-manual-group').style.display = (mode === 'manual') ? '' : 'none';
+    refreshEmailRecipientPreview();
+}
+
+async function getEmailRecipients() {
+    const mode = document.querySelector('input[name="em-recipient-mode"]:checked').value;
+
+    if (mode === 'all') {
+        // allMembers는 loadMembers()에서 이미 채워짐
+        return allMembers
+            .map(m => (m.email || '').trim().toLowerCase())
+            .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+    }
+
+    if (mode === 'event') {
+        const eid = document.getElementById('em-event-select').value;
+        if (!eid) return [];
+
+        if (_emailEventAttendees[eid]) return _emailEventAttendees[eid];
+
+        try {
+            const rows = await DB.getEventAttendees(parseInt(eid));
+            const emails = rows
+                .map(r => (r.profiles && r.profiles.email) || '')
+                .map(e => (e || '').trim().toLowerCase())
+                .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+            const unique = Array.from(new Set(emails));
+            _emailEventAttendees[eid] = unique;
+            return unique;
+        } catch (e) {
+            console.error('참석자 로드 실패:', e);
+            return [];
+        }
+    }
+
+    if (mode === 'manual') {
+        const raw = document.getElementById('em-manual-emails').value || '';
+        const emails = raw.split(/[,\n\s]+/)
+            .map(e => e.trim().toLowerCase())
+            .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+        return Array.from(new Set(emails));
+    }
+
+    return [];
+}
+
+async function refreshEmailRecipientPreview() {
+    const box = document.getElementById('em-recipient-preview');
+    box.textContent = '수신자 계산 중...';
+    try {
+        const list = await getEmailRecipients();
+        if (list.length === 0) {
+            box.textContent = '⚠️ 유효한 수신자가 없습니다.';
+            return;
+        }
+        const sample = list.slice(0, 3).join(', ');
+        const more = list.length > 3 ? ` 외 ${list.length - 3}명` : '';
+        box.textContent = `수신자 ${list.length}명: ${sample}${more}`;
+    } catch (e) {
+        box.textContent = '오류: ' + e.message;
+    }
+}
+
+function buildEmailHtml(rawBody) {
+    // 개행 → <br>, URL 자동 링크는 사용자가 직접 <a> 입력하도록
+    const cleaned = String(rawBody || '');
+    // 이미 HTML 태그가 있으면 그대로 두고, 없으면 줄바꿈 처리
+    const hasTags = /<[a-z][^>]*>/i.test(cleaned);
+    if (hasTags) {
+        return cleaned;
+    }
+    return cleaned.replace(/\n/g, '<br>\n');
+}
+
+function showEmailPreview() {
+    const subject = document.getElementById('em-subject').value || '(제목 없음)';
+    const bodyRaw = document.getElementById('em-body').value || '';
+    document.getElementById('em-pv-subject').textContent = subject;
+    document.getElementById('em-pv-body').innerHTML = buildEmailHtml(bodyRaw);
+    document.getElementById('em-preview-card').style.display = 'block';
+}
+
+function setEmailStatus(msg, type) {
+    const el = document.getElementById('em-status');
+    el.textContent = msg || '';
+    el.style.color = type === 'error' ? 'var(--accent-pink)'
+        : type === 'success' ? 'var(--accent-cyan)'
+        : 'var(--text-muted)';
+}
+
+async function sendTestEmail() {
+    const subject = (document.getElementById('em-subject').value || '').trim();
+    const bodyRaw = (document.getElementById('em-body').value || '').trim();
+    if (!subject || !bodyRaw) {
+        setEmailStatus('제목과 본문을 입력하세요.', 'error');
+        return;
+    }
+    if (!adminUser || !adminUser.email) {
+        setEmailStatus('로그인 정보를 확인할 수 없습니다.', 'error');
+        return;
+    }
+
+    if (!confirm(`테스트 발송: ${adminUser.email} 으로 1통 발송합니다. 진행할까요?`)) return;
+
+    setEmailStatus('테스트 발송 중...', 'info');
+    try {
+        const result = await DB.sendBulkEmail({
+            to: [adminUser.email],
+            subject: '[테스트] ' + subject,
+            html: buildEmailHtml(bodyRaw),
+            test: true
+        });
+        setEmailStatus(`✅ 테스트 발송 완료 (성공 ${result.sent} / 실패 ${result.failed}). 본인 메일함을 확인하세요.`, 'success');
+        loadEmailLogs();
+    } catch (e) {
+        setEmailStatus('❌ 발송 실패: ' + e.message, 'error');
+    }
+}
+
+async function onEmailFormSubmit(e) {
+    e.preventDefault();
+    const subject = (document.getElementById('em-subject').value || '').trim();
+    const bodyRaw = (document.getElementById('em-body').value || '').trim();
+    if (!subject || !bodyRaw) {
+        setEmailStatus('제목과 본문을 입력하세요.', 'error');
+        return;
+    }
+
+    setEmailStatus('수신자 확정 중...', 'info');
+    const recipients = await getEmailRecipients();
+    if (recipients.length === 0) {
+        setEmailStatus('유효한 수신자가 없습니다.', 'error');
+        return;
+    }
+
+    const sample = recipients.slice(0, 5).join('\n');
+    const more = recipients.length > 5 ? `\n... 외 ${recipients.length - 5}명` : '';
+    const confirmMsg = `📨 ${recipients.length}명에게 발송합니다.\n\n제목: ${subject}\n\n수신자(미리보기):\n${sample}${more}\n\n실제로 발송하시겠습니까?`;
+    if (!confirm(confirmMsg)) {
+        setEmailStatus('취소되었습니다.', 'info');
+        return;
+    }
+
+    setEmailStatus(`발송 중... (${recipients.length}명, 약 ${Math.ceil(recipients.length * 0.7)}초 소요 예상)`, 'info');
+    const submitBtn = document.querySelector('#email-form button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+        const result = await DB.sendBulkEmail({
+            to: recipients,
+            subject: subject,
+            html: buildEmailHtml(bodyRaw),
+            test: false
+        });
+        setEmailStatus(`✅ 발송 완료 — 성공 ${result.sent}건 / 실패 ${result.failed}건`, 'success');
+        loadEmailLogs();
+    } catch (e) {
+        setEmailStatus('❌ 발송 실패: ' + e.message, 'error');
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+async function loadEmailLogs() {
+    const tbody = document.getElementById('email-logs-tbody');
+    try {
+        const logs = await DB.getEmailLogs(30);
+        if (logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">발송 이력이 없습니다.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = logs.map(log => {
+            const dt = new Date(log.created_at);
+            const dateStr = dt.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            return `<tr>
+                <td>${dateStr}</td>
+                <td>${escapeHtml(log.subject || '')}</td>
+                <td>${log.recipients_count}</td>
+                <td style="color:var(--accent-cyan);">${log.success_count}</td>
+                <td style="color:${log.fail_count > 0 ? 'var(--accent-pink)' : 'inherit'};">${log.fail_count}</td>
+                <td>${escapeHtml(log.sent_by_email || '-')}</td>
+            </tr>`;
+        }).join('');
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">이력 조회 실패: ${escapeHtml(e.message)}</td></tr>`;
+    }
 }
 
 // ========== Init ==========
