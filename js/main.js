@@ -636,6 +636,18 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
+// 신청자 이름 표시용 길이 제한: 한글 1자 이상이면 4자, 그 외(순영문 등) 10자
+// 정책: 혼용("John김")이면 한글 기준 우선(4자 컷). 풀네임은 title 툴팁에 보존.
+// Array.from으로 코드포인트 단위 분리하여 이모지/한글 안전 처리.
+function truncDisplayName(name) {
+    if (!name) return '';
+    const hasHangul = /[가-힣]/.test(name);
+    const limit = hasHangul ? 4 : 10;
+    const chars = Array.from(name);
+    if (chars.length <= limit) return name;
+    return chars.slice(0, limit).join('') + '…';
+}
+
 // ========== Helper: format event date ==========
 function formatEventDate(dateStr, dayLabel) {
     // dateStr: "2025-02-06" 형태
@@ -810,11 +822,12 @@ async function renderScheduleEvents() {
                     const slotInfo = mySlotsInEvent.map(s => {
                         const sid = Number(s.id);
                         const list = attendeesBySlot[sid] || [];
-                        const myName = (currentProfile && currentProfile.name) || '';
-                        const myIdx = list.findIndex(a => !a.is_guest && a.name === myName);
-                        const order = myIdx >= 0 ? (myIdx + 1) : list.length;
+                        // 서버에서 auth.uid() 비교한 is_me 플래그 사용 (동명이인 안전)
+                        const myIdx = list.findIndex(a => a.is_me === true);
                         const total = list.length;
-                        return `<span class="my-status-slot-tag">${escapeHtml(s.slot_emoji || '')} ${escapeHtml(s.slot_label || '')} — ${order}/${total}번째</span>`;
+                        // is_me 매칭 실패 시 순번을 추측하지 않음 — "?" 표기로 안전 폴백
+                        const orderStr = myIdx >= 0 ? (myIdx + 1) + '/' + total + '번째' : total + '명 중';
+                        return `<span class="my-status-slot-tag">${escapeHtml(s.slot_emoji || '')} ${escapeHtml(s.slot_label || '')} — ${orderStr}</span>`;
                     }).join(' ');
                     myStatusHtml = `
                         <div class="my-attend-status attended">
@@ -861,18 +874,18 @@ async function renderScheduleEvents() {
                         const cardStateClass = attended ? ' is-attended' : (isFull ? ' is-full' : '');
                         const countClass = isFull ? 'slot-count slot-count-full' : 'slot-count';
 
-                        // 슬롯별 신청자 명단 (회원·게스트 통합)
+                        // 슬롯별 신청자 명단 (회원·게스트 통합) — 본인 매칭은 서버 is_me 플래그
                         const slotAttendees = attendeesBySlot[sid] || [];
-                        const myName = (currentProfile && currentProfile.name) || '';
                         const attendeesHtml = slotAttendees.length ? `
                             <div class="slot-attendees">
-                                <div class="slot-attendees-label">참가자 ${slotAttendees.length}명</div>
+                                <div class="slot-attendees-label">신청자 ${slotAttendees.length}명</div>
                                 <div class="slot-attendees-list">
                                     ${slotAttendees.map(a => {
-                                        const isMe = !a.is_guest && a.name === myName;
+                                        const isMe = a.is_me === true;
                                         const tagCls = 'attendee-tag' + (isMe ? ' is-me' : '') + (a.is_guest ? ' is-guest' : '');
                                         const suffix = a.is_guest ? '<span class="attendee-guest-mark">게스트</span>' : '';
-                                        return `<span class="${tagCls}">${escapeHtml(a.name)}${suffix}${isMe ? ' (나)' : ''}</span>`;
+                                        const display = truncDisplayName(a.name);
+                                        return `<span class="${tagCls}" title="${escapeHtml(a.name)}">${escapeHtml(display)}${suffix}${isMe ? ' (나)' : ''}</span>`;
                                     }).join('')}
                                 </div>
                             </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요. 첫 번째 신청자가 되어주세요!</div>';
@@ -1150,6 +1163,7 @@ async function renderSpeakUpPreview() {
                     '<span>👍 ' + reactionData.likes + '</span>' +
                     '<span>👎 ' + reactionData.dislikes + '</span>' +
                     '<span>💬 ' + commentCount + '</span>' +
+                    '<span>👁 ' + (post.view_count || 0) + '</span>' +
                 '</div>' +
             '</a>';
         }
