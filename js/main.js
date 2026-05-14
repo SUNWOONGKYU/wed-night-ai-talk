@@ -692,6 +692,16 @@ async function renderScheduleEvents() {
         // 첫 번째 활성 이벤트를 참여 신청용으로 설정
         currentEventId = events[0].id;
 
+        // 회차 번호 매핑 — 비활성 포함 전체 이벤트 기준 (event_date ASC 순서)
+        // 1회 비활성화돼도 2회는 그대로 "제2회"로 표시되도록 함
+        const meetingNoMap = {};
+        try {
+            const allEvents = await DB.getAllEventsForNumbering();
+            allEvents.forEach((ev, i) => { meetingNoMap[ev.id] = i + 1; });
+        } catch (e) {
+            console.warn('getAllEventsForNumbering failed, falling back to active idx:', e);
+        }
+
         // 슬롯 정보 + 인원수 (이벤트별로 동적 로드) + 본인이 신청한 슬롯 조회
         const slotsByEvent = {};
         const myAttendedSlotIds = new Set();
@@ -826,8 +836,8 @@ async function renderScheduleEvents() {
                 <p class="waat-slots-note">원하는 시간대 하나를 골라서 신청하고 오시면 돼요. 슬롯마다 선착순 모집입니다.<br>사이사이 여유시간이 있어서, 자연스럽게 합류하거나 떠날 수 있습니다.</p>
             ` : '';
 
-            // 모임 회차: DB가 event_date ASC로 정렬돼 있으므로 idx+1 = 회차
-            const meetingNo = idx + 1;
+            // 모임 회차: 비활성 모임 포함 전체 순서 기준 (비활성화돼도 회차 번호 유지)
+            const meetingNo = meetingNoMap[ev.id] || (idx + 1);
 
             return `
                 <div class="schedule-card reveal">

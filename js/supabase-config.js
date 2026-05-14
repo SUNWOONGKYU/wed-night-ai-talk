@@ -148,6 +148,16 @@ var DB = {
         return data;
     },
 
+    // 회차 번호 계산용 — 비활성 포함 전체 이벤트 (event_date ASC = 생성 순서)
+    async getAllEventsForNumbering() {
+        var { data, error } = await _supabase
+            .from('events')
+            .select('id, event_date')
+            .order('event_date', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
+
     async getEvent(eventId) {
         var { data, error } = await _supabase
             .from('events')
