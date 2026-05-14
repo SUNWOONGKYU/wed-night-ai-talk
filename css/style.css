@@ -3802,7 +3802,7 @@ footer {
     .comment-item .comment-body { font-size: 15px !important; line-height: 1.3333; }
     .comment-item .comment-reply-btn,
     .comment-item .comment-delete-btn { font-size: 12px !important; font-weight: 600; }
-    .comment-input { font-size: 16px !important; }
+    .comment-input { font-size: 15px !important; padding: 8px 12px !important; line-height: 1.3 !important; }
     .speakup-page .section-title { font-size: 20px !important; }
     .speakup-page .section-desc { font-size: 13px !important; }
 
@@ -3815,28 +3815,31 @@ footer {
     .post-form { padding: 12px !important; border-radius: 8px !important; }
     .post-form-wrap { margin-left: 0 !important; margin-right: 0 !important; }
 
-    /* 3) input / textarea 가로폭 100% + FB 작성 박스 글씨 크기 */
-    /* iOS는 16px 미만이면 포커스 시 자동 줌 → 16px이 최저값 */
-    .post-form .form-group { margin-bottom: 10px !important; }
+    /* 3) input / textarea — 페이스북 m.facebook.com 실측 매칭
+       - font-size: 15px (페북 15.2px)
+       - line-height: 1.3 (페북 1.3 / 19.76px)
+       - padding: 10px 12px (페북 대비 컴팩트)
+       - viewport에 maximum-scale=1.0 이므로 iOS 줌 차단됨 */
+    .post-form .form-group { margin-bottom: 8px !important; }
     .post-form input[type="text"],
     .post-form input[type="url"],
     .post-form textarea {
         width: 100% !important;
         box-sizing: border-box !important;
-        padding: 12px 14px !important;
-        font-size: 16px !important;
-        line-height: 1.4 !important;
+        padding: 10px 12px !important;
+        font-size: 15px !important;
+        line-height: 1.3 !important;
         border-radius: 8px !important;
         font-weight: 400 !important;
     }
     .post-form input#post-title {
-        font-size: 16px !important;
+        font-size: 15px !important;
         font-weight: 500 !important;
     }
-    .post-form input#post-fb-url { font-size: 16px !important; }
+    .post-form input#post-fb-url { font-size: 14px !important; }
     .post-form textarea {
-        min-height: 160px !important;
-        font-size: 16px !important;
+        min-height: 130px !important;
+        font-size: 15px !important;
     }
 
     /* 4) 게시글 카드 좌우 패딩도 살짝 축소 */
