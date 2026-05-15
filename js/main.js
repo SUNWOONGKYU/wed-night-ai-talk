@@ -993,10 +993,9 @@ async function renderScheduleEvents() {
                                 <div class="slot-attendees-list">
                                     ${slotAttendees.map(a => {
                                         const isMe = a.is_me === true;
-                                        const tagCls = 'attendee-tag' + (isMe ? ' is-me' : '') + (a.is_guest ? ' is-guest' : '');
-                                        const suffix = a.is_guest ? '<span class="attendee-guest-mark">게스트</span>' : '';
+                                        const tagCls = 'attendee-tag' + (isMe ? ' is-me' : '');
                                         const display = truncDisplayName(a.name);
-                                        return `<span class="${tagCls}" title="${escapeHtml(a.name)}">${escapeHtml(display)}${suffix}${isMe ? ' (나)' : ''}</span>`;
+                                        return `<span class="${tagCls}" title="${escapeHtml(a.name)}">${escapeHtml(display)}${isMe ? ' (나)' : ''}</span>`;
                                     }).join('')}
                                 </div>
                             </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요. 첫 번째 신청자가 되어주세요!</div>';
