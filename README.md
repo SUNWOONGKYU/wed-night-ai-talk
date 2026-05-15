@@ -90,7 +90,7 @@ supabase functions deploy send-email
 
 ## 보안 정책
 
-1. **API Key 관리**: Resend/Supabase service-role 키는 Supabase Secrets로만 보관. 정기 회전 권장 → `docs/URGENT_RESEND_KEY_ROTATION.md`
+1. **API Key 관리**: Resend/Supabase service-role 키는 Supabase Secrets로만 보관. `.env`는 로컬 개발용으로만 사용하고 절대 커밋하지 않는다.
 2. **PII**: 마이그레이션 SQL에 실명/휴대폰 평문 금지. 작성 시 user_id로 처리. → `docs/GIT_HISTORY_PII_CLEANUP.md`
 3. **CSP**: vercel.json에서 default-src 'self' 기반 화이트리스트 정책
 4. **CORS (Edge Function)**: Origin 화이트리스트 — 운영 도메인 + localhost만 허용
@@ -111,7 +111,6 @@ supabase functions deploy send-email
 |------|------|
 | `docs/DEPLOY_EMAIL.md` | 이메일 시스템 배포 절차 |
 | `docs/TODO-email-bulk-send.md` | 이메일 발송 기능 TODO |
-| `docs/URGENT_RESEND_KEY_ROTATION.md` | Resend API 키 회전 절차 |
 | `docs/GIT_HISTORY_PII_CLEANUP.md` | git history PII 정제 (필요 시) |
 | `supabase/migrations/README.md` | 마이그레이션 분류 가이드 |
 | `GUIDE_FOR_ADMIN.md` | 관리자용 사용 가이드 |
