@@ -8,10 +8,20 @@ function pfEscape(str) {
     return div.innerHTML;
 }
 
+// 'YYYY-MM-DD' 문자열은 로컬 자정으로 파싱하여 타임존 음수 오프셋에서 하루 밀림 방지
+function pfToLocalDate(d) {
+    if (!d) return null;
+    if (typeof d === 'string') {
+        var m = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) return new Date(parseInt(m[1],10), parseInt(m[2],10)-1, parseInt(m[3],10));
+    }
+    return new Date(d);
+}
+
 function pfFormatDate(d) {
     if (!d) return '—';
     try {
-        var date = new Date(d);
+        var date = pfToLocalDate(d);
         var y = date.getFullYear();
         var m = ('0' + (date.getMonth() + 1)).slice(-2);
         var day = ('0' + date.getDate()).slice(-2);
@@ -22,7 +32,7 @@ function pfFormatDate(d) {
 function pfFormatDateLong(d) {
     if (!d) return '—';
     try {
-        var date = new Date(d);
+        var date = pfToLocalDate(d);
         var y = date.getFullYear();
         var m = date.getMonth() + 1;
         var day = date.getDate();
@@ -87,20 +97,34 @@ async function pfLoadAttendances() {
     try {
         var rows = await DB.getMyAttendancesFull();
 
-        // 활성 모임만 + 미래 모임 우선
+        // 클라이언트 정렬 보강 (서버 정렬 변경에 견고하게) — event_date ASC
+        // pfToLocalDate로 통일하여 classify/render 경로와 형 일관화
+        rows.sort(function(a, b) {
+            var da = pfToLocalDate(a.event_date) || new Date(0);
+            var db = pfToLocalDate(b.event_date) || new Date(0);
+            return da - db;
+        });
+
+        // 분류: 활성 미래 / 활성 과거 / 취소(비활성) — 비활성 미래는 사실상 취소된 모임
         var today = new Date();
         today.setHours(0, 0, 0, 0);
 
         var upcoming = [];
         var past = [];
+        var cancelled = [];
         rows.forEach(function(r) {
-            if (!r.is_active) return; // 비활성 모임은 제외
-            var d = new Date(r.event_date);
+            var d = pfToLocalDate(r.event_date);
+            if (!r.is_active) {
+                // 비활성: 과거면 지난 모임에, 미래면 취소(폐강)된 모임으로
+                if (d >= today) cancelled.push(r);
+                else past.push(r);
+                return;
+            }
             if (d >= today) upcoming.push(r);
             else past.push(r);
         });
 
-        if (upcoming.length === 0 && past.length === 0) {
+        if (upcoming.length === 0 && past.length === 0 && cancelled.length === 0) {
             listEl.innerHTML = '<div class="speakup-empty">아직 신청한 모임이 없습니다. <a href="index.html#schedule">모임 둘러보기 →</a></div>';
             return;
         }
@@ -109,6 +133,10 @@ async function pfLoadAttendances() {
         if (upcoming.length > 0) {
             html += '<div class="my-att-section-label">🟢 예정된 모임 (' + upcoming.length + '건)</div>';
             html += upcoming.map(pfRenderRow).join('');
+        }
+        if (cancelled.length > 0) {
+            html += '<div class="my-att-section-label cancelled">⚠️ 취소(폐강)된 모임 (' + cancelled.length + '건)</div>';
+            html += cancelled.map(pfRenderRow).join('');
         }
         if (past.length > 0) {
             html += '<div class="my-att-section-label past">⏳ 지난 모임 (' + past.length + '건)</div>';
@@ -120,8 +148,11 @@ async function pfLoadAttendances() {
         // 취소 버튼 바인딩
         listEl.querySelectorAll('.my-att-cancel-btn').forEach(function(btn) {
             btn.addEventListener('click', async function() {
-                var eventId = parseInt(btn.dataset.eventId);
-                var slotId = parseInt(btn.dataset.slotId) || null;
+                var eventId = parseInt(btn.dataset.eventId, 10);
+                var rawSlot = btn.dataset.slotId;
+                var parsedSlot = parseInt(rawSlot, 10);
+                // slotId=0도 유효값으로 처리 (NaN/빈문자열만 null)
+                var slotId = (rawSlot === '' || !Number.isFinite(parsedSlot)) ? null : parsedSlot;
                 if (!confirm('이 모임 신청을 취소하시겠습니까?')) return;
                 btn.disabled = true;
                 try {
@@ -144,20 +175,26 @@ function pfRenderRow(r) {
     if (r.slot_time) {
         timeStr = r.slot_time + (r.slot_end_time ? ' ~ ' + r.slot_end_time : '');
     }
-    var isPast = new Date(r.event_date) < new Date(new Date().setHours(0,0,0,0));
-    var cancelBtn = isPast ? '' :
+    var today0 = new Date(); today0.setHours(0,0,0,0);
+    var isPast = pfToLocalDate(r.event_date) < today0;
+    // isCancelled를 호출자 인자가 아닌 row 자체로 계산 (호출 경로 누락 방지)
+    var isCancelled = (r.is_active === false) && !isPast;
+    // 미래 + 활성 모임에만 취소 버튼
+    var cancelBtn = (isPast || isCancelled) ? '' :
         '<button class="my-att-cancel-btn btn-secondary" data-event-id="' + r.event_id + '" data-slot-id="' + (r.event_slot_id || '') + '">신청 취소</button>';
+    var stateCls = isCancelled ? ' cancelled' : (isPast ? ' past' : '');
+    var statusBadge = isCancelled ? '<span class="my-att-status-badge cancelled">취소됨</span>' : '';
 
     return '' +
-        '<div class="my-att-item' + (isPast ? ' past' : '') + '">' +
-            '<div class="my-att-date">' + pfFormatDateLong(r.event_date) + '</div>' +
+        '<div class="my-att-item' + stateCls + '">' +
+            '<div class="my-att-date">' + pfFormatDateLong(r.event_date) + statusBadge + '</div>' +
             '<div class="my-att-slot">' +
                 '<span class="my-att-emoji">' + pfEscape(r.slot_emoji || '') + '</span>' +
                 '<span class="my-att-label">' + pfEscape(r.slot_label || '') + '</span>' +
                 (timeStr ? '<span class="my-att-time">' + pfEscape(timeStr) + '</span>' : '') +
             '</div>' +
             (r.event_title ? '<div class="my-att-title">' + pfEscape(r.event_title) + '</div>' : '') +
-            '<div class="my-att-actions">' + cancelBtn + '</div>' +
+            (cancelBtn ? '<div class="my-att-actions">' + cancelBtn + '</div>' : '') +
         '</div>';
 }
 

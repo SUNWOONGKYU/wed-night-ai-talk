@@ -1,4 +1,4 @@
--- 1회차(event_id=3) 햇살(slot_id=28) — [member-C] 삭제
+﻿-- 1회차(event_id=3) 햇살(slot_id=28) — [member-C] 삭제
 -- 회원(attendance) + 게스트(inquiries) 양쪽 점검
 
 DO $$

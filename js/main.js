@@ -108,13 +108,56 @@ function formatProvision(text) {
     });
 })();
 
+// ========== Modal Focus Trap (공통 유틸) ==========
+const FOCUSABLE_SEL = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const _modalState = new WeakMap();
+
+function trapFocus(modalEl) {
+    if (!modalEl) return;
+    var lastFocused = document.activeElement;
+    function handler(e) {
+        if (e.key !== 'Tab') return;
+        var nodes = Array.prototype.slice.call(modalEl.querySelectorAll(FOCUSABLE_SEL))
+            .filter(function(n) { return n.offsetParent !== null; });
+        if (!nodes.length) return;
+        var first = nodes[0], last = nodes[nodes.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    modalEl.addEventListener('keydown', handler);
+    _modalState.set(modalEl, { lastFocused: lastFocused, handler: handler });
+    // 첫 포커스: close 버튼이 아닌 첫 입력 요소 우선
+    setTimeout(function() {
+        var nodes = Array.prototype.slice.call(modalEl.querySelectorAll(FOCUSABLE_SEL))
+            .filter(function(n) { return n.offsetParent !== null && !n.classList.contains('modal-close'); });
+        if (nodes.length) nodes[0].focus();
+        else {
+            var closer = modalEl.querySelector('.modal-close');
+            if (closer) closer.focus();
+        }
+    }, 50);
+}
+
+function releaseFocus(modalEl) {
+    if (!modalEl) return;
+    var st = _modalState.get(modalEl);
+    if (!st) return;
+    modalEl.removeEventListener('keydown', st.handler);
+    if (st.lastFocused && typeof st.lastFocused.focus === 'function') {
+        try { st.lastFocused.focus(); } catch (e) {}
+    }
+    _modalState.delete(modalEl);
+}
+
 // ========== Modal ==========
 const authModal = document.getElementById('auth-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 
 function openModal(tab, options) {
     authModal.classList.add('open');
+    authModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    trapFocus(authModal);
 
     const notice = document.getElementById('modal-notice');
     if (notice) {
@@ -160,7 +203,9 @@ function openModal(tab, options) {
 
 function closeModal() {
     authModal.classList.remove('open');
+    authModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    releaseFocus(authModal);
     // 모달 닫을 때 참여 UI 갱신 (로그인/가입 후 닫았을 때 버튼 상태 반영)
     updateAttendUI();
     if (currentUser) checkAttendance();
@@ -216,7 +261,6 @@ function bindGoogleAuth(btnId) {
         return;
     }
     btn.addEventListener('click', async function() {
-        console.log('[Google OAuth] 버튼 클릭됨:', btnId);
         if (typeof Auth === 'undefined' || !Auth.signInWithGoogle) {
             alert('Auth 모듈이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
             return;
@@ -224,8 +268,7 @@ function bindGoogleAuth(btnId) {
         try {
             btn.disabled = true;
             btn.textContent = '구글 로그인 페이지로 이동...';
-            var result = await Auth.signInWithGoogle();
-            console.log('[Google OAuth] result:', result);
+            await Auth.signInWithGoogle();
             // signInWithOAuth는 정상이면 브라우저가 자동 리다이렉트됨
             // 3초 후에도 페이지가 그대로면 리다이렉트 실패로 판단
             setTimeout(function() {
@@ -253,12 +296,17 @@ bindGoogleAuth('login-google-btn');
 
     function close() {
         modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        releaseFocus(modal);
     }
 
     var closeBtn = document.getElementById('guest-attend-close-btn');
     if (closeBtn) closeBtn.addEventListener('click', close);
     modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
 
     var form = document.getElementById('guest-attend-form');
     if (!form) return;
@@ -287,7 +335,7 @@ bindGoogleAuth('login-google-btn');
 
         // 검증 3: 핸드폰 번호 (010/011 + 10~11자리)
         var phone = phoneRaw.replace(/[^0-9]/g, '');
-        if (!/^01[016789]\d{7,8}$/.test(phone)) {
+        if (!/^(010\d{8}|01[16789]\d{7})$/.test(phone)) {
             setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
             return;
         }
@@ -347,7 +395,7 @@ function showToast(msg, type) {
 // Google OAuth 등으로 가입한 회원이 phone 없이 모임 신청을 시도할 때,
 // 핸드폰 번호 입력을 강제하기 위한 모달 헬퍼.
 function isValidPhone(v) {
-    return /^01[016789]\d{7,8}$/.test(v || '');
+    return /^(010\d{8}|01[16789]\d{7})$/.test(v || '');
 }
 function showPhoneRequiredModal(onSaved) {
     var m = document.getElementById('phone-required-modal');
@@ -439,19 +487,23 @@ function showIdentityChoiceModal(slot) {
     if (!m) return;
     var slotEl = document.getElementById('ic-selected-slot');
     if (slotEl && slot) {
-        var emoji = slot.slot_emoji || '';
-        var label = slot.slot_label || '';
-        var t = slotTimeStr(slot);
+        var emoji = escapeHtml(slot.slot_emoji || '');
+        var label = escapeHtml(slot.slot_label || '');
+        var t = escapeHtml(slotTimeStr(slot));
         slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
     }
     m.classList.add('open');
+    m.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    trapFocus(m);
 }
 function closeIdentityChoiceModal() {
     var m = document.getElementById('identity-choice-modal');
     if (m) {
         m.classList.remove('open');
+        m.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        releaseFocus(m);
     }
 }
 (function() {
@@ -482,13 +534,15 @@ function closeIdentityChoiceModal() {
         if (s) { s.textContent = ''; s.className = 'form-status'; }
         var slotEl = document.getElementById('ga-selected-slot');
         if (slotEl && slot) {
-            var emoji = slot.slot_emoji || '';
-            var label = slot.slot_label || '';
-            var t = slotTimeStr(slot);
+            var emoji = escapeHtml(slot.slot_emoji || '');
+            var label = escapeHtml(slot.slot_label || '');
+            var t = escapeHtml(slotTimeStr(slot));
             slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
         }
         ga.classList.add('open');
+        ga.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        trapFocus(ga);
     });
 })();
 
@@ -995,7 +1049,7 @@ async function renderScheduleEvents() {
 
     } catch (e) {
         console.error('renderScheduleEvents error:', e);
-        container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">모임 로드 오류: ' + (e.message || e) + '</div>';
+        container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">모임 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
     }
 }
 
@@ -1149,7 +1203,7 @@ async function renderLocations() {
 
     } catch (e) {
         console.error('renderLocations error:', e);
-        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--accent-pink);">장소 로드 오류: ' + (e.message || e) + '</div>';
+        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--accent-pink);">장소 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
     }
 }
 
@@ -1299,13 +1353,13 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         return;
     }
 
-    // 비밀번호 유효성: 영문+숫자만, 6자 이상
-    if (password.length < 6) {
-        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+    // 비밀번호 유효성: 공백 없이 8자 이상 (영문/숫자/특수문자 허용)
+    if (password.length < 8) {
+        setStatus(statusEl, '비밀번호는 8자 이상이어야 합니다.', 'error');
         return;
     }
-    if (!/^[a-zA-Z0-9]+$/.test(password)) {
-        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+    if (/\s/.test(password)) {
+        setStatus(statusEl, '비밀번호에 공백을 사용할 수 없습니다.', 'error');
         return;
     }
 
@@ -1362,7 +1416,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         if (errMsg.includes('already registered') || errMsg.includes('already been registered')) {
             msg = '이미 등록된 이메일입니다. 로그인을 시도해주세요.';
         } else if (errMsg.includes('password')) {
-            msg = '비밀번호는 6자 이상이어야 합니다.';
+            msg = '비밀번호는 8자 이상이어야 합니다.';
         } else if (errMsg.includes('email')) {
             msg = '이메일 형식을 확인해주세요.';
         } else if (errMsg.includes('rate') || errMsg.includes('limit')) {
@@ -1444,12 +1498,12 @@ document.getElementById('reset-password-form').addEventListener('submit', async 
     const newPw = document.getElementById('rp-new').value;
     const confirmPw = document.getElementById('rp-confirm').value;
 
-    if (newPw.length < 6) {
-        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+    if (newPw.length < 8) {
+        setStatus(statusEl, '비밀번호는 8자 이상이어야 합니다.', 'error');
         return;
     }
-    if (!/^[a-zA-Z0-9]+$/.test(newPw)) {
-        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+    if (/\s/.test(newPw)) {
+        setStatus(statusEl, '비밀번호에 공백을 사용할 수 없습니다.', 'error');
         return;
     }
     if (newPw !== confirmPw) {
@@ -1461,8 +1515,6 @@ document.getElementById('reset-password-form').addEventListener('submit', async 
     btn.disabled = true;
 
     try {
-        console.log('비밀번호 재설정 시도 - currentUser:', currentUser);
-        console.log('세션 확인:', await Auth.getSession());
         await Auth.updatePassword(newPw);
         setStatus(statusEl, '비밀번호가 변경되었습니다. 잠시 후 자동으로 닫힙니다.', 'success');
         e.target.reset();
@@ -1492,7 +1544,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     const interests = interestsRaw.trim();
 
     // 핸드폰 번호 — 빈 값은 허용 (Google 가입 직후 등), 입력했을 때만 형식 검증
-    if (phone && !/^01[016789]\d{7,8}$/.test(phone)) {
+    if (phone && !/^(010\d{8}|01[16789]\d{7})$/.test(phone)) {
         setStatus(statusEl, '핸드폰 번호 형식이 올바르지 않습니다. (예: [masked-phone])', 'error');
         return;
     }
@@ -1535,12 +1587,12 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
     const newPw = document.getElementById('pw-new').value;
     const confirmPw = document.getElementById('pw-confirm').value;
 
-    if (newPw.length < 6) {
-        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+    if (newPw.length < 8) {
+        setStatus(statusEl, '비밀번호는 8자 이상이어야 합니다.', 'error');
         return;
     }
-    if (!/^[a-zA-Z0-9]+$/.test(newPw)) {
-        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+    if (/\s/.test(newPw)) {
+        setStatus(statusEl, '비밀번호에 공백을 사용할 수 없습니다.', 'error');
         return;
     }
     if (newPw !== confirmPw) {
@@ -1576,25 +1628,30 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
 const inquiryModal = document.getElementById('inquiry-modal');
 
 var _inquiryTrigger = document.getElementById('footer-inquiry-link') || document.getElementById('nav-inquiry-link');
+function _closeInquiryModal() {
+    inquiryModal.classList.remove('open');
+    inquiryModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    releaseFocus(inquiryModal);
+}
 if (_inquiryTrigger) {
     _inquiryTrigger.addEventListener('click', (e) => {
         e.preventDefault();
         fillInquiryForm();
         inquiryModal.classList.add('open');
+        inquiryModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        trapFocus(inquiryModal);
     });
 }
 
-document.getElementById('inquiry-close-btn').addEventListener('click', () => {
-    inquiryModal.classList.remove('open');
-    document.body.style.overflow = '';
-});
+document.getElementById('inquiry-close-btn').addEventListener('click', _closeInquiryModal);
 
 inquiryModal.addEventListener('click', (e) => {
-    if (e.target === inquiryModal) {
-        inquiryModal.classList.remove('open');
-        document.body.style.overflow = '';
-    }
+    if (e.target === inquiryModal) _closeInquiryModal();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && inquiryModal.classList.contains('open')) _closeInquiryModal();
 });
 
 function fillInquiryForm() {
@@ -1702,7 +1759,7 @@ function startApp() {
         // 10번 시도 후에도 실패 — 에러 표시
         var ec = document.getElementById('events-container');
         var lc = document.getElementById('locations-container');
-        var msg = 'Supabase 로드 실패 (DB:' + dbReady + ', Auth:' + authReady + '). 페이지를 새로고침 해주세요.';
+        var msg = escapeHtml('Supabase 로드 실패 (DB:' + dbReady + ', Auth:' + authReady + '). 페이지를 새로고침 해주세요.');
         if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
         if (lc) lc.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
         return;
@@ -1718,7 +1775,7 @@ function startApp() {
     renderSpeakUpPreview().catch(function(e) {
         console.error('SpeakUp preview error:', e);
         var c = document.getElementById('speakup-preview-container');
-        if (c) c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">미리보기 로드 오류: ' + (e.message || e) + '</div>';
+        if (c) c.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">미리보기 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
     });
 }
 

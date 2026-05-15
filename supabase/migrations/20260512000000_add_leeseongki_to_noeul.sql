@@ -1,4 +1,4 @@
--- 1회차(event=3) 노을(slot=29)에 [member-D](구글 가입 회원) 추가
+﻿-- 1회차(event=3) 노을(slot=29)에 [member-D](구글 가입 회원) 추가
 -- 안전장치: profiles에서 '[member-D]' 매칭 건수 NOTICE로 확인 후 추가
 
 DO $$

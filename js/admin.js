@@ -111,7 +111,7 @@ function renderMembers(members) {
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.message || '-')}</td>
             <td>${date}</td>
-            <td><button class="btn-secondary btn-small" onclick="deleteMember('${m.id}', '${escapeHtml(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
+            <td><button class="btn-secondary btn-small" onclick="deleteMember('${escapeAttr(m.id)}', '${escapeAttr(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
         </tr>`;
     }).join('');
 
@@ -202,11 +202,11 @@ function renderEvents(events) {
             <td>${time}</td>
             <td>${escapeHtml(ev.location || '-')}</td>
             <td>${status}</td>
-            <td><button class="btn-secondary btn-small" onclick="viewAttendees(${ev.id}, '${escapeHtml(ev.title)}')">보기</button></td>
+            <td><button class="btn-secondary btn-small" onclick="viewAttendees(${ev.id}, '${escapeAttr(ev.title)}')">보기</button></td>
             <td>
                 <button class="btn-secondary btn-small" onclick="editEvent(${ev.id})">수정</button>
                 <button class="btn-secondary btn-small" onclick="toggleEventActive(${ev.id}, ${ev.is_active})">${ev.is_active ? '비활성화' : '활성화'}</button>
-                <button class="btn-secondary btn-small" onclick="deleteEvent(${ev.id}, '${escapeHtml(ev.title)}')" style="color:var(--accent-pink);">삭제</button>
+                <button class="btn-secondary btn-small" onclick="deleteEvent(${ev.id}, '${escapeAttr(ev.title)}')" style="color:var(--accent-pink);">삭제</button>
             </td>
         </tr>`;
     }).join('');
@@ -499,8 +499,8 @@ async function viewAttendees(eventId, eventTitle) {
                 var isGuest = !!a.is_guest;
                 var nameDisplay = isGuest ? (escapeHtml(name) + ' <span style="color:var(--accent-pink); font-size:0.78rem; margin-left:0.3rem;">[게스트]</span>') : escapeHtml(name);
                 var deleteBtn = isGuest
-                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.guest_id + ', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
-                    : '<button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + a.user_id + '\', \'' + a.event_id + '\', \'' + escapeHtml(name) + '\')" style="color:var(--accent-pink);">삭제</button>';
+                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.guest_id + ', \'' + escapeAttr(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
+                    : '<button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + escapeAttr(a.user_id) + '\', \'' + escapeAttr(a.event_id) + '\', \'' + escapeAttr(name) + '\')" style="color:var(--accent-pink);">삭제</button>';
                 html += '<tr>' +
                     '<td>' + nameDisplay + '</td>' +
                     '<td>' + escapeHtml(slotLabelCell) + '</td>' +
@@ -516,7 +516,7 @@ async function viewAttendees(eventId, eventTitle) {
         }
     } catch (e) {
         console.error('viewAttendees error:', e);
-        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + escapeHtml(String(e.message || e)) + '</td></tr>';
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -815,6 +815,15 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+// HTML 속성값(특히 onclick='...' 안)에 안전한 이스케이프
+function escapeAttr(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 // =============================================

@@ -1,4 +1,4 @@
--- 1회차(event=3) 달빛(slot=6): 선웅규 삭제 + [member-H] 추가
+﻿-- 1회차(event=3) 달빛(slot=6): 선웅규 삭제 + [member-H] 추가
 -- 단일 트랜잭션으로 처리하여 정원 트리거 통과 보장 (먼저 DELETE → INSERT)
 
 DO $$

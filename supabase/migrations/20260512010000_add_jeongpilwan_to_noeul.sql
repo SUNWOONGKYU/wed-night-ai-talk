@@ -1,4 +1,4 @@
--- 1회차(event=3) 노을(slot=29)에 [member-E] 추가
+﻿-- 1회차(event=3) 노을(slot=29)에 [member-E] 추가
 -- 가입 시 이름란이 '[member-E] 입니다.'로 저장되어 있어 함께 정리
 
 DO $$

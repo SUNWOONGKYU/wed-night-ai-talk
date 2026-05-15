@@ -1,4 +1,4 @@
--- 운영자 요청: 1회차(event_id=3) 특정 신청자 삭제
+﻿-- 운영자 요청: 1회차(event_id=3) 특정 신청자 삭제
 -- 1) 달빛(slot_id=6) [member-A] (phone=[masked-phone]) — 회원 attendance
 -- 2) 햇살(slot_id=28) 선웅규 (phone=[masked-phone]) — 회원 attendance
 --

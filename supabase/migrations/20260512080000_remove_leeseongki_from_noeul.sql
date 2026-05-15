@@ -1,4 +1,4 @@
--- 1회차(event=3) 노을(29)에서 [member-D] 제거
+﻿-- 1회차(event=3) 노을(29)에서 [member-D] 제거
 
 DO $$
 DECLARE

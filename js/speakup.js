@@ -211,7 +211,7 @@ async function loadPosts(reset) {
     } catch (e) {
         console.error('loadPosts error:', e);
         if (reset) {
-            container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류: ' + (e.message || e) + '</div>';
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
         }
     }
 }
@@ -448,7 +448,6 @@ function bindPostCardEvents(card, post) {
             e.preventDefault();
             e.stopPropagation();
             var postId = parseInt(editBtn.dataset.postId);
-            console.log('[edit] click postId=', postId, 'title=', post.title);
             try {
                 startEditPost(postId, post.title, post.content, post.fb_url || '');
             } catch (err) {
@@ -675,7 +674,6 @@ if (postSubmitBtn) {
         if (editId) {
             // 수정
             try {
-                console.log('[edit submit] editId=', editId, 'title=', title, 'fb_url=', fbUrl);
                 var resp = await _supabase
                     .from('posts')
                     .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
@@ -687,7 +685,6 @@ if (postSubmitBtn) {
                     postSubmitBtn.textContent = '수정';
                     return;
                 }
-                console.log('[edit submit] success', resp);
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';

@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WAAT — Wednesday Afternoon AI Talk | 수요일 오후 AI 수다</title>
     <meta name="description" content="AI를 주제로 자유롭게 수다를 나누는 모임. AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.">
+    <meta name="keywords" content="AI, 인공지능, 수다, 모임, 스터디, WAAT, Wednesday, 수요일">
+    <meta name="author" content="WAAT">
+    <meta name="theme-color" content="#1A2238">
+    <link rel="canonical" href="https://wed-night-ai-talk.vercel.app/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WAAT — 수요일 오후 AI 수다">
+    <meta property="og:title" content="WAAT — Wednesday Afternoon AI Talk">
+    <meta property="og:description" content="AI를 주제로 자유롭게 수다를 나누는 모임. 매주 수요일 오후.">
+    <meta property="og:url" content="https://wed-night-ai-talk.vercel.app/">
+    <meta property="og:image" content="https://wed-night-ai-talk.vercel.app/waat-poster.jpg">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WAAT — 수요일 오후 AI 수다">
+    <meta name="twitter:description" content="AI를 주제로 자유롭게 수다를 나누는 모임.">
+    <meta name="twitter:image" content="https://wed-night-ai-talk.vercel.app/waat-poster.jpg">
+
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260515b">
+    <link rel="stylesheet" href="css/style.css?v=20260515c">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -55,7 +75,7 @@
         <div class="hero-inner">
             <div class="hero-brandline">
                 <div class="hero-brand-mark">WAAT</div>
-                <div class="hero-brand-text">Wednesday Afternoon<br>AI Talk</div>
+                <div class="hero-brand-text">Wednesday Afternoon AI Talk</div>
             </div>
 
             <h1 class="hero-headline">
@@ -143,10 +163,10 @@
     </section>
 
     <!-- 문의하기 모달 -->
-    <div id="inquiry-modal" class="modal-overlay">
+    <div id="inquiry-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title" aria-hidden="true">
         <div class="modal-content">
-            <button class="modal-close" id="inquiry-close-btn">&times;</button>
-            <h2 class="modal-title">문의하기</h2>
+            <button class="modal-close" id="inquiry-close-btn" aria-label="닫기">&times;</button>
+            <h2 class="modal-title" id="inquiry-modal-title">문의하기</h2>
             <p style="color:var(--text-muted); margin-bottom:1.5rem;">궁금한 점이나 제안사항을 보내주세요.</p>
             <form id="inquiry-form" class="site-form">
                 <div class="form-grid">
@@ -178,9 +198,9 @@
     </div>
 
     <!-- 멤버 가입 / 로그인 / 프로필 모달 -->
-    <div id="auth-modal" class="modal-overlay">
+    <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="membership-title" aria-hidden="true">
         <div class="modal-content">
-            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <button class="modal-close" id="modal-close-btn" aria-label="닫기">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
             <p id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해서 먼저 멤버 가입 신청을 해주세요.</p>
 
@@ -195,8 +215,8 @@
                         </div>
                         <div class="form-group">
                             <label for="s-password">비밀번호 <span class="required">*</span></label>
-                            <input type="password" id="s-password" name="password" required placeholder="영문+숫자 6자 이상" minlength="6" pattern="[a-zA-Z0-9]+" title="영문과 숫자만 사용 가능합니다">
-                            <span class="form-hint">영문, 숫자 조합 6자 이상으로 해주세요</span>
+                            <input type="password" id="s-password" name="password" required placeholder="8자 이상 (영문/숫자/특수문자)" minlength="8" pattern="\S{8,}" title="공백 없이 8자 이상 입력해주세요" autocomplete="new-password">
+                            <span class="form-hint">8자 이상, 영문·숫자·특수문자 사용 가능 (공백 제외)</span>
                         </div>
                     </div>
                     <div class="form-grid">
@@ -282,12 +302,12 @@
                     <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.95rem;">새로운 비밀번호를 입력해주세요.</p>
                     <div class="form-group">
                         <label for="rp-new">새 비밀번호 <span class="required">*</span></label>
-                        <input type="password" id="rp-new" name="new_password" required minlength="6" placeholder="영문+숫자 6자 이상" pattern="[a-zA-Z0-9]+" title="영문과 숫자만 사용 가능합니다">
-                        <span class="form-hint">영문, 숫자 조합 6자 이상으로 해주세요</span>
+                        <input type="password" id="rp-new" name="new_password" required minlength="8" placeholder="8자 이상 (영문/숫자/특수문자)" pattern="\S{8,}" title="공백 없이 8자 이상 입력해주세요" autocomplete="new-password">
+                        <span class="form-hint">8자 이상, 영문·숫자·특수문자 사용 가능 (공백 제외)</span>
                     </div>
                     <div class="form-group">
                         <label for="rp-confirm">새 비밀번호 확인 <span class="required">*</span></label>
-                        <input type="password" id="rp-confirm" name="confirm_password" required minlength="6" placeholder="새 비밀번호를 다시 입력">
+                        <input type="password" id="rp-confirm" name="confirm_password" required minlength="8" placeholder="새 비밀번호를 다시 입력" autocomplete="new-password">
                     </div>
                     <button type="submit" class="btn-primary form-submit">비밀번호 변경하기 →</button>
                     <div class="form-status" id="reset-status"></div>
@@ -353,11 +373,11 @@
                     <form id="password-form" class="site-form">
                         <div class="form-group">
                             <label for="pw-new">새 비밀번호 <span class="required">*</span></label>
-                            <input type="password" id="pw-new" name="new_password" required minlength="6" placeholder="영문+숫자 6자 이상">
+                            <input type="password" id="pw-new" name="new_password" required minlength="8" placeholder="8자 이상 (영문/숫자/특수문자)" pattern="\S{8,}" title="공백 없이 8자 이상 입력해주세요" autocomplete="new-password">
                         </div>
                         <div class="form-group">
                             <label for="pw-confirm">새 비밀번호 확인 <span class="required">*</span></label>
-                            <input type="password" id="pw-confirm" name="confirm_password" required minlength="6" placeholder="새 비밀번호를 다시 입력">
+                            <input type="password" id="pw-confirm" name="confirm_password" required minlength="8" placeholder="새 비밀번호를 다시 입력" autocomplete="new-password">
                         </div>
                         <button type="submit" class="btn-primary form-submit">비밀번호 변경하기 →</button>
                         <div class="form-status" id="password-status"></div>
@@ -390,10 +410,10 @@
 
     <!-- 게스트(비회원) 참여 신청 모달 -->
     <!-- Identity Choice Modal — 슬롯 신청 시 회원/비회원 분기 -->
-    <div id="identity-choice-modal" class="modal-overlay">
+    <div id="identity-choice-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="identity-choice-title" aria-hidden="true">
         <div class="modal-content" style="max-width: 420px;">
-            <button class="modal-close" id="ic-close-btn">&times;</button>
-            <h2 class="modal-title">신청 방식 선택</h2>
+            <button class="modal-close" id="ic-close-btn" aria-label="닫기">&times;</button>
+            <h2 class="modal-title" id="identity-choice-title">신청 방식 선택</h2>
             <div id="ic-selected-slot" class="ga-selected-slot"></div>
             <p style="color:var(--text-secondary); margin-bottom:1.5rem; text-align:center;">
                 회원이세요? 처음이세요?
@@ -429,10 +449,10 @@
         </div>
     </div>
 
-    <div id="guest-attend-modal" class="modal-overlay">
+    <div id="guest-attend-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="guest-attend-title" aria-hidden="true">
         <div class="modal-content" style="max-width: 480px;">
-            <button class="modal-close" id="guest-attend-close-btn">&times;</button>
-            <h2 class="modal-title">모임 참여 신청</h2>
+            <button class="modal-close" id="guest-attend-close-btn" aria-label="닫기">&times;</button>
+            <h2 class="modal-title" id="guest-attend-title">모임 참여 신청</h2>
             <div id="ga-selected-slot" class="ga-selected-slot"></div>
             <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.92rem;">
                 멤버 가입 없이도 신청할 수 있습니다.
@@ -472,7 +492,7 @@
             <div class="footer-poster">
                 <img src="waat-poster.jpg?v=20260510a" alt="WAAT 수요일 오후 AI 수다 — Wednesday Afternoon AI Talk" loading="lazy">
             </div>
-            <div class="footer-brand">Wednesday Afternoon AI Talk</div>
+            <div class="footer-brand">Wednesday Afternoon<br>AI Talk</div>
             <div class="footer-links">
                 <a href="terms.html">이용약관</a>
                 <span class="footer-sep">·</span>

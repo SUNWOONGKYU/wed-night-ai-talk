@@ -1,4 +1,4 @@
--- 1회차 햇살(slot=28) [member-B] (phone=[masked-phone]) attendance 삭제
+﻿-- 1회차 햇살(slot=28) [member-B] (phone=[masked-phone]) attendance 삭제
 
 DELETE FROM attendance
 WHERE id IN (

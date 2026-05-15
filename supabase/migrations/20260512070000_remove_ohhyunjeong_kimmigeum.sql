@@ -1,4 +1,4 @@
--- 1회차(event=3) 노을(29)에서 [member-F] 제거 + 달빛(6)에서 [member-G] 제거
+﻿-- 1회차(event=3) 노을(29)에서 [member-F] 제거 + 달빛(6)에서 [member-G] 제거
 -- attendance(회원) / guest_attendance(게스트) 양쪽 모두 시도
 
 DO $$
