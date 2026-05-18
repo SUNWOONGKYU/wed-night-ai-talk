@@ -16,8 +16,7 @@
             this.particles = [];
             this.mouse = { x: -9999, y: -9999 };
             this.isActive = true;
-            this.particleCount = isMobile ? 40 : 80;
-            this.connectDistance = isMobile ? 100 : 150;
+            this.particleCount = isMobile ? 24 : 50;
             this.mouseRadius = 200;
 
             this.resize();
@@ -123,20 +122,6 @@
                 this.ctx.fillStyle = `rgba(${color}, ${opacity})`;
                 this.ctx.fill();
                 this.ctx.shadowBlur = 0;
-
-                for (let j = i + 1; j < this.particles.length; j++) {
-                    const p2 = this.particles[j];
-                    const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
-                    if (d < this.connectDistance) {
-                        const alpha = (1 - d / this.connectDistance) * 0.1;
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(p.x, p.y);
-                        this.ctx.lineTo(p2.x, p2.y);
-                        this.ctx.strokeStyle = `rgba(${NAVY}, ${alpha})`;
-                        this.ctx.lineWidth = 0.5;
-                        this.ctx.stroke();
-                    }
-                }
             }
         }
 
@@ -147,33 +132,7 @@
         }
     }
 
-    // ========== 2. Floating Keywords ==========
-    class FloatingKeywords {
-        constructor(container) {
-            this.container = container;
-            this.keywords = ['AI', 'Future', 'Universe', 'Connect', 'Innovation', 'Vibe', 'Code', 'Create', 'Share', 'Tech'];
-            this.init();
-        }
-
-        init() {
-            this.keywords.forEach((text, i) => {
-                const el = document.createElement('span');
-                el.className = 'float-keyword';
-                el.textContent = text;
-
-                el.style.left = Math.random() * 80 + 10 + '%';
-                el.style.top = Math.random() * 70 + 15 + '%';
-                el.style.animationDelay = (i * -2.5) + 's';
-                el.style.animationDuration = (15 + Math.random() * 10) + 's';
-                el.style.fontSize = (0.7 + Math.random() * 0.6) + 'rem';
-                el.style.opacity = 0.06 + Math.random() * 0.06;
-
-                this.container.appendChild(el);
-            });
-        }
-    }
-
-    // ========== 3. Typing Effect ==========
+    // ========== 2. Typing Effect ==========
     function initTypingEffect() {
         const subtitle = document.querySelector('.hero-subtitle');
         if (!subtitle) return;
@@ -518,11 +477,8 @@
             new HeroCanvas(heroCanvas);
         }
 
-        // Floating keywords
-        const heroSection = document.querySelector('.hero');
-        if (heroSection) {
-            new FloatingKeywords(heroSection);
-        }
+        // Floating keywords — 미니멀 배경을 위해 비활성화
+        // (떠다니는 영어 단어가 깔끔한 흰 배경과 어울리지 않음)
 
         // Typing effect
         initTypingEffect();
