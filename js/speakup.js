@@ -36,6 +36,18 @@ function spWithTimeout(promise, ms, label) {
     ]);
 }
 
+// 에러를 사용자가 진단에 쓸 수 있도록 상세 문자열로 변환
+function spErrDetail(err) {
+    if (!err) return '알 수 없는 오류';
+    if (typeof err === 'string') return err;
+    var parts = [];
+    if (err.message) parts.push(err.message);
+    if (err.code) parts.push('code=' + err.code);
+    if (err.hint) parts.push('hint=' + err.hint);
+    if (err.details) parts.push(err.details);
+    return parts.length ? parts.join(' / ') : JSON.stringify(err);
+}
+
 // ========== Time Ago ==========
 function timeAgo(dateStr) {
     var now = new Date();
@@ -683,16 +695,14 @@ if (postSubmitBtn) {
             fbUrl = fbUrlRaw;
         }
 
-        // 세션 항상 재확인 — 메모리의 사용자 객체가 살아있어도 실제 토큰은
-        // 만료됐을 수 있다(모바일·장시간 방치). getSession()은 만료 임박 시 자동 갱신.
+        // 세션 재확인 — 성공하면 최신 user로 갱신, 실패해도 기존 사용자로 폴백.
+        // (getSession 실패만으로 차단하면 멀쩡히 로그인한 사용자도 막히므로 강제 차단 금지)
         try {
-            var session = await spWithTimeout(Auth.getSession(), 10000, '세션 확인');
-            spCurrentUser = (session && session.user) ? session.user : null;
-        } catch (e) {
-            spCurrentUser = null;
-        }
+            var session = await spWithTimeout(Auth.getSession(), 8000, '세션 확인');
+            if (session && session.user) spCurrentUser = session.user;
+        } catch (e) { /* 폴백: spInitAuth가 잡아둔 spCurrentUser 유지 */ }
         if (!spCurrentUser) {
-            spSetStatus(statusEl, '로그인이 만료되었습니다. 페이지를 새로고침한 뒤 다시 로그인해주세요.', 'error');
+            spSetStatus(statusEl, '로그인이 필요합니다. 페이지를 새로고침한 뒤 다시 로그인해주세요.', 'error');
             return;
         }
 
@@ -711,8 +721,7 @@ if (postSubmitBtn) {
                     15000, '수정'
                 );
                 if (resp.error) {
-                    console.error('[edit submit] supabase error:', resp.error);
-                    spSetStatus(statusEl, '수정 오류: ' + resp.error.message, 'error');
+                    spSetStatus(statusEl, '수정 오류: ' + spErrDetail(resp.error), 'error');
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '수정';
                     return;
@@ -730,7 +739,7 @@ if (postSubmitBtn) {
                 spPostOffset = 0;
                 await loadPosts(true);
             } catch (err) {
-                spSetStatus(statusEl, '수정 오류: ' + (err.message || err), 'error');
+                spSetStatus(statusEl, '수정 오류: ' + spErrDetail(err), 'error');
                 postSubmitBtn.disabled = false;
                 postSubmitBtn.textContent = '수정';
             }
@@ -744,7 +753,7 @@ if (postSubmitBtn) {
                     15000, '등록'
                 );
                 if (resp.error) {
-                    spSetStatus(statusEl, '등록 오류: ' + resp.error.message, 'error');
+                    spSetStatus(statusEl, '등록 오류: ' + spErrDetail(resp.error), 'error');
                     postSubmitBtn.disabled = false;
                     postSubmitBtn.textContent = '등록';
                     return;
@@ -761,7 +770,7 @@ if (postSubmitBtn) {
                 spPostOffset = 0;
                 await loadPosts(true);
             } catch (err) {
-                spSetStatus(statusEl, '등록 오류: ' + (err.message || err), 'error');
+                spSetStatus(statusEl, '등록 오류: ' + spErrDetail(err), 'error');
                 postSubmitBtn.disabled = false;
                 postSubmitBtn.textContent = '등록';
             }
