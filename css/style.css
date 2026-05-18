@@ -1,12 +1,12 @@
 /* ========== WAAT — OAT-WHITE / DEEP-NAVY / GOLD THEME ========== */
 :root {
-    /* Backgrounds — warm oat tone */
-    --bg-primary: #FAF7F2;
-    --bg-secondary: #F2EDE2;
+    /* Backgrounds — clean pure white */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F7F7F8;
     --bg-card: #FFFFFF;
-    --bg-card-hover: #F8F4EC;
-    --bg-nav: rgba(250, 247, 242, 0.88);
-    --bg-nav-scroll: rgba(250, 247, 242, 0.96);
+    --bg-card-hover: #F7F7F8;
+    --bg-nav: rgba(255, 255, 255, 0.88);
+    --bg-nav-scroll: rgba(255, 255, 255, 0.96);
 
     /* Accents — navy + gold (ax-on.net 계열 톤매너) */
     --accent-cyan: #1A2238;       /* deep navy — primary accent */
@@ -24,7 +24,7 @@
     --text-muted: #8A8F9E;
 
     /* Border */
-    --border: #E5DFD2;
+    --border: #EAEAEC;
 
     /* Glows */
     --glow-cyan: rgba(26, 34, 56, 0.08);
@@ -55,76 +55,18 @@ body {
     line-height: 1.7;
 }
 
-/* ========== ANIMATED BACKGROUND ========== */
+/* ========== BACKGROUND — clean pure white ========== */
+/* 비네팅·노이즈·컬러 구체 제거. 깔끔한 흰 배경 유지. */
 .bg-grid {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
     z-index: 0;
     pointer-events: none;
-    background:
-        radial-gradient(
-            ellipse 80% 60% at 85% 15%,
-            rgba(0, 229, 255, 0.04) 0%,
-            transparent 70%
-        ),
-        radial-gradient(
-            ellipse 70% 50% at 10% 85%,
-            rgba(120, 80, 255, 0.035) 0%,
-            transparent 70%
-        ),
-        radial-gradient(
-            ellipse 50% 50% at 50% 50%,
-            transparent 0%,
-            rgba(0, 10, 30, 0.4) 100%
-        );
-}
-
-.bg-grid::before {
-    content: '';
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    opacity: 0.03;
-    mix-blend-mode: soft-light;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 300px 300px;
+    background: var(--bg-primary);
 }
 
 .bg-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    z-index: 0;
-    pointer-events: none;
-    animation: orbFloat 20s ease-in-out infinite;
-}
-
-.bg-orb-1 {
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(0, 229, 255, 0.1), transparent 70%);
-    top: -200px; right: -200px;
-}
-
-.bg-orb-2 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.08), transparent 70%);
-    bottom: -150px; left: -150px;
-    animation-delay: -10s;
-}
-
-.bg-orb-3 {
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(77, 124, 255, 0.08), transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    animation-delay: -5s;
-}
-
-@keyframes orbFloat {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(30px, -40px); }
-    50% { transform: translate(-20px, 30px); }
-    75% { transform: translate(40px, 20px); }
+    display: none;
 }
 
 /* ========== NAV ========== */

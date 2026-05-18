@@ -34,6 +34,7 @@
 
         createParticles() {
             this.particles = [];
+            this.frame = 0;
             for (let i = 0; i < this.particleCount; i++) {
                 this.particles.push({
                     x: Math.random() * this.canvas.width,
@@ -41,7 +42,12 @@
                     vx: (Math.random() - 0.5) * 0.5,
                     vy: (Math.random() - 0.5) * 0.5,
                     radius: Math.random() * 2 + 1,
-                    opacity: Math.random() * 0.5 + 0.3
+                    baseOpacity: Math.random() * 0.4 + 0.3,
+                    // twinkle: 각 입자마다 다른 속도·위상으로 깜빡임
+                    twinkleSpeed: Math.random() * 0.05 + 0.02,
+                    twinklePhase: Math.random() * Math.PI * 2,
+                    // 약 55%는 gold, 나머지는 navy — 흰 배경 + 테마 일치
+                    gold: Math.random() < 0.55
                 });
             }
         }
@@ -73,6 +79,10 @@
 
         drawParticles() {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.frame++;
+
+            const GOLD = '201, 169, 97';
+            const NAVY = '46, 58, 95';
 
             for (let i = 0; i < this.particles.length; i++) {
                 const p = this.particles[i];
@@ -95,20 +105,34 @@
                 p.vx *= 0.99;
                 p.vy *= 0.99;
 
+                // twinkle: 0~1 사인파 → 밝기·크기·글로우에 반영
+                const tw = 0.5 + 0.5 * Math.sin(this.frame * p.twinkleSpeed + p.twinklePhase);
+                const opacity = p.baseOpacity * (0.25 + 0.75 * tw);
+                const color = p.gold ? GOLD : NAVY;
+                const r = p.radius * (0.8 + 0.5 * tw);
+
+                // gold 입자는 반짝일 때 글로우 — 별처럼 보이게
+                if (p.gold) {
+                    this.ctx.shadowBlur = 8 * tw;
+                    this.ctx.shadowColor = `rgba(${GOLD}, ${opacity})`;
+                } else {
+                    this.ctx.shadowBlur = 0;
+                }
                 this.ctx.beginPath();
-                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = `rgba(0, 229, 255, ${p.opacity})`;
+                this.ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                this.ctx.fillStyle = `rgba(${color}, ${opacity})`;
                 this.ctx.fill();
+                this.ctx.shadowBlur = 0;
 
                 for (let j = i + 1; j < this.particles.length; j++) {
                     const p2 = this.particles[j];
                     const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
                     if (d < this.connectDistance) {
-                        const alpha = (1 - d / this.connectDistance) * 0.15;
+                        const alpha = (1 - d / this.connectDistance) * 0.1;
                         this.ctx.beginPath();
                         this.ctx.moveTo(p.x, p.y);
                         this.ctx.lineTo(p2.x, p2.y);
-                        this.ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+                        this.ctx.strokeStyle = `rgba(${NAVY}, ${alpha})`;
                         this.ctx.lineWidth = 0.5;
                         this.ctx.stroke();
                     }
