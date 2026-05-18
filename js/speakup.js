@@ -25,12 +25,16 @@ function spEscape(str) {
 }
 
 // ========== 요청 타임아웃 래퍼 (무한 대기 방지) ==========
+// 등록 자체는 서버에서 성공해도 느린 네트워크(원격 데스크톱 등)에서는
+// 응답 도착이 지연될 수 있다. 타임아웃 메시지는 "이미 등록됐을 수 있음"을 안내한다.
 function spWithTimeout(promise, ms, label) {
     return Promise.race([
         Promise.resolve(promise),
         new Promise(function (_, reject) {
             setTimeout(function () {
-                reject(new Error((label || '요청') + ' 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해주세요.'));
+                var err = new Error((label || '요청') + ' 응답이 지연되고 있습니다. 글이 이미 등록되었을 수 있으니, 다시 누르지 말고 페이지를 새로고침해 목록을 확인해주세요.');
+                err.isTimeout = true;
+                reject(err);
             }, ms);
         })
     ]);
@@ -718,7 +722,7 @@ if (postSubmitBtn) {
                         .from('posts')
                         .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
                         .eq('id', Number(editId)),
-                    15000, '수정'
+                    30000, '수정'
                 );
                 if (resp.error) {
                     spSetStatus(statusEl, '수정 오류: ' + spErrDetail(resp.error), 'error');
@@ -750,7 +754,7 @@ if (postSubmitBtn) {
                     _supabase
                         .from('posts')
                         .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl }),
-                    15000, '등록'
+                    30000, '등록'
                 );
                 if (resp.error) {
                     spSetStatus(statusEl, '등록 오류: ' + spErrDetail(resp.error), 'error');
