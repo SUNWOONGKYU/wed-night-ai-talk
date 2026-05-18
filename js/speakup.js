@@ -846,19 +846,41 @@ function startSpeakUp() {
 
     spInitAuth().then(function() {
         return loadPosts(true);
-    }).then(function() {
-        // 공유 링크로 접속 시 해당 게시글로 스크롤
+    }).then(async function() {
+        // 공유 링크(?post=N)로 접속 — 로그인 없이 해당 글을 바로 볼 수 있게 한다
         var params = new URLSearchParams(window.location.search);
         var sharedPostId = params.get('post');
-        if (sharedPostId) {
-            var target = document.querySelector('[data-post-id="' + sharedPostId + '"]');
-            if (target) {
-                setTimeout(function() {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    target.classList.add('post-highlighted');
-                    setTimeout(function() { target.classList.remove('post-highlighted'); }, 3000);
-                }, 300);
+        if (!sharedPostId) return;
+
+        // 공유 링크 방문자는 '보기'가 목적 — 글쓰기 로그인 안내는 숨긴다
+        var loginPrompt = document.getElementById('post-login-prompt');
+        if (loginPrompt) loginPrompt.style.display = 'none';
+
+        var container = document.getElementById('posts-container');
+        var target = container.querySelector('[data-post-id="' + sharedPostId + '"]');
+
+        // 최근 목록(10개) 밖의 오래된 글이면 직접 불러와 맨 위에 표시
+        if (!target) {
+            try {
+                var post = await DB.getPost(Number(sharedPostId));
+                if (post) {
+                    var card = await renderPostCard(post);
+                    var empty = container.querySelector('.speakup-empty');
+                    if (empty) container.innerHTML = '';
+                    container.insertBefore(card, container.firstChild);
+                    target = card;
+                }
+            } catch (e) {
+                // 글이 삭제됐거나 존재하지 않음
             }
+        }
+
+        if (target) {
+            setTimeout(function() {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.classList.add('post-highlighted');
+                setTimeout(function() { target.classList.remove('post-highlighted'); }, 3000);
+            }, 300);
         }
     }).catch(function(e) {
         console.error('SpeakUp init error:', e);
