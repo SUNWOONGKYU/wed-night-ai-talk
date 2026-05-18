@@ -1,4 +1,4 @@
-// ========== Animation & Design Upgrade ==========
+﻿// ========== Animation & Design Upgrade ==========
 // GSAP ScrollTrigger + Canvas Particle System
 // =============================================
 
@@ -7,130 +7,6 @@
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-    // ========== 1. Hero Canvas — Constellation Particle System ==========
-    class HeroCanvas {
-        constructor(canvas) {
-            this.canvas = canvas;
-            this.ctx = canvas.getContext('2d');
-            this.particles = [];
-            this.mouse = { x: -9999, y: -9999 };
-            this.isActive = true;
-            this.particleCount = isMobile ? 24 : 50;
-            this.mouseRadius = 200;
-
-            this.resize();
-            this.createParticles();
-            this.bindEvents();
-            this.animate();
-        }
-
-        resize() {
-            const hero = this.canvas.parentElement;
-            this.canvas.width = hero.offsetWidth;
-            this.canvas.height = hero.offsetHeight;
-        }
-
-        createParticles() {
-            this.particles = [];
-            this.frame = 0;
-            for (let i = 0; i < this.particleCount; i++) {
-                this.particles.push({
-                    x: Math.random() * this.canvas.width,
-                    y: Math.random() * this.canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    radius: Math.random() * 2 + 1,
-                    baseOpacity: Math.random() * 0.4 + 0.3,
-                    // twinkle: 각 입자마다 다른 속도·위상으로 깜빡임
-                    twinkleSpeed: Math.random() * 0.05 + 0.02,
-                    twinklePhase: Math.random() * Math.PI * 2,
-                    // 약 55%는 gold, 나머지는 navy — 흰 배경 + 테마 일치
-                    gold: Math.random() < 0.55
-                });
-            }
-        }
-
-        bindEvents() {
-            window.addEventListener('resize', () => {
-                this.resize();
-                this.createParticles();
-            });
-
-            if (!isMobile) {
-                this.canvas.parentElement.addEventListener('mousemove', (e) => {
-                    const rect = this.canvas.getBoundingClientRect();
-                    this.mouse.x = e.clientX - rect.left;
-                    this.mouse.y = e.clientY - rect.top;
-                });
-
-                this.canvas.parentElement.addEventListener('mouseleave', () => {
-                    this.mouse.x = -9999;
-                    this.mouse.y = -9999;
-                });
-            }
-
-            document.addEventListener('visibilitychange', () => {
-                this.isActive = !document.hidden;
-                if (this.isActive) this.animate();
-            });
-        }
-
-        drawParticles() {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.frame++;
-
-            const GOLD = '201, 169, 97';
-            const NAVY = '46, 58, 95';
-
-            for (let i = 0; i < this.particles.length; i++) {
-                const p = this.particles[i];
-
-                p.x += p.vx;
-                p.y += p.vy;
-
-                if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
-
-                const dx = p.x - this.mouse.x;
-                const dy = p.y - this.mouse.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < this.mouseRadius) {
-                    const force = (this.mouseRadius - dist) / this.mouseRadius;
-                    p.vx += (dx / dist) * force * 0.3;
-                    p.vy += (dy / dist) * force * 0.3;
-                }
-
-                p.vx *= 0.99;
-                p.vy *= 0.99;
-
-                // twinkle: 0~1 사인파 → 밝기·크기·글로우에 반영
-                const tw = 0.5 + 0.5 * Math.sin(this.frame * p.twinkleSpeed + p.twinklePhase);
-                const opacity = p.baseOpacity * (0.25 + 0.75 * tw);
-                const color = p.gold ? GOLD : NAVY;
-                const r = p.radius * (0.8 + 0.5 * tw);
-
-                // gold 입자는 반짝일 때 글로우 — 별처럼 보이게
-                if (p.gold) {
-                    this.ctx.shadowBlur = 8 * tw;
-                    this.ctx.shadowColor = `rgba(${GOLD}, ${opacity})`;
-                } else {
-                    this.ctx.shadowBlur = 0;
-                }
-                this.ctx.beginPath();
-                this.ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-                this.ctx.fillStyle = `rgba(${color}, ${opacity})`;
-                this.ctx.fill();
-                this.ctx.shadowBlur = 0;
-            }
-        }
-
-        animate() {
-            if (!this.isActive) return;
-            this.drawParticles();
-            requestAnimationFrame(() => this.animate());
-        }
-    }
 
     // ========== 2. Typing Effect ==========
     function initTypingEffect() {
@@ -160,24 +36,7 @@
         setTimeout(type, 1200);
     }
 
-    // ========== 4. Gradient Pulse ==========
-    function initGradientPulse() {
-        const hero = document.querySelector('.hero');
-        if (!hero) return;
-
-        let hue = 0;
-        function pulse() {
-            hue = (hue + 0.1) % 360;
-            const c1 = `hsla(${185 + Math.sin(hue * 0.02) * 15}, 100%, 50%, 0.03)`;
-            const c2 = `hsla(${240 + Math.sin(hue * 0.015) * 20}, 80%, 60%, 0.02)`;
-            hero.style.background = `radial-gradient(ellipse at 30% 50%, ${c1} 0%, transparent 60%),
-                                     radial-gradient(ellipse at 70% 80%, ${c2} 0%, transparent 50%)`;
-            requestAnimationFrame(pulse);
-        }
-        pulse();
-    }
-
-    // ========== 5. GSAP Scroll Animations ==========
+    // ========== GSAP Scroll Animations ==========
     // NOTE: NO opacity animations — only transform (y, x, scale, rotation).
     // This guarantees elements are always visible even if GSAP/ScrollTrigger fails.
     function initScrollAnimations() {
@@ -449,7 +308,7 @@
                     nav.style.background = 'var(--bg-nav-scroll)';
                     nav.style.webkitBackdropFilter = 'blur(30px)';
                     nav.style.backdropFilter = 'blur(30px)';
-                    nav.style.borderBottomColor = 'rgba(0, 229, 255, 0.1)';
+                    nav.style.borderBottomColor = 'rgba(26, 34, 56, 0.1)';
                 } else {
                     nav.style.background = 'var(--bg-nav)';
                     nav.style.webkitBackdropFilter = 'blur(20px)';
@@ -471,20 +330,10 @@
             return;
         }
 
-        // Canvas
-        const heroCanvas = document.getElementById('hero-canvas');
-        if (heroCanvas) {
-            new HeroCanvas(heroCanvas);
-        }
-
-        // Floating keywords — 미니멀 배경을 위해 비활성화
-        // (떠다니는 영어 단어가 깔끔한 흰 배경과 어울리지 않음)
+        // hero 배경은 정적 SVG 말풍선(.hero-bubbles)으로 처리 — JS 애니메이션 없음
 
         // Typing effect
         initTypingEffect();
-
-        // Gradient pulse
-        initGradientPulse();
 
         // GSAP animations (check if GSAP is loaded)
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
