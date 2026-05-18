@@ -2594,6 +2594,15 @@ body.speakup-light .nav-links.show {
     color: var(--text-muted);
 }
 
+/* 내용 입력칸 — 글자 수에 따라 JS(spAutoGrow)가 높이를 조절. 수동 리사이즈 비활성. */
+.post-form textarea#post-content {
+    resize: none;
+    min-height: 110px;
+    overflow-y: hidden;
+    line-height: 1.6;
+    transition: border-color 0.3s ease, height 0.12s ease;
+}
+
 .post-form-actions {
     display: flex;
     gap: 0.5rem;

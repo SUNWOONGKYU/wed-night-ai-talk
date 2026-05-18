@@ -24,6 +24,18 @@ function spEscape(str) {
     return div.innerHTML;
 }
 
+// ========== 요청 타임아웃 래퍼 (무한 대기 방지) ==========
+function spWithTimeout(promise, ms, label) {
+    return Promise.race([
+        Promise.resolve(promise),
+        new Promise(function (_, reject) {
+            setTimeout(function () {
+                reject(new Error((label || '요청') + ' 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해주세요.'));
+            }, ms);
+        })
+    ]);
+}
+
 // ========== Time Ago ==========
 function timeAgo(dateStr) {
     var now = new Date();
@@ -610,6 +622,7 @@ if (postWriteOpenBtn) {
         var wrap = document.getElementById('post-form-wrap');
         wrap.style.display = 'block';
         document.getElementById('post-write-btn-wrap').style.display = 'none';
+        spAutoGrow(document.getElementById('post-content'));
         // 폼으로 스크롤 (모바일에서 폼이 화면 아래라서 못 보는 경우 방지)
         var navHeight = (document.querySelector('nav') && document.querySelector('nav').offsetHeight) || 70;
         var top = wrap.getBoundingClientRect().top + window.pageYOffset - navHeight - 12;
@@ -625,6 +638,21 @@ var postForm = document.getElementById('post-form');
 var postEditId = document.getElementById('post-edit-id');
 var postCancelBtn = document.getElementById('post-cancel-btn');
 var postSubmitBtn = document.getElementById('post-submit-btn');
+
+// ========== 내용 입력칸 자동 높이 — 글자 수에 비례해 늘어남 ==========
+var SP_TEXTAREA_MIN = 110;   // px, 약 4줄
+var SP_TEXTAREA_MAX = 640;   // px, 이 이상은 내부 스크롤
+function spAutoGrow(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    var h = Math.min(Math.max(el.scrollHeight, SP_TEXTAREA_MIN), SP_TEXTAREA_MAX);
+    el.style.height = h + 'px';
+    el.style.overflowY = (el.scrollHeight > SP_TEXTAREA_MAX) ? 'auto' : 'hidden';
+}
+var postContentEl = document.getElementById('post-content');
+if (postContentEl) {
+    postContentEl.addEventListener('input', function () { spAutoGrow(postContentEl); });
+}
 
 // form submit 막기
 if (postForm) {
@@ -655,15 +683,16 @@ if (postSubmitBtn) {
             fbUrl = fbUrlRaw;
         }
 
-        // 세션 재확인 (모바일에서 토큰 만료된 경우 방지)
-        if (!spCurrentUser) {
-            try {
-                var session = await Auth.getSession();
-                if (session) spCurrentUser = session.user;
-            } catch (e) {}
+        // 세션 항상 재확인 — 메모리의 사용자 객체가 살아있어도 실제 토큰은
+        // 만료됐을 수 있다(모바일·장시간 방치). getSession()은 만료 임박 시 자동 갱신.
+        try {
+            var session = await spWithTimeout(Auth.getSession(), 10000, '세션 확인');
+            spCurrentUser = (session && session.user) ? session.user : null;
+        } catch (e) {
+            spCurrentUser = null;
         }
         if (!spCurrentUser) {
-            spSetStatus(statusEl, '로그인이 필요합니다. 다시 로그인해주세요.', 'error');
+            spSetStatus(statusEl, '로그인이 만료되었습니다. 페이지를 새로고침한 뒤 다시 로그인해주세요.', 'error');
             return;
         }
 
@@ -674,10 +703,13 @@ if (postSubmitBtn) {
         if (editId) {
             // 수정
             try {
-                var resp = await _supabase
-                    .from('posts')
-                    .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
-                    .eq('id', Number(editId));
+                var resp = await spWithTimeout(
+                    _supabase
+                        .from('posts')
+                        .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
+                        .eq('id', Number(editId)),
+                    15000, '수정'
+                );
                 if (resp.error) {
                     console.error('[edit submit] supabase error:', resp.error);
                     spSetStatus(statusEl, '수정 오류: ' + resp.error.message, 'error');
@@ -687,6 +719,7 @@ if (postSubmitBtn) {
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
+                spAutoGrow(document.getElementById('post-content'));
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
                 postEditId.value = '';
                 postSubmitBtn.textContent = '등록';
@@ -704,9 +737,12 @@ if (postSubmitBtn) {
         } else {
             // 등록
             try {
-                var resp = await _supabase
-                    .from('posts')
-                    .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl });
+                var resp = await spWithTimeout(
+                    _supabase
+                        .from('posts')
+                        .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl }),
+                    15000, '등록'
+                );
                 if (resp.error) {
                     spSetStatus(statusEl, '등록 오류: ' + resp.error.message, 'error');
                     postSubmitBtn.disabled = false;
@@ -715,6 +751,7 @@ if (postSubmitBtn) {
                 }
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-content').value = '';
+                spAutoGrow(document.getElementById('post-content'));
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
                 postSubmitBtn.textContent = '등록';
                 postSubmitBtn.disabled = false;
@@ -740,6 +777,7 @@ function startEditPost(postId, title, content, fbUrl) {
     var submitBtn = document.querySelector('.post-submit-btn');
     if (submitBtn) submitBtn.textContent = '수정';
     document.getElementById('post-form-wrap').style.display = 'block';
+    spAutoGrow(document.getElementById('post-content'));
     var writeBtnWrap = document.getElementById('post-write-btn-wrap');
     if (writeBtnWrap) writeBtnWrap.style.display = 'none';
     var statusEl = document.getElementById('post-status');
