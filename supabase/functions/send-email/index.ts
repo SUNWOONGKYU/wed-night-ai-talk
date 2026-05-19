@@ -31,8 +31,9 @@ const MAX_HTML_LEN = 100 * 1024; // 100KB
 
 // Origin 화이트리스트 — 운영/프리뷰/로컬개발만 허용
 const ALLOWED_ORIGINS = [
+    'https://waat.community',
+    'https://www.waat.community',
     'https://wed-night-ai-talk.vercel.app',
-    'https://waat.kr',
     'http://localhost:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5500',

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /profile.html
 
-Sitemap: https://wed-night-ai-talk.vercel.app/sitemap.xml
+Sitemap: https://waat.community/sitemap.xml
