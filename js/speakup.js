@@ -209,27 +209,31 @@ function isAdmin() {
 }
 
 // ========== Load Posts ==========
-async function loadPosts(reset) {
+// excludeId: 공유 링크로 이미 최상단에 표시한 글 — 목록에서 중복 제외
+async function loadPosts(reset, excludeId) {
     var container = document.getElementById('posts-container');
     var loadMoreWrap = document.getElementById('load-more-wrap');
+    // excludeId가 있으면 공유 글이 이미 container에 표시돼 있으므로 비우지 않고 이어붙인다
+    var pinned = !!excludeId;
 
     if (reset) {
         spPostOffset = 0;
-        container.innerHTML = '<div class="admin-loading">게시글을 불러오는 중...</div>';
+        if (!pinned) container.innerHTML = '<div class="admin-loading">게시글을 불러오는 중...</div>';
     }
 
     try {
         var posts = await DB.getPosts(SP_PAGE_SIZE, spPostOffset);
 
-        if (reset && posts.length === 0) {
+        if (reset && posts.length === 0 && !pinned) {
             container.innerHTML = '<div class="speakup-empty">아직 게시글이 없습니다. 첫 글을 작성해보세요!</div>';
             loadMoreWrap.style.display = 'none';
             return;
         }
 
-        if (reset) container.innerHTML = '';
+        if (reset && !pinned) container.innerHTML = '';
 
         for (var i = 0; i < posts.length; i++) {
+            if (excludeId && Number(posts[i].id) === Number(excludeId)) continue;
             var postEl = await renderPostCard(posts[i]);
             container.appendChild(postEl);
         }
@@ -238,7 +242,7 @@ async function loadPosts(reset) {
         loadMoreWrap.style.display = posts.length < SP_PAGE_SIZE ? 'none' : 'block';
     } catch (e) {
         console.error('loadPosts error:', e);
-        if (reset) {
+        if (reset && !pinned) {
             container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
         }
     }
@@ -844,44 +848,38 @@ function startSpeakUp() {
         return;
     }
 
-    spInitAuth().then(function() {
-        return loadPosts(true);
-    }).then(async function() {
-        // 공유 링크(?post=N)로 접속 — 로그인 없이 해당 글을 바로 볼 수 있게 한다
+    spInitAuth().then(async function() {
         var params = new URLSearchParams(window.location.search);
         var sharedPostId = params.get('post');
-        if (!sharedPostId) return;
 
-        // 공유 링크 방문자는 '보기'가 목적 — 글쓰기 로그인 안내는 숨긴다
-        var loginPrompt = document.getElementById('post-login-prompt');
-        if (loginPrompt) loginPrompt.style.display = 'none';
+        // 공유 링크(?post=N)가 아니면 평소대로 전체 목록만 로드
+        if (!sharedPostId) {
+            return loadPosts(true);
+        }
 
+        // --- 공유 링크 접속: 해당 글을 페이지 최상단에 바로 표시 ---
         var container = document.getElementById('posts-container');
-        var target = container.querySelector('[data-post-id="' + sharedPostId + '"]');
+        var loginPrompt = document.getElementById('post-login-prompt');
+        if (loginPrompt) loginPrompt.style.display = 'none';  // 글쓰기 안내 숨김
 
-        // 최근 목록(10개) 밖의 오래된 글이면 직접 불러와 맨 위에 표시
-        if (!target) {
-            try {
-                var post = await DB.getPost(Number(sharedPostId));
-                if (post) {
-                    var card = await renderPostCard(post);
-                    var empty = container.querySelector('.speakup-empty');
-                    if (empty) container.innerHTML = '';
-                    container.insertBefore(card, container.firstChild);
-                    target = card;
-                }
-            } catch (e) {
-                // 글이 삭제됐거나 존재하지 않음
+        var pinned = false;
+        try {
+            var post = await DB.getPost(Number(sharedPostId));
+            if (post) {
+                container.innerHTML = '';
+                var card = await renderPostCard(post);
+                card.classList.add('post-highlighted');
+                container.appendChild(card);          // 공유 글을 맨 위에 고정
+                window.scrollTo(0, 0);                // 그 글이 바로 보이도록 최상단
+                pinned = true;
+                setTimeout(function () { card.classList.remove('post-highlighted'); }, 3000);
             }
+        } catch (e) {
+            // 글이 삭제됐거나 존재하지 않음 → 일반 목록으로 폴백
         }
 
-        if (target) {
-            setTimeout(function() {
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                target.classList.add('post-highlighted');
-                setTimeout(function() { target.classList.remove('post-highlighted'); }, 3000);
-            }, 300);
-        }
+        // 나머지 글은 공유 글 아래로 이어붙인다 (공유 글 중복 제외)
+        return loadPosts(true, pinned ? Number(sharedPostId) : null);
     }).catch(function(e) {
         console.error('SpeakUp init error:', e);
     });
