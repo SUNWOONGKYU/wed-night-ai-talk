@@ -1237,7 +1237,7 @@ async function renderSpeakUpPreview() {
     if (!container) return;
 
     try {
-        var posts = await DB.getPosts(3, 0);
+        var posts = await DB.getPosts(5, 0);
 
         if (posts.length === 0) {
             container.innerHTML = '<div class="speakup-empty" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">아직 게시글이 없습니다.</div>';
