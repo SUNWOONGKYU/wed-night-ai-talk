@@ -3605,6 +3605,9 @@ footer {
     text-align: center;
     max-width: 600px;
     margin: 0.6rem auto 0;
+    /* 한국어 단어가 글자 단위로 쪼개지지 않도록 어절(띄어쓰기) 단위 줄바꿈 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 .ga-selected-slot {
     background: rgba(201, 169, 97, 0.1);
