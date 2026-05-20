@@ -322,7 +322,8 @@ async function renderPostCard(post) {
         '</div>' +
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
-            '<div class="post-content">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
+            '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
+            '<button type="button" class="post-more-btn" style="display:none;">더보기</button>' +
             fbBadgeHtml +
         '</div>' +
         '<div class="post-footer">' +
@@ -363,6 +364,27 @@ async function renderPostCard(post) {
 
 // ========== Bind post card events ==========
 function bindPostCardEvents(card, post) {
+    // 본문 더보기/접기 — 페이스북식. clamped 상태에서 본문이 잘려있을 때만 버튼 노출.
+    var contentEl = card.querySelector('.post-content');
+    var moreBtn = card.querySelector('.post-more-btn');
+    if (contentEl && moreBtn) {
+        requestAnimationFrame(function () {
+            // 잘림 감지: 스크롤 높이가 보이는 높이보다 큰 경우
+            if (contentEl.scrollHeight - contentEl.clientHeight > 2) {
+                moreBtn.style.display = 'inline-block';
+            }
+        });
+        moreBtn.addEventListener('click', function () {
+            if (contentEl.classList.contains('clamped')) {
+                contentEl.classList.remove('clamped');
+                moreBtn.textContent = '접기';
+            } else {
+                contentEl.classList.add('clamped');
+                moreBtn.textContent = '더보기';
+            }
+        });
+    }
+
     // Reaction buttons
     card.querySelectorAll('.reaction-btn').forEach(function(btn) {
         btn.addEventListener('click', async function() {

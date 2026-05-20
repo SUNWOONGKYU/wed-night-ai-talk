@@ -2747,6 +2747,28 @@ body.speakup-light .nav-links.show {
     line-height: 1.7;
 }
 
+/* 페이스북식 본문 클램프 — 3줄까지만 보이고 나머지는 '더보기' */
+.post-content.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.post-more-btn {
+    background: none;
+    border: none;
+    color: var(--accent-cyan);
+    cursor: pointer;
+    padding: 4px 0;
+    margin-top: 2px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    font-family: inherit;
+}
+.post-more-btn:hover { text-decoration: underline; }
+body.speakup-light .post-more-btn { color: #1a5fb4; }
+
 /* Post Footer — Reactions & Comments Toggle */
 .post-footer {
     display: flex;
