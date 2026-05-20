@@ -2798,6 +2798,32 @@ body.speakup-light .post-more-btn { color: #1a5fb4; }
 .post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
 .post-category-badge.cat-discuss   { background: rgba(123,93,175,0.16); color: #5A3F8A; }
 
+/* nav 메뉴 — 영문 위 / 한글 아래 2줄 배치 */
+.nav-links-center a {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+}
+.nav-links a .nav-en {
+    display: block;
+    font-size: inherit;
+    line-height: 1.1;
+}
+.nav-links a .nav-ko {
+    display: block;
+    font-size: 0.66rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    letter-spacing: 0;
+    font-weight: 400;
+    text-align: center;
+}
+.nav-links a:hover .nav-ko { color: var(--text-secondary); }
+@media (max-width: 768px) {
+    .nav-links a .nav-ko { font-size: 0.62rem; }
+}
+
 /* 작성 폼 카테고리 선택 chip */
 .post-category-group {
     display: flex;
