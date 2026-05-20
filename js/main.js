@@ -875,7 +875,7 @@ async function renderScheduleEvents() {
                             <div class="info-label">장소</div>
                             <div class="info-value">
                                 <a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>
-                                <span class="info-rooms">(햇살: 2번 회의실 · 노을/달빛: 5번 회의실)</span>
+                                <span class="info-rooms">(햇살: 2번 회의실 · 달빛: 5번 회의실)</span>
                             </div>
                         </div>
                     </div>`;
