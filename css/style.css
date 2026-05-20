@@ -2133,7 +2133,7 @@ footer {
        - 댓글 시간: 12px
        - 아바타: 40px
     */
-    .posts-container { gap: 0.5rem; }   /* 모바일은 8px — 페이스북 모바일 피드와 동일 */
+    /* .posts-container gap 모바일 규칙은 파일 끝(@media 480 — 모바일 카드 간격)에서 정의 — cascade 순서 보장 */
     .post-card { padding: 12px 16px 4px; border-radius: 8px; }
     .post-form { padding: 1rem; border-radius: 8px; }
     .post-form input,
@@ -2652,6 +2652,12 @@ body.speakup-light .nav-links.show {
     display: flex;
     flex-direction: column;
     gap: 1rem;     /* 페이스북 피드 기준 — 카드 사이 16px */
+}
+
+/* 모바일 카드 간격 — 페이스북 모바일 피드(8px)와 동일.
+   여기 두는 이유: 위의 .posts-container 데스크톱 정의보다 뒤에 와야 cascade로 적용됨. */
+@media (max-width: 480px) {
+    .posts-container { gap: 0.5rem; }
 }
 
 .post-card {
