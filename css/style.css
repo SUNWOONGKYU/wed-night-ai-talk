@@ -2796,6 +2796,7 @@ body.speakup-light .post-more-btn { color: #1a5fb4; }
 .post-category-badge.cat-collab    { background: rgba(91,138,114,0.18); color: #3B6B52; }
 .post-category-badge.cat-question  { background: rgba(46,58,95,0.13); color: #2E3A5F; }
 .post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
+.post-category-badge.cat-discuss   { background: rgba(123,93,175,0.16); color: #5A3F8A; }
 
 /* 작성 폼 카테고리 선택 chip */
 .post-category-group {

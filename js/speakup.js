@@ -4,7 +4,7 @@ let spCurrentProfile = null;
 let spPostOffset = 0;
 let spActiveCategory = '';   // '' = 전체. '일반'/'홍보하기'/'협력하기'/'질문하기'/'요청하기'
 const SP_PAGE_SIZE = 10;
-const SP_CATEGORIES = ['새 소식', '공부하기', '홍보하기', '협력하기', '질문하기', '요청하기'];
+const SP_CATEGORIES = ['새 소식', '공부하기', '홍보하기', '협력하기', '질문하기', '요청하기', '토론하기'];
 // 카테고리별 뱃지 클래스 (CSS와 매핑)
 function spCatClass(c) {
     return ({
@@ -13,7 +13,8 @@ function spCatClass(c) {
         '공부하기': 'cat-study',
         '협력하기': 'cat-collab',
         '질문하기': 'cat-question',
-        '요청하기': 'cat-request'
+        '요청하기': 'cat-request',
+        '토론하기': 'cat-discuss'
     })[c] || 'cat-general';
 }
 

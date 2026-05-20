@@ -6,7 +6,7 @@
     <title>Free Talk — WAAT</title>
     <meta name="description" content="WAAT 커뮤니티 게시판 — AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 나눠봅시다.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260521d">
+    <link rel="stylesheet" href="css/style.css?v=20260521e">
 </head>
 <body class="speakup-light">
 
@@ -62,6 +62,7 @@
                         <label class="post-category-chip"><input type="radio" name="post-category" value="협력하기"><span>협력하기</span></label>
                         <label class="post-category-chip"><input type="radio" name="post-category" value="질문하기"><span>질문하기</span></label>
                         <label class="post-category-chip"><input type="radio" name="post-category" value="요청하기"><span>요청하기</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="토론하기"><span>토론하기</span></label>
                     </div>
                     <div class="form-group">
                         <input type="text" id="post-title" placeholder="제목을 입력하세요" required maxlength="200">
@@ -95,6 +96,7 @@
                 <button type="button" class="cat-tab" data-cat="협력하기" role="tab">협력하기</button>
                 <button type="button" class="cat-tab" data-cat="질문하기" role="tab">질문하기</button>
                 <button type="button" class="cat-tab" data-cat="요청하기" role="tab">요청하기</button>
+                <button type="button" class="cat-tab" data-cat="토론하기" role="tab">토론하기</button>
             </div>
 
             <!-- 게시글 목록 -->
@@ -171,7 +173,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js?v=20260521b"></script>
-    <script src="js/speakup.js?v=20260521d"></script>
+    <script src="js/speakup.js?v=20260521e"></script>
     <script>
         // 문의하기 모달
         document.addEventListener('DOMContentLoaded', function() {
