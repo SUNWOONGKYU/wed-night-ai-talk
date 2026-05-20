@@ -2790,6 +2790,15 @@ body.speakup-light .post-more-btn { color: #1a5fb4; }
     margin-bottom: 6px;
     letter-spacing: -0.01em;
 }
+/* 작성자 줄 옆에 인라인으로 들어갈 때 위/아래 마진 제거 + 작게 */
+.post-author .post-category-badge {
+    margin-bottom: 0;
+    margin-right: 6px;
+    vertical-align: middle;
+    font-size: 0.72rem;
+    padding: 1px 8px;
+}
+
 .post-category-badge.cat-general   { background: #EFEFF1; color: #4A5670; }
 .post-category-badge.cat-showcase  { background: rgba(201,169,97,0.18); color: #8A6F2C; }
 .post-category-badge.cat-study     { background: rgba(43,111,140,0.16); color: #1F5872; }

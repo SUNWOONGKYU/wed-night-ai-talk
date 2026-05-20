@@ -998,7 +998,7 @@ async function renderScheduleEvents() {
                                         return `<span class="${tagCls}" title="${escapeHtml(a.name)}">${escapeHtml(display)}${isMe ? ' (나)' : ''}</span>`;
                                     }).join('')}
                                 </div>
-                            </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요. 첫 번째 신청자가 되어주세요!</div>';
+                            </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요.<br>첫 번째 신청자가 되어주세요!</div>';
 
                         return `
                         <div class="waat-slot-card${cardStateClass}" data-event-slot-id="${sid}">
