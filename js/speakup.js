@@ -4,7 +4,7 @@ let spCurrentProfile = null;
 let spPostOffset = 0;
 let spActiveCategory = '';   // '' = 전체. '일반'/'자랑하기'/'협력하기'/'질문하기'/'요청하기'
 const SP_PAGE_SIZE = 10;
-const SP_CATEGORIES = ['일반', '자랑하기', '공부하기', '협력하기', '질문하기', '요청하기'];
+const SP_CATEGORIES = ['일반', '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기'];
 // 카테고리별 뱃지 클래스 (CSS와 매핑)
 function spCatClass(c) {
     return ({
