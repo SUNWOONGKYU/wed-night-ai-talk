@@ -1245,7 +1245,7 @@ async function renderSpeakUpPreview() {
         }
 
         var html = '';
-        var count = Math.min(posts.length, 2);
+        var count = Math.min(posts.length, 5);
         for (var i = 0; i < count; i++) {
             var post = posts[i];
             var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
