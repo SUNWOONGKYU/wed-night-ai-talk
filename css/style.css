@@ -2775,6 +2775,104 @@ body.speakup-light .nav-links.show {
 .post-more-btn:hover { text-decoration: underline; }
 body.speakup-light .post-more-btn { color: #1a5fb4; }
 
+/* ============================================
+   Free Talk 카테고리 — 뱃지 + 필터 탭
+   ============================================ */
+
+/* 카드 위의 카테고리 뱃지 */
+.post-category-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+}
+.post-category-badge.cat-general   { background: #EFEFF1; color: #4A5670; }
+.post-category-badge.cat-showcase  { background: rgba(201,169,97,0.18); color: #8A6F2C; }
+.post-category-badge.cat-collab    { background: rgba(91,138,114,0.18); color: #3B6B52; }
+.post-category-badge.cat-question  { background: rgba(46,58,95,0.13); color: #2E3A5F; }
+.post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
+
+/* 작성 폼 카테고리 선택 chip */
+.post-category-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.post-category-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+.post-category-chip input[type="radio"] {
+    display: none;
+}
+.post-category-chip:hover {
+    border-color: var(--accent-gold);
+}
+.post-category-chip:has(input[type="radio"]:checked) {
+    background: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: #fff;
+}
+.post-category-chip:has(input[type="radio"]:checked) span {
+    color: #fff;
+}
+
+/* 카테고리 필터 탭 */
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 1rem;
+    padding-bottom: 4px;
+}
+.cat-tab {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.15s ease;
+}
+.cat-tab:hover {
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+}
+.cat-tab.is-active {
+    background: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    color: #fff;
+}
+
+/* 모바일에서 가로 스크롤 가능하게 */
+@media (max-width: 480px) {
+    .category-filter {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .category-filter::-webkit-scrollbar { display: none; }
+    .cat-tab { flex-shrink: 0; font-size: 0.85rem; padding: 5px 12px; }
+    .post-category-chip { font-size: 0.82rem; padding: 5px 10px; }
+    .post-category-badge { font-size: 0.72rem; padding: 2px 8px; }
+}
+
 /* Post Footer — Reactions & Comments Toggle */
 .post-footer {
     display: flex;

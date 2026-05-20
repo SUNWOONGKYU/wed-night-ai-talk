@@ -459,14 +459,16 @@ var DB = {
 
     // -- Admin: Attendance by event --
     // -- Posts --
-    async getPosts(limit, offset) {
+    async getPosts(limit, offset, category) {
         limit = limit || 10;
         offset = offset || 0;
-        var { data, error } = await _supabase
+        var q = _supabase
             .from('posts')
             .select('*, profiles:user_id(id, name)')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
+        if (category) q = q.eq('category', category);
+        var { data, error } = await q;
         if (error) throw error;
         return data;
     },

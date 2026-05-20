@@ -6,7 +6,7 @@
     <title>Free Talk — WAAT</title>
     <meta name="description" content="WAAT 커뮤니티 게시판 — AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 나눠봅시다.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260521b">
+    <link rel="stylesheet" href="css/style.css?v=20260521c">
 </head>
 <body class="speakup-light">
 
@@ -55,6 +55,13 @@
             <!-- 글쓰기 폼 (글쓰기 버튼 클릭 시 펼침) -->
             <div id="post-form-wrap" class="post-form-wrap" style="display:none;">
                 <form id="post-form" class="site-form post-form">
+                    <div class="form-group post-category-group" role="radiogroup" aria-label="카테고리">
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="일반" checked><span>일반</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="자랑하기"><span>자랑하기</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="협력하기"><span>협력하기</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="질문하기"><span>질문하기</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="요청하기"><span>요청하기</span></label>
+                    </div>
                     <div class="form-group">
                         <input type="text" id="post-title" placeholder="제목을 입력하세요" required maxlength="200">
                     </div>
@@ -76,6 +83,16 @@
             <!-- 비로그인 안내 -->
             <div id="post-login-prompt" class="post-login-prompt" style="display:none;">
                 <p>글을 작성하려면 <a href="index.html" class="speakup-login-link">로그인</a>이 필요합니다.</p>
+            </div>
+
+            <!-- 카테고리 필터 탭 -->
+            <div class="category-filter" id="category-filter" role="tablist" aria-label="카테고리 필터">
+                <button type="button" class="cat-tab is-active" data-cat="" role="tab">전체</button>
+                <button type="button" class="cat-tab" data-cat="일반" role="tab">일반</button>
+                <button type="button" class="cat-tab" data-cat="자랑하기" role="tab">자랑하기</button>
+                <button type="button" class="cat-tab" data-cat="협력하기" role="tab">협력하기</button>
+                <button type="button" class="cat-tab" data-cat="질문하기" role="tab">질문하기</button>
+                <button type="button" class="cat-tab" data-cat="요청하기" role="tab">요청하기</button>
             </div>
 
             <!-- 게시글 목록 -->
@@ -151,8 +168,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260515a"></script>
-    <script src="js/speakup.js?v=20260520a"></script>
+    <script src="js/supabase-config.js?v=20260521a"></script>
+    <script src="js/speakup.js?v=20260521a"></script>
     <script>
         // 문의하기 모달
         document.addEventListener('DOMContentLoaded', function() {

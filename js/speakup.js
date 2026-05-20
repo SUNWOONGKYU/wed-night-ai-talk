@@ -2,7 +2,19 @@
 let spCurrentUser = null;
 let spCurrentProfile = null;
 let spPostOffset = 0;
+let spActiveCategory = '';   // '' = 전체. '일반'/'자랑하기'/'협력하기'/'질문하기'/'요청하기'
 const SP_PAGE_SIZE = 10;
+const SP_CATEGORIES = ['일반', '자랑하기', '협력하기', '질문하기', '요청하기'];
+// 카테고리별 뱃지 클래스 (CSS와 매핑)
+function spCatClass(c) {
+    return ({
+        '일반': 'cat-general',
+        '자랑하기': 'cat-showcase',
+        '협력하기': 'cat-collab',
+        '질문하기': 'cat-question',
+        '요청하기': 'cat-request'
+    })[c] || 'cat-general';
+}
 
 // ========== View Count Tracking (세션 당 1회) ==========
 var _viewedPosts = [];
@@ -222,7 +234,7 @@ async function loadPosts(reset, excludeId) {
     }
 
     try {
-        var posts = await DB.getPosts(SP_PAGE_SIZE, spPostOffset);
+        var posts = await DB.getPosts(SP_PAGE_SIZE, spPostOffset, spActiveCategory);
 
         if (reset && posts.length === 0 && !pinned) {
             container.innerHTML = '<div class="speakup-empty">아직 게시글이 없습니다. 첫 글을 작성해보세요!</div>';
@@ -321,6 +333,7 @@ async function renderPostCard(post) {
             actionBtns +
         '</div>' +
         '<div class="post-body">' +
+            '<span class="post-category-badge ' + spCatClass(post.category || '일반') + '">' + spEscape(post.category || '일반') + '</span>' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
             '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
             '<button type="button" class="post-more-btn" style="display:none;">더보기</button>' +
@@ -503,7 +516,7 @@ function bindPostCardEvents(card, post) {
             e.stopPropagation();
             var postId = parseInt(editBtn.dataset.postId);
             try {
-                startEditPost(postId, post.title, post.content, post.fb_url || '');
+                startEditPost(postId, post.title, post.content, post.fb_url || '', post.category || '일반');
             } catch (err) {
                 console.error('[edit] startEditPost error:', err);
                 alert('수정 모드 진입 오류: ' + (err.message || err));
@@ -664,6 +677,9 @@ if (postWriteOpenBtn) {
         var wrap = document.getElementById('post-form-wrap');
         wrap.style.display = 'block';
         document.getElementById('post-write-btn-wrap').style.display = 'none';
+        // 새 글이므로 카테고리는 '일반'으로 리셋
+        var defaultRadio = document.querySelector('input[name="post-category"][value="일반"]');
+        if (defaultRadio) defaultRadio.checked = true;
         spAutoGrow(document.getElementById('post-content'));
         // 폼으로 스크롤 (모바일에서 폼이 화면 아래라서 못 보는 경우 방지)
         var navHeight = (document.querySelector('nav') && document.querySelector('nav').offsetHeight) || 70;
@@ -709,6 +725,8 @@ if (postSubmitBtn) {
         var content = document.getElementById('post-content').value.trim();
         var fbUrlRaw = (document.getElementById('post-fb-url') && document.getElementById('post-fb-url').value.trim()) || '';
         var editId = postEditId.value;
+        var catEl = document.querySelector('input[name="post-category"]:checked');
+        var category = (catEl && SP_CATEGORIES.indexOf(catEl.value) !== -1) ? catEl.value : '일반';
 
         if (!title || !content) {
             spSetStatus(statusEl, '제목과 내용을 모두 입력해주세요.', 'error');
@@ -746,7 +764,7 @@ if (postSubmitBtn) {
                 var resp = await spWithTimeout(
                     _supabase
                         .from('posts')
-                        .update({ title: title, content: content, fb_url: fbUrl, updated_at: new Date().toISOString() })
+                        .update({ title: title, content: content, fb_url: fbUrl, category: category, updated_at: new Date().toISOString() })
                         .eq('id', Number(editId)),
                     30000, '수정'
                 );
@@ -779,7 +797,7 @@ if (postSubmitBtn) {
                 var resp = await spWithTimeout(
                     _supabase
                         .from('posts')
-                        .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl }),
+                        .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl, category: category }),
                     30000, '등록'
                 );
                 if (resp.error) {
@@ -808,10 +826,14 @@ if (postSubmitBtn) {
     });
 }
 
-function startEditPost(postId, title, content, fbUrl) {
+function startEditPost(postId, title, content, fbUrl, category) {
     document.getElementById('post-title').value = title || '';
     document.getElementById('post-content').value = content || '';
     if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = fbUrl || '';
+    // 카테고리 라디오 복원
+    var cat = SP_CATEGORIES.indexOf(category) !== -1 ? category : '일반';
+    var radio = document.querySelector('input[name="post-category"][value="' + cat + '"]');
+    if (radio) radio.checked = true;
     postEditId.value = postId;
     var submitBtn = document.querySelector('.post-submit-btn');
     if (submitBtn) submitBtn.textContent = '수정';
@@ -851,6 +873,25 @@ if (loadMoreBtn) {
         loadPosts(false);
     });
 }
+
+// ========== 카테고리 필터 탭 ==========
+(function () {
+    var bar = document.getElementById('category-filter');
+    if (!bar) return;
+    bar.addEventListener('click', function (e) {
+        var btn = e.target.closest('.cat-tab');
+        if (!btn) return;
+        var cat = btn.dataset.cat || '';
+        if (cat === spActiveCategory) return;
+        spActiveCategory = cat;
+        // 활성 표시 갱신
+        bar.querySelectorAll('.cat-tab').forEach(function (b) {
+            b.classList.toggle('is-active', b === btn);
+        });
+        spPostOffset = 0;
+        loadPosts(true);
+    });
+})();
 
 // ========== Init ==========
 var spStartAttempts = 0;

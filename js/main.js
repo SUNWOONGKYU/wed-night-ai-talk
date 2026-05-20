@@ -1263,8 +1263,14 @@ async function renderSpeakUpPreview() {
                 commentCount = 0;
             }
 
+            var cat = post.category || '일반';
+            var catCls = ({
+                '일반': 'cat-general', '자랑하기': 'cat-showcase', '협력하기': 'cat-collab',
+                '질문하기': 'cat-question', '요청하기': 'cat-request'
+            })[cat] || 'cat-general';
             html += '<a href="speakup.html?post=' + encodeURIComponent(post.id) + '" class="speakup-preview-card">' +
                 '<div class="spc-header">' +
+                    '<span class="post-category-badge ' + catCls + '">' + escapeHtml(cat) + '</span>' +
                     '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
                     '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
                 '</div>' +
