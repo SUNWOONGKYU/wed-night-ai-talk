@@ -2133,7 +2133,7 @@ footer {
        - 댓글 시간: 12px
        - 아바타: 40px
     */
-    .posts-container { gap: 0.75rem; }
+    .posts-container { gap: 0.5rem; }   /* 모바일은 8px — 페이스북 모바일 피드와 동일 */
     .post-card { padding: 12px 16px 4px; border-radius: 8px; }
     .post-form { padding: 1rem; border-radius: 8px; }
     .post-form input,
@@ -2469,7 +2469,7 @@ body.speakup-light .nav-links.show {
 .speakup-preview-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;     /* 페이스북 피드 기준 — 카드 사이 16px */
     margin-bottom: 2rem;
 }
 
@@ -2651,7 +2651,7 @@ body.speakup-light .nav-links.show {
 .posts-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;     /* 페이스북 피드 기준 — 카드 사이 16px */
 }
 
 .post-card {
