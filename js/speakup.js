@@ -4,11 +4,11 @@ let spCurrentProfile = null;
 let spPostOffset = 0;
 let spActiveCategory = '';   // '' = 전체. '일반'/'자랑하기'/'협력하기'/'질문하기'/'요청하기'
 const SP_PAGE_SIZE = 10;
-const SP_CATEGORIES = ['새 소식', '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기', '토론하기'];
+const SP_CATEGORIES = ['AI 새 소식', '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기', '토론하기'];
 // 카테고리별 뱃지 클래스 (CSS와 매핑)
 function spCatClass(c) {
     return ({
-        '새 소식': 'cat-general',
+        'AI 새 소식': 'cat-general',
         '자랑하기': 'cat-showcase',
         '공부하기': 'cat-study',
         '협력하기': 'cat-collab',
@@ -326,7 +326,7 @@ async function renderPostCard(post) {
     card.innerHTML =
         '<div class="post-header">' +
             '<div class="post-author-info">' +
-                '<span class="post-category-badge ' + spCatClass(post.category || '새 소식') + '">' + spEscape(post.category || '새 소식') + '</span>' +
+                '<span class="post-category-badge ' + spCatClass(post.category || 'AI 새 소식') + '">' + spEscape(post.category || 'AI 새 소식') + '</span>' +
                 '<div class="post-avatar">' + spEscape(authorName.charAt(0)) + '</div>' +
                 '<div class="post-author">' + spEscape(authorName) + '</div>' +
                 '<div class="post-time">' + timeAgo(post.created_at) + '</div>' +
@@ -518,7 +518,7 @@ function bindPostCardEvents(card, post) {
             e.stopPropagation();
             var postId = parseInt(editBtn.dataset.postId);
             try {
-                startEditPost(postId, post.title, post.content, post.fb_url || '', post.category || '새 소식');
+                startEditPost(postId, post.title, post.content, post.fb_url || '', post.category || 'AI 새 소식');
             } catch (err) {
                 console.error('[edit] startEditPost error:', err);
                 alert('수정 모드 진입 오류: ' + (err.message || err));
@@ -679,7 +679,7 @@ if (postWriteOpenBtn) {
         var wrap = document.getElementById('post-form-wrap');
         wrap.style.display = 'block';
         document.getElementById('post-write-btn-wrap').style.display = 'none';
-        // 새 글이므로 카테고리는 '새 소식'으로 리셋
+        // 새 글이므로 카테고리는 'AI 새 소식'으로 리셋
         var defaultRadio = document.querySelector('input[name="post-category"][value="새 소식"]');
         if (defaultRadio) defaultRadio.checked = true;
         spAutoGrow(document.getElementById('post-content'));
@@ -728,7 +728,7 @@ if (postSubmitBtn) {
         var fbUrlRaw = (document.getElementById('post-fb-url') && document.getElementById('post-fb-url').value.trim()) || '';
         var editId = postEditId.value;
         var catEl = document.querySelector('input[name="post-category"]:checked');
-        var category = (catEl && SP_CATEGORIES.indexOf(catEl.value) !== -1) ? catEl.value : '새 소식';
+        var category = (catEl && SP_CATEGORIES.indexOf(catEl.value) !== -1) ? catEl.value : 'AI 새 소식';
 
         if (!title || !content) {
             spSetStatus(statusEl, '제목과 내용을 모두 입력해주세요.', 'error');
@@ -833,7 +833,7 @@ function startEditPost(postId, title, content, fbUrl, category) {
     document.getElementById('post-content').value = content || '';
     if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = fbUrl || '';
     // 카테고리 라디오 복원
-    var cat = SP_CATEGORIES.indexOf(category) !== -1 ? category : '새 소식';
+    var cat = SP_CATEGORIES.indexOf(category) !== -1 ? category : 'AI 새 소식';
     var radio = document.querySelector('input[name="post-category"][value="' + cat + '"]');
     if (radio) radio.checked = true;
     postEditId.value = postId;

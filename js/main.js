@@ -1263,9 +1263,9 @@ async function renderSpeakUpPreview() {
                 commentCount = 0;
             }
 
-            var cat = post.category || '새 소식';
+            var cat = post.category || 'AI 새 소식';
             var catCls = ({
-                '새 소식': 'cat-general', '자랑하기': 'cat-showcase', '공부하기': 'cat-study',
+                'AI 새 소식': 'cat-general', '자랑하기': 'cat-showcase', '공부하기': 'cat-study',
                 '협력하기': 'cat-collab', '질문하기': 'cat-question', '요청하기': 'cat-request',
                 '토론하기': 'cat-discuss'
             })[cat] || 'cat-general';
