@@ -2,14 +2,14 @@
 let spCurrentUser = null;
 let spCurrentProfile = null;
 let spPostOffset = 0;
-let spActiveCategory = '';   // '' = 전체. '일반'/'홍보하기'/'협력하기'/'질문하기'/'요청하기'
+let spActiveCategory = '';   // '' = 전체. '일반'/'자랑하기'/'협력하기'/'질문하기'/'요청하기'
 const SP_PAGE_SIZE = 10;
-const SP_CATEGORIES = ['새 소식', '공부하기', '홍보하기', '협력하기', '질문하기', '요청하기', '토론하기'];
+const SP_CATEGORIES = ['새 소식', '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기', '토론하기'];
 // 카테고리별 뱃지 클래스 (CSS와 매핑)
 function spCatClass(c) {
     return ({
         '새 소식': 'cat-general',
-        '홍보하기': 'cat-showcase',
+        '자랑하기': 'cat-showcase',
         '공부하기': 'cat-study',
         '협력하기': 'cat-collab',
         '질문하기': 'cat-question',
