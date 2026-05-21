@@ -326,14 +326,10 @@ async function renderPostCard(post) {
     card.innerHTML =
         '<div class="post-header">' +
             '<div class="post-author-info">' +
+                '<span class="post-category-badge ' + spCatClass(post.category || '새 소식') + '">' + spEscape(post.category || '새 소식') + '</span>' +
                 '<div class="post-avatar">' + spEscape(authorName.charAt(0)) + '</div>' +
-                '<div>' +
-                    '<div class="post-author">' +
-                        '<span class="post-category-badge ' + spCatClass(post.category || '새 소식') + '">' + spEscape(post.category || '새 소식') + '</span>' +
-                        spEscape(authorName) +
-                    '</div>' +
-                    '<div class="post-time">' + timeAgo(post.created_at) + '</div>' +
-                '</div>' +
+                '<div class="post-author">' + spEscape(authorName) + '</div>' +
+                '<div class="post-time">' + timeAgo(post.created_at) + '</div>' +
             '</div>' +
             actionBtns +
         '</div>' +
