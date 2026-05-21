@@ -2753,7 +2753,8 @@ body.speakup-light .nav-links.show {
     line-height: 1.7;
 }
 
-/* 페이스북식 본문 클램프 — 3줄까지만 보이고 나머지는 '더보기' */
+/* 페이스북식 본문 클램프 — 3줄까지만 보이고 마지막 줄 끝에 '더 보기' 인라인 */
+.post-content-wrap { position: relative; }
 .post-content.clamped {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -2766,14 +2767,34 @@ body.speakup-light .nav-links.show {
     border: none;
     color: var(--accent-cyan);
     cursor: pointer;
-    padding: 4px 0;
-    margin-top: 2px;
-    font-size: 0.92rem;
+    padding: 0;
+    font-size: inherit;
     font-weight: 500;
     font-family: inherit;
+    line-height: inherit;
 }
 .post-more-btn:hover { text-decoration: underline; }
 body.speakup-light .post-more-btn { color: #1a5fb4; }
+
+/* 클램프된 상태 — 본문 우하단에 absolute로 띄워 3번째 줄 끝에 인라인처럼 보이게 */
+.post-content.clamped + .post-more-btn {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0 0 0 36px;
+    background: linear-gradient(to right, transparent 0, var(--bg-card) 28px);
+}
+body.speakup-light .post-content.clamped + .post-more-btn {
+    background: linear-gradient(to right, transparent 0, #ffffff 28px);
+}
+/* 펼친 상태 — '접기'는 별도 줄로 (절대 위치 해제) */
+.post-content:not(.clamped) + .post-more-btn {
+    position: static;
+    display: inline-block;
+    margin-top: 4px;
+    background: none;
+    padding: 0;
+}
 
 /* ============================================
    Free Talk 카테고리 — 뱃지 + 필터 탭

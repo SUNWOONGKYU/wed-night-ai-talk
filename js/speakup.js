@@ -335,8 +335,10 @@ async function renderPostCard(post) {
         '</div>' +
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
-            '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
-            '<button type="button" class="post-more-btn" style="display:none;">더보기</button>' +
+            '<div class="post-content-wrap">' +
+                '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
+                '<button type="button" class="post-more-btn" style="display:none;">… 더 보기</button>' +
+            '</div>' +
             fbBadgeHtml +
         '</div>' +
         '<div class="post-footer">' +
@@ -393,7 +395,7 @@ function bindPostCardEvents(card, post) {
                 moreBtn.textContent = '접기';
             } else {
                 contentEl.classList.add('clamped');
-                moreBtn.textContent = '더보기';
+                moreBtn.textContent = '… 더 보기';
             }
         });
     }
