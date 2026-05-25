@@ -3672,6 +3672,14 @@ footer {
     flex-direction: column;
     align-items: center;
     gap: 0.45rem;
+    /* 같은 회차의 슬롯들이 같은 높이를 공유할 때(grid stretch),
+       위쪽 요소(이모지·라벨·시간·버튼)는 위에, 신청자 명단은 바닥에 정렬되게.
+       → 신청 버튼 위치가 슬롯 간 동일하게 맞춰짐. */
+}
+.waat-slot-card > .slot-attendees,
+.waat-slot-card > .slot-attendees-empty {
+    margin-top: auto;
+    width: 100%;
 }
 .waat-slot-card:hover {
     transform: translateY(-3px);
