@@ -3654,7 +3654,8 @@ footer {
 /* ========== WAAT 3 Time Slot Cards ========== */
 .waat-slots {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* 슬롯 개수(2~3개)에 맞춰 자동 분배 — 빈 칸 안 생기게 */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1rem;
     margin: 1rem 0 1.4rem;
     width: 100%;
