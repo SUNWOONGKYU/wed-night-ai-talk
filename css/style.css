@@ -3678,8 +3678,10 @@ footer {
 }
 .waat-slot-card > .slot-attendees,
 .waat-slot-card > .slot-attendees-empty {
-    margin-top: auto;
     width: 100%;
+    /* margin-top:auto 제거 — 명단이 버튼 바로 아래(자연 흐름)에 오게 해서
+       '신청자 N명' 라벨이 슬롯 간 같은 세로 위치에 정렬되도록.
+       짧은 슬롯은 카드 아래쪽 빈 공간이 자연스럽게 생긴다. */
 }
 .waat-slot-card:hover {
     transform: translateY(-3px);
