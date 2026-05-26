@@ -27,7 +27,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260525d">
+    <link rel="stylesheet" href="css/style.css?v=20260526a">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -129,6 +129,11 @@
             <!-- 동적 이벤트 목록 (DB에서 로드) -->
             <div id="events-container">
                 <div class="admin-loading">모임 정보를 불러오는 중...</div>
+            </div>
+
+            <!-- 비회원 신청 취소 진입 -->
+            <div class="guest-cancel-entry">
+                <a href="#" id="guest-cancel-open-btn" class="guest-cancel-link">비회원으로 신청한 거 취소하기 →</a>
             </div>
         </div>
     </section>
@@ -499,6 +504,36 @@
         </div>
     </div>
 
+    <!-- 비회원 신청 셀프 취소 모달 -->
+    <div id="guest-cancel-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="guest-cancel-title" aria-hidden="true">
+        <div class="modal-content" style="max-width: 540px;">
+            <button class="modal-close" id="guest-cancel-close-btn" aria-label="닫기">&times;</button>
+            <h2 class="modal-title" id="guest-cancel-title">비회원 신청 취소</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.92rem;">
+                신청 시 입력하신 <strong>이름</strong>과 <strong>핸드폰 번호</strong>로 본인 확인 후 취소할 수 있습니다.
+            </p>
+
+            <!-- 검색 폼 -->
+            <form id="guest-cancel-form" class="site-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="gc-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="gc-name" name="name" required maxlength="50" placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label for="gc-phone">핸드폰 번호 <span class="required">*</span></label>
+                        <input type="tel" id="gc-phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="[masked-phone]">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary form-submit" id="gc-search-btn">신청 내역 찾기 →</button>
+                <div class="form-status" id="gc-status"></div>
+            </form>
+
+            <!-- 결과 목록 -->
+            <div id="gc-results" class="guest-cancel-results" style="display:none;"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -527,8 +562,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260521b"></script>
+    <script src="js/supabase-config.js?v=20260526a"></script>
     <script src="js/animations.js?v=20260518c"></script>
-    <script src="js/main.js?v=20260521g"></script>
+    <script src="js/main.js?v=20260526a"></script>
 </body>
 </html>

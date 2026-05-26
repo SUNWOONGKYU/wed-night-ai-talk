@@ -376,6 +376,153 @@ bindGoogleAuth('login-google-btn');
     });
 })();
 
+// ========== Guest Self-Cancel (비회원 본인 신청 취소) ==========
+(function() {
+    var modal = document.getElementById('guest-cancel-modal');
+    var openBtn = document.getElementById('guest-cancel-open-btn');
+    if (!modal || !openBtn) return;
+
+    var form = document.getElementById('guest-cancel-form');
+    var closeBtn = document.getElementById('guest-cancel-close-btn');
+    var nameInp = document.getElementById('gc-name');
+    var phoneInp = document.getElementById('gc-phone');
+    var statusEl = document.getElementById('gc-status');
+    var resultsEl = document.getElementById('gc-results');
+    var searchBtn = document.getElementById('gc-search-btn');
+
+    function resetUI() {
+        if (statusEl) { statusEl.textContent = ''; statusEl.className = 'form-status'; }
+        if (resultsEl) { resultsEl.innerHTML = ''; resultsEl.style.display = 'none'; }
+    }
+    function open() {
+        resetUI();
+        if (nameInp) nameInp.value = '';
+        if (phoneInp) phoneInp.value = '';
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function() { if (nameInp) nameInp.focus(); }, 100);
+    }
+    function close() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (typeof releaseFocus === 'function') releaseFocus(modal);
+    }
+
+    openBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        open();
+    });
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+
+    function fmtDate(d) {
+        if (!d) return '';
+        var dt = new Date(d + 'T00:00:00');
+        var wk = ['일', '월', '화', '수', '목', '금', '토'][dt.getDay()];
+        return (dt.getMonth() + 1) + '월 ' + dt.getDate() + '일 (' + wk + ')';
+    }
+    function fmtTime(t) {
+        if (!t) return '';
+        var s = String(t);
+        var m = s.match(/^(\d{1,2}):(\d{2})/);
+        if (!m) return s;
+        return m[1] + ':' + m[2];
+    }
+
+    function renderResults(rows, name, phone) {
+        if (!rows || rows.length === 0) {
+            resultsEl.style.display = 'block';
+            resultsEl.innerHTML = '<div class="guest-cancel-empty">신청 내역이 없습니다.<br><span style="color:var(--text-muted); font-size:0.88rem;">이름·휴대폰 번호를 다시 확인해 주세요. (지난 모임은 표시되지 않습니다)</span></div>';
+            return;
+        }
+        var html = '<div class="guest-cancel-list-label">신청 내역 ' + rows.length + '건</div>';
+        html += rows.map(function(r) {
+            var emoji = r.slot_emoji ? r.slot_emoji + ' ' : '';
+            var timeRange = fmtTime(r.slot_time) + (r.slot_end_time ? ' ~ ' + fmtTime(r.slot_end_time) : '');
+            return '<div class="guest-cancel-row" data-id="' + r.id + '">' +
+                '<div class="gc-row-main">' +
+                    '<div class="gc-row-date">' + escapeHtml(fmtDate(r.event_date)) + '</div>' +
+                    '<div class="gc-row-slot">' + emoji + escapeHtml(r.slot_label || '') + ' <span class="gc-row-time">' + escapeHtml(timeRange) + '</span></div>' +
+                '</div>' +
+                '<button type="button" class="btn-secondary gc-cancel-btn" data-id="' + r.id + '">취소</button>' +
+            '</div>';
+        }).join('');
+        resultsEl.style.display = 'block';
+        resultsEl.innerHTML = html;
+
+        // 취소 버튼 바인딩
+        resultsEl.querySelectorAll('.gc-cancel-btn').forEach(function(btn) {
+            btn.addEventListener('click', async function() {
+                var id = Number(btn.getAttribute('data-id'));
+                if (!id) return;
+                if (!confirm('이 신청을 취소하시겠습니까?')) return;
+                btn.disabled = true;
+                btn.textContent = '취소 중...';
+                try {
+                    var ok = await DB.cancelGuestAttendanceByOwner(id, name, phone);
+                    if (ok) {
+                        var row = resultsEl.querySelector('.guest-cancel-row[data-id="' + id + '"]');
+                        if (row) row.remove();
+                        showToast('❎ 신청이 취소되었습니다.');
+                        // 결과가 비면 안내 + 닫기 옵션
+                        if (!resultsEl.querySelector('.guest-cancel-row')) {
+                            resultsEl.innerHTML = '<div class="guest-cancel-empty">취소 완료. 남은 신청 내역이 없습니다.</div>';
+                        } else {
+                            var lbl = resultsEl.querySelector('.guest-cancel-list-label');
+                            var remaining = resultsEl.querySelectorAll('.guest-cancel-row').length;
+                            if (lbl) lbl.textContent = '신청 내역 ' + remaining + '건';
+                        }
+                        // 메인 화면 슬롯 카운트 새로고침
+                        if (typeof renderScheduleEvents === 'function') renderScheduleEvents();
+                    } else {
+                        showToast('본인 확인에 실패했습니다.', 'error');
+                        btn.disabled = false;
+                        btn.textContent = '취소';
+                    }
+                } catch (err) {
+                    console.error('Guest self-cancel error:', err);
+                    showToast('취소 실패: ' + (err.message || err), 'error');
+                    btn.disabled = false;
+                    btn.textContent = '취소';
+                }
+            });
+        });
+    }
+
+    if (form) form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        resetUI();
+        var name = (nameInp.value || '').trim();
+        var phoneRaw = (phoneInp.value || '').trim();
+        var phone = sanitizePhone(phoneRaw);
+        if (!name) {
+            setStatus(statusEl, '이름을 입력해주세요.', 'error');
+            return;
+        }
+        if (!isValidPhone(phone)) {
+            setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
+            return;
+        }
+        setStatus(statusEl, '신청 내역을 찾는 중...', 'loading');
+        searchBtn.disabled = true;
+        try {
+            var rows = await DB.findGuestAttendances(name, phone);
+            setStatus(statusEl, '', '');
+            renderResults(rows, name, phone);
+        } catch (err) {
+            console.error('Guest find error:', err);
+            setStatus(statusEl, '조회 실패: ' + (err.message || err), 'error');
+        } finally {
+            searchBtn.disabled = false;
+        }
+    });
+})();
+
 // ========== Toast helper ==========
 function showToast(msg, type) {
     var t = document.getElementById('app-toast');
