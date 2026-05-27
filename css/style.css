@@ -4356,23 +4356,33 @@ footer {
     text-align: center;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    border-top: 1px dashed rgba(26, 34, 56, 0.10);
 }
-.guest-cancel-link {
+.guest-cancel-btn {
     display: inline-block;
-    color: var(--text-muted);
+    background: var(--accent-cyan);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.85rem 1.6rem;
+    border: 2px solid var(--accent-cyan);
+    border-radius: 8px;
+    cursor: pointer;
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    box-shadow: 0 4px 12px rgba(26, 34, 56, 0.18);
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
 }
-.guest-cancel-link:hover {
-    color: var(--accent-gold);
-    border-color: var(--accent-gold);
-    background: rgba(201, 169, 97, 0.06);
+.guest-cancel-btn:hover {
+    background: #fff;
+    color: var(--accent-cyan);
+    border-color: var(--accent-cyan);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(26, 34, 56, 0.25);
+}
+.guest-cancel-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(26, 34, 56, 0.20);
 }
 
 .guest-cancel-results {
