@@ -1908,7 +1908,7 @@ footer {
     transform-origin: left center;
 }
 
-/* ========== HERO BUBBLES — 배경 말풍선 + 헬륨 풍선 모티프 ========== */
+/* ========== HERO BUBBLES — 컬러풀한 작은 헬륨 풍선 ========== */
 .hero-bubbles {
     position: absolute;
     top: 0;
@@ -1917,32 +1917,45 @@ footer {
     height: 100%;
     z-index: 0;
     pointer-events: none;
-    /* 풍선 전체에 부드러운 그림자 (입체감) */
-    filter: drop-shadow(0 6px 12px rgba(26, 34, 56, 0.10));
+    filter: drop-shadow(0 4px 8px rgba(26, 34, 56, 0.10));
 }
 .hero-bubbles use {
-    fill: var(--accent-gold);
-    color: var(--accent-gold); /* 끈(stroke=currentColor) 색상 */
+    opacity: 0.78;
 }
-.hero-bubbles .bub-gold      { fill: var(--accent-gold);      color: var(--accent-gold); }
-.hero-bubbles .bub-gold-soft { fill: var(--accent-gold-soft); color: var(--accent-gold-soft); }
-.hero-bubbles .bub-purple    { fill: var(--accent-purple);    color: var(--accent-purple); }
+/* 컬러풀 파스텔 7색 */
+.hero-bubbles .bb-red    { fill: #ff8a8a; color: #ff8a8a; }
+.hero-bubbles .bb-yellow { fill: #ffd166; color: #ffd166; }
+.hero-bubbles .bb-blue   { fill: #a3c4f3; color: #a3c4f3; }
+.hero-bubbles .bb-green  { fill: #95d5b2; color: #95d5b2; }
+.hero-bubbles .bb-pink   { fill: #ffafcc; color: #ffafcc; }
+.hero-bubbles .bb-purple { fill: #cdb4db; color: #cdb4db; }
+.hero-bubbles .bb-orange { fill: #ffb088; color: #ffb088; }
 
-/* 헬륨 풍선만 살짝 떠다니는 미세 애니메이션 (감속 모션 선호 시 끔) */
+/* 풍선 부유 애니메이션 */
 @keyframes balloonFloat {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-6px); }
+    50%      { transform: translateY(-8px); }
 }
-.hero-bubbles use[href="#waat-balloon"] {
+.hero-bubbles use {
     transform-box: fill-box;
     transform-origin: center top;
     animation: balloonFloat 6s ease-in-out infinite;
 }
-.hero-bubbles use[href="#waat-balloon"]:nth-of-type(2) { animation-duration: 7.5s; animation-delay: -1.2s; }
-.hero-bubbles use[href="#waat-balloon"]:nth-of-type(3) { animation-duration: 5.5s; animation-delay: -2.8s; }
-.hero-bubbles use[href="#waat-balloon"]:nth-of-type(4) { animation-duration: 8s;   animation-delay: -0.5s; }
+.hero-bubbles use:nth-of-type(2)  { animation-duration: 7.2s;  animation-delay: -1.1s; }
+.hero-bubbles use:nth-of-type(3)  { animation-duration: 5.6s;  animation-delay: -2.4s; }
+.hero-bubbles use:nth-of-type(4)  { animation-duration: 8.1s;  animation-delay: -0.7s; }
+.hero-bubbles use:nth-of-type(5)  { animation-duration: 6.7s;  animation-delay: -3.2s; }
+.hero-bubbles use:nth-of-type(6)  { animation-duration: 7.8s;  animation-delay: -1.8s; }
+.hero-bubbles use:nth-of-type(7)  { animation-duration: 5.9s;  animation-delay: -2.9s; }
+.hero-bubbles use:nth-of-type(8)  { animation-duration: 6.4s;  animation-delay: -0.4s; }
+.hero-bubbles use:nth-of-type(9)  { animation-duration: 7.5s;  animation-delay: -3.6s; }
+.hero-bubbles use:nth-of-type(10) { animation-duration: 5.7s;  animation-delay: -1.5s; }
+.hero-bubbles use:nth-of-type(11) { animation-duration: 8.2s;  animation-delay: -2.1s; }
+.hero-bubbles use:nth-of-type(12) { animation-duration: 6.1s;  animation-delay: -3.0s; }
+.hero-bubbles use:nth-of-type(13) { animation-duration: 7.0s;  animation-delay: -1.0s; }
+.hero-bubbles use:nth-of-type(14) { animation-duration: 5.8s;  animation-delay: -2.6s; }
 @media (prefers-reduced-motion: reduce) {
-    .hero-bubbles use[href="#waat-balloon"] { animation: none; }
+    .hero-bubbles use { animation: none; }
 }
 
 .hero-inner {
@@ -3543,15 +3556,7 @@ footer {
     -webkit-text-fill-color: var(--accent-gold);
 }
 .hero-headline .hero-accent::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0.05em;
-    height: 0.32em;
-    background: rgba(201, 169, 97, 0.22);
-    z-index: -1;
-    border-radius: 2px;
+    content: none;
 }
 
 /* Lead — 정체성 카피 (H2급) */
