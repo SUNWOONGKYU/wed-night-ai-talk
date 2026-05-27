@@ -1908,7 +1908,7 @@ footer {
     transform-origin: left center;
 }
 
-/* ========== HERO BUBBLES — 배경 말풍선 모티프 (정적) ========== */
+/* ========== HERO BUBBLES — 배경 말풍선 + 헬륨 풍선 모티프 ========== */
 .hero-bubbles {
     position: absolute;
     top: 0;
@@ -1917,9 +1917,32 @@ footer {
     height: 100%;
     z-index: 0;
     pointer-events: none;
+    /* 풍선 전체에 부드러운 그림자 (입체감) */
+    filter: drop-shadow(0 6px 12px rgba(26, 34, 56, 0.10));
 }
 .hero-bubbles use {
     fill: var(--accent-gold);
+    color: var(--accent-gold); /* 끈(stroke=currentColor) 색상 */
+}
+.hero-bubbles .bub-gold      { fill: var(--accent-gold);      color: var(--accent-gold); }
+.hero-bubbles .bub-gold-soft { fill: var(--accent-gold-soft); color: var(--accent-gold-soft); }
+.hero-bubbles .bub-purple    { fill: var(--accent-purple);    color: var(--accent-purple); }
+
+/* 헬륨 풍선만 살짝 떠다니는 미세 애니메이션 (감속 모션 선호 시 끔) */
+@keyframes balloonFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+.hero-bubbles use[href="#waat-balloon"] {
+    transform-box: fill-box;
+    transform-origin: center top;
+    animation: balloonFloat 6s ease-in-out infinite;
+}
+.hero-bubbles use[href="#waat-balloon"]:nth-of-type(2) { animation-duration: 7.5s; animation-delay: -1.2s; }
+.hero-bubbles use[href="#waat-balloon"]:nth-of-type(3) { animation-duration: 5.5s; animation-delay: -2.8s; }
+.hero-bubbles use[href="#waat-balloon"]:nth-of-type(4) { animation-duration: 8s;   animation-delay: -0.5s; }
+@media (prefers-reduced-motion: reduce) {
+    .hero-bubbles use[href="#waat-balloon"] { animation: none; }
 }
 
 .hero-inner {
