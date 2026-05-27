@@ -77,7 +77,7 @@ function formatProvision(text) {
             prefixed = line;
         } else if (/^입금계좌/.test(line)) {
             prefixed = '※ ' + line;
-            cls += ' provision-note';
+            cls += ' provision-note provision-bank';
         } else if (/^\*/.test(line)) {
             prefixed = '※ ' + line.replace(/^\*\s*/, '');
             cls += ' provision-note';

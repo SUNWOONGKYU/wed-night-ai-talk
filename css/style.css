@@ -803,6 +803,11 @@ section {
     color: var(--text-muted);
     line-height: 1.35;
 }
+/* 입금계좌만 볼드 (크기는 .provision-note 유지) */
+.schedule-info-text .provision-line.provision-bank {
+    font-weight: 700;
+    color: var(--text-secondary);
+}
 /* 장소 옆 회의실 안내 (햇살: 2번 회의실 · 노을/달빛: 5번 회의실) */
 .schedule-info-text .info-rooms {
     display: inline-block;
