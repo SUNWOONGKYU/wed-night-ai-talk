@@ -38,6 +38,22 @@ function spEscape(str) {
     return div.innerHTML;
 }
 
+// ========== Render post images (image_urls array) ==========
+// 2026-05-27 claude-news-agent 지원: posts.image_urls (text[]) 를 본문 아래 갤러리로 렌더링.
+// 에이전트는 Supabase Storage 'post-images' 버킷에 업로드 후 public URL 배열을 image_urls 에 저장.
+function spRenderImages(urls) {
+    if (!Array.isArray(urls) || urls.length === 0) return '';
+    var html = '<div class="post-images" style="margin-top:0.75rem;">';
+    for (var i = 0; i < urls.length; i++) {
+        var url = String(urls[i] || '').trim();
+        if (!url) continue;
+        html += '<img src="' + spEscape(url) + '" alt="" loading="lazy" ' +
+            'style="max-width:100%;height:auto;margin:0.5rem 0;border-radius:6px;display:block;">';
+    }
+    html += '</div>';
+    return html;
+}
+
 // ========== 요청 타임아웃 래퍼 (무한 대기 방지) ==========
 // 등록 자체는 서버에서 성공해도 느린 네트워크(원격 데스크톱 등)에서는
 // 응답 도착이 지연될 수 있다. 타임아웃 메시지는 "이미 등록됐을 수 있음"을 안내한다.
@@ -336,7 +352,7 @@ async function renderPostCard(post) {
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
             '<div class="post-content-wrap">' +
-                '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + '</div>' +
+                '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + spRenderImages(post.image_urls) + '</div>' +
                 '<button type="button" class="post-more-btn" style="display:none;">… 더 보기</button>' +
             '</div>' +
             fbBadgeHtml +
