@@ -3428,6 +3428,37 @@ footer {
     margin-top: 0.4rem;
 }
 
+/* 운영자 다른 사이트 — 2026-06-03 */
+.footer-related {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.footer-related a {
+    color: var(--text-muted);
+    text-decoration: none;
+    text-align: center;
+    line-height: 1.35;
+    padding: 0.3rem 0.5rem;
+    transition: color 0.18s ease;
+}
+.footer-related a:hover { color: var(--accent-gold); }
+.footer-related .related-name {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+}
+.footer-related .related-desc {
+    display: block;
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
+    opacity: 0.85;
+}
+
 @media (max-width: 768px) {
     .nav-inner { gap: 0.75rem; }
     .nav-logo-img { height: 34px; }
