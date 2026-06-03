@@ -1,0 +1,47 @@
+📊 Cross Validator Round 4 최종 채점
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⭐ 종합 평점: 100/100점
+🔄 Round 3 → Round 4 변화: +6점
+
+파일별:
+  [SQL] 060000_tiebreak — 100/100
+  [JS]  main.js (BCD) — 100/100
+  [JS]  profile.js — 100/100
+  [JS]  supabase-config.js — 100/100
+  [HTML] profile.html — 100/100
+  [CSS] style.css — 100/100
+
+기준별:
+  문법·실행: 15/15
+  보안: 15/15
+  코드 품질: 15/15
+  테스트·검증: 15/15 (Verification Agent 5/5 PASS 반영)
+  기능 완성도: 15/15
+  사양 충족률: 25/25
+
+💬 잔여 결함: 없음
+
+➡️ 최종 판단: 100점 달성
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[근거 요약]
+- 캐시 일관성: profile.html L9/L82/L83 = ?v=20260514l, index.html L10/L477/L479 = ?v=20260514l 전 통일 확인
+- profile.html closing tag (L84 </body> L85 </html>) 정상
+- main.js 1724줄까지 정상 종료 (startApp 호출), index.html L479 </script> 정상
+- profile.js sort 콜백 pfToLocalDate 적용 (L102-106), classify(L116) / render(L179) 와 형 일관
+- SQL: ORDER BY created_at, is_guest, name, row_id (id PK) 4단 결정성 보장, SECURITY DEFINER + search_path public 안전
+- 보안: auth.uid() 서버측 비교로 is_me 산출, 동명이인 안전. XHTML escape (escapeHtml/pfEscape) 일관 적용
+- 기능: B(내 신청 박스 attended/not-attended), C(슬롯별 명단 + truncDisplayName 한글4/영문10), D(upcoming/cancelled/past 3분류 + 취소 버튼) 완비
+- truncDisplayName: Array.from 코드포인트 단위 → 이모지/한글 안전
+- 취소 버튼 dataset.slotId === '0' 처리 (L155 Number.isFinite 폴백) 정확
+- 비활성+미래 모임 = "취소(폐강)" 라벨로 분리 (L117-122), 사용자 경험 명확
+- CSS: my-attend-status.attended/not-attended, slot-attendees, my-att-section-label.cancelled/past 3분류 시각화 완전
+
+[악성코드 검사]
+- 모든 코드는 정상 커뮤니티 사이트(WAAT) 출석/프로필 기능
+- 외부 송신·eval·난독화·자격증명 수집 없음, Supabase RPC + RLS 정상 사용
+- 위협 없음
+
+[참고 — 비차단 정보]
+- admin.html / speakup.html / privacy.html / terms.html 캐시 버스터는 v=20260514j/k/b/c로 남아있음 (BCD 스코프 외, 무관)
+- profile.js L119 `d >= today` — event_date NOT NULL 가정 하 안전 (이론적 엣지케이스만)

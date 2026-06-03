@@ -1,0 +1,72 @@
+============================================
+WAAT 이메일 발송 시스템 — 배포 명령어 모음
+작성: 2026-05-14
+============================================
+
+[STEP 1] DB 마이그레이션 실행
+--------------------------------------------
+방법 A (간단): Supabase Dashboard SQL Editor
+  접속: https://supabase.com/dashboard/project/vmiyqfkcoqdnkxjnxijt/sql
+  → 새 쿼리 → 아래 파일 전체 복붙 → Run
+  파일: supabase/migrations/20260514070000_email_logs.sql
+
+방법 B (CLI):
+  cd "G:/내 드라이브/백업_AI스터디모임"
+  supabase db push
+
+
+[STEP 2] Supabase CLI 설치 (최초 1회만)
+--------------------------------------------
+npm install -g supabase
+
+supabase login
+
+cd "G:/내 드라이브/백업_AI스터디모임"
+supabase link --project-ref vmiyqfkcoqdnkxjnxijt
+
+
+[STEP 3] Secrets 등록 (4개)
+--------------------------------------------
+⚠️ RESEND_API_KEY 자리에 본인이 메모장에 보관한 실제 키 넣기
+
+supabase secrets set RESEND_API_KEY=re_여기에본인키
+supabase secrets set RESEND_FROM_EMAIL=onboarding@resend.dev
+supabase secrets set RESEND_FROM_NAME="WAAT 운영자 선웅규"
+supabase secrets set RESEND_REPLY_TO=wksun999@gmail.com
+
+
+[STEP 4] Edge Function 배포
+--------------------------------------------
+cd "G:/내 드라이브/백업_AI스터디모임"
+supabase functions deploy send-email
+
+
+[STEP 5] 동작 확인
+--------------------------------------------
+1. https://wed-night-ai-talk.vercel.app/admin.html 접속
+2. 관리자 계정으로 로그인
+3. 상단 탭 "📧 이메일 발송" 클릭
+4. 제목/본문 입력
+5. "🧪 나에게 테스트" 버튼 → wksun999@gmail.com 메일함 확인
+6. 정상 도착하면 "📨 전체 발송" 사용 가능
+
+
+[GitHub Push (코드 적용)]
+--------------------------------------------
+cd "G:/내 드라이브/백업_AI스터디모임"
+git add admin.html js/admin.js js/supabase-config.js \
+        supabase/migrations/20260514070000_email_logs.sql \
+        supabase/functions/send-email/index.ts \
+        .env.example .gitignore docs/DEPLOY_EMAIL.md
+git commit -m "이메일 일괄 발송 기능 추가 (Resend + Edge Function)"
+git push
+
+(Vercel이 자동 배포 → 1~2분 후 사이트에 반영)
+
+
+[중요 안내]
+--------------------------------------------
+- .env 파일은 절대 커밋하지 마세요 (.gitignore에 등록됨)
+- Resend 무료 플랜: 일 100건 / 월 3,000건
+- 발송 이력은 admin → 이메일 발송 탭 우측에서 확인
+============================================
