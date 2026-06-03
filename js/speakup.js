@@ -320,6 +320,7 @@ async function renderPostCard(post) {
             '</div>';
     } else if (isAdminUser) {
         actionBtns = '<div class="post-actions">' +
+            '<button class="post-action-btn post-edit-btn" data-post-id="' + post.id + '" title="관리자 수정">수정</button>' +
             '<button class="post-action-btn post-delete-btn" data-post-id="' + post.id + '">삭제</button>' +
             '</div>';
     }
