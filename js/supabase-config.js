@@ -426,20 +426,8 @@ var DB = {
         if (error) throw error;
     },
 
-    // -- Guest Attendance (게스트 모임 참여 신청) --
-    async createGuestAttendance(payload) {
-        // payload: { name, phone, email, message, event_id, event_slot_id }
-        var { data, error } = await _supabase.rpc('create_guest_attendance', {
-            p_name: payload.name,
-            p_phone: payload.phone,
-            p_email: payload.email || null,
-            p_message: payload.message || null,
-            p_event_id: payload.event_id,
-            p_event_slot_id: payload.event_slot_id
-        });
-        if (error) throw error;
-        return data;
-    },
+    // -- Guest Attendance (게스트 모임 참여 신청은 2026-06-04 회원 전용 전환 — createGuestAttendance 제거) --
+    // 셀프 취소·관리자 삭제·기존 게스트 명단 조회는 유지
 
     async deleteGuestAttendance(id) {
         var { error } = await _supabase

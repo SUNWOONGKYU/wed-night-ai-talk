@@ -216,9 +216,7 @@ document.querySelectorAll('[data-open-modal]').forEach(el => {
     el.addEventListener('click', (e) => {
         e.preventDefault();
         const tab = el.getAttribute('data-open-modal') || 'signup';
-        // 참여 신청 버튼에서 열릴 때 안내문 표시
-        const isAttendBtn = el.id === 'attend-guest-btn';
-        openModal(tab, { showNotice: isAttendBtn });
+        openModal(tab);
     });
 });
 
@@ -289,92 +287,7 @@ function bindGoogleAuth(btnId) {
 bindGoogleAuth('signup-google-btn');
 bindGoogleAuth('login-google-btn');
 
-// ========== Guest Attend (비회원 참여 신청) ==========
-(function() {
-    var modal = document.getElementById('guest-attend-modal');
-    if (!modal) return;
-
-    function close() {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        releaseFocus(modal);
-    }
-
-    var closeBtn = document.getElementById('guest-attend-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', close);
-    modal.addEventListener('click', function(e) { if (e.target === modal) close(); });
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.classList.contains('open')) close();
-    });
-
-    var form = document.getElementById('guest-attend-form');
-    if (!form) return;
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        var statusEl = document.getElementById('ga-status');
-        var btn = form.querySelector('.form-submit');
-
-        var name = document.getElementById('ga-name').value.trim();
-        var email = document.getElementById('ga-email').value.trim();
-        var phoneRaw = document.getElementById('ga-phone').value.trim();
-        var memo = document.getElementById('ga-memo').value.trim();
-
-        // 검증 1: 빈 필드
-        if (!name || !email || !phoneRaw) {
-            setStatus(statusEl, '이름·이메일·핸드폰 번호를 모두 입력해주세요.', 'error');
-            return;
-        }
-
-        // 검증 2: 이메일 형식
-        var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRe.test(email)) {
-            setStatus(statusEl, '이메일 형식이 올바르지 않습니다.', 'error');
-            return;
-        }
-
-        // 검증 3: 핸드폰 번호 (010/011 + 10~11자리)
-        var phone = phoneRaw.replace(/[^0-9]/g, '');
-        if (!/^(010\d{8}|01[16789]\d{7})$/.test(phone)) {
-            setStatus(statusEl, '핸드폰 번호를 정확히 입력해주세요. (예: [masked-phone])', 'error');
-            return;
-        }
-
-        // 이벤트/슬롯 정보
-        var eventId = (typeof currentEventId !== 'undefined' && currentEventId) ? currentEventId : null;
-        var eventSlotId = (typeof currentEventSlotId !== 'undefined' && currentEventSlotId) ? currentEventSlotId : null;
-        if (!eventSlotId) {
-            setStatus(statusEl, '먼저 모임 카드의 타임 슬롯을 선택해주세요.', 'error');
-            return;
-        }
-        var slot = getSlotById(eventSlotId);
-        var slotLabel = slot ? (' / ' + slotDisplayName(slot)) : '';
-
-        setStatus(statusEl, '신청 처리 중...', 'loading');
-        btn.disabled = true;
-        try {
-            await DB.createGuestAttendance({
-                name: name,
-                phone: phone,
-                email: email,
-                message: memo,
-                event_id: eventId,
-                event_slot_id: eventSlotId
-            });
-            setStatus(statusEl, '신청이 접수되었습니다.', 'success');
-            setTimeout(close, 2000);
-        } catch (err) {
-            console.error('Guest attend error:', err);
-            var msg = err.message || String(err);
-            if (/이미 같은/i.test(msg)) {
-                setStatus(statusEl, '이미 같은 핸드폰 번호로 신청되어 있습니다.', 'error');
-            } else {
-                setStatus(statusEl, '신청 실패: ' + msg, 'error');
-            }
-            btn.disabled = false;
-        }
-    });
-})();
+// (게스트 신청 폼 제거 — 2026-06-04 mbo-천상. 셀프 취소는 아래 유지)
 
 // ========== Guest Self-Cancel (비회원 본인 신청 취소) ==========
 (function() {
@@ -628,70 +541,8 @@ async function memberCancelSlot(eventId, eventSlotId, slot) {
     }
 }
 
-// ========== Identity Choice Modal ==========
-function showIdentityChoiceModal(slot) {
-    var m = document.getElementById('identity-choice-modal');
-    if (!m) return;
-    var slotEl = document.getElementById('ic-selected-slot');
-    if (slotEl && slot) {
-        var emoji = escapeHtml(slot.slot_emoji || '');
-        var label = escapeHtml(slot.slot_label || '');
-        var t = escapeHtml(slotTimeStr(slot));
-        slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
-    }
-    m.classList.add('open');
-    m.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    trapFocus(m);
-}
-function closeIdentityChoiceModal() {
-    var m = document.getElementById('identity-choice-modal');
-    if (m) {
-        m.classList.remove('open');
-        m.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        releaseFocus(m);
-    }
-}
-(function() {
-    var m = document.getElementById('identity-choice-modal');
-    if (!m) return;
-    var closeBtn = document.getElementById('ic-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', closeIdentityChoiceModal);
-    m.addEventListener('click', function(e) { if (e.target === m) closeIdentityChoiceModal(); });
-
-    var memberBtn = document.getElementById('ic-member-btn');
-    if (memberBtn) memberBtn.addEventListener('click', function() {
-        if (currentEventId && currentEventSlotId) {
-            pendingAttend = { eventId: currentEventId, eventSlotId: currentEventSlotId };
-        }
-        closeIdentityChoiceModal();
-        openModal('login');
-    });
-
-    var guestBtn = document.getElementById('ic-guest-btn');
-    if (guestBtn) guestBtn.addEventListener('click', function() {
-        closeIdentityChoiceModal();
-        var slot = getSlotById(currentEventSlotId);
-        var ga = document.getElementById('guest-attend-modal');
-        if (!ga) return;
-        var f = document.getElementById('guest-attend-form');
-        if (f) f.reset();
-        var s = document.getElementById('ga-status');
-        if (s) { s.textContent = ''; s.className = 'form-status'; }
-        var slotEl = document.getElementById('ga-selected-slot');
-        if (slotEl && slot) {
-            var emoji = escapeHtml(slot.slot_emoji || '');
-            var label = escapeHtml(slot.slot_label || '');
-            var t = escapeHtml(slotTimeStr(slot));
-            slotEl.innerHTML = emoji + ' <strong>' + label + '</strong>' + (t ? ' (' + t + ')' : '');
-        }
-        ga.classList.add('open');
-        ga.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-        trapFocus(ga);
-    });
-})();
+// (게스트 신청 제거 — 2026-06-04 mbo-천상)
+// 비로그인 슬롯 클릭 시 곧바로 signup 모달로 안내. pendingAttend에 슬롯 저장 → 가입 완료 후 자동 신청.
 
 // 로그인 후 pending slot 자동 신청
 async function tryPendingSlotAttend() {
@@ -707,7 +558,7 @@ async function tryPendingSlotAttend() {
 function sanitizePhone(value) {
     return value.replace(/[^0-9]/g, '');
 }
-document.querySelectorAll('#s-contact, #inq-phone, #ga-phone').forEach(function(el) {
+document.querySelectorAll('#s-contact, #inq-phone').forEach(function(el) {
     el.addEventListener('input', function() {
         var pos = el.selectionStart;
         var before = el.value.length;
@@ -1249,8 +1100,9 @@ function rebindAttendButtons() {
                 // 회원: 즉시 신청
                 await memberAttendSlot(eventIdForSlot, eventSlotId, slot);
             } else {
-                // 비로그인: 신원 선택 모달
-                showIdentityChoiceModal(slot);
+                // 비로그인: 회원가입 모달 직행 + 가입 후 자동 신청 위해 pendingAttend 저장
+                pendingAttend = { eventId: eventIdForSlot, eventSlotId: eventSlotId };
+                openModal('signup');
             }
         });
     });
@@ -1298,17 +1150,8 @@ function rebindAttendButtons() {
 // ========== Update attend button visibility based on login state ==========
 function updateAttendUI() {
     const attendLoggedIn = document.getElementById('attend-logged-in');
-    const attendGuestBtn = document.getElementById('attend-guest-btn');
-
-    if (!attendLoggedIn && !attendGuestBtn) return;
-
-    if (currentUser) {
-        if (attendLoggedIn) attendLoggedIn.style.display = 'block';
-        if (attendGuestBtn) attendGuestBtn.style.display = 'none';
-    } else {
-        if (attendLoggedIn) attendLoggedIn.style.display = 'none';
-        if (attendGuestBtn) attendGuestBtn.style.display = '';
-    }
+    if (!attendLoggedIn) return;
+    attendLoggedIn.style.display = currentUser ? 'block' : 'none';
 }
 
 // ========== Render locations from DB ==========
