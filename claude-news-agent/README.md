@@ -8,6 +8,13 @@ Anthropic Claude 새 소식 → 한글 자동 번역 → WAAT 커뮤니티(`AI �
 
 ---
 
+## LLM 폴백 체인 (2026-06-10 개선)
+
+`anthropic → claude_cli → gemini → openai → grok` 순서로 시도 (`.env`의 `LLM_FALLBACK_ORDER`).
+
+- **claude_cli**: 이 PC의 Claude Code CLI(`claude -p`)를 호출 — Claude 구독(Pro/Max)을 사용하므로 **API 크레딧이 없어도 동작**. `--tools none`으로 도구 사용을 차단해 순수 텍스트 생성만 수행.
+- Anthropic API 크레딧이 소진돼도 claude_cli가 받아주므로 에이전트는 계속 구동된다.
+
 ## 설치 (1회)
 
 ```powershell
@@ -70,6 +77,7 @@ claude-news-agent/
 ├── run.py                       ← 진입점 (cron + 수동)
 ├── run-once.bat                 ← 바탕화면 바로가기용
 ├── engine.py                    (LLM 호출·self_critique·tool round-trip)
+├── llm_providers.py             (폴백 체인: Claude API → Claude CLI → Gemini → GPT → Grok)
 ├── anthropic_source.py          (sitemap·HTML 파싱)
 ├── waat_client.py               (Supabase posts INSERT + Storage 업로드)
 ├── marketing_filter.py          (금지 단어 정규식 검사)

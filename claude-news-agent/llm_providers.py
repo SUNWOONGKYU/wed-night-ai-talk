@@ -1,4 +1,4 @@
-"""LLM provider 폴백 체인 — Claude → Gemini → ChatGPT → Grok.
+"""LLM provider 폴백 체인 — Claude API → Claude Code CLI → Gemini → ChatGPT → Grok.
 
 각 provider 공통 인터페이스:
     def chat(system: str, user: str) -> str
@@ -8,6 +8,8 @@
 다른 예외(네트워크 등)는 1회 재시도 후 다음으로.
 """
 import os
+import shutil
+import subprocess
 import time
 from typing import Optional, Tuple
 
@@ -44,6 +46,39 @@ def _call_anthropic(system: str, user: str) -> str:
         if getattr(block, "type", None) == "text":
             text += block.text
     return text
+
+
+# ───── Claude Code CLI (구독 기반 — API 크레딧 불필요) ─────
+def _call_claude_cli(system: str, user: str) -> str:
+    """로컬 설치된 Claude Code CLI(`claude -p`)로 호출.
+    Claude 구독(Pro/Max)을 사용하므로 API 크레딧이 없어도 동작한다.
+    PC에 claude CLI가 설치·로그인되어 있어야 함."""
+    exe = os.environ.get("CLAUDE_CLI_PATH", "") or shutil.which("claude")
+    if not exe:
+        raise RuntimeError("claude CLI 미설치 (PATH에 claude 없음)")
+    model = os.environ.get("CLAUDE_CLI_MODEL", "claude-sonnet-4-6")
+    # system은 프롬프트 앞부분에 합쳐 stdin으로 전달 (CLI 버전별 플래그 차이 회피)
+    prompt = f"{system}\n\n{'='*20}\n\n{user}" if system else user
+    # ANTHROPIC_API_KEY가 환경에 있으면 CLI가 구독 대신 API 결제를 쓰므로 제거
+    env = dict(os.environ)
+    for k in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"):
+        env.pop(k, None)
+    proc = subprocess.run(
+        # --tools none: 파일 읽기 등 도구 사용 차단 — 순수 텍스트 생성으로 고정
+        # (도구를 허용하면 로컬 파일을 읽고 판단이 오염되는 사례 있었음, 2026-06-10)
+        [exe, "-p", "--model", model, "--tools", "none"],
+        input=prompt,
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        timeout=int(os.environ.get("CLAUDE_CLI_TIMEOUT_SEC", "600")),
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"claude CLI 종료코드 {proc.returncode}: {(proc.stderr or proc.stdout or '')[:300]}"
+        )
+    return (proc.stdout or "").strip()
 
 
 # ───── Google Gemini (google-genai SDK) ─────
@@ -117,6 +152,7 @@ def _call_grok(system: str, user: str) -> str:
 
 PROVIDERS = {
     "anthropic": _call_anthropic,
+    "claude_cli": _call_claude_cli,
     "gemini": _call_gemini,
     "openai": _call_openai,
     "grok": _call_grok,
@@ -124,7 +160,7 @@ PROVIDERS = {
 
 
 def _order() -> list:
-    raw = os.environ.get("LLM_FALLBACK_ORDER", "anthropic,gemini,openai,grok")
+    raw = os.environ.get("LLM_FALLBACK_ORDER", "anthropic,claude_cli,gemini,openai,grok")
     return [p.strip() for p in raw.split(",") if p.strip() in PROVIDERS]
 
 

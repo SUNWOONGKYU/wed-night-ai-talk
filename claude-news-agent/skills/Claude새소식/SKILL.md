@@ -4,12 +4,16 @@ skill_name: Claude 새소식 한글 자동발행
 description: Anthropic 영문 새 글 중 한국 독자가 가장 궁금해할 1건을 골라 한글 풀어쓰기로 WAAT 커뮤니티에 게시한다.
 domain: AI/콘텐츠 큐레이션
 agent_id: claude-news-agent
-version: "1.2"
+version: "1.3"
 created_at: 2026-05-28
-updated_at: 2026-05-28
+updated_at: 2026-06-10
 ---
 
 # Claude 새소식 한글 자동발행 — INSTRUCTION
+
+## 구동 환경 메모 (2026-06-10)
+
+이 에이전트는 Anthropic API 크레딧이 없어도 정상 구동된다. LLM 폴백 체인이 `anthropic(API) → claude_cli(Claude Code CLI, 구독 기반) → gemini → openai → grok` 순서로 동작하며, API 크레딧 소진 시 PC에 설치된 Claude Code CLI(`claude -p --tools none`)가 자동으로 받아 처리한다. (구현: `llm_providers.py`)
 
 ## 역할
 
