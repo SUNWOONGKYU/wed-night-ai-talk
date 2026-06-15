@@ -7,7 +7,9 @@
 $ProjectDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $TargetPath   = Join-Path $ProjectDir $TargetBat
 $Desktop      = [Environment]::GetFolderPath('Desktop')
-$ShortcutPath = Join-Path $Desktop "$ShortcutName.lnk"
+$AgentDir     = Join-Path $Desktop "AI 에이전트"
+New-Item -ItemType Directory -Force $AgentDir | Out-Null
+$ShortcutPath = Join-Path $AgentDir "$ShortcutName.lnk"
 if (-not (Test-Path $TargetPath)) {
     Write-Error "Target .bat not found: $TargetPath"; exit 1
 }
