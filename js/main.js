@@ -212,6 +212,8 @@ function openModal(tab, options) {
             document.getElementById('membership-title').textContent = '멤버 가입';
             if (switchTop) switchTop.style.display = 'block';
             if (switchTopSignup) switchTopSignup.style.display = 'inline';
+            const optionalFields = document.getElementById('signup-optional-fields');
+            if (optionalFields) optionalFields.style.display = 'none';
         }
     }
 }
@@ -272,6 +274,11 @@ document.getElementById('switch-to-login-top').addEventListener('click', (e) => 
 document.getElementById('switch-to-signup-top').addEventListener('click', (e) => {
     e.preventDefault();
     openModal('signup');
+});
+document.getElementById('signup-optional-toggle').addEventListener('click', (e) => {
+    e.preventDefault();
+    const fields = document.getElementById('signup-optional-fields');
+    fields.style.display = (fields.style.display === 'none') ? 'block' : 'none';
 });
 
 // ========== Google OAuth 로그인 ==========

@@ -1380,7 +1380,24 @@ footer {
     margin-top: 0.15rem;
 }
 .auth-form .auth-divider {
-    margin: 0.8rem 0;
+    margin: 0.6rem 0;
+}
+.auth-form .form-submit {
+    padding: 0.7rem 2rem;
+    margin-top: 0.2rem;
+}
+.auth-form .btn-google {
+    padding: 0.6rem 1rem;
+}
+.auth-form .form-status:empty {
+    margin: 0;
+}
+#auth-modal .modal-content {
+    margin: 1.2rem auto;
+    padding: 1.8rem 2.5rem;
+}
+#auth-modal .modal-title {
+    margin-bottom: 0.2rem;
 }
 
 .modal-desc {
