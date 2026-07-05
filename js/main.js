@@ -164,11 +164,16 @@ function openModal(tab, options) {
         notice.style.display = (options && options.showNotice) ? 'block' : 'none';
     }
 
+    const switchTop = document.getElementById('auth-switch-top');
+    const switchTopSignup = document.getElementById('auth-switch-top-signup');
+    const switchTopLogin = document.getElementById('auth-switch-top-login');
+
     if (currentUser) {
         // 로그인 상태: 프로필 현황 표시
         document.getElementById('auth-container').style.display = 'none';
         document.getElementById('profile-container').style.display = 'block';
         document.getElementById('membership-title').textContent = '프로필 현황';
+        if (switchTop) switchTop.style.display = 'none';
         if (currentProfile) fillProfileAll();
     } else {
         // 비로그인 상태: 가입/로그인/비밀번호찾기/재설정 표시
@@ -185,18 +190,28 @@ function openModal(tab, options) {
         forgotForm.style.display = 'none';
         resetForm.style.display = 'none';
 
+        // 상단 가입<->로그인 전환 링크: 스크롤 없이 바로 전환 가능하도록
+        if (switchTopSignup) switchTopSignup.style.display = 'none';
+        if (switchTopLogin) switchTopLogin.style.display = 'none';
+
         if (tab === 'forgot') {
             forgotForm.style.display = 'block';
             document.getElementById('membership-title').textContent = '비밀번호 찾기';
+            if (switchTop) switchTop.style.display = 'none';
         } else if (tab === 'reset') {
             resetForm.style.display = 'block';
             document.getElementById('membership-title').textContent = '비밀번호 재설정';
+            if (switchTop) switchTop.style.display = 'none';
         } else if (tab === 'login') {
             loginForm.style.display = 'block';
             document.getElementById('membership-title').textContent = '로그인';
+            if (switchTop) switchTop.style.display = 'block';
+            if (switchTopLogin) switchTopLogin.style.display = 'inline';
         } else {
             signupForm.style.display = 'block';
             document.getElementById('membership-title').textContent = '멤버 가입';
+            if (switchTop) switchTop.style.display = 'block';
+            if (switchTopSignup) switchTopSignup.style.display = 'inline';
         }
     }
 }
@@ -249,6 +264,14 @@ document.getElementById('switch-to-forgot').addEventListener('click', (e) => {
 document.getElementById('switch-to-login-from-forgot').addEventListener('click', (e) => {
     e.preventDefault();
     openModal('login');
+});
+document.getElementById('switch-to-login-top').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('login');
+});
+document.getElementById('switch-to-signup-top').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('signup');
 });
 
 // ========== Google OAuth 로그인 ==========

@@ -27,7 +27,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260706a">
+    <link rel="stylesheet" href="css/style.css?v=20260706b">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -256,6 +256,10 @@
             <button class="modal-close" id="modal-close-btn" aria-label="닫기">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
             <p id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해서 먼저 멤버 가입 신청을 해주세요.</p>
+            <p id="auth-switch-top" class="auth-switch" style="margin-top:0; margin-bottom:1.2rem; display:none;">
+                <span id="auth-switch-top-signup" style="display:none;">이미 가입하셨나요? <a href="#" id="switch-to-login-top">로그인</a></span>
+                <span id="auth-switch-top-login" style="display:none;">아직 회원이 아니신가요? <a href="#" id="switch-to-signup-top">회원가입</a></span>
+            </p>
 
             <!-- 비로그인: 가입 / 로그인 폼 -->
             <div id="auth-container">
@@ -535,6 +539,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260604a"></script>
     <script src="js/animations.js?v=20260518c"></script>
-    <script src="js/main.js?v=20260706a"></script>
+    <script src="js/main.js?v=20260706b"></script>
 </body>
 </html>
