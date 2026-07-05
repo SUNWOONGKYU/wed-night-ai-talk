@@ -1362,6 +1362,27 @@ footer {
     text-decoration: underline;
 }
 
+/* 가입/로그인 폼 — 간격 압축해 로그인 전환 링크가 스크롤 없이 더 잘 보이도록 */
+.auth-form .form-grid {
+    gap: 1rem;
+}
+.auth-form .form-group {
+    margin-bottom: 0.9rem;
+}
+.auth-form .form-group label {
+    margin-bottom: 0.3rem;
+}
+.auth-form .form-group input,
+.auth-form .form-group textarea {
+    padding: 0.6rem 1rem;
+}
+.auth-form .form-hint {
+    margin-top: 0.15rem;
+}
+.auth-form .auth-divider {
+    margin: 0.8rem 0;
+}
+
 .modal-desc {
     color: var(--text-secondary);
     font-size: 1rem;
