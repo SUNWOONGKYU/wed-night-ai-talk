@@ -334,7 +334,7 @@ function showPhoneRequiredModal(onSaved) {
         e.preventDefault();
         var phone = sanitizePhone(inp.value);
         if (!isValidPhone(phone)) {
-            status.textContent = '핸드폰 번호 형식이 올바르지 않습니다. (예: [masked-phone])';
+            status.textContent = '핸드폰 번호 형식이 올바르지 않습니다. (예: 010-1234-5678)';
             status.className = 'form-status error';
             return;
         }
@@ -953,7 +953,8 @@ function rebindAttendButtons() {
                 // 회원: 즉시 신청
                 await memberAttendSlot(eventIdForSlot, eventSlotId, slot);
             } else {
-                // 비로그인: 회원가입 모달 직행 + 가입 후 자동 신청 위해 pendingAttend 저장
+                // 비로그인: 안내 후 회원가입 모달 직행 + 가입 후 자동 신청 위해 pendingAttend 저장
+                showToast('모임에 참석 신청을 하려면 멤버가입을 해주세요', 'error');
                 pendingAttend = { eventId: eventIdForSlot, eventSlotId: eventSlotId };
                 openModal('signup');
             }
@@ -1394,7 +1395,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 
     // 핸드폰 번호 — 빈 값은 허용 (Google 가입 직후 등), 입력했을 때만 형식 검증
     if (phone && !/^(010\d{8}|01[16789]\d{7})$/.test(phone)) {
-        setStatus(statusEl, '핸드폰 번호 형식이 올바르지 않습니다. (예: [masked-phone])', 'error');
+        setStatus(statusEl, '핸드폰 번호 형식이 올바르지 않습니다. (예: 010-1234-5678)', 'error');
         return;
     }
 
