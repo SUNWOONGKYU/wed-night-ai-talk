@@ -437,27 +437,6 @@ var DB = {
         if (error) throw error;
     },
 
-    // 게스트 본인 신청 목록 (이름+휴대폰 매칭)
-    async findGuestAttendances(name, phone) {
-        var { data, error } = await _supabase.rpc('find_guest_attendances', {
-            p_name: name,
-            p_phone: phone
-        });
-        if (error) throw error;
-        return data || [];
-    },
-
-    // 게스트 본인 신청 단건 취소 (id+이름+휴대폰 3중 매칭)
-    async cancelGuestAttendanceByOwner(id, name, phone) {
-        var { data, error } = await _supabase.rpc('cancel_guest_attendance_by_owner', {
-            p_id: id,
-            p_name: name,
-            p_phone: phone
-        });
-        if (error) throw error;
-        return data === true;
-    },
-
     async adminDeleteAttendance(userId, eventId) {
         var { error } = await _supabase.rpc('admin_delete_attendance', {
             p_user_id: userId,
