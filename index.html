@@ -170,11 +170,6 @@
             <div id="events-container">
                 <div class="admin-loading">모임 정보를 불러오는 중...</div>
             </div>
-
-            <!-- 비회원 신청 취소 진입 -->
-            <div class="guest-cancel-entry">
-                <button type="button" id="guest-cancel-open-btn" class="guest-cancel-btn">비회원으로 신청한 것 취소하기 →</button>
-            </div>
         </div>
     </section>
 
@@ -483,36 +478,6 @@
                 <div class="form-status" id="prq-status" style="margin-bottom:0.5rem;"></div>
                 <button type="submit" class="btn-primary form-submit" id="prq-submit-btn">저장하고 신청하기 →</button>
             </form>
-        </div>
-    </div>
-
-    <!-- 비회원 신청 셀프 취소 모달 -->
-    <div id="guest-cancel-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="guest-cancel-title" aria-hidden="true">
-        <div class="modal-content" style="max-width: 540px;">
-            <button class="modal-close" id="guest-cancel-close-btn" aria-label="닫기">&times;</button>
-            <h2 class="modal-title" id="guest-cancel-title">비회원 신청 취소</h2>
-            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.92rem;">
-                신청 시 입력하신 <strong>이름</strong>과 <strong>핸드폰 번호</strong>로 본인 확인 후 취소할 수 있습니다.
-            </p>
-
-            <!-- 검색 폼 -->
-            <form id="guest-cancel-form" class="site-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="gc-name">이름 <span class="required">*</span></label>
-                        <input type="text" id="gc-name" name="name" required maxlength="50" placeholder="홍길동">
-                    </div>
-                    <div class="form-group">
-                        <label for="gc-phone">핸드폰 번호 <span class="required">*</span></label>
-                        <input type="tel" id="gc-phone" name="phone" required maxlength="13" inputmode="numeric" placeholder="[masked-phone]">
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary form-submit" id="gc-search-btn">신청 내역 찾기 →</button>
-                <div class="form-status" id="gc-status"></div>
-            </form>
-
-            <!-- 결과 목록 -->
-            <div id="gc-results" class="guest-cancel-results" style="display:none;"></div>
         </div>
     </div>
 
