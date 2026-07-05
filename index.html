@@ -27,7 +27,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260706c">
+    <link rel="stylesheet" href="css/style.css?v=20260706e">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -255,7 +255,7 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn" aria-label="닫기">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
-            <p id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해서 먼저 멤버 가입 신청을 해주세요.</p>
+            <p id="modal-notice" class="modal-notice" style="display:none;">모임 참석 신청을 하려면 멤버 가입을 해주세요.</p>
             <p id="auth-switch-top" class="auth-switch" style="margin-top:0; margin-bottom:1.2rem; display:none;">
                 <span id="auth-switch-top-signup" style="display:none;">이미 가입하셨나요? <a href="#" id="switch-to-login-top">로그인</a></span>
                 <span id="auth-switch-top-login" style="display:none;">아직 회원이 아니신가요? <a href="#" id="switch-to-signup-top">회원가입</a></span>
@@ -286,8 +286,8 @@
                             <input type="tel" id="s-contact" name="contact" required placeholder="010-1234-5678" maxlength="11">
                         </div>
                     </div>
-                    <p class="auth-switch" style="margin:0.4rem 0;"><a href="#" id="signup-optional-toggle">직업·관심분야·하고 싶은 말 (선택, 입력하려면 클릭)</a></p>
-                    <div id="signup-optional-fields" style="display:none;">
+                    <p class="auth-switch" style="margin:0.4rem 0;"><a href="#" id="signup-optional-toggle">현재 하는 일·관심분야·하고 싶은 말 (선택, 입력하려면 클릭)</a></p>
+                    <div id="signup-optional-fields" class="signup-optional-fields" style="display:none;">
                         <div class="form-group">
                             <label for="s-current-job">현재 하는 일 (선택)</label>
                             <input type="text" id="s-current-job" name="currentJob" placeholder="예: 삼성전자 근무, 프리랜서, 학생 등" maxlength="100">
@@ -295,11 +295,11 @@
                         </div>
                         <div class="form-group">
                             <label for="s-interests">관심 분야 (선택)</label>
-                            <textarea id="s-interests" name="interests" rows="1" placeholder="예: 바이브코딩, AI 마케팅, 사업 아이디어 등 자유롭게 적어주세요" maxlength="200"></textarea>
+                            <textarea id="s-interests" name="interests" rows="2" placeholder="예: 바이브코딩, AI 마케팅, 사업 아이디어 등 자유롭게 적어주세요" maxlength="200"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="s-message">하고 싶은 말 (선택)</label>
-                            <textarea id="s-message" name="message" rows="1" placeholder="자기소개, 기대하는 점, 하고 싶은 말 등"></textarea>
+                            <textarea id="s-message" name="message" rows="2" placeholder="자기소개, 기대하는 점, 하고 싶은 말 등"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -541,6 +541,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260604a"></script>
     <script src="js/animations.js?v=20260518c"></script>
-    <script src="js/main.js?v=20260706c"></script>
+    <script src="js/main.js?v=20260706e"></script>
 </body>
 </html>

@@ -983,10 +983,9 @@ function rebindAttendButtons() {
                 // 회원: 즉시 신청
                 await memberAttendSlot(eventIdForSlot, eventSlotId, slot);
             } else {
-                // 비로그인: 안내 후 회원가입 모달 직행 + 가입 후 자동 신청 위해 pendingAttend 저장
-                showToast('모임에 참석 신청을 하려면 멤버가입을 해주세요', 'error');
+                // 비로그인: 안내 문구 표시 후 회원가입 모달 직행 + 가입 후 자동 신청 위해 pendingAttend 저장
                 pendingAttend = { eventId: eventIdForSlot, eventSlotId: eventSlotId };
-                openModal('signup');
+                openModal('signup', { showNotice: true });
             }
         });
     });

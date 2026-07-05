@@ -1399,6 +1399,18 @@ footer {
 #auth-modal .modal-title {
     margin-bottom: 0.2rem;
 }
+.signup-optional-fields {
+    margin: 0.8rem 0 1.2rem;
+    padding: 1.2rem 1.2rem 0.4rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
+}
+.signup-optional-fields .form-group {
+    margin-bottom: 1.3rem;
+}
+.signup-optional-fields .form-group label {
+    margin-bottom: 0.5rem;
+}
 
 .modal-desc {
     color: var(--text-secondary);
