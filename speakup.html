@@ -6,7 +6,7 @@
     <title>Community — WAAT</title>
     <meta name="description" content="WAAT 커뮤니티 게시판 — AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 나눠봅시다.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260715a">
+    <link rel="stylesheet" href="css/style.css?v=20260715c">
 </head>
 <body class="speakup-light">
 
@@ -67,6 +67,12 @@
                         <input type="text" id="post-title" placeholder="제목을 입력하세요" required maxlength="200">
                     </div>
                     <div class="form-group">
+                        <div class="post-format-toolbar" id="post-format-toolbar" role="toolbar" aria-label="글자 서식">
+                            <button type="button" class="fmt-btn" data-fmt="bold" title="굵게"><strong>B</strong></button>
+                            <button type="button" class="fmt-btn" data-fmt="italic" title="기울임"><em>I</em></button>
+                            <button type="button" class="fmt-btn" data-fmt="list" title="목록">• 목록</button>
+                            <button type="button" class="fmt-btn" data-fmt="link" title="링크">🔗 링크</button>
+                        </div>
                         <textarea id="post-content" rows="4" placeholder="내용을 입력하세요" required maxlength="5000"></textarea>
                     </div>
                     <div class="form-group">
@@ -191,7 +197,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js?v=20260604a"></script>
-    <script src="js/speakup.js?v=20260715b"></script>
+    <script src="js/speakup.js?v=20260715c"></script>
     <script>
         // 문의하기 모달
         document.addEventListener('DOMContentLoaded', function() {

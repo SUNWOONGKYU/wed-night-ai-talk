@@ -105,6 +105,42 @@ function linkify(text) {
     );
 }
 
+// ========== 안전 마크다운 렌더 (2026-07-15) ==========
+// 원칙: 먼저 전부 HTML escape(XSS 무력화) → 그 위에 화이트리스트 태그만 정규식으로 주입.
+// 지원: **굵게**, *기울임*, [텍스트](http…), 맨 URL 자동링크, '- ' 목록, 줄바꿈.
+function spRenderContent(text) {
+    var s = spEscape(text || '');
+    // 마크다운 링크 [텍스트](http/https…) — http(s)만 허용
+    s = s.replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="post-link">$1</a>');
+    // 굵게 (링크 처리 뒤), 그다음 기울임
+    s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+    // 남은 맨 URL 자동링크 — 줄머리/공백 뒤만 매칭해 href 속성 안(따옴표 뒤)은 안 건드림
+    s = s.replace(/(^|[\s])(https?:\/\/[^\s<]+)/g,
+        '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="post-link">$2</a>');
+    // '- ' 로 시작하는 연속 줄 → <ul><li>
+    var lines = s.split('\n');
+    var out = [];
+    var inList = false;
+    for (var i = 0; i < lines.length; i++) {
+        var m = /^\s*-\s+(.*)$/.exec(lines[i]);
+        if (m) {
+            if (!inList) { out.push('<ul class="post-ul">'); inList = true; }
+            out.push('<li>' + m[1] + '</li>');
+        } else {
+            if (inList) { out.push('</ul>'); inList = false; }
+            out.push(lines[i]);
+        }
+    }
+    if (inList) out.push('</ul>');
+    var html = out.join('\n').replace(/\n/g, '<br>');
+    // 블록 태그(<ul>/<li>) 주변의 불필요한 <br> 제거
+    html = html.replace(/<br>\s*(<\/?(?:ul|li)[^>]*>)/g, '$1')
+               .replace(/(<\/?(?:ul|li)[^>]*>)\s*<br>/g, '$1');
+    return html;
+}
+
 // ========== Status Helper ==========
 function spSetStatus(el, message, type) {
     if (!el) return;
@@ -363,7 +399,7 @@ async function renderPostCard(post) {
         '<div class="post-body">' +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
             '<div class="post-content-wrap">' +
-                '<div class="post-content clamped">' + linkify(post.content).replace(/\n/g, '<br>') + spRenderImages(post.image_urls) + '</div>' +
+                '<div class="post-content clamped">' + spRenderContent(post.content) + spRenderImages(post.image_urls) + '</div>' +
                 '<button type="button" class="post-more-btn" style="display:none;">… 더 보기</button>' +
             '</div>' +
             fbBadgeHtml +
@@ -853,6 +889,51 @@ function spAutoGrow(el) {
 var postContentEl = document.getElementById('post-content');
 if (postContentEl) {
     postContentEl.addEventListener('input', function () { spAutoGrow(postContentEl); });
+}
+
+// ========== 서식 툴바 (굵게/기울임/목록/링크) — 등록·수정 공용 ==========
+function spApplyFormat(fmt) {
+    var ta = document.getElementById('post-content');
+    if (!ta) return;
+    var start = ta.selectionStart, end = ta.selectionEnd;
+    var val = ta.value;
+    var sel = val.slice(start, end);
+    var before = val.slice(0, start), after = val.slice(end);
+    var newVal, cs, ce;
+    if (fmt === 'bold' || fmt === 'italic') {
+        var mark = fmt === 'bold' ? '**' : '*';
+        var t = sel || (fmt === 'bold' ? '굵은 텍스트' : '기울인 텍스트');
+        newVal = before + mark + t + mark + after;
+        cs = start + mark.length; ce = cs + t.length;
+    } else if (fmt === 'list') {
+        var block = sel || '목록 항목';
+        var listed = block.split('\n').map(function (l) { return l.trim() ? '- ' + l : l; }).join('\n');
+        var prefix = (before && !/\n$/.test(before)) ? '\n' : '';
+        newVal = before + prefix + listed + after;
+        cs = start + prefix.length; ce = cs + listed.length;
+    } else if (fmt === 'link') {
+        var isUrl = /^https?:\/\//.test(sel);
+        var label = isUrl ? '링크 텍스트' : (sel || '링크 텍스트');
+        var url = isUrl ? sel : 'https://';
+        newVal = before + '[' + label + '](' + url + ')' + after;
+        cs = start + 1; ce = cs + label.length;   // 텍스트 부분 선택
+    } else {
+        return;
+    }
+    ta.value = newVal;
+    ta.focus();
+    ta.setSelectionRange(cs, ce);
+    spAutoGrow(ta);
+}
+
+var spFmtToolbar = document.getElementById('post-format-toolbar');
+if (spFmtToolbar) {
+    spFmtToolbar.addEventListener('click', function (e) {
+        var btn = e.target.closest('.fmt-btn');
+        if (!btn) return;
+        e.preventDefault();
+        spApplyFormat(btn.dataset.fmt);
+    });
 }
 
 // form submit 막기
