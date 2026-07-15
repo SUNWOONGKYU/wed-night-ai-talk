@@ -545,7 +545,7 @@ function bindPostCardEvents(card, post) {
             e.stopPropagation();
             var postId = parseInt(editBtn.dataset.postId);
             try {
-                startEditPost(postId, post.title, post.content, post.fb_url || '', post.category || 'AI 새 소식');
+                startEditPost(postId, post.title, post.content, post.fb_url || '', post.category || 'AI 새 소식', post.image_urls || []);
             } catch (err) {
                 console.error('[edit] startEditPost error:', err);
                 alert('수정 모드 진입 오류: ' + (err.message || err));
@@ -709,6 +709,7 @@ if (postWriteOpenBtn) {
         // 새 글이므로 카테고리는 'AI 새 소식'으로 리셋
         var defaultRadio = document.querySelector('input[name="post-category"][value="새 소식"]');
         if (defaultRadio) defaultRadio.checked = true;
+        spResetImages();
         spAutoGrow(document.getElementById('post-content'));
         // 폼으로 스크롤 (모바일에서 폼이 화면 아래라서 못 보는 경우 방지)
         var navHeight = (document.querySelector('nav') && document.querySelector('nav').offsetHeight) || 70;
@@ -725,6 +726,117 @@ var postForm = document.getElementById('post-form');
 var postEditId = document.getElementById('post-edit-id');
 var postCancelBtn = document.getElementById('post-cancel-btn');
 var postSubmitBtn = document.getElementById('post-submit-btn');
+
+// ========== 이미지 첨부 (2026-07-15, 옵션 A: 로그인 사용자 업로드) ==========
+var SP_IMG_BUCKET = 'post-images';
+var SP_IMG_MAX = 5;
+var SP_IMG_MAX_BYTES = 5 * 1024 * 1024;
+var SP_IMG_MIME = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+var spNewImageFiles = [];      // 이번에 새로 올릴 File[]
+var spExistingImageUrls = [];  // 수정 시 유지되는 기존 public URL[]
+
+function spResetImages() {
+    spNewImageFiles = [];
+    spExistingImageUrls = [];
+    var input = document.getElementById('post-image-input');
+    if (input) input.value = '';
+    spRenderImagePreviews();
+}
+
+function spRenderImagePreviews() {
+    var wrap = document.getElementById('post-image-previews');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    // 기존(수정) 이미지 — 제거 시 배열에서 빠져 저장 때 반영됨
+    spExistingImageUrls.forEach(function (url, idx) {
+        var d = document.createElement('div');
+        d.className = 'post-image-thumb';
+        var img = document.createElement('img');
+        img.alt = '';
+        img.src = url;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'post-image-remove';
+        btn.title = '제거';
+        btn.textContent = '×';
+        btn.addEventListener('click', function () {
+            spExistingImageUrls.splice(idx, 1);
+            spRenderImagePreviews();
+        });
+        d.appendChild(img);
+        d.appendChild(btn);
+        wrap.appendChild(d);
+    });
+    // 새로 선택한 파일 — object URL 미리보기
+    spNewImageFiles.forEach(function (file, idx) {
+        var d = document.createElement('div');
+        d.className = 'post-image-thumb';
+        var img = document.createElement('img');
+        img.alt = '';
+        img.src = URL.createObjectURL(file);
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'post-image-remove';
+        btn.title = '제거';
+        btn.textContent = '×';
+        btn.addEventListener('click', function () {
+            spNewImageFiles.splice(idx, 1);
+            spRenderImagePreviews();
+        });
+        d.appendChild(img);
+        d.appendChild(btn);
+        wrap.appendChild(d);
+    });
+}
+
+// 파일 선택 → 검증(형식·용량·개수) 후 목록에 추가
+var spImageInput = document.getElementById('post-image-input');
+if (spImageInput) {
+    spImageInput.addEventListener('change', function () {
+        var statusEl = document.getElementById('post-status');
+        var files = Array.prototype.slice.call(spImageInput.files || []);
+        spImageInput.value = '';  // 같은 파일 재선택 허용 + 매 change 초기화
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            if (SP_IMG_MIME.indexOf(f.type) === -1) {
+                spSetStatus(statusEl, '지원하지 않는 형식: ' + (f.name || '') + ' (PNG/JPG/WEBP/GIF만)', 'error');
+                continue;
+            }
+            if (f.size > SP_IMG_MAX_BYTES) {
+                spSetStatus(statusEl, '용량 초과: ' + (f.name || '') + ' (장당 5MB 이하)', 'error');
+                continue;
+            }
+            if (spExistingImageUrls.length + spNewImageFiles.length >= SP_IMG_MAX) {
+                spSetStatus(statusEl, '이미지는 최대 ' + SP_IMG_MAX + '장까지 첨부할 수 있습니다.', 'error');
+                break;
+            }
+            spNewImageFiles.push(f);
+        }
+        spRenderImagePreviews();
+    });
+}
+
+// 새 File[] 을 Storage(post-images/user/<uid>/) 에 업로드 → public URL[] 반환. 실패 시 throw.
+async function spUploadNewImages(userId) {
+    var urls = [];
+    for (var i = 0; i < spNewImageFiles.length; i++) {
+        var file = spNewImageFiles[i];
+        var ext = (file.name && file.name.indexOf('.') !== -1)
+            ? file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '') : 'png';
+        var rand = Math.random().toString(36).slice(2, 8);
+        var path = 'user/' + userId + '/' + Date.now() + '_' + rand + '.' + (ext || 'png');
+        var up = await _supabase.storage.from(SP_IMG_BUCKET).upload(path, file, {
+            contentType: file.type || 'image/png',
+            upsert: true
+        });
+        if (up.error) throw new Error('이미지 업로드 실패: ' + (up.error.message || up.error));
+        var pub = _supabase.storage.from(SP_IMG_BUCKET).getPublicUrl(path);
+        var publicUrl = pub && pub.data && pub.data.publicUrl;
+        if (!publicUrl) throw new Error('이미지 public URL 생성 실패');
+        urls.push(publicUrl);
+    }
+    return urls;
+}
 
 // ========== 내용 입력칸 자동 높이 — 글자 수에 비례해 늘어남 ==========
 var SP_TEXTAREA_MIN = 110;   // px, 약 4줄
@@ -787,13 +899,28 @@ if (postSubmitBtn) {
         postSubmitBtn.textContent = editId ? '수정 중...' : '등록 중...';
         spSetStatus(statusEl, editId ? '수정 중...' : '등록 중...', 'loading');
 
+        // 첨부 이미지 업로드 (있으면). 실패 시 저장 중단하고 버튼 복구.
+        var finalImages;
+        try {
+            if (spNewImageFiles.length > 0) {
+                spSetStatus(statusEl, '이미지 업로드 중...', 'loading');
+            }
+            var newImgUrls = await spUploadNewImages(spCurrentUser.id);
+            finalImages = spExistingImageUrls.concat(newImgUrls);
+        } catch (imgErr) {
+            spSetStatus(statusEl, spErrDetail(imgErr), 'error');
+            postSubmitBtn.disabled = false;
+            postSubmitBtn.textContent = editId ? '수정' : '등록';
+            return;
+        }
+
         if (editId) {
             // 수정
             try {
                 var resp = await spWithTimeout(
                     _supabase
                         .from('posts')
-                        .update({ title: title, content: content, fb_url: fbUrl, category: category, updated_at: new Date().toISOString() })
+                        .update({ title: title, content: content, fb_url: fbUrl, category: category, image_urls: finalImages, updated_at: new Date().toISOString() })
                         .eq('id', Number(editId)),
                     30000, '수정'
                 );
@@ -807,6 +934,7 @@ if (postSubmitBtn) {
                 document.getElementById('post-content').value = '';
                 spAutoGrow(document.getElementById('post-content'));
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
+                spResetImages();
                 postEditId.value = '';
                 postSubmitBtn.textContent = '등록';
                 postSubmitBtn.disabled = false;
@@ -826,7 +954,7 @@ if (postSubmitBtn) {
                 var resp = await spWithTimeout(
                     _supabase
                         .from('posts')
-                        .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl, category: category }),
+                        .insert({ user_id: spCurrentUser.id, title: title, content: content, fb_url: fbUrl, category: category, image_urls: finalImages }),
                     30000, '등록'
                 );
                 if (resp.error) {
@@ -839,6 +967,7 @@ if (postSubmitBtn) {
                 document.getElementById('post-content').value = '';
                 spAutoGrow(document.getElementById('post-content'));
                 if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = '';
+                spResetImages();
                 postSubmitBtn.textContent = '등록';
                 postSubmitBtn.disabled = false;
                 document.getElementById('post-form-wrap').style.display = 'none';
@@ -855,10 +984,16 @@ if (postSubmitBtn) {
     });
 }
 
-function startEditPost(postId, title, content, fbUrl, category) {
+function startEditPost(postId, title, content, fbUrl, category, imageUrls) {
     document.getElementById('post-title').value = title || '';
     document.getElementById('post-content').value = content || '';
     if (document.getElementById('post-fb-url')) document.getElementById('post-fb-url').value = fbUrl || '';
+    // 기존 첨부 이미지 복원 (제거 가능, 새 이미지 추가 가능)
+    spNewImageFiles = [];
+    spExistingImageUrls = Array.isArray(imageUrls) ? imageUrls.slice() : [];
+    var imgInput = document.getElementById('post-image-input');
+    if (imgInput) imgInput.value = '';
+    spRenderImagePreviews();
     // 카테고리 라디오 복원
     var cat = SP_CATEGORIES.indexOf(category) !== -1 ? category : 'AI 새 소식';
     var radio = document.querySelector('input[name="post-category"][value="' + cat + '"]');
@@ -885,6 +1020,7 @@ function startEditPost(postId, title, content, fbUrl, category) {
 
 function cancelEditPost() {
     postForm.reset();
+    spResetImages();
     postEditId.value = '';
     document.querySelector('.post-submit-btn').textContent = '등록';
     document.getElementById('post-form-wrap').style.display = 'none';
