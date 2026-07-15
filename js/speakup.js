@@ -767,13 +767,15 @@ function spRenderImagePreviews() {
         d.appendChild(btn);
         wrap.appendChild(d);
     });
-    // 새로 선택한 파일 — object URL 미리보기
+    // 새로 선택한 파일 — data URL 미리보기 (CSP img-src가 data: 허용, blob:은 미허용)
     spNewImageFiles.forEach(function (file, idx) {
         var d = document.createElement('div');
         d.className = 'post-image-thumb';
         var img = document.createElement('img');
         img.alt = '';
-        img.src = URL.createObjectURL(file);
+        var reader = new FileReader();
+        reader.onload = function (e) { img.src = e.target.result; };
+        reader.readAsDataURL(file);
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'post-image-remove';
