@@ -981,16 +981,20 @@ if (postSubmitBtn) {
             return;
         }
 
-        // 페이스북 / 쓰레드 링크 검증 (선택 입력 — 비어있으면 통과)
+        // 원문·참고 링크 검증 (선택 입력 — 모든 HTTP/HTTPS 웹 링크 허용)
         var fbUrl = null;
         if (fbUrlRaw) {
-            if (!/^https?:\/\/(www\.|m\.|web\.|business\.)?(facebook\.com|fb\.com|fb\.watch|threads\.net|threads\.com)\//i.test(fbUrlRaw)) {
-                spSetStatus(statusEl, '페이스북 또는 쓰레드 링크만 가능합니다. (facebook.com / fb.com / fb.watch / threads.net)', 'error');
+            try {
+                var parsedSourceUrl = new URL(fbUrlRaw);
+                if (parsedSourceUrl.protocol !== 'http:' && parsedSourceUrl.protocol !== 'https:') {
+                    throw new Error('unsupported protocol');
+                }
+            } catch (urlError) {
+                spSetStatus(statusEl, 'http:// 또는 https://로 시작하는 유효한 웹 링크를 입력해주세요.', 'error');
                 return;
             }
             fbUrl = fbUrlRaw;
         }
-
         // 세션 재확인 — 성공하면 최신 user로 갱신, 실패해도 기존 사용자로 폴백.
         // (getSession 실패만으로 차단하면 멀쩡히 로그인한 사용자도 막히므로 강제 차단 금지)
         try {
