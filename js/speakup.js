@@ -38,6 +38,39 @@ function spEscape(str) {
     return div.innerHTML;
 }
 
+function spEscapeAttr(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function spDecodeHtml(str) {
+    var div = document.createElement('div');
+    div.innerHTML = str || '';
+    return div.textContent || '';
+}
+
+function spNormalizeHttpUrl(url) {
+    try {
+        var parsed = new URL(String(url || '').trim());
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+        return parsed.href;
+    } catch (e) {
+        return null;
+    }
+}
+
+function spBuildSafeLink(escapedUrl, escapedLabel) {
+    var normalized = spNormalizeHttpUrl(spDecodeHtml(escapedUrl));
+    if (!normalized) return null;
+    return '<a href="' + spEscapeAttr(normalized) + '" target="_blank" rel="noopener noreferrer" class="post-link">' +
+        (escapedLabel === undefined ? escapedUrl : escapedLabel) +
+        '</a>';
+}
+
 // ========== Render post images (image_urls array) ==========
 // 2026-05-27 claude-news-agent 지원: posts.image_urls (text[]) 를 본문 아래 갤러리로 렌더링.
 // 에이전트는 Supabase Storage 'post-images' 버킷에 업로드 후 public URL 배열을 image_urls 에 저장.
@@ -46,8 +79,9 @@ function spRenderImages(urls) {
     var html = '<div class="post-images" style="margin-top:0.75rem;">';
     for (var i = 0; i < urls.length; i++) {
         var url = String(urls[i] || '').trim();
-        if (!url) continue;
-        html += '<img src="' + spEscape(url) + '" alt="" loading="lazy" ' +
+        var safeUrl = spNormalizeHttpUrl(url);
+        if (!safeUrl) continue;
+        html += '<img src="' + spEscapeAttr(safeUrl) + '" alt="" loading="lazy" ' +
             'style="max-width:100%;height:auto;margin:0.5rem 0;border-radius:6px;display:block;">';
     }
     html += '</div>';
@@ -101,7 +135,7 @@ function linkify(text) {
     var escaped = spEscape(text);
     return escaped.replace(
         /(https?:\/\/[^\s<]+)/g,
-        '<a href="$1" target="_blank" rel="noopener noreferrer" class="post-link">$1</a>'
+        function (match, url) { return spBuildSafeLink(url) || url; }
     );
 }
 
@@ -112,13 +146,13 @@ function spRenderContent(text) {
     var s = spEscape(text || '');
     // 마크다운 링크 [텍스트](http/https…) — http(s)만 허용
     s = s.replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="post-link">$1</a>');
+        function (match, label, url) { return spBuildSafeLink(url, label) || match; });
     // 굵게 (링크 처리 뒤), 그다음 기울임
     s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
     s = s.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
     // 남은 맨 URL 자동링크 — 줄머리/공백 뒤만 매칭해 href 속성 안(따옴표 뒤)은 안 건드림
     s = s.replace(/(^|[\s])(https?:\/\/[^\s<]+)/g,
-        '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="post-link">$2</a>');
+        function (match, prefix, url) { return prefix + (spBuildSafeLink(url) || url); });
     // '- ' 로 시작하는 연속 줄 → <ul><li>
     var lines = s.split('\n');
     var out = [];
@@ -217,7 +251,7 @@ function spUpdateAuthUI() {
         navSignupLink.style.display = 'none';
         navUserMenu.style.display = 'block';
         navUserName.textContent = (spCurrentProfile && spCurrentProfile.name) || spCurrentUser.email;
-        navAdminLink.style.display = (spCurrentProfile && spCurrentProfile.role === 'admin') ? 'block' : 'none';
+        navAdminLink.style.display = isAdmin() ? 'block' : 'none';
         postWriteBtnWrap.style.display = 'block';
         postLoginPrompt.style.display = 'none';
     } else {
@@ -271,7 +305,9 @@ function isOwner(userId) {
 }
 
 function isAdmin() {
-    return spCurrentProfile && spCurrentProfile.role === 'admin';
+    var email = spCurrentUser && spCurrentUser.email;
+    return !!email && Array.isArray(ADMIN_EMAILS) &&
+        ADMIN_EMAILS.indexOf(email.toLowerCase()) !== -1;
 }
 
 // ========== Load Posts ==========
@@ -362,9 +398,10 @@ async function renderPostCard(post) {
 
     var pinBadgeHtml = post.pinned_at ? '<span class="post-pin-badge">상단 고정</span>' : '';
     var fbBadgeHtml = '';
-    if (post.fb_url) {
-        var isThreads = /threads\.(net|com)/i.test(post.fb_url);
-        var isFacebook = /(?:^|\.)facebook\.com|(?:^|\.)fb\.com/i.test(post.fb_url);
+    var sourceUrl = spNormalizeHttpUrl(post.fb_url);
+    if (sourceUrl) {
+        var isThreads = /threads\.(net|com)/i.test(sourceUrl);
+        var isFacebook = /(?:^|\.)facebook\.com|(?:^|\.)fb\.com/i.test(sourceUrl);
         var badgeClass, badgeLabel, badgeIcon;
         if (isThreads) {
             badgeClass = 'post-fb-badge post-threads-badge';
@@ -380,7 +417,7 @@ async function renderPostCard(post) {
             badgeIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>';
         }
         fbBadgeHtml =
-            '<a href="' + spEscape(post.fb_url) + '" target="_blank" rel="noopener noreferrer" class="' + badgeClass + '" title="' + badgeLabel + '">' +
+            '<a href="' + spEscapeAttr(sourceUrl) + '" target="_blank" rel="noopener noreferrer" class="' + badgeClass + '" title="' + badgeLabel + '">' +
                 badgeIcon +
                 '<span>' + badgeLabel + '</span>' +
             '</a>';
@@ -993,7 +1030,7 @@ if (postSubmitBtn) {
                 spSetStatus(statusEl, 'http:// 또는 https://로 시작하는 유효한 웹 링크를 입력해주세요.', 'error');
                 return;
             }
-            fbUrl = fbUrlRaw;
+            fbUrl = parsedSourceUrl.href;
         }
         // 세션 재확인 — 성공하면 최신 user로 갱신, 실패해도 기존 사용자로 폴백.
         // (getSession 실패만으로 차단하면 멀쩡히 로그인한 사용자도 막히므로 강제 차단 금지)
