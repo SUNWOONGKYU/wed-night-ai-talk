@@ -453,6 +453,7 @@ var DB = {
         var q = _supabase
             .from('posts')
             .select('*, profiles:user_id(id, name)')
+            .order('pinned_at', { ascending: false, nullsFirst: false })
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
         if (category) q = q.eq('category', category);
@@ -488,6 +489,14 @@ var DB = {
             .from('posts')
             .update({ title: title, content: content, updated_at: new Date().toISOString() })
             .eq('id', postId);
+        if (error) throw error;
+    },
+
+    async setPostPinned(postId, pinned) {
+        var { error } = await _supabase.rpc('set_post_pinned', {
+            p_post_id: postId,
+            p_pinned: pinned
+        });
         if (error) throw error;
     },
 

@@ -317,7 +317,7 @@ async function loadPosts(reset, excludeId) {
 // ========== Render Single Post Card ==========
 async function renderPostCard(post) {
     var card = document.createElement('div');
-    card.className = 'post-card';
+    card.className = 'post-card' + (post.pinned_at ? ' is-pinned' : '');
     card.dataset.postId = post.id;
 
     var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
@@ -349,18 +349,18 @@ async function renderPostCard(post) {
 
     // Action buttons for own post / admin
     var actionBtns = '';
-    if (isOwnPost) {
+    if (isOwnPost || isAdminUser) {
         actionBtns = '<div class="post-actions">' +
-            '<button class="post-action-btn post-edit-btn" data-post-id="' + post.id + '">수정</button>' +
-            '<button class="post-action-btn post-delete-btn" data-post-id="' + post.id + '">삭제</button>' +
-            '</div>';
-    } else if (isAdminUser) {
-        actionBtns = '<div class="post-actions">' +
-            '<button class="post-action-btn post-edit-btn" data-post-id="' + post.id + '" title="관리자 수정">수정</button>' +
+            (isAdminUser ?
+                '<button class="post-action-btn post-pin-btn" data-post-id="' + post.id + '" data-pinned="' + (post.pinned_at ? 'true' : 'false') + '">' +
+                    (post.pinned_at ? '고정 해제' : '상단 고정') +
+                '</button>' : '') +
+            '<button class="post-action-btn post-edit-btn" data-post-id="' + post.id + '"' + (isAdminUser && !isOwnPost ? ' title="관리자 수정"' : '') + '>수정</button>' +
             '<button class="post-action-btn post-delete-btn" data-post-id="' + post.id + '">삭제</button>' +
             '</div>';
     }
 
+    var pinBadgeHtml = post.pinned_at ? '<span class="post-pin-badge">상단 고정</span>' : '';
     var fbBadgeHtml = '';
     if (post.fb_url) {
         var isThreads = /threads\.(net|com)/i.test(post.fb_url);
@@ -397,6 +397,7 @@ async function renderPostCard(post) {
             actionBtns +
         '</div>' +
         '<div class="post-body">' +
+            pinBadgeHtml +
             '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
             '<div class="post-content-wrap">' +
                 '<div class="post-content clamped">' + spRenderContent(post.content) + spRenderImages(post.image_urls) + '</div>' +
@@ -569,6 +570,29 @@ function bindPostCardEvents(card, post) {
                 document.body.removeChild(ta);
                 shareBtn.textContent = '✅';
                 setTimeout(function() { shareBtn.textContent = '🔗'; }, 1500);
+            }
+        });
+    }
+
+    // 관리자만 현재 아젠다를 상단에 고정하거나 해제할 수 있다.
+    var pinBtn = card.querySelector('.post-pin-btn');
+    if (pinBtn) {
+        pinBtn.addEventListener('click', async function() {
+            var postId = parseInt(pinBtn.dataset.postId);
+            var shouldPin = pinBtn.dataset.pinned !== 'true';
+            var message = shouldPin
+                ? '이 게시글을 상단에 고정하시겠습니까? 고정글은 최대 3개입니다.'
+                : '이 게시글의 상단 고정을 해제하시겠습니까?';
+            if (!confirm(message)) return;
+
+            pinBtn.disabled = true;
+            try {
+                await DB.setPostPinned(postId, shouldPin);
+                await loadPosts(true);
+            } catch (err) {
+                alert((shouldPin ? '상단 고정' : '상단 고정 해제') + ' 오류: ' + (err.message || err));
+            } finally {
+                pinBtn.disabled = false;
             }
         });
     }

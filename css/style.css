@@ -1,4 +1,4 @@
-﻿/* ========== WAAT — OAT-WHITE / DEEP-NAVY / GOLD THEME ========== */
+/* ========== WAAT — OAT-WHITE / DEEP-NAVY / GOLD THEME ========== */
 :root {
     /* Backgrounds — near-white with subtle warmth */
     --bg-primary: #FDFCFA;
@@ -2923,6 +2923,28 @@ body.speakup-light .post-content.clamped + .post-more-btn {
 .post-category-badge.cat-question  { background: rgba(46,58,95,0.13); color: #2E3A5F; }
 .post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
 .post-category-badge.cat-discuss   { background: rgba(123,93,175,0.16); color: #5A3F8A; }
+/* 현재 운영 아젠다: 관리자 고정글 */
+body.speakup-light .post-card.is-pinned {
+    border-color: #2B6F8C;
+    border-left: 4px solid #2B6F8C;
+    box-shadow: 0 3px 12px rgba(43, 111, 140, 0.12);
+}
+.post-pin-badge {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0 0.45rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(43, 111, 140, 0.12);
+    color: #1F5872;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+.post-pin-btn {
+    border-color: #2B6F8C;
+    color: #1F5872;
+}
 
 /* nav 메뉴 — 영문 위 / 한글 아래 2줄 배치 */
 .nav-links-center a {
