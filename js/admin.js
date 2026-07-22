@@ -81,17 +81,27 @@ document.getElementById('admin-logout-btn').addEventListener('click', async () =
 
 // ========== Members ==========
 let allMembers = [];
+let membersLoaded = false;
+let membersLoadPromise = null;
 
-async function loadMembers() {
-    try {
-        allMembers = await DB.getAllProfiles();
-        renderMembers(allMembers);
-    } catch (e) {
-        document.getElementById('members-tbody').innerHTML =
-            '<tr><td colspan="7" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
-    }
+function loadMembers() {
+    if (membersLoadPromise) return membersLoadPromise;
+
+    membersLoadPromise = (async function () {
+        try {
+            allMembers = await DB.getAllProfiles();
+            membersLoaded = true;
+            renderMembers(allMembers);
+        } catch (e) {
+            document.getElementById('members-tbody').innerHTML =
+                '<tr><td colspan="7" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
+        } finally {
+            membersLoadPromise = null;
+        }
+    })();
+
+    return membersLoadPromise;
 }
-
 function renderMembers(members) {
     const tbody = document.getElementById('members-tbody');
     if (members.length === 0) {
@@ -865,6 +875,11 @@ async function initEmailPanel() {
 
     // 발송 이력 로드
     loadEmailLogs();
+
+    // 회원 목록 로드가 끝난 뒤 정확한 전체 수신자 수를 계산한다.
+    if (!membersLoaded) {
+        await loadMembers();
+    }
 
     // 초기 수신자 미리보기
     refreshEmailRecipientPreview();
