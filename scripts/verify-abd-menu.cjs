@@ -85,6 +85,8 @@ async function verifyAbdLoggedIn(browser) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     await mockBackend(page, true, true);
     await page.goto(baseUrl + '/index.html');
+    assert((await page.locator('.hero-tagline').count()) === 0, '삭제된 메인 문구 영역이 남아 있음');
+    assert(!(await page.locator('body').innerText()).includes('AI로 말 잔치를 벌이다 보면 AI 활용 능력이 저절로 커집니다.'), '삭제된 메인 문구가 화면에 남아 있음');
     const mainAbdMenu = page.locator('a[href="speakup.html?category=AI%20Biz%20Daily"]').first();
     assert(await mainAbdMenu.locator('.nav-ko').innerText() === '유망 AI Biz 발굴', '메인 화면 보조문구 불일치');
     await mainAbdMenu.click();
