@@ -1644,6 +1644,14 @@ function startApp() {
         return;
     }
 
+    var authEntry = new URLSearchParams(window.location.search).get('auth');
+    if (authEntry === 'signup' || authEntry === 'login') {
+        openModal(authEntry);
+        var cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('auth');
+        window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+    }
+
     // 정상 실행: 카드 렌더링 완료 후 인증 초기화 (참여 UI가 DOM에 있어야 함)
     renderScheduleEvents()
         .then(function() { return initAuth(); })

@@ -6,7 +6,7 @@
     <title>Community — WAAT</title>
     <meta name="description" content="WAAT 커뮤니티 게시판 — AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 나눠봅시다.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260722a">
+    <link rel="stylesheet" href="css/style.css?v=20260814b">
 </head>
 <body class="speakup-light">
 
@@ -18,7 +18,8 @@
             </a>
             <ul class="nav-links nav-links-center">
                 <li><a href="index.html#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
-                <li><a href="speakup.html" class="speakup-nav-active"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+                <li><a href="speakup.html" class="speakup-nav-active" data-board-nav="community"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+                <li><a href="speakup.html?category=AI%20Biz%20Daily" data-board-nav="abd"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">ABD</span></a></li>
             </ul>
             <ul class="nav-links nav-links-right">
                 <!-- 비로그인 상태 -->
@@ -43,8 +44,21 @@
     <!-- Board Content -->
     <section class="speakup-page">
         <div class="section-inner">
-            <h2 class="section-title">커뮤니티 <span class="section-title-en">Community</span></h2>
-            <p class="section-desc">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
+            <h2 class="section-title" id="board-title">커뮤니티 <span class="section-title-en">Community</span></h2>
+            <p class="section-desc" id="board-description">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
+            <section class="abd-membership-notice" id="abd-membership-notice" aria-labelledby="abd-membership-title" hidden>
+                <div class="abd-membership-copy">
+                    <span class="abd-membership-kicker">WAAT MEMBER BENEFIT</span>
+                    <h3 id="abd-membership-title">WAAT Community 회원에게 보내드립니다</h3>
+                    <p>WAAT Community 회원으로 가입하면 AI Biz Daily를 자동으로 받아볼 수 있습니다.</p>
+                </div>
+                <a class="btn-primary abd-membership-signup" id="abd-membership-signup" href="index.html?auth=signup">WAAT 회원가입</a>
+                <p class="abd-membership-member-note" id="abd-membership-member-note" hidden>WAAT 회원으로 등록되어 있습니다.</p>
+            </section>
+            <div class="abd-discussion-guide" id="abd-discussion-guide" hidden>
+                <strong>사업 검증 토론</strong>
+                <span><b>기회</b>는 시장성·실행 가능성에, <b>우려</b>는 리스크에 표시하고 근거 있는 의견과 답글로 토론에 참여해주세요.</span>
+            </div>
 
             <!-- 글쓰기 버튼 (로그인 시만) -->
             <div id="post-write-btn-wrap" class="post-write-btn-wrap" style="display:none;">
@@ -56,6 +70,7 @@
                 <form id="post-form" class="site-form post-form">
                     <div class="form-group post-category-group" role="radiogroup" aria-label="카테고리">
                         <label class="post-category-chip"><input type="radio" name="post-category" value="AI 새 소식" checked><span>AI 새 소식</span></label>
+                        <label class="post-category-chip"><input type="radio" name="post-category" value="AI Biz Daily"><span>AI Biz Daily</span></label>
                         <label class="post-category-chip"><input type="radio" name="post-category" value="공부하기"><span>공부하기</span></label>
                         <label class="post-category-chip"><input type="radio" name="post-category" value="자랑하기"><span>자랑하기</span></label>
                         <label class="post-category-chip"><input type="radio" name="post-category" value="협력하기"><span>협력하기</span></label>
@@ -101,6 +116,7 @@
             <div class="category-filter" id="category-filter" role="tablist" aria-label="카테고리 필터">
                 <button type="button" class="cat-tab is-active" data-cat="" role="tab">전체</button>
                 <button type="button" class="cat-tab" data-cat="AI 새 소식" role="tab">AI 새 소식</button>
+                <button type="button" class="cat-tab" data-cat="AI Biz Daily" role="tab">AI Biz Daily</button>
                 <button type="button" class="cat-tab" data-cat="공부하기" role="tab">공부하기</button>
                 <button type="button" class="cat-tab" data-cat="자랑하기" role="tab">자랑하기</button>
                 <button type="button" class="cat-tab" data-cat="협력하기" role="tab">협력하기</button>
@@ -196,8 +212,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260604a"></script>
-    <script src="js/speakup.js?v=20260722d"></script>
+    <script src="js/supabase-config.js?v=20260814b"></script>
+    <script src="js/speakup.js?v=20260814b"></script>
     <script>
         // 문의하기 모달
         document.addEventListener('DOMContentLoaded', function() {

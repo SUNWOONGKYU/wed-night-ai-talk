@@ -2917,12 +2917,85 @@ body.speakup-light .post-content.clamped + .post-more-btn {
 }
 
 .post-category-badge.cat-general   { background: #EFEFF1; color: #4A5670; }
+.post-category-badge.cat-abd       { background: rgba(30,111,92,0.14); color: #17634F; }
 .post-category-badge.cat-showcase  { background: rgba(201,169,97,0.18); color: #8A6F2C; }
 .post-category-badge.cat-study     { background: rgba(43,111,140,0.16); color: #1F5872; }
 .post-category-badge.cat-collab    { background: rgba(91,138,114,0.18); color: #3B6B52; }
 .post-category-badge.cat-question  { background: rgba(46,58,95,0.13); color: #2E3A5F; }
 .post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
 .post-category-badge.cat-discuss   { background: rgba(123,93,175,0.16); color: #5A3F8A; }
+
+.abd-membership-notice {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 28px;
+    align-items: center;
+    margin: 24px 0 18px;
+    padding: 24px;
+    border: 1px solid #b8d7cd;
+    border-left: 4px solid #17634f;
+    border-radius: 6px;
+    background: #f7fbf9;
+}
+.abd-membership-notice[hidden] { display: none; }
+.abd-membership-kicker {
+    display: block;
+    margin-bottom: 7px;
+    color: #17634f;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+.abd-membership-copy h3 {
+    margin: 0 0 7px;
+    color: #17231f;
+    font-size: 21px;
+    line-height: 1.35;
+}
+.abd-membership-copy p {
+    margin: 0;
+    color: #53635e;
+    font-size: 14px;
+    line-height: 1.65;
+}
+.abd-membership-signup {
+    justify-content: center;
+    white-space: nowrap;
+}
+.abd-membership-signup[hidden] { display: none; }
+.abd-membership-member-note {
+    margin: 0;
+    color: #17634f;
+    font-size: 14px;
+    font-weight: 600;
+}
+.abd-membership-member-note[hidden] { display: none; }
+
+.abd-discussion-guide {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 18px 0 22px;
+    padding: 12px 14px;
+    border-left: 3px solid #1e6f5c;
+    background: #f3f8f6;
+    color: #35443f;
+    font-size: 14px;
+    line-height: 1.55;
+}
+.abd-discussion-guide[hidden] { display: none; }
+.abd-discussion-guide strong { color: #17634f; white-space: nowrap; }
+@media (max-width: 640px) {
+    .abd-membership-notice {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 18px;
+    }
+    .abd-membership-signup { width: 100%; }
+    .abd-discussion-guide { align-items: flex-start; flex-direction: column; gap: 4px; }
+}
+
 /* 현재 운영 아젠다: 관리자 고정글 */
 body.speakup-light .post-card.is-pinned {
     border-color: #2B6F8C;

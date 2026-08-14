@@ -3,12 +3,15 @@ let spCurrentUser = null;
 let spCurrentProfile = null;
 let spPostOffset = 0;
 let spActiveCategory = '';   // '' = 전체. '일반'/'자랑하기'/'협력하기'/'질문하기'/'요청하기'
+let spDedicatedCategory = '';
 const SP_PAGE_SIZE = 10;
-const SP_CATEGORIES = ['AI 새 소식', '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기', '토론하기'];
+const SP_ABD_CATEGORY = 'AI Biz Daily';
+const SP_CATEGORIES = ['AI 새 소식', SP_ABD_CATEGORY, '공부하기', '자랑하기', '협력하기', '질문하기', '요청하기', '토론하기'];
 // 카테고리별 뱃지 클래스 (CSS와 매핑)
 function spCatClass(c) {
     return ({
         'AI 새 소식': 'cat-general',
+        'AI Biz Daily': 'cat-abd',
         '자랑하기': 'cat-showcase',
         '공부하기': 'cat-study',
         '협력하기': 'cat-collab',
@@ -16,6 +19,54 @@ function spCatClass(c) {
         '요청하기': 'cat-request',
         '토론하기': 'cat-discuss'
     })[c] || 'cat-general';
+}
+
+function spApplyBoardContext() {
+    var params = new URLSearchParams(window.location.search);
+    var requestedCategory = params.get('category') || '';
+    spActiveCategory = SP_CATEGORIES.indexOf(requestedCategory) !== -1 ? requestedCategory : '';
+    spDedicatedCategory = spActiveCategory === SP_ABD_CATEGORY ? SP_ABD_CATEGORY : '';
+
+    var bar = document.getElementById('category-filter');
+    if (bar) {
+        bar.querySelectorAll('.cat-tab').forEach(function (button) {
+            button.classList.toggle('is-active', (button.dataset.cat || '') === spActiveCategory);
+        });
+        if (spDedicatedCategory) bar.style.display = 'none';
+    }
+
+    if (!spDedicatedCategory) return;
+
+    document.title = 'AI Biz Daily — WAAT';
+    var title = document.getElementById('board-title');
+    var description = document.getElementById('board-description');
+    var discussionGuide = document.getElementById('abd-discussion-guide');
+    var membershipNotice = document.getElementById('abd-membership-notice');
+    if (title) title.innerHTML = 'AI Biz Daily <span class="section-title-en">ABD</span>';
+    if (description) description.textContent = '유망 AI Biz 발굴';
+    if (discussionGuide) discussionGuide.hidden = false;
+    if (membershipNotice) membershipNotice.hidden = false;
+
+    document.querySelectorAll('[data-board-nav]').forEach(function (link) {
+        link.classList.toggle('speakup-nav-active', link.dataset.boardNav === 'abd');
+    });
+
+    document.querySelectorAll('input[name="post-category"]').forEach(function (radio) {
+        radio.checked = radio.value === SP_ABD_CATEGORY;
+        var label = radio.closest('label');
+        if (label) label.style.display = radio.value === SP_ABD_CATEGORY ? '' : 'none';
+    });
+
+    var writeButton = document.getElementById('post-write-open-btn');
+    if (writeButton) writeButton.textContent = 'AI Biz Daily 글쓰기';
+}
+
+function spUpdateAbdMembershipNotice() {
+    if (spDedicatedCategory !== SP_ABD_CATEGORY) return;
+    var signup = document.getElementById('abd-membership-signup');
+    var memberNote = document.getElementById('abd-membership-member-note');
+    if (signup) signup.hidden = Boolean(spCurrentUser);
+    if (memberNote) memberNote.hidden = !spCurrentUser;
 }
 
 // ========== View Count Tracking (세션 당 1회) ==========
@@ -29,6 +80,35 @@ async function trackPostView(postId) {
     // 서버 측에서 비로그인은 무시되므로 로그인 시에만 호출 (불필요한 요청 절약)
     if (!spCurrentUser) return;
     try { await DB.incrementViewCount(postId); } catch(e) {}
+}
+
+var spViewObserver = null;
+var spViewTimers = new Map();
+
+function spObservePostView(card, postId) {
+    if (typeof IntersectionObserver === 'undefined') return;
+    if (!spViewObserver) {
+        spViewObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                var id = Number(entry.target.dataset.postId);
+                var timer = spViewTimers.get(entry.target);
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                    if (!timer && _viewedPosts.indexOf(id) === -1) {
+                        timer = setTimeout(function () {
+                            spViewTimers.delete(entry.target);
+                            spViewObserver.unobserve(entry.target);
+                            trackPostView(id);
+                        }, 1000);
+                        spViewTimers.set(entry.target, timer);
+                    }
+                } else if (timer) {
+                    clearTimeout(timer);
+                    spViewTimers.delete(entry.target);
+                }
+            });
+        }, { threshold: [0, 0.5, 1] });
+    }
+    spViewObserver.observe(card);
 }
 
 // ========== Escape HTML ==========
@@ -263,6 +343,7 @@ function spUpdateAuthUI() {
         postFormWrap.style.display = 'none';
         postLoginPrompt.style.display = 'block';
     }
+    spUpdateAbdMembershipNotice();
 }
 
 // ========== Init Auth ==========
@@ -380,6 +461,11 @@ async function renderPostCard(post) {
         myReaction = null;
     }
 
+    var isAbdDiscussion = spDedicatedCategory === SP_ABD_CATEGORY;
+    var likeLabel = isAbdDiscussion ? '기회' : '👍';
+    var dislikeLabel = isAbdDiscussion ? '우려' : '👎';
+    var commentLabel = isAbdDiscussion ? '토론 참여' : '💬 댓글';
+    var commentPlaceholder = isAbdDiscussion ? '사업 검증 의견을 남겨주세요' : '댓글을 입력하세요';
     var likeActive = myReaction && myReaction.reaction_type === 'like' ? ' active' : '';
     var dislikeActive = myReaction && myReaction.reaction_type === 'dislike' ? ' active' : '';
 
@@ -445,17 +531,17 @@ async function renderPostCard(post) {
         '<div class="post-footer">' +
             '<div class="post-reactions">' +
                 '<button class="reaction-btn like-btn' + likeActive + '" data-post-id="' + post.id + '" data-type="like">' +
-                    '👍 <span class="like-count">' + reactionData.likes + '</span>' +
+                    likeLabel + ' <span class="like-count">' + reactionData.likes + '</span>' +
                 '</button>' +
                 '<button class="reaction-btn dislike-btn' + dislikeActive + '" data-post-id="' + post.id + '" data-type="dislike">' +
-                    '👎 <span class="dislike-count">' + reactionData.dislikes + '</span>' +
+                    dislikeLabel + ' <span class="dislike-count">' + reactionData.dislikes + '</span>' +
                 '</button>' +
             '</div>' +
             '<div class="post-footer-right">' +
                 '<span class="post-view-count">👁 <span class="view-count-num">' + (post.view_count || 0) + '</span></span>' +
                 '<button class="post-share-btn" data-post-id="' + post.id + '" title="링크 복사">공유</button>' +
                 '<button class="comment-toggle-btn" data-post-id="' + post.id + '">' +
-                    '💬 댓글 <span class="comment-count">' + commentCount + '</span>' +
+                    commentLabel + ' <span class="comment-count">' + commentCount + '</span>' +
                 '</button>' +
             '</div>' +
         '</div>' +
@@ -464,14 +550,14 @@ async function renderPostCard(post) {
             (spCurrentUser ?
                 '<div class="comment-form-wrap">' +
                     '<form class="comment-form" data-post-id="' + post.id + '">' +
-                        '<input type="text" class="comment-input" placeholder="댓글을 입력하세요" required maxlength="1000">' +
+                        '<input type="text" class="comment-input" placeholder="' + commentPlaceholder + '" required maxlength="1000">' +
                         '<button type="submit" class="btn-primary comment-submit-btn">등록</button>' +
                     '</form>' +
                 '</div>' : '') +
         '</div>';
 
-    // 조회수 트래킹 (fire and forget)
-    trackPostView(post.id);
+    // 카드가 실제로 50% 이상 1초간 노출된 경우에만 조회로 인정한다.
+    spObservePostView(card, post.id);
 
     // Bind events
     bindPostCardEvents(card, post);
@@ -592,7 +678,10 @@ function bindPostCardEvents(card, post) {
     if (shareBtn) {
         shareBtn.addEventListener('click', function() {
             var postId = shareBtn.dataset.postId;
-            var url = window.location.origin + window.location.pathname + '?post=' + postId;
+            var shareUrl = new URL(window.location.pathname, window.location.origin);
+            if (spDedicatedCategory) shareUrl.searchParams.set('category', spDedicatedCategory);
+            shareUrl.searchParams.set('post', postId);
+            var url = shareUrl.toString();
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(url).then(function() {
                     shareBtn.textContent = '복사됨';
@@ -675,7 +764,8 @@ async function loadComments(postId, postCard) {
     try {
         var comments = await DB.getComments(postId);
         if (comments.length === 0) {
-            listEl.innerHTML = '<div class="speakup-empty" style="padding:0.5rem;font-size:0.85rem;">댓글이 없습니다.</div>';
+            var emptyText = spDedicatedCategory === SP_ABD_CATEGORY ? '아직 토론 의견이 없습니다.' : '댓글이 없습니다.';
+            listEl.innerHTML = '<div class="speakup-empty" style="padding:0.5rem;font-size:0.85rem;">' + emptyText + '</div>';
             return;
         }
 
@@ -720,7 +810,8 @@ function renderComment(comment, postId, postCard, isReply) {
         '<button class="comment-delete-btn" data-comment-id="' + comment.id + '">삭제</button>' : '';
 
     var replyBtnHtml = (!isReply && spCurrentUser) ?
-        '<button class="comment-reply-btn" data-comment-id="' + comment.id + '">답글</button>' : '';
+        '<button class="comment-reply-btn" data-comment-id="' + comment.id + '">' +
+            (spDedicatedCategory === SP_ABD_CATEGORY ? '토론 답변' : '답글') + '</button>' : '';
 
     el.innerHTML =
         '<div class="comment-header">' +
@@ -745,7 +836,8 @@ function renderComment(comment, postId, postCard, isReply) {
             wrap.style.display = 'block';
             wrap.innerHTML =
                 '<form class="reply-form" data-post-id="' + postId + '" data-parent-id="' + comment.id + '">' +
-                    '<input type="text" class="comment-input reply-input" placeholder="답글을 입력하세요" required maxlength="1000">' +
+                    '<input type="text" class="comment-input reply-input" placeholder="' +
+                        (spDedicatedCategory === SP_ABD_CATEGORY ? '사업 검증 답변을 남겨주세요' : '답글을 입력하세요') + '" required maxlength="1000">' +
                     '<button type="submit" class="btn-primary comment-submit-btn">등록</button>' +
                 '</form>';
 
@@ -803,8 +895,9 @@ if (postWriteOpenBtn) {
         var wrap = document.getElementById('post-form-wrap');
         wrap.style.display = 'block';
         document.getElementById('post-write-btn-wrap').style.display = 'none';
-        // 새 글이므로 카테고리는 'AI 새 소식'으로 리셋
-        var defaultRadio = document.querySelector('input[name="post-category"][value="새 소식"]');
+        // 전용 메뉴에서는 AI Biz Daily, 일반 커뮤니티에서는 AI 새 소식으로 시작한다.
+        var defaultCategory = spDedicatedCategory || 'AI 새 소식';
+        var defaultRadio = document.querySelector('input[name="post-category"][value="' + defaultCategory + '"]');
         if (defaultRadio) defaultRadio.checked = true;
         spResetImages();
         spAutoGrow(document.getElementById('post-content'));
@@ -1224,6 +1317,7 @@ function startSpeakUp() {
         return;
     }
 
+    spApplyBoardContext();
     spInitAuth().then(async function() {
         var params = new URLSearchParams(window.location.search);
         var sharedPostId = params.get('post');
