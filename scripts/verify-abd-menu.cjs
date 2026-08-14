@@ -85,7 +85,9 @@ async function verifyAbdLoggedIn(browser) {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     await mockBackend(page, true, true);
     await page.goto(baseUrl + '/index.html');
-    await page.locator('a[href="speakup.html?category=AI%20Biz%20Daily"]').first().click();
+    const mainAbdMenu = page.locator('a[href="speakup.html?category=AI%20Biz%20Daily"]').first();
+    assert(await mainAbdMenu.locator('.nav-ko').innerText() === '유망 Biz 발굴', '메인 화면 보조문구 불일치');
+    await mainAbdMenu.click();
     await page.waitForFunction(() => window.__getPostsCalls && window.__getPostsCalls.length > 0);
 
     assert(new URL(page.url()).searchParams.get('category') === 'AI Biz Daily', 'ABD 전용 URL 이동 실패');
