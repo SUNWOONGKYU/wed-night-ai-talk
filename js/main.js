@@ -1109,10 +1109,21 @@ async function renderSpeakUpPreview() {
     var abdContainer = document.getElementById('abd-preview-container');
     if (!communityContainer && !abdContainer) return;
 
+    function normalizePreviewCategory(value) {
+        return String(value || '').trim().toLowerCase();
+    }
+
     async function renderBoardPreview(container, category) {
         if (!container) return;
         try {
             var posts = await DB.getPosts(5, 0, category);
+            if (category && posts.length === 0) {
+                var fallbackPosts = await DB.getPosts(20, 0, null);
+                var normalizedCategory = normalizePreviewCategory(category);
+                posts = fallbackPosts.filter(function(post) {
+                    return normalizePreviewCategory(post.category) === normalizedCategory;
+                }).slice(0, 5);
+            }
             if (posts.length === 0) {
                 container.innerHTML = '<div class="speakup-empty" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">아직 게시글이 없습니다.</div>';
                 return;
