@@ -94,7 +94,7 @@ async function verifyAbdLoggedIn(browser) {
     const boardTitleText = await page.locator('#board-title').innerText();
     assert(boardTitleText.includes('AI Biz Daily'), 'ABD 제목 누락: ' + boardTitleText);
     assert(boardTitleText.includes('AI Biz 발굴'), 'AI Biz 발굴 보조표기 누락: ' + boardTitleText);
-    assert(await page.locator('#board-description').innerText() === '유망한 AI Biz 아이디어를 발굴하여 서로 토론해서 완성도를 높여봅시다.', 'ABD 제목 부제 불일치');
+    assert(await page.locator('#board-description').innerText() === '유망한 AI Biz 아이디어를 발굴하여 서로 토론을 통해 완성도를 높여봅시다.', 'ABD 제목 부제 불일치');
     assert((await page.locator('#abd-discussion-guide').count()) === 0, '불필요한 사업 검증 안내가 남아 있음');
     assert(await page.locator('#abd-membership-member-note').isVisible(), '로그인 회원 안내가 보이지 않음');
     assert(!(await page.locator('#abd-membership-signup').isVisible()), '로그인 회원에게 가입 버튼이 노출됨');
