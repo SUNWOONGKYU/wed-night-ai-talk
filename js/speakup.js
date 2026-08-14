@@ -35,7 +35,14 @@ function spApplyBoardContext() {
         if (spDedicatedCategory) bar.style.display = 'none';
     }
 
-    if (!spDedicatedCategory) return;
+    if (!spDedicatedCategory) {
+        var abdRadio = document.querySelector('input[name="post-category"][value="' + SP_ABD_CATEGORY + '"]');
+        if (abdRadio) {
+            var abdLabel = abdRadio.closest('label');
+            if (abdLabel) abdLabel.style.display = 'none';
+        }
+        return;
+    }
 
     document.title = 'AI Biz Daily — WAAT';
     var title = document.getElementById('board-title');
@@ -403,7 +410,8 @@ async function loadPosts(reset, excludeId) {
     }
 
     try {
-        var posts = await DB.getPosts(SP_PAGE_SIZE, spPostOffset, spActiveCategory);
+        var excludeCategory = spDedicatedCategory ? null : SP_ABD_CATEGORY;
+        var posts = await DB.getPosts(SP_PAGE_SIZE, spPostOffset, spActiveCategory, excludeCategory);
 
         if (reset && posts.length === 0 && !pinned) {
             container.innerHTML = '<div class="speakup-empty">아직 게시글이 없습니다. 첫 글을 작성해보세요!</div>';
