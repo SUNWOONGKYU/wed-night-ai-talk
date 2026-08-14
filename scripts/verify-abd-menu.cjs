@@ -72,7 +72,7 @@ async function verifyLoggedOut(browser) {
     assert(!(await page.locator('#post-write-btn-wrap').isVisible()), '비로그인에게 글쓰기 버튼이 보임');
     assert(!(await page.locator('#post-form-wrap').isVisible()), '비로그인에게 글쓰기 폼이 보임');
     assert(await page.locator('#abd-membership-notice').isVisible(), 'ABD 회원 안내가 보이지 않음');
-    assert((await page.locator('#abd-membership-notice').innerText()).includes('WAAT Community 회원으로 가입하면 AI Biz Daily를 자동으로 받아볼 수 있습니다.'), '회원 자동 수신 안내 문구 불일치');
+    assert((await page.locator('#abd-membership-notice').innerText()).includes('WAAT Community 멤버로 가입하면 AI Biz Daily를 이메일로 매일 자동으로 받아볼 수 있습니다.'), '멤버 자동 수신 안내 문구 불일치');
     assert(await page.locator('#abd-membership-signup').isVisible(), '비회원에게 WAAT 회원가입 버튼이 보이지 않음');
     assert((await page.locator('#abd-subscription-email').count()) === 0, 'ABD 화면에 별도 이메일 입력이 남아 있음');
     await page.locator('#abd-membership-signup').click();
@@ -86,12 +86,14 @@ async function verifyAbdLoggedIn(browser) {
     await mockBackend(page, true, true);
     await page.goto(baseUrl + '/index.html');
     const mainAbdMenu = page.locator('a[href="speakup.html?category=AI%20Biz%20Daily"]').first();
-    assert(await mainAbdMenu.locator('.nav-ko').innerText() === '유망 Biz 발굴', '메인 화면 보조문구 불일치');
+    assert(await mainAbdMenu.locator('.nav-ko').innerText() === '유망 AI Biz 발굴', '메인 화면 보조문구 불일치');
     await mainAbdMenu.click();
     await page.waitForFunction(() => window.__getPostsCalls && window.__getPostsCalls.length > 0);
 
     assert(new URL(page.url()).searchParams.get('category') === 'AI Biz Daily', 'ABD 전용 URL 이동 실패');
-    assert((await page.locator('#board-title').innerText()).includes('AI Biz Daily'), 'ABD 제목 누락');
+    const boardTitleText = await page.locator('#board-title').innerText();
+    assert(boardTitleText.includes('AI Biz Daily'), 'ABD 제목 누락: ' + boardTitleText);
+    assert(boardTitleText.includes('AI Biz 발굴'), 'AI Biz 발굴 보조표기 누락: ' + boardTitleText);
     assert(await page.locator('#board-description').innerText() === '유망 AI Biz 발굴', 'ABD 대표 보조문구 불일치');
     assert(await page.locator('#abd-discussion-guide').isVisible(), 'ABD 사업 검증 안내 누락');
     assert(await page.locator('#abd-membership-member-note').isVisible(), '로그인 회원 안내가 보이지 않음');

@@ -42,7 +42,7 @@ function spApplyBoardContext() {
     var description = document.getElementById('board-description');
     var discussionGuide = document.getElementById('abd-discussion-guide');
     var membershipNotice = document.getElementById('abd-membership-notice');
-    if (title) title.innerHTML = 'AI Biz Daily <span class="section-title-en">ABD</span>';
+    if (title) title.innerHTML = 'AI Biz Daily <span class="section-title-en abd-title-label">AI Biz 발굴</span>';
     if (description) description.textContent = '유망 AI Biz 발굴';
     if (discussionGuide) discussionGuide.hidden = false;
     if (membershipNotice) membershipNotice.hidden = false;
