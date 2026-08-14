@@ -2982,13 +2982,6 @@ body.speakup-light .post-content.clamped + .post-more-btn {
     white-space: nowrap;
 }
 .abd-membership-signup[hidden] { display: none; }
-.abd-membership-member-note {
-    margin: 0;
-    color: #17634f;
-    font-size: 14px;
-    font-weight: 600;
-}
-.abd-membership-member-note[hidden] { display: none; }
 
 @media (max-width: 640px) {
     .abd-membership-notice {

@@ -68,10 +68,8 @@ function spApplyBoardContext() {
 
 function spUpdateAbdMembershipNotice() {
     if (spDedicatedCategory !== SP_ABD_CATEGORY) return;
-    var signup = document.getElementById('abd-membership-signup');
-    var memberNote = document.getElementById('abd-membership-member-note');
-    if (signup) signup.hidden = Boolean(spCurrentUser);
-    if (memberNote) memberNote.hidden = !spCurrentUser;
+    var notice = document.getElementById('abd-membership-notice');
+    if (notice) notice.hidden = Boolean(spCurrentUser);
 }
 
 // ========== View Count Tracking (세션 당 1회) ==========
