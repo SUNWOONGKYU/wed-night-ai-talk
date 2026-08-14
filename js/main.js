@@ -1125,10 +1125,10 @@ async function renderSpeakUpPreview() {
         return String(value || '').trim().toLowerCase();
     }
 
-    async function renderBoardPreview(container, category) {
+    async function renderBoardPreview(container, category, excludeCategory) {
         if (!container) return;
         try {
-            var posts = await DB.getPosts(5, 0, category);
+            var posts = await DB.getPosts(5, 0, category, excludeCategory);
             if (category && posts.length === 0) {
                 var fallbackPosts = await DB.getPosts(20, 0, null);
                 var normalizedCategory = normalizePreviewCategory(category);
@@ -1186,7 +1186,7 @@ async function renderSpeakUpPreview() {
     }
 
     await Promise.all([
-        renderBoardPreview(communityContainer, null),
+        renderBoardPreview(communityContainer, null, 'AI Biz Daily'),
         renderBoardPreview(abdContainer, 'AI Biz Daily')
     ]);
 }

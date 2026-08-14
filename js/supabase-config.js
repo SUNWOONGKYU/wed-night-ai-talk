@@ -449,7 +449,7 @@ var DB = {
 
     // -- Admin: Attendance by event --
     // -- Posts --
-    async getPosts(limit, offset, category) {
+    async getPosts(limit, offset, category, excludeCategory) {
         limit = limit || 10;
         offset = offset || 0;
         var q = _supabase
@@ -459,6 +459,7 @@ var DB = {
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
         if (category) q = q.eq('category', category);
+        if (excludeCategory) q = q.neq('category', excludeCategory);
         var { data, error } = await q;
         if (error) throw error;
         return data;
