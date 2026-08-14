@@ -40,11 +40,9 @@ function spApplyBoardContext() {
     document.title = 'AI Biz Daily — WAAT';
     var title = document.getElementById('board-title');
     var description = document.getElementById('board-description');
-    var discussionGuide = document.getElementById('abd-discussion-guide');
     var membershipNotice = document.getElementById('abd-membership-notice');
     if (title) title.innerHTML = 'AI Biz Daily <span class="section-title-en abd-title-label">AI Biz 발굴</span>';
-    if (description) description.textContent = '유망 AI Biz 발굴';
-    if (discussionGuide) discussionGuide.hidden = false;
+    if (description) description.textContent = '유망한 AI Biz 아이디어를 발굴하여 서로 토론해서 완성도를 높여봅시다.';
     if (membershipNotice) membershipNotice.hidden = false;
 
     document.querySelectorAll('[data-board-nav]').forEach(function (link) {

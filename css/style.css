@@ -2973,20 +2973,6 @@ body.speakup-light .post-content.clamped + .post-more-btn {
 }
 .abd-membership-member-note[hidden] { display: none; }
 
-.abd-discussion-guide {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 18px 0 22px;
-    padding: 12px 14px;
-    border-left: 3px solid #1e6f5c;
-    background: #f3f8f6;
-    color: #35443f;
-    font-size: 14px;
-    line-height: 1.55;
-}
-.abd-discussion-guide[hidden] { display: none; }
-.abd-discussion-guide strong { color: #17634f; white-space: nowrap; }
 @media (max-width: 640px) {
     .abd-membership-notice {
         grid-template-columns: 1fr;
@@ -2994,7 +2980,6 @@ body.speakup-light .post-content.clamped + .post-more-btn {
         padding: 18px;
     }
     .abd-membership-signup { width: 100%; }
-    .abd-discussion-guide { align-items: flex-start; flex-direction: column; gap: 4px; }
 }
 
 /* 현재 운영 아젠다: 관리자 고정글 */

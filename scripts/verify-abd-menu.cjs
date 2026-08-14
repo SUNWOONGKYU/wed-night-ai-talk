@@ -94,8 +94,8 @@ async function verifyAbdLoggedIn(browser) {
     const boardTitleText = await page.locator('#board-title').innerText();
     assert(boardTitleText.includes('AI Biz Daily'), 'ABD 제목 누락: ' + boardTitleText);
     assert(boardTitleText.includes('AI Biz 발굴'), 'AI Biz 발굴 보조표기 누락: ' + boardTitleText);
-    assert(await page.locator('#board-description').innerText() === '유망 AI Biz 발굴', 'ABD 대표 보조문구 불일치');
-    assert(await page.locator('#abd-discussion-guide').isVisible(), 'ABD 사업 검증 안내 누락');
+    assert(await page.locator('#board-description').innerText() === '유망한 AI Biz 아이디어를 발굴하여 서로 토론해서 완성도를 높여봅시다.', 'ABD 제목 부제 불일치');
+    assert((await page.locator('#abd-discussion-guide').count()) === 0, '불필요한 사업 검증 안내가 남아 있음');
     assert(await page.locator('#abd-membership-member-note').isVisible(), '로그인 회원 안내가 보이지 않음');
     assert(!(await page.locator('#abd-membership-signup').isVisible()), '로그인 회원에게 가입 버튼이 노출됨');
     assert(await page.evaluate(() => window.__getPostsCalls.at(-1)[2]) === 'AI Biz Daily', 'ABD 카테고리 필터 미적용');
@@ -137,7 +137,7 @@ async function verifyCommunityRegression(browser) {
     await page.goto(baseUrl + '/speakup.html');
     await page.waitForFunction(() => window.__getPostsCalls && window.__getPostsCalls.length > 0);
     assert(await page.evaluate(() => window.__getPostsCalls.at(-1)[2]) === '', 'Community 전체 필터가 유지되지 않음');
-    assert(!(await page.locator('#abd-discussion-guide').isVisible()), 'Community에 ABD 토론 안내가 노출됨');
+    assert((await page.locator('#abd-discussion-guide').count()) === 0, 'Community에 삭제된 토론 안내가 남아 있음');
     assert((await page.locator('.like-btn').innerText()).startsWith('👍'), 'Community 좋아요 문구 회귀');
     assert((await page.locator('.comment-toggle-btn').innerText()).startsWith('💬 댓글'), 'Community 댓글 문구 회귀');
     await page.close();
