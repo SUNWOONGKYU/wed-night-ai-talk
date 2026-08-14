@@ -1103,6 +1103,18 @@ async function loadFreeTalkCount() {
     }
 }
 
+async function loadABDCount() {
+    var el = document.getElementById('abd-count-display');
+    if (!el) return;
+    try {
+        var count = await DB.getPostCount('AI Biz Daily');
+        el.textContent = count;
+    } catch (e) {
+        console.error('loadABDCount error:', e);
+        el.textContent = '-';
+    }
+}
+
 // ========== Speak Up Preview ==========
 async function renderSpeakUpPreview() {
     var communityContainer = document.getElementById('speakup-preview-container');
@@ -1674,6 +1686,7 @@ function startApp() {
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
     loadMemberCount();
     loadFreeTalkCount();
+    loadABDCount();
     renderSpeakUpPreview().catch(function(e) {
         console.error('SpeakUp preview error:', e);
         var c = document.getElementById('speakup-preview-container');

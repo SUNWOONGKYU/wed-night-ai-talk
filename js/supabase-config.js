@@ -124,10 +124,12 @@ var DB = {
         return data;
     },
 
-    async getPostCount() {
-        var { count, error } = await _supabase
+    async getPostCount(category) {
+        var q = _supabase
             .from('posts')
             .select('*', { count: 'exact', head: true });
+        if (category) q = q.eq('category', category);
+        var { count, error } = await q;
         if (error) throw error;
         return count || 0;
     },
