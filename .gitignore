@@ -15,3 +15,6 @@ claude-news-agent/sessions/
 .env.local
 .env.*.local
 supabase/functions/**/.env
+
+# audit trail (do not commit - prevents post-commit recursion)
+_audit/

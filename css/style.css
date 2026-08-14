@@ -638,7 +638,7 @@ section {
     background: linear-gradient(135deg, rgba(26, 34, 56, 0.05), rgba(26, 34, 56, 0.05));
     border: 1px solid rgba(26, 34, 56, 0.15);
     border-radius: 24px;
-    padding: 3rem;
+    padding: 2rem 3rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
@@ -2552,6 +2552,23 @@ body.speakup-light .nav-links.show {
     background: var(--bg-secondary);
 }
 
+.board-preview-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.board-preview-panel {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.board-preview-panel .section-title { margin-top: 0; }
+
 .speakup-preview-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -3381,6 +3398,7 @@ body.speakup-light .post-card.is-pinned {
 
 /* Responsive — Board page (이전 작은 폰트 블록 — 새 큰 폰트 블록으로 대체됨) */
 @media (max-width: 768px) {
+    .board-preview-columns { grid-template-columns: 1fr; }
     .speakup-preview-grid { grid-template-columns: 1fr; }
     .speakup-page { padding-top: 5rem; }
 }

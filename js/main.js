@@ -1105,62 +1105,67 @@ async function loadFreeTalkCount() {
 
 // ========== Speak Up Preview ==========
 async function renderSpeakUpPreview() {
-    var container = document.getElementById('speakup-preview-container');
-    if (!container) return;
+    var communityContainer = document.getElementById('speakup-preview-container');
+    var abdContainer = document.getElementById('abd-preview-container');
+    if (!communityContainer && !abdContainer) return;
 
-    try {
-        var posts = await DB.getPosts(5, 0);
-
-        if (posts.length === 0) {
-            container.innerHTML = '<div class="speakup-empty" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">아직 게시글이 없습니다.</div>';
-            return;
-        }
-
-        var html = '';
-        var count = Math.min(posts.length, 5);
-        for (var i = 0; i < count; i++) {
-            var post = posts[i];
-            var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
-
-            var reactionData, commentCount;
-            try {
-                var results = await Promise.all([
-                    DB.getReactionCounts(post.id),
-                    DB.getCommentCount(post.id)
-                ]);
-                reactionData = results[0];
-                commentCount = results[1];
-            } catch (e) {
-                reactionData = { likes: 0, dislikes: 0 };
-                commentCount = 0;
+    async function renderBoardPreview(container, category) {
+        if (!container) return;
+        try {
+            var posts = await DB.getPosts(5, 0, category);
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="speakup-empty" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);">아직 게시글이 없습니다.</div>';
+                return;
             }
-
-            var cat = post.category || 'AI 새 소식';
-            var catCls = ({
-                'AI 새 소식': 'cat-general', '자랑하기': 'cat-showcase', '공부하기': 'cat-study',
-                '협력하기': 'cat-collab', '질문하기': 'cat-question', '요청하기': 'cat-request',
-                '토론하기': 'cat-discuss'
-            })[cat] || 'cat-general';
-            html += '<a href="speakup.html?post=' + encodeURIComponent(post.id) + '" class="speakup-preview-card">' +
-                '<div class="spc-header">' +
-                    '<span class="post-category-badge ' + catCls + '">' + escapeHtml(cat) + '</span>' +
-                    '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
-                    '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
-                '</div>' +
-                '<h4 class="spc-title">' + escapeHtml(post.title) + '</h4>' +
-                '<div class="spc-stats">' +
-                    '<span>👍 ' + reactionData.likes + '</span>' +
-                    '<span>👎 ' + reactionData.dislikes + '</span>' +
-                    '<span>💬 ' + commentCount + '</span>' +
-                    '<span>👁 ' + (post.view_count || 0) + '</span>' +
-                '</div>' +
-            '</a>';
+            var html = '';
+            var count = Math.min(posts.length, 5);
+            for (var i = 0; i < count; i++) {
+                var post = posts[i];
+                var authorName = (post.profiles && post.profiles.name) || '알 수 없음';
+                var reactionData, commentCount;
+                try {
+                    var results = await Promise.all([
+                        DB.getReactionCounts(post.id),
+                        DB.getCommentCount(post.id)
+                    ]);
+                    reactionData = results[0];
+                    commentCount = results[1];
+                } catch (e) {
+                    reactionData = { likes: 0, dislikes: 0 };
+                    commentCount = 0;
+                }
+                var cat = post.category || 'AI 새 소식';
+                var catCls = ({
+                    'AI 새 소식': 'cat-general', 'AI Biz Daily': 'cat-abd', '자랑하기': 'cat-showcase', '공부하기': 'cat-study',
+                    '협력하기': 'cat-collab', '질문하기': 'cat-question', '요청하기': 'cat-request',
+                    '토론하기': 'cat-discuss'
+                })[cat] || 'cat-general';
+                html += '<a href="speakup.html?post=' + encodeURIComponent(post.id) + '" class="speakup-preview-card">' +
+                    '<div class="spc-header">' +
+                        '<span class="post-category-badge ' + catCls + '">' + escapeHtml(cat) + '</span>' +
+                        '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
+                        '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
+                    '</div>' +
+                    '<h4 class="spc-title">' + escapeHtml(post.title) + '</h4>' +
+                    '<div class="spc-stats">' +
+                        '<span>👍 ' + reactionData.likes + '</span>' +
+                        '<span>👎 ' + reactionData.dislikes + '</span>' +
+                        '<span>💬 ' + commentCount + '</span>' +
+                        '<span>👁 ' + (post.view_count || 0) + '</span>' +
+                    '</div>' +
+                '</a>';
+            }
+            container.innerHTML = html;
+        } catch (e) {
+            console.error('renderSpeakUpPreview error:', e);
+            container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류</div>';
         }
-        container.innerHTML = html;
-    } catch (e) {
-        console.error('renderSpeakUpPreview error:', e);
-        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">게시글 로드 오류</div>';
     }
+
+    await Promise.all([
+        renderBoardPreview(communityContainer, null),
+        renderBoardPreview(abdContainer, 'AI Biz Daily')
+    ]);
 }
 
 function timeAgoShort(dateStr) {

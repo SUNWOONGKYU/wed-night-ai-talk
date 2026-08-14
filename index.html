@@ -199,18 +199,22 @@
         </svg>
     </div>
 
-    <!-- Community (Speakup Preview) -->
+    <!-- Community + AI Biz Daily previews -->
     <section id="speakup" class="speakup-preview-section">
         <div class="section-inner">
-            <h2 class="section-title">커뮤니티 <span class="section-title-en">Community</span></h2>
-            <p class="section-desc">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
-
-            <div id="speakup-preview-container" class="speakup-preview-grid">
-                <div class="admin-loading">게시글을 불러오는 중...</div>
-            </div>
-
-            <div class="speakup-preview-more">
-                <a href="speakup.html" class="btn-secondary">더보기 →</a>
+            <div class="board-preview-columns">
+                <section class="board-preview-panel" aria-labelledby="community-preview-title">
+                    <h2 id="community-preview-title" class="section-title">커뮤니티 <span class="section-title-en">Community</span></h2>
+                    <p class="section-desc">AI 관련 새로운 소식, 아이디어, 의견, 경험, 질문 등을 자유롭게 올려봅시다.</p>
+                    <div id="speakup-preview-container" class="speakup-preview-grid"><div class="admin-loading">게시글을 불러오는 중...</div></div>
+                    <div class="speakup-preview-more"><a href="speakup.html" class="btn-secondary">커뮤니티 더보기 →</a></div>
+                </section>
+                <section class="board-preview-panel board-preview-panel-abd" aria-labelledby="abd-preview-title">
+                    <h2 id="abd-preview-title" class="section-title">AI Biz Daily <span class="section-title-en">ABD</span></h2>
+                    <p class="section-desc">유망한 AI Biz 아이디어를 발굴하여 서로 토론을 통해 완성도를 높여봅시다.</p>
+                    <div id="abd-preview-container" class="speakup-preview-grid"><div class="admin-loading">게시글을 불러오는 중...</div></div>
+                    <div class="speakup-preview-more"><a href="speakup.html?category=AI%20Biz%20Daily" class="btn-secondary">AI Biz Daily 더보기 →</a></div>
+                </section>
             </div>
         </div>
     </section>
