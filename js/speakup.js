@@ -21,6 +21,28 @@ function spCatClass(c) {
     })[c] || 'cat-general';
 }
 
+// 카드 뱃지 표시용 라벨 — 저장된 post.category 값은 절대 바꾸지 않는다(필터·작성
+// 폼은 여전히 'AI Biz Daily'를 그대로 씀). 상단 메뉴·페이지 제목은 이 함수를
+// 거치지 않으므로 그대로 "AI Biz Daily"로 남는다. PO, 2026-08-15: 카드 안에서
+// "AI Biz Daily"가 중복 노출되는 걸 줄이기 위해 카드 뱃지만 "ABD"로 축약.
+function spCatLabel(c) {
+    return c === SP_ABD_CATEGORY ? 'ABD' : (c || 'AI 새 소식');
+}
+
+// AI Biz Daily 자동 게시글 제목 끝에 " · 평점 NN점"이 실려 오면(가운뎃점 U+00B7,
+// 앞뒤 공백 포함) 그 부분만 뽑아 배지로 그리고 화면 제목에서는 지운다. 이 표기가
+// 없는 글(수동 작성 글, 다른 카테고리 글)은 title을 원본 그대로 반환한다 — 원본
+// post.title 자체는 절대 바꾸지 않으므로 수정 폼에는 항상 평점이 그대로 남는다.
+function spExtractRatingBadge(title) {
+    var raw = title || '';
+    var match = /\s*·\s*평점\s*(\d+)\s*점(?=\))/.exec(raw);
+    if (!match) return { title: raw, rating: null };
+    return {
+        title: raw.slice(0, match.index) + raw.slice(match.index + match[0].length),
+        rating: match[1]
+    };
+}
+
 function spApplyBoardContext() {
     var params = new URLSearchParams(window.location.search);
     var requestedCategory = params.get('category') || '';
@@ -61,9 +83,9 @@ function spApplyBoardContext() {
         var label = radio.closest('label');
         if (label) label.style.display = radio.value === SP_ABD_CATEGORY ? '' : 'none';
     });
-
-    var writeButton = document.getElementById('post-write-open-btn');
-    if (writeButton) writeButton.textContent = 'AI Biz Daily 글쓰기';
+    // 글쓰기 버튼은 커뮤니티 게시판과 같은 라벨(PO, 2026-08-15: "글쓰기"로 통일,
+    // 새 스타일 없음) — HTML(speakup.html)의 기본 텍스트가 이미 "글쓰기"이므로
+    // 여기서 따로 바꾸지 않는다. 카테고리 사전 선택(위 라디오 처리)은 그대로 유지.
 }
 
 function spUpdateAbdMembershipNotice() {
@@ -513,10 +535,16 @@ async function renderPostCard(post) {
             '</a>';
     }
 
+    var spTitleInfo = spExtractRatingBadge(post.title);
+    var spRatingBadgeHtml = spTitleInfo.rating
+        ? '<span class="post-category-badge post-rating-badge">평점 ' + spEscape(spTitleInfo.rating) + '점</span>'
+        : '';
+
     card.innerHTML =
         '<div class="post-header">' +
             '<div class="post-author-info">' +
-                '<span class="post-category-badge ' + spCatClass(post.category || 'AI 새 소식') + '">' + spEscape(post.category || 'AI 새 소식') + '</span>' +
+                '<span class="post-category-badge ' + spCatClass(post.category || 'AI 새 소식') + '">' + spEscape(spCatLabel(post.category)) + '</span>' +
+                spRatingBadgeHtml +
                 '<div class="post-avatar">' + spEscape(authorName.charAt(0)) + '</div>' +
                 '<div class="post-author">' + spEscape(authorName) + '</div>' +
                 '<div class="post-time">' + timeAgo(post.created_at) + '</div>' +
@@ -525,7 +553,7 @@ async function renderPostCard(post) {
         '</div>' +
         '<div class="post-body">' +
             pinBadgeHtml +
-            '<h3 class="post-title">' + spEscape(post.title) + '</h3>' +
+            '<h3 class="post-title">' + spEscape(spTitleInfo.title) + '</h3>' +
             '<div class="post-content-wrap">' +
                 '<div class="post-content clamped">' + spRenderContent(post.content) + spRenderImages(post.image_urls) + '</div>' +
                 '<button type="button" class="post-more-btn" style="display:none;">… 더 보기</button>' +
@@ -1331,32 +1359,63 @@ function startSpeakUp() {
             return loadPosts(true);
         }
 
-        // --- 공유 링크 접속: 해당 글을 페이지 최상단에 바로 표시 ---
-        var container = document.getElementById('posts-container');
-        var loginPrompt = document.getElementById('post-login-prompt');
-        if (loginPrompt) loginPrompt.style.display = 'none';  // 글쓰기 안내 숨김
-
-        var pinned = false;
-        try {
-            var post = await DB.getPost(Number(sharedPostId));
-            if (post) {
-                container.innerHTML = '';
-                var card = await renderPostCard(post);
-                card.classList.add('post-highlighted');
-                container.appendChild(card);          // 공유 글을 맨 위에 고정
-                window.scrollTo(0, 0);                // 그 글이 바로 보이도록 최상단
-                pinned = true;
-                setTimeout(function () { card.classList.remove('post-highlighted'); }, 3000);
-            }
-        } catch (e) {
-            // 글이 삭제됐거나 존재하지 않음 → 일반 목록으로 폴백
-        }
-
-        // 나머지 글은 공유 글 아래로 이어붙인다 (공유 글 중복 제외)
-        return loadPosts(true, pinned ? Number(sharedPostId) : null);
+        return spRenderSinglePost(Number(sharedPostId));
     }).catch(function(e) {
         console.error('SpeakUp init error:', e);
     });
+}
+
+// ========== 공유 링크(?post=N) 단독 표시 ==========
+// PO 확정(2026-08-15): 이메일·게시 링크로 들어온 사람은 그 글을 읽으러 온 것이므로,
+// 예전처럼 목록 맨 위에 고정해 보여주고 그 아래로 나머지 글을 이어 붙이던 방식(그래서
+// 여전히 "목록처럼" 보인다는 지적을 받음) 대신 그 글 하나만 목록·필터·페이지네이션
+// 없이 보여준다. 비로그인 사용자도 동일하게 봐야 한다 -- 글 조회는 RLS가 anon에도
+// 열려 있어(정책: "Anyone can view posts" USING (true)) 로그인 여부를 신경 쓸 필요가
+// 없다. 존재하지 않는 post 값은 목록으로 자연스럽게 떨어진다(빈 화면·에러 금지).
+async function spRenderSinglePost(postId) {
+    var container = document.getElementById('posts-container');
+    var loginPrompt = document.getElementById('post-login-prompt');
+    if (loginPrompt) loginPrompt.style.display = 'none';
+
+    // 목록·필터·페이지네이션은 숨긴다 -- 이 글 하나만 보여줄 것이므로.
+    var filterBar = document.getElementById('category-filter');
+    if (filterBar) filterBar.style.display = 'none';
+    var loadMoreWrap = document.getElementById('load-more-wrap');
+    if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+
+    var post = null;
+    try {
+        post = await DB.getPost(postId);
+    } catch (e) {
+        post = null;
+    }
+
+    if (!post) {
+        // 삭제됐거나 잘못된 id -- 숨겼던 목록 UI를 되돌리고 평소 목록으로 폴백.
+        if (filterBar) filterBar.style.display = '';
+        if (loadMoreWrap) loadMoreWrap.style.display = '';
+        return loadPosts(true);
+    }
+
+    container.innerHTML = '';
+
+    // "목록으로" -- 새 디자인 없이 기존 버튼 스타일(.post-action-btn) 재사용.
+    var backWrap = document.createElement('div');
+    backWrap.className = 'sp-back-to-list';
+    var backLink = document.createElement('a');
+    backLink.className = 'post-action-btn';
+    backLink.textContent = '← 목록으로';
+    backLink.href = 'speakup.html' + (post.category ? '?category=' + encodeURIComponent(post.category) : '');
+    backWrap.appendChild(backLink);
+    container.appendChild(backWrap);
+
+    var card = await renderPostCard(post);
+    var contentEl = card.querySelector('.post-content');
+    // 링크로 들어온 사람은 이 글을 읽으러 온 것이므로 "더 보기" 없이 펼친 상태로.
+    if (contentEl) contentEl.classList.remove('clamped');
+    container.appendChild(card);
+
+    window.scrollTo(0, 0);
 }
 
 if (document.readyState === 'loading') {

@@ -1115,6 +1115,21 @@ async function loadABDCount() {
     }
 }
 
+// AI Biz Daily 자동 게시글 제목 끝에 " · 평점 NN점"이 실려 오면(가운뎃점 U+00B7,
+// 앞뒤 공백 포함) 그 부분만 뽑아 배지로 그리고 화면 제목에서는 지운다. 이 표기가
+// 없는 글은 title을 원본 그대로 반환한다. speakup.js의 spExtractRatingBadge와
+// 동일한 로직이지만 이 페이지(index.html)는 그 스크립트를 불러오지 않아 최소
+// 변경 원칙에 따라 여기 그대로 복제해 둔다.
+function mainExtractRatingBadge(title) {
+    var raw = title || '';
+    var match = /\s*·\s*평점\s*(\d+)\s*점(?=\))/.exec(raw);
+    if (!match) return { title: raw, rating: null };
+    return {
+        title: raw.slice(0, match.index) + raw.slice(match.index + match[0].length),
+        rating: match[1]
+    };
+}
+
 // ========== Speak Up Preview ==========
 async function renderSpeakUpPreview() {
     var communityContainer = document.getElementById('speakup-preview-container');
@@ -1158,18 +1173,26 @@ async function renderSpeakUpPreview() {
                     commentCount = 0;
                 }
                 var cat = post.category || 'AI 새 소식';
+                // 카드 뱃지 표시용 라벨만 축약("AI Biz Daily" -> "ABD", PO 2026-08-15) --
+                // catCls·저장된 post.category는 그대로 둔다(필터·작성 폼에 영향 없음).
+                var catLabel = cat === 'AI Biz Daily' ? 'ABD' : cat;
                 var catCls = ({
                     'AI 새 소식': 'cat-general', 'AI Biz Daily': 'cat-abd', '자랑하기': 'cat-showcase', '공부하기': 'cat-study',
                     '협력하기': 'cat-collab', '질문하기': 'cat-question', '요청하기': 'cat-request',
                     '토론하기': 'cat-discuss'
                 })[cat] || 'cat-general';
+                var titleInfo = mainExtractRatingBadge(post.title);
+                var ratingBadgeHtml = titleInfo.rating
+                    ? '<span class="post-category-badge post-rating-badge">평점 ' + escapeHtml(titleInfo.rating) + '점</span>'
+                    : '';
                 html += '<a href="speakup.html?post=' + encodeURIComponent(post.id) + '" class="speakup-preview-card">' +
                     '<div class="spc-header">' +
-                        '<span class="post-category-badge ' + catCls + '">' + escapeHtml(cat) + '</span>' +
+                        '<span class="post-category-badge ' + catCls + '">' + escapeHtml(catLabel) + '</span>' +
+                        ratingBadgeHtml +
                         '<span class="spc-author">' + escapeHtml(authorName) + '</span>' +
                         '<span class="spc-time">' + timeAgoShort(post.created_at) + '</span>' +
                     '</div>' +
-                    '<h4 class="spc-title">' + escapeHtml(post.title) + '</h4>' +
+                    '<h4 class="spc-title">' + escapeHtml(titleInfo.title) + '</h4>' +
                     '<div class="spc-stats">' +
                         '<span>👍 ' + reactionData.likes + '</span>' +
                         '<span>👎 ' + reactionData.dislikes + '</span>' +

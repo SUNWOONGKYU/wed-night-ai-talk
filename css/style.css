@@ -2839,6 +2839,11 @@ body.speakup-light .nav-links.show {
     color: var(--accent-pink);
 }
 
+/* 공유 링크(?post=N) 단독 표시 화면의 "목록으로" — .post-action-btn을 그대로 쓰고
+   위치만 잡는다. 새 버튼 스타일 아님. */
+.sp-back-to-list { margin-bottom: 0.8rem; }
+.sp-back-to-list .post-action-btn { display: inline-block; text-decoration: none; }
+
 .post-body {
     margin-bottom: 1rem;
 }
@@ -2942,6 +2947,14 @@ body.speakup-light .post-content.clamped + .post-more-btn {
 .post-category-badge.cat-question  { background: rgba(46,58,95,0.13); color: #2E3A5F; }
 .post-category-badge.cat-request   { background: rgba(107,123,160,0.20); color: #4A5670; }
 .post-category-badge.cat-discuss   { background: rgba(123,93,175,0.16); color: #5A3F8A; }
+
+/* AI Biz Daily 자동 게시글 제목에서 뽑아낸 평점 뱃지 — 기존 카테고리 뱃지와 같은
+   .post-category-badge 계열을 그대로 쓰고 색만 구분한다(새 디자인 체계 아님). */
+.post-category-badge.post-rating-badge { background: rgba(198,75,54,0.14); color: #A03D2A; }
+/* 랜딩 페이지 미리보기 카드(.spc-header)는 뱃지에 flex-shrink 보호가 없어 2개가
+   나란히 들어가면 텍스트가 줄바꿈됐다 — 게시판 헤더(.post-author-info)에 이미
+   있는 것과 같은 보호를 여기도 추가한다(새 스타일 아님, 기존 패턴 재사용). */
+.spc-header .post-category-badge { flex-shrink: 0; white-space: nowrap; }
 
 .abd-membership-notice {
     display: grid;
