@@ -1,0 +1,33 @@
+project_id = "vmiyqfkcoqdnkxjnxijt"
+
+# ⚠️ 주의 — `supabase config push` 는 확인 프롬프트 없이 즉시 적용되며,
+#    이 파일에 없는 항목은 CLI 기본값으로 '덮어쓴다'.
+#    따라서 원격의 기존 설정을 여기에 전부 명시해 두어야 한다.
+#    (2026-08-16: 최소 config.toml 로 push 했다가 site_url·redirect URL 이 로컬 기본값으로
+#     초기화되는 사고가 있었음. 아래 값들은 그때 복구한 운영값이다.)
+
+[auth]
+enabled = true
+site_url = "https://waat.community"
+additional_redirect_urls = [
+  "https://wed-night-ai-talk.vercel.app",
+  "https://wed-night-ai-talk.vercel.app/**",
+  "http://localhost:*/**",
+  "https://waat.community/**",
+  "https://www.waat.community/**",
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email]
+# 이메일 인증 — 가입 시 확인 메일을 보내고 링크를 눌러야 계정이 확정된다.
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = false
+max_frequency = "1m0s"
+otp_length = 8
+otp_expiry = 3600
