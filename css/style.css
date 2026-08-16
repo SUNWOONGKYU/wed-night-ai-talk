@@ -1360,14 +1360,8 @@ footer {
 .admin-table tr.row-provisional td {
     background: rgba(255, 184, 0, 0.05);
 }
-/* 비고 컬럼이 추가되며 폭이 눌려 '가입일' 헤더와 출처 문구가 잘렸다.
-   두 열만 줄바꿈을 막아 최소 폭을 확보한다 (표는 .admin-table-wrap 이 가로 스크롤). */
-.admin-table th:nth-child(7),
-.admin-table td:nth-child(7),
-.admin-table th:nth-child(8),
-.admin-table td:nth-child(8) {
-    white-space: nowrap;
-}
+/* 컬럼 폭은 admin.html 인라인 <style> 이 #members-table 로 지정한다(특이성이 더 높다).
+   여기서 폭을 다시 잡지 않는다 — 두 곳에서 다투면 추적이 어려워진다. */
 .member-note-source {
     margin-left: 0.35rem;
     font-size: 0.8rem;
