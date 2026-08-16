@@ -36,6 +36,14 @@ enable_confirmations = true
 # [auth.email.template.confirmation]
 # subject = "[WAAT] 이메일 인증을 완료해 주세요"
 # content_path = "./templates/confirmation-ko.html"
+
+# 커스텀 SMTP — Resend (2026-08-16 적용, Management API PATCH)
+#   기본 Supabase SMTP 는 발신자가 'Supabase Auth <noreply@mail.app.supabase.io>' 이고
+#   시간당 발송 상한이 2통이라, 예비멤버가 몰려 가입하면 인증 메일이 나가지 않는다.
+#   host=smtp.resend.com  port=465  user=resend  pass=RESEND_API_KEY(.env, 커밋 금지)
+#   발신=noreply@waat.community (Resend 에서 도메인 verified)  이름=WAAT
+#   rate_limit_email_sent: 2 → 30 (Resend 무료 한도 일 100통 안에서 여유)
+# [auth.email.smtp]  # ← 값은 원격에만 두고 여기 적지 않는다 (API 키 커밋 방지)
 double_confirm_changes = true
 secure_password_change = false
 max_frequency = "1m0s"
