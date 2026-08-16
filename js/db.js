@@ -20,7 +20,10 @@
 var supabase = _supabase;
 
 var _dbExtensions = {
-    // ===== 예비 멤버 관련 함수 =====
+    // ===== provisional_members 테이블 함수 =====
+    // ⚠️ 유일한 호출자였던 join.html·js/join.js 는 2026-08-16 삭제됐다(어디서도 링크되지 않는 고아 페이지).
+    //    테이블(provisional_members, 111건)과 아래 함수는 남겨둔다 — 데이터가 살아있고 admin 쪽에서 쓸 수 있다.
+    //    현행 예비멤버 판별은 이 테이블이 아니라 `profiles.notes` 의 '예비 멤버' 마크를 쓴다(92건).
 
     // 예비 멤버 조회 (이메일로)
     async getProvisionalMember(email) {
