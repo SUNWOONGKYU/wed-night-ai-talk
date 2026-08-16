@@ -1,6 +1,17 @@
 // ========== Database Module — Supabase 함수 ==========
+//
+// ⚠️ 이 파일은 supabase-config.js 다음에 로드된다.
+//    거기서 이미 `var DB = {...}` 로 전역 DB 를 선언하므로, 여기서 `const DB` 로 재선언하면
+//    "SyntaxError: Identifier 'DB' has already been declared" 로 이 파일 전체가 로드에 실패한다.
+//    (실제로 join.html·admin.html 에서 그렇게 죽어 있었다 — 예비멤버 조회가 통째로 미작동)
+//    → 재선언하지 않고 기존 DB 에 메서드를 '추가'한다.
+//
+// ⚠️ 클라이언트 변수명도 supabase-config.js 와 맞춰야 한다.
+//    전역 `supabase` 는 CDN 라이브러리 객체(createClient 를 가진)이지 클라이언트가 아니다.
+//    실제 클라이언트는 `_supabase`.
+const supabase = _supabase;
 
-const DB = {
+var _dbExtensions = {
     // ===== 예비 멤버 관련 함수 =====
 
     // 예비 멤버 조회 (이메일로)
@@ -163,9 +174,13 @@ const DB = {
     // 프로필 업데이트
     async updateProfile(userId, updates) {
         try {
+            // interests(TEXT[]) 문자열→배열 정규화 — supabase-config.js 의 공용 헬퍼 사용
+            const normalized = (typeof waatNormalizeProfileUpdates === 'function')
+                ? waatNormalizeProfileUpdates(updates)
+                : updates;
             const { data, error } = await supabase
                 .from('profiles')
-                .update(updates)
+                .update(normalized)
                 .eq('id', userId)
                 .select();
 
@@ -251,6 +266,14 @@ const DB = {
         return result;
     }
 };
+
+// 기존 DB(supabase-config.js)에 '없는 메서드만' 추가한다.
+// getProfile / updateProfile / getAllProfiles 는 양쪽에 다 있는데,
+// admin.html 등은 지금까지 supabase-config.js 판본으로 동작해 왔으므로 그쪽을 유지한다.
+// (여기서 덮어쓰면 검증되지 않은 동작 변경이 된다)
+Object.keys(_dbExtensions).forEach(function (k) {
+    if (!(k in DB)) DB[k] = _dbExtensions[k];
+});
 
 // 전역 객체로 사용 가능하도록 할당
 if (typeof window !== 'undefined') {

@@ -519,11 +519,85 @@ function showResetPasswordModal() {
     if (noticeEl) noticeEl.style.display = 'none';
 }
 
+// ========== 가입 프로필 완성 (이메일 인증 왕복 대응) ==========
+// signUp 시 metadata(auth.users.raw_user_meta_data)에 실어둔 입력값을 profiles 에 반영한다.
+// 이메일 인증이 켜져 있으면 가입 시점엔 세션이 없어 저장할 수 없으므로(RLS가 auth.uid() 요구),
+// 인증 링크를 누른 뒤 첫 SIGNED_IN 시점에 이 함수가 실행된다.
+// waat_profile_pending 플래그로 멱등성 보장 — 완료되면 false 로 내려 다음 로그인부터 건너뛴다.
+async function completePendingProfile(user) {
+    if (!user) return;
+    const meta = user.user_metadata || {};
+    if (!meta.waat_profile_pending) return;  // 이미 완료됐거나 이 흐름으로 가입한 계정이 아님
+
+    // 트리거가 profiles row 를 생성할 때까지 폴링 (최대 10초)
+    let profileCreated = false;
+    for (let poll = 0; poll < 20; poll++) {
+        try {
+            const profile = await DB.getProfile(user.id);
+            if (profile) { profileCreated = true; break; }
+        } catch (e) {
+            // row 미생성(PGRST116) 포함 — 무시하고 계속 폴링
+        }
+        await new Promise(r => setTimeout(r, 500));
+    }
+    if (!profileCreated) {
+        throw new Error('프로필 생성 시간 초과. 잠시 후 다시 시도해주세요.');
+    }
+
+    // 예비멤버 병합 — 같은 이메일의 예비멤버 행을 내 행으로 흡수하고 옛 행을 삭제한다.
+    // 프로필 저장보다 먼저 해야 한다. 병합이 notes 를 덮어쓰기 때문.
+    // 실패해도 가입 자체는 진행 (관리자가 나중에 정리 가능).
+    try {
+        const claim = await DB.claimProvisionalProfile();
+        if (claim && claim.claimed) {
+            console.log('예비멤버 행 병합 완료:', claim.merged_from);
+        }
+    } catch (claimErr) {
+        console.warn('예비멤버 병합 실패:', claimErr.message);
+    }
+
+    // 프로필 업데이트 (최대 5회 재시도)
+    let updated = false;
+    for (let i = 0; i < 5; i++) {
+        try {
+            await DB.updateProfile(user.id, {
+                name: meta.name || '',
+                phone: meta.phone || '',
+                email: user.email,
+                current_job: meta.current_job || '',
+                interests: meta.interests || '',   // updateProfile 이 TEXT[] 로 정규화
+                message: meta.message || ''
+            });
+            updated = true;
+            break;
+        } catch (retryErr) {
+            console.warn('Profile update retry', i + 1, retryErr.message);
+            await new Promise(r => setTimeout(r, 1500));
+        }
+    }
+    if (!updated) {
+        throw new Error('프로필 저장에 실패했습니다. [프로필 수정]에서 다시 저장해주세요.');
+    }
+
+    // 완료 표시 — 실패해도 프로필 자체는 저장됐으므로 진행을 막지 않는다
+    try {
+        await Auth.updateUserMetadata({ waat_profile_pending: false });
+    } catch (e) {
+        console.warn('프로필 완료 플래그 갱신 실패:', e.message);
+    }
+}
+
 // ========== Auth State Management ==========
 async function initAuth() {
     const session = await Auth.getSession();
     if (session) {
         currentUser = session.user;
+        // SIGNED_IN 이벤트 없이 저장된 세션으로 들어온 경우에도 미완성 프로필을 복구한다.
+        try {
+            await completePendingProfile(currentUser);
+        } catch (e) {
+            console.warn('가입 프로필 완성 실패:', e.message);
+        }
         try {
             currentProfile = await DB.getProfile(currentUser.id);
             currentProfile = await syncAdminRole(currentUser, currentProfile);
@@ -559,6 +633,14 @@ async function initAuth() {
         }
         if (event === 'SIGNED_IN' && session) {
             currentUser = session.user;
+            // 이메일 인증을 마치고 처음 들어온 경우 — 가입 때 담아둔 프로필을 여기서 완성한다.
+            // 실패해도 로그인 자체는 진행시킨다(프로필은 [프로필 수정]에서 복구 가능).
+            try {
+                await completePendingProfile(currentUser);
+            } catch (e) {
+                console.warn('가입 프로필 완성 실패:', e.message);
+                showToast('프로필 저장에 실패했습니다. [프로필 수정]에서 정보를 확인해주세요.', 'error');
+            }
             try {
                 currentProfile = await DB.getProfile(currentUser.id);
                 currentProfile = await syncAdminRole(currentUser, currentProfile);
@@ -1351,65 +1433,35 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        const signUpData = await Auth.signUp(email, password, { name, phone });
+        // 프로필 입력값 전부를 signUp metadata(auth.users.raw_user_meta_data)에 실어 보낸다.
+        // 이메일 인증을 거치는 동안 세션이 없으므로, 인증 후 첫 로그인 때 여기서 복원해 프로필을 완성한다.
+        // localStorage 대신 metadata를 쓰는 이유: 다른 기기/브라우저에서 인증 링크를 눌러도 데이터가 남는다.
+        const signUpData = await Auth.signUp(email, password, {
+            name,
+            phone,
+            current_job: currentJob,
+            interests,
+            message,
+            waat_profile_pending: true
+        });
 
-        // signUp 반환값 또는 세션에서 유저 ID 가져오기
-        let userId = null;
-        if (signUpData && signUpData.user) {
-            userId = signUpData.user.id;
-        } else {
-            const session = await Auth.getSession();
-            if (session && session.user) userId = session.user.id;
+        if (!signUpData || !signUpData.user) {
+            throw new Error('가입 중 오류: 사용자 정보를 얻을 수 없습니다. 다시 시도해주세요.');
         }
 
-        if (!userId) {
-            throw new Error('가입 중 오류: 사용자 ID를 얻을 수 없습니다. 다시 시도해주세요.');
+        // 이메일 인증(Confirm email)이 켜져 있으면 session이 null로 돌아온다.
+        // 이 경우 프로필 저장은 아직 불가능(RLS가 auth.uid()를 요구) → 메일함 안내 후 종료.
+        if (!signUpData.session) {
+            setStatus(statusEl,
+                '✉️ ' + email + ' 으로 인증 메일을 보냈습니다.\n메일의 링크를 눌러 인증을 완료하면 가입이 끝납니다.',
+                'success');
+            e.target.reset();
+            setTimeout(closeModal, 5000);
+            return;
         }
 
-        // 트리거가 profiles row를 생성할 때까지 폴링 (최대 10초)
-        let profileCreated = false;
-        for (let poll = 0; poll < 20; poll++) {
-            try {
-                const profile = await DB.getProfile(userId);
-                if (profile) {
-                    profileCreated = true;
-                    break;
-                }
-            } catch (e) {
-                // getProfile 호출 실패는 무시하고 계속 폴링
-            }
-            await new Promise(r => setTimeout(r, 500));
-        }
-
-        if (!profileCreated) {
-            throw new Error('프로필 생성 시간 초과. 잠시 후 다시 시도해주세요.');
-        }
-
-        if (userId) {
-            // 프로필 업데이트 (최대 5회 재시도)
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const updateData = {
-                        name,
-                        phone,
-                        email,
-                        current_job: currentJob,
-                        interests,
-                        message
-                    };
-                    // 예비멤버면 '예비 멤버' 마크 제거
-                    const existingProfile = await DB.getProfile(userId);
-                    if (existingProfile && existingProfile.notes && existingProfile.notes.includes('예비 멤버')) {
-                        updateData.notes = existingProfile.notes.replace(/예비 멤버\s*/g, '').trim();
-                    }
-                    await DB.updateProfile(userId, updateData);
-                    break;
-                } catch (retryErr) {
-                    console.warn('Profile update retry', i + 1, retryErr.message);
-                    await new Promise(r => setTimeout(r, 1500));
-                }
-            }
-        }
+        // 세션이 즉시 발급된 경우(Confirm email OFF) — 곧바로 프로필을 완성한다.
+        await completePendingProfile(signUpData.user);
 
         setStatus(statusEl, '가입이 완료되었습니다! 환영합니다.', 'success');
         e.target.reset();

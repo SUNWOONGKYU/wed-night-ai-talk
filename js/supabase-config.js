@@ -35,10 +35,15 @@ var ADMIN_EMAILS = [
 // ========== Auth Helpers ==========
 var Auth = {
     async signUp(email, password, metadata) {
+        // emailRedirectTo: 인증 메일의 링크를 눌렀을 때 돌아올 주소.
+        // origin만 사용 (signInWithGoogle과 동일 규칙 — Redirect URL 허용목록 매칭 단순화)
         var { data, error } = await _supabase.auth.signUp({
             email,
             password,
-            options: { data: metadata }
+            options: {
+                data: metadata,
+                emailRedirectTo: window.location.origin + '/'
+            }
         });
         if (error) throw error;
         return data;
@@ -89,10 +94,35 @@ var Auth = {
         if (error) throw error;
     },
 
+    // user_metadata 부분 갱신 (기존 키는 유지, 전달한 키만 덮어씀)
+    async updateUserMetadata(data) {
+        var { error } = await _supabase.auth.updateUser({ data: data });
+        if (error) throw error;
+    },
+
     onAuthStateChange(callback) {
         return _supabase.auth.onAuthStateChange(callback);
     }
 };
+
+// ========== 공통 정규화 ==========
+// profiles.interests 는 TEXT[] 컬럼인데 UI는 자유입력 textarea(문자열)를 쓴다.
+// 문자열을 그대로 보내면 Postgres가 22P02 malformed array literal 로 UPDATE 전체를 거부한다.
+// 빈 문자열('')도 거부되므로, 관심분야를 비워둔 사용자까지 저장이 실패한다.
+// → 저장 직전 쉼표 기준으로 잘라 배열로 변환한다. (읽는 쪽은 이미 array.join(', ')을 기대함)
+function waatNormalizeProfileUpdates(updates) {
+    if (!updates || !Object.prototype.hasOwnProperty.call(updates, 'interests')) return updates;
+    var out = {};
+    for (var k in updates) {
+        if (Object.prototype.hasOwnProperty.call(updates, k)) out[k] = updates[k];
+    }
+    var v = out.interests;
+    if (Array.isArray(v)) return out;
+    if (v == null) { out.interests = []; return out; }
+    out.interests = String(v).split(',').map(function (s) { return s.trim(); })
+                             .filter(function (s) { return s.length > 0; });
+    return out;
+}
 
 // ========== DB Helpers ==========
 var DB = {
@@ -110,10 +140,19 @@ var DB = {
     async updateProfile(userId, updates) {
         var { data, error } = await _supabase
             .from('profiles')
-            .update(updates)
+            .update(waatNormalizeProfileUpdates(updates))
             .eq('id', userId)
             .select()
             .single();
+        if (error) throw error;
+        return data;
+    },
+
+    // 예비멤버 행 흡수 — 같은 이메일의 예비멤버 profiles 행을 내 행으로 병합하고 옛 행을 삭제한다.
+    // 예비멤버 행은 남의 행이라 RLS 로 손댈 수 없어 SECURITY DEFINER RPC 로 처리한다.
+    // 반환: { claimed: bool, reason?: string, merged_from?: uuid }
+    async claimProvisionalProfile() {
+        var { data, error } = await _supabase.rpc('claim_provisional_profile');
         if (error) throw error;
         return data;
     },
