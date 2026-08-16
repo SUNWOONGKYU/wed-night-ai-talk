@@ -121,8 +121,10 @@ function renderMembers(members) {
         const date = m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-';
         const prov = isProvisionalMember(m);
         // 비고란: 예비 멤버는 뱃지로 눈에 띄게, 나머지는 notes 원문 그대로
+        const source = prov ? m.notes.replace('예비 멤버', '').replace(/^\s*·\s*/, '').trim() : '';
         const noteCell = prov
-            ? `<span class="member-badge-provisional">예비 멤버</span>${escapeHtml(m.notes.replace('예비 멤버', '').replace(/^\s*·\s*/, ' ')) }`
+            ? `<span class="member-badge-provisional">예비 멤버</span>` +
+              (source ? `<span class="member-note-source">${escapeHtml(source)}</span>` : '')
             : escapeHtml(m.notes || '-');
         return `<tr${prov ? ' class="row-provisional"' : ''}>
             <td>${escapeHtml(m.name || '-')}</td>

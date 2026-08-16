@@ -1360,6 +1360,19 @@ footer {
 .admin-table tr.row-provisional td {
     background: rgba(255, 184, 0, 0.05);
 }
+/* 비고 컬럼이 추가되며 폭이 눌려 '가입일' 헤더와 출처 문구가 잘렸다.
+   두 열만 줄바꿈을 막아 최소 폭을 확보한다 (표는 .admin-table-wrap 이 가로 스크롤). */
+.admin-table th:nth-child(7),
+.admin-table td:nth-child(7),
+.admin-table th:nth-child(8),
+.admin-table td:nth-child(8) {
+    white-space: nowrap;
+}
+.member-note-source {
+    margin-left: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
 
 /* 선택 입력 항목 펼치기 링크 — 모바일에서 두 줄로 잘리므로 줄을 나누고 위아래 여백을 준다 */
 .signup-optional-link {
