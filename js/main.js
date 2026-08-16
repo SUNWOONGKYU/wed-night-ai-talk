@@ -630,8 +630,37 @@ function showResetPasswordModal() {
 // SIGNED_IN 이 매번 이 루틴을 처음부터 다시 돌려 재시도(최대 7.5초)를 반복하게 된다.
 let _profileCompletionAttempted = false;
 
+// 예비멤버 병합 — 가입/로그인 경로와 무관하게(이메일 가입·Google OAuth·저장된 세션 복귀) 한 번 시도한다.
+//
+// ⚠️ 이 호출은 원래 completePendingProfile() 안에 있었다. 그런데 그 함수는 첫 줄에서
+//    waat_profile_pending(우리 가입 폼으로 가입한 계정에만 심기는 표시)이 없으면 즉시 반환한다.
+//    그래서 "Google로 계속하기"로 들어온 예비멤버는 병합이 아예 실행되지 않았고,
+//    profiles 행이 2개(옛 예비행 + 새 행)로 남았다. — 2026-08-16 확인, 실제 5명 누락.
+//    → 병합은 early return 위로 끌어올려 모든 경로에서 돌게 한다.
+let _provisionalClaimAttempted = false;
+
+async function claimProvisionalIfAny(user) {
+    if (!user || _provisionalClaimAttempted) return;
+    _provisionalClaimAttempted = true;
+    try {
+        // 트리거가 내 profiles 행을 만들기 전이면 병합할 대상이 없다 — 잠깐 기다린다(최대 5초).
+        for (let i = 0; i < 10; i++) {
+            try { if (await DB.getProfile(user.id)) break; } catch (e) { /* 미생성(PGRST116) — 계속 */ }
+            await new Promise(r => setTimeout(r, 500));
+        }
+        const claim = await DB.claimProvisionalProfile();
+        if (claim && claim.claimed) console.log('예비멤버 행 병합 완료:', claim.merged_from);
+    } catch (e) {
+        console.warn('예비멤버 병합 실패:', e && e.message);   // 실패해도 로그인은 진행
+    }
+}
+
 async function completePendingProfile(user) {
     if (!user) return;
+    // 병합을 아래 early return 보다 먼저 한다 — 가입 경로와 무관하게 실행되어야 하고,
+    // 프로필 저장보다도 앞서야 한다(병합이 notes 를 덮어쓴다).
+    await claimProvisionalIfAny(user);
+
     const meta = user.user_metadata || {};
     if (!meta.waat_profile_pending) return;  // 이미 완료됐거나 이 흐름으로 가입한 계정이 아님
     if (_profileCompletionAttempted) return; // 이 페이지에서 이미 시도함 (중복 실행 방지)
@@ -652,17 +681,7 @@ async function completePendingProfile(user) {
         throw new Error('프로필 생성 시간 초과. 잠시 후 다시 시도해주세요.');
     }
 
-    // 예비멤버 병합 — 같은 이메일의 예비멤버 행을 내 행으로 흡수하고 옛 행을 삭제한다.
-    // 프로필 저장보다 먼저 해야 한다. 병합이 notes 를 덮어쓰기 때문.
-    // 실패해도 가입 자체는 진행 (관리자가 나중에 정리 가능).
-    try {
-        const claim = await DB.claimProvisionalProfile();
-        if (claim && claim.claimed) {
-            console.log('예비멤버 행 병합 완료:', claim.merged_from);
-        }
-    } catch (claimErr) {
-        console.warn('예비멤버 병합 실패:', claimErr.message);
-    }
+    // (예비멤버 병합은 이 함수 첫 부분의 claimProvisionalIfAny() 에서 이미 처리됐다)
 
     // 프로필 업데이트 (최대 5회 재시도)
     let updated = false;
