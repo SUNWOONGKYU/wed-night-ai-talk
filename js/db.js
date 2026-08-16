@@ -9,7 +9,15 @@
 // ⚠️ 클라이언트 변수명도 supabase-config.js 와 맞춰야 한다.
 //    전역 `supabase` 는 CDN 라이브러리 객체(createClient 를 가진)이지 클라이언트가 아니다.
 //    실제 클라이언트는 `_supabase`.
-const supabase = _supabase;
+//
+// ⚠️ 이 파일 전체를 IIFE 로 감싼다.
+//    전역 스코프에서 `const supabase = _supabase` 를 하면 CDN 이 이미 선언한 전역 `supabase` 와 충돌해
+//    "SyntaxError: Identifier 'supabase' has already been declared" 로 파일 전체가 죽는다.
+//    (2026-08-16 index.html 에 db.js 를 처음 넣었을 때 실제로 그렇게 죽어 예비멤버 안내가 미작동했다)
+//    → 별칭은 IIFE 안에서만 쓰는 지역 변수로 둔다.
+(function () {
+
+var supabase = _supabase;
 
 var _dbExtensions = {
     // ===== 예비 멤버 관련 함수 =====
@@ -288,3 +296,5 @@ Object.keys(_dbExtensions).forEach(function (k) {
 if (typeof window !== 'undefined') {
     window.DB = DB;
 }
+
+})();
