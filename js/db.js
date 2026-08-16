@@ -1,0 +1,238 @@
+// ========== Database Module — Supabase 함수 ==========
+
+const DB = {
+    // ===== 예비 멤버 관련 함수 =====
+
+    // 예비 멤버 조회 (이메일로)
+    async getProvisionalMember(email) {
+        try {
+            const { data, error } = await supabase
+                .from('provisional_members')
+                .select('*')
+                .eq('email', email.toLowerCase())
+                .single();
+
+            if (error && error.code !== 'PGRST116') throw error;
+            return data || null;
+        } catch (e) {
+            console.error('getProvisionalMember error:', e);
+            throw e;
+        }
+    },
+
+    // 기존 정식 멤버 조회 (이메일로)
+    async getExistingMember(email) {
+        try {
+            const { data, error } = await supabase.auth.admin.listUsers();
+            if (error) throw error;
+
+            return data?.users?.find(u => u.email === email.toLowerCase()) || null;
+        } catch (e) {
+            console.error('getExistingMember error:', e);
+            // 권한 없음인 경우 클라이언트 쿼리로 대체
+            return null;
+        }
+    },
+
+    // 모든 예비 멤버 조회
+    async getAllProvisionalMembers(includeSubmitted = false) {
+        try {
+            let query = supabase
+                .from('provisional_members')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (!includeSubmitted) {
+                query = query.is('submitted_at', null);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return data || [];
+        } catch (e) {
+            console.error('getAllProvisionalMembers error:', e);
+            throw e;
+        }
+    },
+
+    // 예비 멤버 일괄 등록
+    async insertProvisionalMembers(members) {
+        try {
+            // members: [{ email, name, source }, ...]
+            const { data, error } = await supabase
+                .from('provisional_members')
+                .insert(members)
+                .select();
+
+            if (error) throw error;
+            return data || [];
+        } catch (e) {
+            console.error('insertProvisionalMembers error:', e);
+            throw e;
+        }
+    },
+
+    // 예비 멤버 제출 완료 마킹
+    async markProvisionalSubmitted(provisionalId, profileData = {}) {
+        try {
+            const { data, error } = await supabase
+                .from('provisional_members')
+                .update({
+                    submitted_at: new Date().toISOString(),
+                    notes: profileData ? JSON.stringify(profileData) : null
+                })
+                .eq('id', provisionalId)
+                .select();
+
+            if (error) throw error;
+            return data?.[0] || null;
+        } catch (e) {
+            console.error('markProvisionalSubmitted error:', e);
+            throw e;
+        }
+    },
+
+    // 예비 멤버 삭제
+    async deleteProvisionalMember(provisionalId) {
+        try {
+            const { error } = await supabase
+                .from('provisional_members')
+                .delete()
+                .eq('id', provisionalId);
+
+            if (error) throw error;
+            return true;
+        } catch (e) {
+            console.error('deleteProvisionalMember error:', e);
+            throw e;
+        }
+    },
+
+    // ===== 정식 멤버 (프로필) 관련 함수 =====
+
+    // 프로필 생성
+    async createProfile(profileData) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .insert([profileData])
+                .select();
+
+            if (error) throw error;
+            return data?.[0] || null;
+        } catch (e) {
+            console.error('createProfile error:', e);
+            throw e;
+        }
+    },
+
+    // 프로필 조회
+    async getProfile(userId) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') throw error;
+            return data || null;
+        } catch (e) {
+            console.error('getProfile error:', e);
+            throw e;
+        }
+    },
+
+    // 프로필 업데이트
+    async updateProfile(userId, updates) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('id', userId)
+                .select();
+
+            if (error) throw error;
+            return data?.[0] || null;
+        } catch (e) {
+            console.error('updateProfile error:', e);
+            throw e;
+        }
+    },
+
+    // 모든 프로필 조회 (관리자용)
+    async getAllProfiles() {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return data || [];
+        } catch (e) {
+            console.error('getAllProfiles error:', e);
+            throw e;
+        }
+    },
+
+    // ===== 유틸 함수 =====
+
+    // 이메일로 기존 멤버 조회
+    async getExistingEmails() {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('email');
+
+            if (error) throw error;
+            return (data || []).map(p => p.email?.toLowerCase()).filter(Boolean);
+        } catch (e) {
+            console.error('getExistingEmails error:', e);
+            return [];
+        }
+    },
+
+    // 예비 멤버 통계
+    async getProvisionalStats() {
+        try {
+            const all = await this.getAllProvisionalMembers(true);
+            const submitted = all.filter(p => p.submitted_at).length;
+            const pending = all.length - submitted;
+
+            return {
+                total: all.length,
+                submitted: submitted,
+                pending: pending,
+                bySource: this._groupBySource(all),
+                byDate: this._groupByDate(all)
+            };
+        } catch (e) {
+            console.error('getProvisionalStats error:', e);
+            throw e;
+        }
+    },
+
+    _groupBySource(members) {
+        const result = {};
+        members.forEach(m => {
+            const src = m.source || 'unknown';
+            result[src] = (result[src] || 0) + 1;
+        });
+        return result;
+    },
+
+    _groupByDate(members) {
+        const result = {};
+        members.forEach(m => {
+            const date = m.created_at.split('T')[0];
+            result[date] = (result[date] || 0) + 1;
+        });
+        return result;
+    }
+};
+
+// 전역 객체로 사용 가능하도록 할당
+if (typeof window !== 'undefined') {
+    window.DB = DB;
+}

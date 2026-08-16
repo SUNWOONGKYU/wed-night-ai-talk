@@ -92,6 +92,7 @@
             </div>
 
             <div class="admin-tabs">
+                <button class="admin-tab" data-tab="provisional">📋 예비 멤버</button>
                 <button class="admin-tab active" data-tab="members">멤버 관리</button>
                 <button class="admin-tab" data-tab="events">모임 관리</button>
                 <button class="admin-tab" data-tab="locations">장소 관리</button>
@@ -99,8 +100,70 @@
                 <button class="admin-tab" data-tab="email">📧 이메일 발송</button>
             </div>
 
+            <!-- 예비 멤버 관리 -->
+            <div id="panel-provisional" class="admin-panel">
+                <div class="admin-card">
+                    <h3>📋 예비 멤버 관리</h3>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                        111명의 예비 멤버를 한 번에 등록하고 진행 상황을 추적합니다.
+                    </p>
+
+                    <!-- CSV 임포트 -->
+                    <div class="admin-card" style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <h4>📤 CSV/Excel 파일로 일괄 등록</h4>
+                        <div style="margin: 1rem 0;">
+                            <input type="file" id="provisional-csv-input" accept=".csv,.xlsx" style="margin-bottom: 1rem;">
+                            <small style="color: var(--text-secondary);">
+                                형식: 이름, 이메일, 출처 (첫 행은 헤더로 무시됨)<br>
+                                예: 홍길동, hong@gmail.com, 페이스북
+                            </small>
+                        </div>
+                        <button class="btn-primary" id="btn-import-provisional" onclick="importProvisionalMembers()">
+                            ✓ 예비 멤버 등록
+                        </button>
+                        <div id="import-provisional-status" class="form-status" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- 통계 -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--text-secondary);">총 예비 멤버</div>
+                            <div style="font-size: 1.8em; font-weight: 600;" id="stat-total-provisional">—</div>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--text-secondary);">정보 입력 완료</div>
+                            <div style="font-size: 1.8em; font-weight: 600; color: #4caf50;" id="stat-submitted-provisional">—</div>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--text-secondary);">미입력 (예정)</div>
+                            <div style="font-size: 1.8em; font-weight: 600; color: #ff9800;" id="stat-pending-provisional">—</div>
+                        </div>
+                    </div>
+
+                    <!-- 미입력 목록 -->
+                    <h4 style="margin-top: 2rem; margin-bottom: 1rem;">⏳ 아직 정보를 입력하지 않은 예비 멤버</h4>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>이메일</th>
+                                    <th>이름</th>
+                                    <th>출처</th>
+                                    <th>등록일</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="provisional-pending-tbody">
+                                <tr><td colspan="5" class="admin-loading">로딩 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="provisional-count" style="margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;"></p>
+                </div>
+            </div>
+
             <!-- 멤버 관리 -->
-            <div id="panel-members" class="admin-panel active">
+            <div id="panel-members" class="admin-panel">
                 <div class="admin-card">
                     <h3>전체 멤버 목록</h3>
                     <div class="admin-actions">
@@ -534,6 +597,142 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script src="js/supabase-config.js?v=20260604a"></script>
+    <script src="js/db.js?v=20260816a"></script>
     <script src="js/admin.js?v=20260814a"></script>
+
+    <!-- 예비 멤버 관리 함수 -->
+    <script>
+        // 예비 멤버 CSV 임포트
+        async function importProvisionalMembers() {
+            const fileInput = document.getElementById('provisional-csv-input');
+            const statusEl = document.getElementById('import-provisional-status');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                statusEl.innerHTML = '<span style="color: #ff6464;">파일을 선택하세요</span>';
+                return;
+            }
+
+            statusEl.innerHTML = '📥 파일 읽는 중...';
+
+            try {
+                const wb = XLSX.read(await file.arrayBuffer());
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const data = XLSX.utils.sheet_to_json(ws);
+
+                if (data.length === 0) {
+                    statusEl.innerHTML = '<span style="color: #ff6464;">데이터가 없습니다</span>';
+                    return;
+                }
+
+                // CSV 데이터 정규화
+                const members = data.map(row => ({
+                    email: String(row['이메일'] || row['email'] || '').toLowerCase().trim(),
+                    name: String(row['이름'] || row['name'] || '').trim(),
+                    source: String(row['출처'] || row['source'] || '').trim()
+                })).filter(m => m.email && m.email.includes('@'));
+
+                console.log(`✓ ${members.length}명 준비됨`);
+
+                // 기존 멤버 확인 (중복 제거)
+                const existingEmails = await DB.getExistingEmails();
+                const newMembers = members.filter(m => !existingEmails.includes(m.email.toLowerCase()));
+
+                console.log(`✓ 신규: ${newMembers.length}명, 중복: ${members.length - newMembers.length}명`);
+
+                if (newMembers.length === 0) {
+                    statusEl.innerHTML = '<span style="color: #ff9800;">등록할 새 멤버가 없습니다</span>';
+                    return;
+                }
+
+                // DB에 등록
+                statusEl.innerHTML = '💾 DB에 등록 중...';
+                await DB.insertProvisionalMembers(newMembers);
+
+                statusEl.innerHTML = `<span style="color: #4caf50;">✓ ${newMembers.length}명 등록 완료!</span>`;
+                fileInput.value = '';
+
+                // 통계 갱신
+                loadProvisionalStats();
+                loadPendingProvisionalMembers();
+
+            } catch (e) {
+                console.error('Import error:', e);
+                statusEl.innerHTML = `<span style="color: #ff6464;">⚠️ 오류: ${e.message}</span>`;
+            }
+        }
+
+        // 예비 멤버 통계 로드
+        async function loadProvisionalStats() {
+            try {
+                const stats = await DB.getProvisionalStats();
+                document.getElementById('stat-total-provisional').textContent = stats.total;
+                document.getElementById('stat-submitted-provisional').textContent = stats.submitted;
+                document.getElementById('stat-pending-provisional').textContent = stats.pending;
+            } catch (e) {
+                console.error('loadProvisionalStats error:', e);
+            }
+        }
+
+        // 미입력 예비 멤버 목록 로드
+        async function loadPendingProvisionalMembers() {
+            try {
+                const members = await DB.getAllProvisionalMembers(false); // 미제출만
+
+                const tbody = document.getElementById('provisional-pending-tbody');
+                if (members.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">모두 정보를 입력했습니다! 🎉</td></tr>';
+                    document.getElementById('provisional-count').textContent = '';
+                    return;
+                }
+
+                tbody.innerHTML = members.map((m, idx) => `
+                    <tr>
+                        <td>${m.email}</td>
+                        <td>${m.name}</td>
+                        <td>${m.source || '—'}</td>
+                        <td>${new Date(m.created_at).toLocaleDateString('ko-KR')}</td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="sendProvisionalReminder('${m.email}')">
+                                📧 알림
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('provisional-count').textContent = `총 ${members.length}명 (경과: ${Math.floor((new Date() - new Date(members[0]?.created_at)) / 86400000)}일)`;
+
+            } catch (e) {
+                console.error('loadPendingProvisionalMembers error:', e);
+            }
+        }
+
+        // 리마인더 발송
+        async function sendProvisionalReminder(email) {
+            if (!confirm(`${email}로 알림을 발송하시겠습니까?`)) return;
+
+            alert('⚠️ 현재 이메일 발송 기능은 수동으로 구현이 필요합니다.\n' +
+                '일단 관리자가 직접 카톡이나 메일로 알려주세요.');
+            // TODO: 이메일 발송 API 연동
+        }
+
+        // 페이지 로드 시 통계 및 목록 갱신
+        document.addEventListener('DOMContentLoaded', function() {
+            // 탭 클릭 시 예비 멤버 데이터 갱신
+            const provisionalTab = document.querySelector('[data-tab="provisional"]');
+            if (provisionalTab) {
+                provisionalTab.addEventListener('click', function() {
+                    setTimeout(() => {
+                        loadProvisionalStats();
+                        loadPendingProvisionalMembers();
+                    }, 100);
+                });
+            }
+
+            // 처음 로드 시
+            loadProvisionalStats();
+            loadPendingProvisionalMembers();
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 만들기 — WAAT</title>
+    <meta name="description" content="WAAT 프로필 만들기">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260603a">
+    <style>
+        .join-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .join-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .join-header h1 {
+            font-size: 2em;
+            margin-bottom: 0.5rem;
+        }
+
+        .join-header p {
+            font-size: 1em;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .join-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .join-progress::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active .step-num {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .progress-step.completed .step-num {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .step-num {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .step-title {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .join-form {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        .badge.required {
+            background: rgba(255, 100, 100, 0.2);
+            color: #ff6464;
+        }
+
+        .badge.optional {
+            background: rgba(150, 150, 150, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            background: white;
+            color: black;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .error-box {
+            background: rgba(255, 100, 100, 0.1);
+            border-left: 3px solid #ff6464;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            color: #ff6464;
+        }
+
+        .success-box {
+            background: rgba(100, 200, 100, 0.1);
+            border-left: 3px solid #64c864;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            color: #4a7c59;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .form-actions button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        .modal-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .modal-content button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .readonly-field {
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 640px) {
+            .join-container {
+                padding: 1rem;
+            }
+
+            .join-form {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="speakup-light">
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="logo-waat.png?v=20260510i" alt="WAAT" class="nav-logo-img">
+            </a>
+            <ul class="nav-links nav-links-center">
+                <li><a href="index.html#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
+                <li><a href="speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+            </ul>
+            <ul class="nav-links nav-links-right">
+                <li id="nav-login-link"><a href="index.html" class="nav-login-btn">Login</a></li>
+                <li id="nav-signup-link"><a href="index.html" class="nav-cta">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="join-container">
+            <!-- 헤더 -->
+            <div class="join-header">
+                <h1>🎉 프로필 만들기</h1>
+                <p>환영합니다!<br>아래에서 프로필을 만들어주세요.</p>
+            </div>
+
+            <!-- 진행 표시 -->
+            <div class="join-progress">
+                <div class="progress-step active">
+                    <span class="step-num">1️⃣</span>
+                    <div class="step-title">이메일 확인</div>
+                </div>
+                <div class="progress-step">
+                    <span class="step-num">2️⃣</span>
+                    <div class="step-title">정보 입력</div>
+                </div>
+                <div class="progress-step">
+                    <span class="step-num">3️⃣</span>
+                    <div class="step-title">완료</div>
+                </div>
+            </div>
+
+            <!-- Step 1: 이메일 확인 -->
+            <div id="step-1-email" class="join-form">
+                <div class="form-section">
+                    <div class="form-section-title">Step 1️⃣ 이메일 확인</div>
+
+                    <div id="email-error" class="error-box" style="display:none;"></div>
+
+                    <div class="form-group">
+                        <label for="join-email">📧 이메일</label>
+                        <input type="email" id="join-email" placeholder="your@email.com">
+                        <small>예비 멤버로 등록된 이메일을 입력하세요</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-primary" id="btn-check-email">확인하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: 정보 입력 (초기 숨김) -->
+            <div id="step-2-form" class="join-form" style="display:none;">
+                <div class="form-section">
+                    <div class="form-section-title">Step 2️⃣ 프로필 입력</div>
+
+                    <div class="form-group">
+                        <label>👤 이름</label>
+                        <div class="readonly-field" id="display-name">—</div>
+                        <small>등록된 이름입니다</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="join-phone">📱 전화번호 <span class="badge optional">선택</span></label>
+                        <input type="tel" id="join-phone" placeholder="010-1234-5678">
+                        <small>모임 연락용으로 사용됩니다</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="join-bio">💬 자기소개 <span class="badge optional">선택</span></label>
+                        <textarea id="join-bio" placeholder="예: AI에 관심이 있고, 데이터를 공부 중입니다."></textarea>
+                        <small>WAAT 커뮤니티에서 함께 활동할 때 도움이 됩니다</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="join-interests">✨ 관심사 <span class="badge optional">선택</span></label>
+                        <input type="text" id="join-interests" placeholder="예: AI, 데이터, 창업 (쉼표로 구분)">
+                        <small>비슷한 관심사 있는 멤버들과 연결됩니다</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="btn-skip">⏭️ 스킵</button>
+                        <button class="btn-primary" id="btn-save">✓ 저장하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: 완료 메시지 (초기 숨김) -->
+            <div id="step-3-complete" class="join-form" style="display:none;">
+                <div class="success-box" id="complete-message"></div>
+                <div class="form-actions">
+                    <button class="btn-primary" id="btn-go-home">홈으로 돌아가기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">Wednesday Afternoon<br>AI Talk</div>
+            <div class="footer-links">
+                <a href="terms.html">이용약관</a>
+                <span class="footer-sep">·</span>
+                <a href="privacy.html">개인정보처리방침</a>
+            </div>
+            <div class="footer-meta">운영자: Sunny <span class="footer-sep">|</span> 공인회계사 선웅규</div>
+            <div class="footer-since">Since 2026.05.09</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=20260604a"></script>
+    <script src="js/db.js?v=20260816a"></script>
+    <script src="js/join.js?v=20260816a"></script>
+</body>
+</html>
