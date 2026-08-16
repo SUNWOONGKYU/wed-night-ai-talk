@@ -143,6 +143,23 @@ const DB = {
         }
     },
 
+    // 프로필 조회 (이메일로)
+    async getProfileByEmail(email) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('email', email.toLowerCase())
+                .single();
+
+            if (error && error.code !== 'PGRST116') throw error;
+            return data || null;
+        } catch (e) {
+            console.error('getProfileByEmail error:', e);
+            throw e;
+        }
+    },
+
     // 프로필 업데이트
     async updateProfile(userId, updates) {
         try {

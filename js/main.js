@@ -1331,13 +1331,25 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         return;
     }
 
-    if (typeof Auth === 'undefined') {
+    if (typeof Auth === 'undefined' || typeof DB === 'undefined') {
         setStatus(statusEl, '시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.', 'error');
         return;
     }
 
     setStatus(statusEl, '가입 처리 중...', 'loading');
     btn.disabled = true;
+
+    // 예비멤버 체크 — 이메일이 이미 예비멤버로 등록되어 있으면 안내
+    try {
+        const existingProfile = await DB.getProfileByEmail(email);
+        if (existingProfile && existingProfile.notes && existingProfile.notes.includes('예비 멤버')) {
+            setStatus(statusEl, '✅ 예비멤버 등록이 확인되었습니다!\n\n비밀번호를 설정하고 프로필 정보를 입력하면 정식 멤버로 업그레이드됩니다.', 'success');
+            btn.disabled = false;
+            // 가입 진행 (프로필 존재하므로 auth.users만 생성)
+        }
+    } catch (checkErr) {
+        console.warn('Provisional member check error:', checkErr.message);
+    }
 
     try {
         const signUpData = await Auth.signUp(email, password, { name, phone });
@@ -1358,14 +1370,20 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
             // 프로필 업데이트 (최대 5회 재시도)
             for (let i = 0; i < 5; i++) {
                 try {
-                    await DB.updateProfile(userId, {
+                    const updateData = {
                         name,
                         phone,
                         email,
                         current_job: currentJob,
                         interests,
                         message
-                    });
+                    };
+                    // 예비멤버면 '예비 멤버' 마크 제거
+                    const existingProfile = await DB.getProfile(userId);
+                    if (existingProfile && existingProfile.notes && existingProfile.notes.includes('예비 멤버')) {
+                        updateData.notes = existingProfile.notes.replace(/예비 멤버\s*/g, '').trim();
+                    }
+                    await DB.updateProfile(userId, updateData);
                     break;
                 } catch (retryErr) {
                     console.warn('Profile update retry', i + 1, retryErr.message);
