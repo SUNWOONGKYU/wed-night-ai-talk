@@ -383,9 +383,48 @@ function showPhoneRequiredModal(onSaved) {
     setTimeout(function() { if (inp) inp.focus(); }, 100);
 }
 
+// 예비 멤버 업그레이드 모달
+function showProvisionalUpgradeModal(onAction) {
+    var m = document.getElementById('provisional-upgrade-modal');
+    if (!m) { if (onAction) onAction(false); return; }
+    var upgradeBtn = document.getElementById('pum-upgrade-btn');
+    var cancelBtn = document.getElementById('pum-cancel-btn');
+    var closeBtn = document.getElementById('pum-close-btn');
+
+    function close(upgraded) {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+        upgradeBtn.onclick = null;
+        cancelBtn.onclick = null;
+        closeBtn.onclick = null;
+        m.onclick = null;
+        if (onAction) onAction(!!upgraded);
+    }
+
+    closeBtn.onclick = function() { close(false); };
+    cancelBtn.onclick = function() { close(false); };
+    upgradeBtn.onclick = function() {
+        close(true);
+        window.location.href = 'profile.html';
+    };
+    m.onclick = function(e) { if (e.target === m) close(false); };
+
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
 // ========== 회원 슬롯 신청 ==========
 async function memberAttendSlot(eventId, eventSlotId, slot) {
     if (!eventId || !eventSlotId || !currentUser) return;
+
+    // 예비 멤버 체크 — 모임 신청 시 정식 멤버 가입 유도
+    if (currentProfile && currentProfile.notes && currentProfile.notes.includes('예비 멤버')) {
+        showProvisionalUpgradeModal(function(upgraded) {
+            // 나중에 버튼 클릭 시에는 아무것도 안 함
+        });
+        return;
+    }
+
     // 핸드폰 번호 가드 — phone 없거나 형식 불일치 시 모달로 강제 입력
     var phone = currentProfile && currentProfile.phone;
     if (!isValidPhone(phone)) {

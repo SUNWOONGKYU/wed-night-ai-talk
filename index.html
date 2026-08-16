@@ -495,6 +495,24 @@
         </div>
     </div>
 
+    <!-- 예비멤버 업그레이드 모달 -->
+    <div id="provisional-upgrade-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" id="pum-close-btn">&times;</button>
+            <h2 class="modal-title">🎉 정식 멤버로 업그레이드</h2>
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem; text-align:center; font-size:0.95rem;">
+                모임에 참석하시려면 정식 멤버로 업그레이드하셔야 합니다.<br>
+                <span style="display:block; margin-top:0.5rem; color:var(--text-muted); font-size:0.85rem;">
+                    프로필 정보를 완성하면 WAAT 커뮤니티의<br>모든 기능을 이용하실 수 있습니다.
+                </span>
+            </p>
+            <div style="display:flex; gap:0.75rem;">
+                <button type="button" class="btn-secondary" id="pum-cancel-btn" style="flex:1;">나중에</button>
+                <button type="button" class="btn-primary" id="pum-upgrade-btn" style="flex:1;">프로필 완성하기 →</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">

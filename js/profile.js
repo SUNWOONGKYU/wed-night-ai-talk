@@ -72,6 +72,9 @@ async function pfInit() {
 
     // 신청 내역
     await pfLoadAttendances();
+
+    // 프로필 편집 폼 바인딩
+    pfSetupEditForm();
 }
 
 function pfUpdateNav() {
@@ -196,6 +199,67 @@ function pfRenderRow(r) {
             (r.event_title ? '<div class="my-att-title">' + pfEscape(r.event_title) + '</div>' : '') +
             (cancelBtn ? '<div class="my-att-actions">' + cancelBtn + '</div>' : '') +
         '</div>';
+}
+
+// 프로필 편집 폼 설정
+function pfSetupEditForm() {
+    var editBtn = document.getElementById('pf-edit-btn');
+    var cancelBtn = document.getElementById('pf-cancel-btn');
+    var form = document.getElementById('pf-form');
+    var pfCard = document.getElementById('profile-card');
+    var editForm = document.getElementById('profile-edit-form');
+    var status = document.getElementById('pf-form-status');
+
+    editBtn.onclick = function() {
+        // 폼에 현재 정보 채우기
+        document.getElementById('pf-edit-name').value = (pfCurrentProfile && pfCurrentProfile.name) || '';
+        document.getElementById('pf-edit-phone').value = (pfCurrentProfile && pfCurrentProfile.phone) || '';
+        document.getElementById('pf-edit-about').value = (pfCurrentProfile && pfCurrentProfile.about_me) || '';
+        document.getElementById('pf-edit-interests').value = (pfCurrentProfile && pfCurrentProfile.interests) || '';
+        var notesVal = (pfCurrentProfile && pfCurrentProfile.notes) || '';
+        notesVal = notesVal.replace(/예비 멤버\s*/g, '').trim();
+        document.getElementById('pf-edit-notes').value = notesVal;
+
+        pfCard.style.display = 'none';
+        editForm.style.display = 'block';
+    };
+
+    cancelBtn.onclick = function() {
+        editForm.style.display = 'none';
+        pfCard.style.display = 'block';
+    };
+
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        status.textContent = '저장 중...';
+        status.className = 'form-status loading';
+
+        try {
+            var updates = {
+                name: document.getElementById('pf-edit-name').value.trim(),
+                phone: document.getElementById('pf-edit-phone').value.trim(),
+                about_me: document.getElementById('pf-edit-about').value.trim(),
+                interests: document.getElementById('pf-edit-interests').value.trim(),
+                notes: document.getElementById('pf-edit-notes').value.trim()
+            };
+
+            pfCurrentProfile = await DB.updateProfile(pfCurrentUser.id, updates);
+            status.textContent = '저장되었습니다! ✅';
+            status.className = 'form-status success';
+
+            setTimeout(function() {
+                editForm.style.display = 'none';
+                pfCard.style.display = 'block';
+                // 카드 정보 업데이트
+                document.getElementById('pf-name').textContent = updates.name || '—';
+                document.getElementById('pf-phone').textContent = updates.phone || '—';
+                pfUpdateNav();
+            }, 1000);
+        } catch (err) {
+            status.textContent = '저장 실패: ' + (err.message || err);
+            status.className = 'form-status error';
+        }
+    };
 }
 
 // nav user dropdown

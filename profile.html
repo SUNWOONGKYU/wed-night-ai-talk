@@ -49,12 +49,47 @@
                 <p><a href="index.html" class="speakup-login-link">로그인</a>이 필요합니다.</p>
             </div>
 
-            <!-- 프로필 카드 -->
+            <!-- 프로필 카드 (보기 모드) -->
             <div id="profile-card" class="profile-card" style="display:none;">
                 <div class="profile-row"><span class="profile-key">이름</span><span class="profile-val" id="pf-name">—</span></div>
                 <div class="profile-row"><span class="profile-key">이메일</span><span class="profile-val" id="pf-email">—</span></div>
                 <div class="profile-row"><span class="profile-key">전화번호</span><span class="profile-val" id="pf-phone">—</span></div>
                 <div class="profile-row"><span class="profile-key">가입일</span><span class="profile-val" id="pf-created">—</span></div>
+                <button id="pf-edit-btn" class="btn-primary" style="margin-top:1rem;">프로필 수정 ✏️</button>
+            </div>
+
+            <!-- 프로필 편집 폼 -->
+            <div id="profile-edit-form" style="display:none;">
+                <div class="admin-card" style="max-width:600px; margin:0 auto;">
+                    <h3>프로필 수정</h3>
+                    <form id="pf-form" class="site-form">
+                        <div class="form-group">
+                            <label for="pf-edit-name">이름</label>
+                            <input type="text" id="pf-edit-name" placeholder="이름" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-edit-phone">전화번호</label>
+                            <input type="tel" id="pf-edit-phone" placeholder="010-1234-5678">
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-edit-about">현재 하는 일</label>
+                            <textarea id="pf-edit-about" rows="2" placeholder="예: AI 스타트업 창업자"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-edit-interests">관심 분야</label>
+                            <textarea id="pf-edit-interests" rows="2" placeholder="예: 생성형 AI, LLM 파인튜닝"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-edit-notes">하고 싶은 말</label>
+                            <textarea id="pf-edit-notes" rows="2" placeholder="자유롭게 입력해주세요"></textarea>
+                        </div>
+                        <div class="form-status" id="pf-form-status"></div>
+                        <div style="display:flex; gap:0.75rem;">
+                            <button type="button" class="btn-secondary" id="pf-cancel-btn" style="flex:1;">취소</button>
+                            <button type="submit" class="btn-primary" style="flex:1;">저장하기 →</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <h3 class="profile-section-title">📅 내 신청 내역</h3>
