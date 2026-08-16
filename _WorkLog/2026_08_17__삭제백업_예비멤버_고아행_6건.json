@@ -1,0 +1,104 @@
+﻿[
+    {
+        "id":  "b26450dd-d45a-4292-b3f1-3ed5ec2fd0f1",
+        "name":  "AI가 먹는건가요?",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "promaey01@gmail.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    },
+    {
+        "id":  "283caa4d-56a1-4b64-8804-41016995900a",
+        "name":  "솔라리스",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "withsolaris@gmail.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    },
+    {
+        "id":  "d80abedc-a20c-4cd9-b45b-bcd22b605ca6",
+        "name":  "일등감자",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "narsis.yu@gmail.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    },
+    {
+        "id":  "8dc22d36-2378-42ec-8aae-0a75c434f136",
+        "name":  "파티하는 어피치",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "alstnslasla@gmail.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    },
+    {
+        "id":  "e88b5968-280a-4ec6-be32-88fe6261ed85",
+        "name":  "배부른",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "sysmining@naver.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    },
+    {
+        "id":  "4b1a8542-e11a-4bf5-95b6-2890c2ad2cb2",
+        "name":  "AX",
+        "phone":  "",
+        "interests":  [
+
+                      ],
+        "member_type":  "",
+        "message":  "",
+        "role":  "member",
+        "created_at":  "2026-08-16T06:44:17.196006+00:00",
+        "updated_at":  "2026-08-16T07:05:20.589596+00:00",
+        "email":  "bybychingu@gmail.com",
+        "current_job":  null,
+        "notes":  "예비 멤버 · 카톡_댓글",
+        "about_me":  ""
+    }
+]
