@@ -1345,6 +1345,22 @@ footer {
     font-weight: 400;
 }
 
+/* 관리자 멤버 목록 — 예비 멤버 표시 */
+.member-badge-provisional {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    background: rgba(255, 184, 0, 0.18);
+    border: 1px solid rgba(255, 184, 0, 0.55);
+    color: #8a6100;
+}
+.admin-table tr.row-provisional td {
+    background: rgba(255, 184, 0, 0.05);
+}
+
 /* 선택 입력 항목 펼치기 링크 — 모바일에서 두 줄로 잘리므로 줄을 나누고 위아래 여백을 준다 */
 .signup-optional-link {
     text-align: center;

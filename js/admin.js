@@ -91,10 +91,10 @@ function loadMembers() {
         try {
             allMembers = await DB.getAllProfiles();
             membersLoaded = true;
-            renderMembers(allMembers);
+            applyMemberFilters();   // 검색어·구분 필터가 걸려 있으면 그대로 유지한 채 그린다
         } catch (e) {
             document.getElementById('members-tbody').innerHTML =
-                '<tr><td colspan="7" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
+                '<tr><td colspan="9" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
         } finally {
             membersLoadPromise = null;
         }
@@ -102,45 +102,80 @@ function loadMembers() {
 
     return membersLoadPromise;
 }
+// 예비 멤버 판정 — profiles.notes 에 '예비 멤버' 마크가 있는 사람.
+// (예비 멤버도 멤버 명단 안에 똑같이 들어가 있고, 비고란 표시로만 구분한다)
+function isProvisionalMember(m) {
+    return !!(m && m.notes && m.notes.indexOf('예비 멤버') !== -1);
+}
+
 function renderMembers(members) {
     const tbody = document.getElementById('members-tbody');
     if (members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
-        document.getElementById('member-count').textContent = '';
+        tbody.innerHTML = '<tr><td colspan="9" class="admin-empty">조건에 맞는 멤버가 없습니다.</td></tr>';
+        updateMemberCount(0);
         return;
     }
 
     tbody.innerHTML = members.map(m => {
         const interests = Array.isArray(m.interests) ? m.interests.join(', ') : (m.interests || '');
         const date = m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-';
-        return `<tr>
+        const prov = isProvisionalMember(m);
+        // 비고란: 예비 멤버는 뱃지로 눈에 띄게, 나머지는 notes 원문 그대로
+        const noteCell = prov
+            ? `<span class="member-badge-provisional">예비 멤버</span>${escapeHtml(m.notes.replace('예비 멤버', '').replace(/^\s*·\s*/, ' ')) }`
+            : escapeHtml(m.notes || '-');
+        return `<tr${prov ? ' class="row-provisional"' : ''}>
             <td>${escapeHtml(m.name || '-')}</td>
             <td>${escapeHtml(m.phone || '-')}</td>
             <td>${escapeHtml(m.email || '-')}</td>
             <td>${escapeHtml(m.current_job || '-')}</td>
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.message || '-')}</td>
+            <td>${noteCell}</td>
             <td>${date}</td>
             <td><button class="btn-secondary btn-small" onclick="deleteMember('${escapeAttr(m.id)}', '${escapeAttr(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
         </tr>`;
     }).join('');
 
-    document.getElementById('member-count').textContent = `총 ${members.length}명`;
+    updateMemberCount(members.length);
 }
 
-// ========== Member Search ==========
-document.getElementById('member-search').addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase().trim();
-    if (!q) {
-        renderMembers(allMembers);
-        return;
+// 카운트 — 전체 기준 정규/예비 내역을 항상 보여주고, 필터가 걸리면 표시 중 건수를 덧붙인다.
+function updateMemberCount(shownCount) {
+    const el = document.getElementById('member-count');
+    if (!el) return;
+    const total = allMembers.length;
+    const prov = allMembers.filter(isProvisionalMember).length;
+    let text = `전체 ${total}명 · 정규 ${total - prov}명 · 예비 ${prov}명`;
+    if (shownCount !== total) text += `  →  현재 ${shownCount}명 표시 중`;
+    el.textContent = text;
+}
+
+// ========== Member Search + Filter ==========
+// 검색어와 구분 필터를 함께 적용한다 (둘 중 하나만 걸어도 다른 쪽이 풀리면 안 된다).
+function applyMemberFilters() {
+    const searchEl = document.getElementById('member-search');
+    const filterEl = document.getElementById('member-filter');
+    const q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+    const mode = filterEl ? filterEl.value : 'all';
+
+    let list = allMembers;
+    if (mode === 'provisional') list = list.filter(isProvisionalMember);
+    else if (mode === 'regular') list = list.filter(m => !isProvisionalMember(m));
+
+    if (q) {
+        list = list.filter(m =>
+            (m.name || '').toLowerCase().includes(q) ||
+            (m.phone || '').includes(q) ||
+            (m.email || '').toLowerCase().includes(q)
+        );
     }
-    const filtered = allMembers.filter(m =>
-        (m.name || '').toLowerCase().includes(q) ||
-        (m.phone || '').includes(q)
-    );
-    renderMembers(filtered);
-});
+    renderMembers(list);
+}
+
+document.getElementById('member-search').addEventListener('input', applyMemberFilters);
+var _memberFilterEl = document.getElementById('member-filter');
+if (_memberFilterEl) _memberFilterEl.addEventListener('change', applyMemberFilters);
 
 // ========== Events ==========
 let allEvents = [];
@@ -786,6 +821,8 @@ function getMembersExportData() {
         '현재 하는 일': m.current_job || '',
         '관심분야': Array.isArray(m.interests) ? m.interests.join(', ') : (m.interests || ''),
         '하고 싶은 말': m.message || '',
+        '구분': isProvisionalMember(m) ? '예비 멤버' : '정규 멤버',
+        '비고': m.notes || '',
         '가입일': m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : ''
     }));
 }
@@ -797,7 +834,8 @@ function exportMembersExcel() {
     // 열 너비 설정
     ws['!cols'] = [
         { wch: 10 }, { wch: 15 }, { wch: 25 },
-        { wch: 30 }, { wch: 30 }, { wch: 10 }, { wch: 12 }
+        { wch: 30 }, { wch: 30 }, { wch: 10 },
+        { wch: 10 }, { wch: 22 }, { wch: 12 }
     ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '멤버목록');

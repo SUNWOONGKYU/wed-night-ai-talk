@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260603a">
+    <link rel="stylesheet" href="css/style.css?v=20260816f">
     <style>
         /* 멤버 테이블 칼럼 너비 조정 */
         #members-table th:nth-child(1),
@@ -100,11 +100,18 @@
             </div>
 
 <!-- 멤버 관리 -->
-            <div id="panel-members" class="admin-panel">
+            <!-- ⚠️ 탭 버튼(위 .admin-tab[data-tab=members])이 active 인데 이 패널에 active 가 없으면
+                 페이지를 열자마자 멤버 목록이 빈 화면으로 보인다(.admin-panel 기본 display:none). -->
+            <div id="panel-members" class="admin-panel active">
                 <div class="admin-card">
                     <h3>전체 멤버 목록</h3>
                     <div class="admin-actions">
                         <input type="text" class="admin-search" id="member-search" placeholder="이름 또는 전화번호로 검색...">
+                        <select class="admin-search" id="member-filter" style="max-width:180px;">
+                            <option value="all">전체 멤버</option>
+                            <option value="provisional">예비 멤버만</option>
+                            <option value="regular">정규 멤버만</option>
+                        </select>
                         <button class="btn-secondary btn-small" onclick="exportMembersExcel()" title="Excel 파일로 다운로드">📥 Excel 다운로드</button>
                         <button class="btn-secondary btn-small" onclick="exportMembersCsv()" title="CSV 파일로 다운로드">📥 CSV 다운로드</button>
                     </div>
@@ -118,12 +125,13 @@
                                     <th>현재 하는 일</th>
                                     <th>관심분야</th>
                                     <th>하고 싶은 말</th>
+                                    <th>비고</th>
                                     <th>가입일</th>
                                     <th>관리</th>
                                 </tr>
                             </thead>
                             <tbody id="members-tbody">
-                                <tr><td colspan="8" class="admin-loading">로딩 중...</td></tr>
+                                <tr><td colspan="9" class="admin-loading">로딩 중...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -532,10 +540,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <!-- SheetJS 는 jsdelivr 에서 받는다. cdn.sheetjs.com 은 CSP(script-src) 허용 목록에 없어
+         차단되고, 그러면 Excel·CSV 다운로드가 둘 다 동작하지 않는다(CSV 도 XLSX 를 쓴다). -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
     <script src="js/supabase-config.js?v=20260816b"></script>
-    <script src="js/db.js?v=20260816b"></script>
-    <script src="js/admin.js?v=20260814a"></script>
+    <script src="js/db.js?v=20260816e"></script>
+    <script src="js/admin.js?v=20260816e"></script>
 
 </body>
 </html>
