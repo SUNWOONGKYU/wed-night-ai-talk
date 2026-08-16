@@ -27,7 +27,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260816d">
+    <link rel="stylesheet" href="css/style.css?v=20260816f">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -296,7 +296,8 @@
                             <input type="tel" id="s-contact" name="contact" required placeholder="010-1234-5678" maxlength="11">
                         </div>
                     </div>
-                    <p class="auth-switch" style="margin:0.4rem 0;"><a href="#" id="signup-optional-toggle">현재 하는 일·관심분야·하고 싶은 말 (선택, 입력하려면 클릭)</a></p>
+                    <!-- 모바일에서 한 줄에 안 들어가 어색하게 잘리므로 줄을 명시적으로 나눈다 -->
+                    <p class="signup-optional-link"><a href="#" id="signup-optional-toggle">현재 하는 일 · 관심분야 · 하고 싶은 말<br><span class="signup-optional-hint">(선택 — 입력하려면 클릭)</span></a></p>
                     <div id="signup-optional-fields" class="signup-optional-fields" style="display:none;">
                         <div class="form-group">
                             <label for="s-current-job">현재 하는 일 (선택)</label>

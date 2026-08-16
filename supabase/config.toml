@@ -26,6 +26,16 @@ verify_enabled = true
 [auth.email]
 # 이메일 인증 — 가입 시 확인 메일을 보내고 링크를 눌러야 계정이 확정된다.
 enable_confirmations = true
+
+# 확인 메일 템플릿(한글) — 2026-08-16 적용.
+#   본문 원본: supabase/templates/confirmation-ko.html
+#   제목:     [WAAT] 이메일 인증을 완료해 주세요
+# ⚠️ 적용은 `config push` 가 아니라 Management API PATCH 로 했다
+#    (config push 는 이 파일에 없는 설정을 CLI 기본값으로 덮어쓴다 — 위 경고 참조).
+#    아래 template 블록은 기록용이며, push 하려면 다른 설정 유실 여부를 먼저 확인할 것.
+# [auth.email.template.confirmation]
+# subject = "[WAAT] 이메일 인증을 완료해 주세요"
+# content_path = "./templates/confirmation-ko.html"
 double_confirm_changes = true
 secure_password_change = false
 max_frequency = "1m0s"

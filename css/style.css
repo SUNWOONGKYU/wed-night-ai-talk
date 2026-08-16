@@ -1345,6 +1345,24 @@ footer {
     font-weight: 400;
 }
 
+/* 선택 입력 항목 펼치기 링크 — 모바일에서 두 줄로 잘리므로 줄을 나누고 위아래 여백을 준다 */
+.signup-optional-link {
+    text-align: center;
+    margin: 1rem 0 1.2rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.signup-optional-link a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+}
+.signup-optional-link .signup-optional-hint {
+    display: inline-block;
+    margin-top: 0.15rem;
+    font-size: 0.85em;
+    color: var(--text-muted);
+}
+
 /* 예비멤버 감지 안내 — 가입 모달 이메일 입력 바로 아래 */
 .provisional-notice {
     margin: 0 0 1rem;
