@@ -170,7 +170,10 @@ const DB = {
                 .select();
 
             if (error) throw error;
-            return data?.[0] || null;
+            if (!data || data.length === 0) {
+                throw new Error('프로필 업데이트 실패: 해당 사용자 프로필이 없습니다. (ID: ' + userId + ')');
+            }
+            return data[0];
         } catch (e) {
             console.error('updateProfile error:', e);
             throw e;

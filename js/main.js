@@ -1339,13 +1339,12 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     setStatus(statusEl, '가입 처리 중...', 'loading');
     btn.disabled = true;
 
-    // 예비멤버 체크 — 이메일이 이미 예비멤버로 등록되어 있으면 안내
+    // 예비멤버 체크 — 이메일이 이미 예비멤버로 등록되어 있으면 안내 (UI만 업데이트, 버튼은 처리 중)
     try {
         const existingProfile = await DB.getProfileByEmail(email);
         if (existingProfile && existingProfile.notes && existingProfile.notes.includes('예비 멤버')) {
-            setStatus(statusEl, '✅ 예비멤버 등록이 확인되었습니다!\n\n비밀번호를 설정하고 프로필 정보를 입력하면 정식 멤버로 업그레이드됩니다.', 'success');
-            btn.disabled = false;
-            // 가입 진행 (프로필 존재하므로 auth.users만 생성)
+            // 프리체크 성공 메시지를 보여주지만 버튼은 이미 disabled 상태 유지 (가입 진행 중)
+            console.log('Provisional member detected, proceeding with signup...');
         }
     } catch (checkErr) {
         console.warn('Provisional member check error:', checkErr.message);
@@ -1354,9 +1353,6 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     try {
         const signUpData = await Auth.signUp(email, password, { name, phone });
 
-        // 트리거가 profiles row를 생성할 시간 확보
-        await new Promise(r => setTimeout(r, 2000));
-
         // signUp 반환값 또는 세션에서 유저 ID 가져오기
         let userId = null;
         if (signUpData && signUpData.user) {
@@ -1364,6 +1360,29 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         } else {
             const session = await Auth.getSession();
             if (session && session.user) userId = session.user.id;
+        }
+
+        if (!userId) {
+            throw new Error('가입 중 오류: 사용자 ID를 얻을 수 없습니다. 다시 시도해주세요.');
+        }
+
+        // 트리거가 profiles row를 생성할 때까지 폴링 (최대 10초)
+        let profileCreated = false;
+        for (let poll = 0; poll < 20; poll++) {
+            try {
+                const profile = await DB.getProfile(userId);
+                if (profile) {
+                    profileCreated = true;
+                    break;
+                }
+            } catch (e) {
+                // getProfile 호출 실패는 무시하고 계속 폴링
+            }
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        if (!profileCreated) {
+            throw new Error('프로필 생성 시간 초과. 잠시 후 다시 시도해주세요.');
         }
 
         if (userId) {
