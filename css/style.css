@@ -1345,6 +1345,32 @@ footer {
     font-weight: 400;
 }
 
+/* 예비멤버 감지 안내 — 가입 모달 이메일 입력 바로 아래 */
+.provisional-notice {
+    margin: 0 0 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    background: rgba(255, 184, 0, 0.10);
+    border: 1px solid rgba(255, 184, 0, 0.45);
+    color: var(--text-primary);
+}
+.provisional-notice strong {
+    font-weight: 700;
+}
+.provisional-notice .provisional-notice-sub {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+}
+.provisional-notice.is-checking {
+    background: none;
+    border: 1px dashed var(--text-muted);
+    color: var(--text-muted);
+}
+
 .auth-switch {
     text-align: center;
     margin-top: 1rem;

@@ -27,7 +27,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo-waat.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260814e">
+    <link rel="stylesheet" href="css/style.css?v=20260816d">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -278,6 +278,8 @@
                             <label for="s-email">이메일 <span class="required">*</span></label>
                             <input type="email" id="s-email" name="email" required placeholder="email@example.com">
                         </div>
+                        <!-- 예비멤버 감지 안내 (js/main.js 가 이메일 입력 시 채운다) -->
+                        <p id="provisional-notice" class="provisional-notice" style="display:none; grid-column:1 / -1;" role="status" aria-live="polite"></p>
                         <div class="form-group">
                             <label for="s-password">비밀번호 <span class="required">*</span></label>
                             <input type="password" id="s-password" name="password" required placeholder="8자 이상 (영문/숫자/특수문자)" minlength="8" pattern="\S{8,}" title="공백 없이 8자 이상 입력해주세요" autocomplete="new-password">
@@ -566,7 +568,10 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260816b"></script>
+    <!-- db.js 는 supabase-config.js 다음에 와야 한다(전역 DB·_supabase 에 의존).
+         예비멤버 조회(DB.getProfileByEmail)가 여기 있어서, 빠지면 가입 모달의 예비멤버 안내가 통째로 죽는다. -->
+    <script src="js/db.js?v=20260816d"></script>
     <script src="js/animations.js?v=20260518c"></script>
-    <script src="js/main.js?v=20260816c"></script>
+    <script src="js/main.js?v=20260816d"></script>
 </body>
 </html>

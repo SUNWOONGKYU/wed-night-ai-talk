@@ -164,6 +164,9 @@ function openModal(tab, options) {
         notice.style.display = (options && options.showNotice) ? 'block' : 'none';
     }
 
+    // 예비멤버 안내는 이메일을 입력해야 뜬다 — 모달을 열 때는 항상 초기화한다.
+    if (typeof hideProvisionalNotice === 'function') hideProvisionalNotice();
+
     const switchTop = document.getElementById('auth-switch-top');
     const switchTopSignup = document.getElementById('auth-switch-top-signup');
     const switchTopLogin = document.getElementById('auth-switch-top-login');
@@ -280,6 +283,104 @@ document.getElementById('signup-optional-toggle').addEventListener('click', (e) 
     const fields = document.getElementById('signup-optional-fields');
     fields.style.display = (fields.style.display === 'none') ? 'block' : 'none';
 });
+
+// ========== 예비멤버 감지 안내 ==========
+// 예비멤버 = profiles 행은 있지만 로그인 계정(auth.users)이 없는 사람. notes 에 '예비 멤버' 마크가 붙어 있다.
+// PO 방침(2026-08-16): 예비멤버에게 일괄 안내 메일을 발송하지 않는다.
+//   대신 모임 신청 등으로 가입 모달에 닿았을 때 여기서 알아보고 전환 신청을 유도한다.
+// 이 기능은 DB.getProfileByEmail() 에 의존한다 — index.html 이 js/db.js 를 반드시 로드해야 한다.
+var provisionalCheckTimer = null;
+var provisionalCheckSeq = 0;       // 늦게 도착한 옛 응답이 최신 결과를 덮어쓰지 않도록 하는 순번
+var provisionalMatched = null;     // 예비멤버로 확인된 profiles 행 (가입 제출 시 재사용)
+
+function isProvisionalProfile(profile) {
+    return !!(profile && profile.notes && profile.notes.indexOf('예비 멤버') !== -1);
+}
+
+function hideProvisionalNotice() {
+    provisionalMatched = null;
+    var el = document.getElementById('provisional-notice');
+    if (!el) return;
+    el.style.display = 'none';
+    el.innerHTML = '';
+    el.classList.remove('is-checking');
+}
+
+function showProvisionalNotice(profile) {
+    provisionalMatched = profile;
+    var el = document.getElementById('provisional-notice');
+    if (!el) return;
+    var who = (profile && profile.name) ? profile.name + '님, ' : '';
+    el.classList.remove('is-checking');
+    el.innerHTML =
+        '✅ ' + escapeHtml(who) + '<strong>예비 멤버로 등록되어 있습니다.</strong><br>' +
+        '정규 멤버로 전환 신청을 하여 주세요.' +
+        '<span class="provisional-notice-sub">아래 정보를 입력하고 가입을 완료하시면 정규 멤버로 전환됩니다. ' +
+        '기존 예비 멤버 기록은 자동으로 이어집니다.</span>';
+    el.style.display = 'block';
+
+    // 전환 신청 유도 — 이미 아는 정보는 채워주고, 다음 입력칸으로 보낸다.
+    var nameEl = document.getElementById('s-name');
+    if (nameEl && !nameEl.value.trim() && profile && profile.name) nameEl.value = profile.name;
+    var phoneEl = document.getElementById('s-contact');
+    if (phoneEl && !phoneEl.value.trim() && profile && profile.phone) phoneEl.value = profile.phone;
+    var pwEl = document.getElementById('s-password');
+    if (pwEl && !pwEl.value) pwEl.focus();
+}
+
+async function runProvisionalCheck(email) {
+    var el = document.getElementById('provisional-notice');
+    email = String(email || '').trim().toLowerCase();
+
+    // 이메일 형태가 아직 아니면 조용히 숨긴다 (타이핑 중 깜빡임 방지)
+    if (!email || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+        hideProvisionalNotice();
+        return null;
+    }
+    if (typeof DB === 'undefined' || typeof DB.getProfileByEmail !== 'function') {
+        console.warn('[예비멤버] DB.getProfileByEmail 없음 — js/db.js 가 로드되지 않았습니다.');
+        hideProvisionalNotice();
+        return null;
+    }
+
+    var seq = ++provisionalCheckSeq;
+    if (el) {
+        el.classList.add('is-checking');
+        el.textContent = '예비 멤버 여부를 확인하는 중...';
+        el.style.display = 'block';
+    }
+
+    try {
+        var profile = await DB.getProfileByEmail(email);
+        if (seq !== provisionalCheckSeq) return null;   // 그 사이 더 최신 조회가 시작됨 → 이 결과는 버린다
+        if (isProvisionalProfile(profile)) {
+            showProvisionalNotice(profile);
+            return profile;
+        }
+        hideProvisionalNotice();
+        return null;
+    } catch (err) {
+        if (seq !== provisionalCheckSeq) return null;
+        console.warn('[예비멤버] 조회 실패:', err && err.message);
+        hideProvisionalNotice();   // 확신이 없으면 아무 말도 하지 않는다
+        return null;
+    }
+}
+
+(function bindProvisionalCheck() {
+    var emailEl = document.getElementById('s-email');
+    if (!emailEl) return;
+    emailEl.addEventListener('input', function() {
+        hideProvisionalNotice();                       // 이메일이 바뀌면 옛 안내는 즉시 내린다
+        clearTimeout(provisionalCheckTimer);
+        var v = emailEl.value;
+        provisionalCheckTimer = setTimeout(function() { runProvisionalCheck(v); }, 600);
+    });
+    emailEl.addEventListener('blur', function() {
+        clearTimeout(provisionalCheckTimer);
+        runProvisionalCheck(emailEl.value);
+    });
+})();
 
 // ========== Google OAuth 로그인 ==========
 function bindGoogleAuth(btnId) {
@@ -1428,15 +1529,14 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     setStatus(statusEl, '가입 처리 중...', 'loading');
     btn.disabled = true;
 
-    // 예비멤버 체크 — 이메일이 이미 예비멤버로 등록되어 있으면 안내 (UI만 업데이트, 버튼은 처리 중)
-    try {
-        const existingProfile = await DB.getProfileByEmail(email);
-        if (existingProfile && existingProfile.notes && existingProfile.notes.includes('예비 멤버')) {
-            // 프리체크 성공 메시지를 보여주지만 버튼은 이미 disabled 상태 유지 (가입 진행 중)
-            console.log('Provisional member detected, proceeding with signup...');
-        }
-    } catch (checkErr) {
-        console.warn('Provisional member check error:', checkErr.message);
+    // 예비멤버 확인 — 안내 배너를 갱신하고, 상태 문구도 전환 신청 맥락으로 바꾼다.
+    // (버튼은 건드리지 않는다 — 가입이 진행 중이므로 disabled 를 유지해 이중 제출을 막는다)
+    var provisionalHit = provisionalMatched;
+    if (!provisionalHit || String(provisionalHit.email || '').toLowerCase() !== email.toLowerCase()) {
+        provisionalHit = await runProvisionalCheck(email);   // 실패해도 null 만 돌려주고 가입은 계속된다
+    }
+    if (provisionalHit) {
+        setStatus(statusEl, '예비 멤버 확인됨 — 정규 멤버로 전환 신청 중...', 'loading');
     }
 
     try {
@@ -1460,9 +1560,11 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         // 이 경우 프로필 저장은 아직 불가능(RLS가 auth.uid()를 요구) → 메일함 안내 후 종료.
         if (!signUpData.session) {
             setStatus(statusEl,
-                '✉️ ' + email + ' 으로 인증 메일을 보냈습니다.\n메일의 링크를 눌러 인증을 완료하면 가입이 끝납니다.',
+                '✉️ ' + email + ' 으로 인증 메일을 보냈습니다.\n메일의 링크를 눌러 인증을 완료하면 ' +
+                (provisionalHit ? '정규 멤버로 전환됩니다.' : '가입이 끝납니다.'),
                 'success');
             e.target.reset();
+            hideProvisionalNotice();
             setTimeout(closeModal, 5000);
             return;
         }

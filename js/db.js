@@ -157,14 +157,23 @@ var _dbExtensions = {
     // 프로필 조회 (이메일로)
     async getProfileByEmail(email) {
         try {
+            // profiles.email 에는 UNIQUE 제약이 없어 같은 이메일 행이 여러 개일 수 있다.
+            // .single() 은 그때 PGRST116 으로 실패해 예비멤버를 놓치므로 쓰지 않는다.
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('email', email.toLowerCase())
-                .single();
+                .eq('email', String(email || '').toLowerCase())
+                .order('created_at', { ascending: true })
+                .limit(20);
 
-            if (error && error.code !== 'PGRST116') throw error;
-            return data || null;
+            if (error) throw error;
+            if (!data || data.length === 0) return null;
+
+            // 여러 행이면 '예비 멤버' 마크가 붙은 행을 우선 반환한다(전환 안내가 목적).
+            const provisional = data.find(function(row) {
+                return row.notes && row.notes.indexOf('예비 멤버') !== -1;
+            });
+            return provisional || data[0];
         } catch (e) {
             console.error('getProfileByEmail error:', e);
             throw e;
