@@ -524,10 +524,17 @@ function showResetPasswordModal() {
 // 이메일 인증이 켜져 있으면 가입 시점엔 세션이 없어 저장할 수 없으므로(RLS가 auth.uid() 요구),
 // 인증 링크를 누른 뒤 첫 SIGNED_IN 시점에 이 함수가 실행된다.
 // waat_profile_pending 플래그로 멱등성 보장 — 완료되면 false 로 내려 다음 로그인부터 건너뛴다.
+// 페이지 로드당 1회만 실행하기 위한 가드.
+// 저장이 실패하면 waat_profile_pending 플래그가 true 로 남는데, 그러면 initAuth 와
+// SIGNED_IN 이 매번 이 루틴을 처음부터 다시 돌려 재시도(최대 7.5초)를 반복하게 된다.
+let _profileCompletionAttempted = false;
+
 async function completePendingProfile(user) {
     if (!user) return;
     const meta = user.user_metadata || {};
     if (!meta.waat_profile_pending) return;  // 이미 완료됐거나 이 흐름으로 가입한 계정이 아님
+    if (_profileCompletionAttempted) return; // 이 페이지에서 이미 시도함 (중복 실행 방지)
+    _profileCompletionAttempted = true;
 
     // 트리거가 profiles row 를 생성할 때까지 폴링 (최대 10초)
     let profileCreated = false;
@@ -593,11 +600,11 @@ async function initAuth() {
     if (session) {
         currentUser = session.user;
         // SIGNED_IN 이벤트 없이 저장된 세션으로 들어온 경우에도 미완성 프로필을 복구한다.
-        try {
-            await completePendingProfile(currentUser);
-        } catch (e) {
+        // await 하지 않는다 — 저장이 실패하면 재시도에 최대 7.5초가 걸리는데,
+        // 그동안 updateUI() 가 막혀 화면이 멈춘 것처럼 보이기 때문이다.
+        completePendingProfile(currentUser).catch(function (e) {
             console.warn('가입 프로필 완성 실패:', e.message);
-        }
+        });
         try {
             currentProfile = await DB.getProfile(currentUser.id);
             currentProfile = await syncAdminRole(currentUser, currentProfile);
