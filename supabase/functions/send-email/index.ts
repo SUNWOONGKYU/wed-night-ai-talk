@@ -25,7 +25,10 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const ADMIN_EMAILS = ['wksun999@gmail.com', 'lsonic.lee@gmail.com'];
-const MAX_RECIPIENTS = 200;
+// Resend 유료 플랜 전환 (2026-08-18) — 200명 상한은 무료 플랜 시절의 자체 안전장치였을 뿐
+// Resend API 자체 제한이 아니었음(발송은 이 파일 안에서 건별 순차 호출, 배치 API 미사용).
+// 안전장치로 여유 있게 상향, 완전히 제거하지는 않음.
+const MAX_RECIPIENTS = 2000;
 const MAX_SUBJECT_LEN = 200;
 const MAX_HTML_LEN = 100 * 1024; // 100KB
 
