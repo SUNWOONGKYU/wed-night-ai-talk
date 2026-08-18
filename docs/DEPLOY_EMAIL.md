@@ -7,7 +7,7 @@
 
 | 종류 | 파일 |
 |---|---|
-| DB 마이그레이션 | `supabase/migrations/20260514070000_email_logs.sql` |
+| DB 마이그레이션 | `supabase/migrations/20260514070000_email_logs.sql` (테이블 생성), `20260818010000_email_logs_incremental_status.sql` (`status`/`updated_at` 컬럼 추가) |
 | Edge Function | `supabase/functions/send-email/index.ts` |
 | 클라이언트 래퍼 | `js/supabase-config.js` (DB.sendBulkEmail / DB.getEmailLogs) |
 | 관리자 UI | `admin.html` (📧 이메일 발송 탭) |
@@ -28,7 +28,7 @@
 
 **방법 B: Supabase CLI**
 ```bash
-cd "G:/내 드라이브/백업_AI스터디모임"
+cd "G:/내 드라이브/WAAT"
 supabase db push
 ```
 
@@ -47,7 +47,7 @@ npm install -g supabase
 supabase login
 
 # 프로젝트 연결 (저장소 루트에서)
-cd "G:/내 드라이브/백업_AI스터디모임"
+cd "G:/내 드라이브/WAAT"
 supabase link --project-ref vmiyqfkcoqdnkxjnxijt
 ```
 
@@ -73,7 +73,7 @@ supabase secrets set RESEND_REPLY_TO=wksun999@gmail.com
 ### STEP 4. Edge Function 배포
 
 ```bash
-cd "G:/내 드라이브/백업_AI스터디모임"
+cd "G:/내 드라이브/WAAT"
 supabase functions deploy send-email
 ```
 
@@ -123,9 +123,9 @@ https://vmiyqfkcoqdnkxjnxijt.supabase.co/functions/v1/send-email
 
 | 항목 | 한도 | 비용 |
 |---|---|---|
-| Resend 무료 플랜 | 일 100건, 월 3,000건 | 무료 |
+| Resend 유료 플랜 (2026-08-18~) | 무료 플랜의 일 100건/월 3,000건 한도 해제 | 유료 |
 | Supabase Edge Functions | 월 500,000 호출 | 무료 |
-| **현재 상태** | 회원 27명 × 모임 4회 = 약 100건/월 | **무료 유지** |
+| **현재 상태** | 회원 283명 × 일일 발굴 콘텐츠 발송 | **유료 플랜 사용 중** |
 
 ---
 
@@ -133,9 +133,10 @@ https://vmiyqfkcoqdnkxjnxijt.supabase.co/functions/v1/send-email
 
 - [x] `.env` 가 `.gitignore` 에 포함됨
 - [x] Edge Function 에서 `ADMIN_EMAILS` 화이트리스트 검증
-- [x] 1회 최대 200명 제한 (스팸/오발송 방지)
-- [x] 600ms 발송 간격 (Resend rate-limit 회피)
+- [x] 1회 최대 2,000명 제한 (2026-08-18, 200명 → 상향. 스팸/오발송 방지용 안전장치일 뿐 Resend API 자체 제한 아님 — 발송은 건별 순차 호출, 배치 API 미사용)
+- [x] 300ms 발송 간격 (2026-08-18, 600ms → 단축. Resend 유료 플랜 전환에 맞춰 절반으로 줄임 — 실제 초당 한도 확인 전이라 429 뜨면 다시 늘릴 것)
 - [x] email_logs RLS — 관리자만 조회 가능
+- [x] email_logs 는 발송 루프 시작 전에 `in_progress` 행을 먼저 쓰고 매 건 발송 직후 갱신 (2026-08-18 — 아래 "문제 해결" 참고)
 - [x] CORS 명시적으로 설정
 
 ---
@@ -164,3 +165,13 @@ https://vmiyqfkcoqdnkxjnxijt.supabase.co/functions/v1/send-email
 
 ### 이메일이 스팸함으로 감
 → 본인 도메인 인증 + SPF/DKIM/DMARC 설정 권장 (Resend Dashboard → Domains)
+
+### 📨 전체 발송을 눌렀는데 발송 이력(admin.html 하단 표)에 아무것도 안 남음
+
+**2026-08-18 실사고**: 283명에게 전체 발송 → Resend Dashboard(resend.com/emails)에는 "Delivered"로 실제 발송이 확인되는데, `email_logs` 테이블엔 몇 분이 지나도 새 행이 안 생김.
+
+**원인**: 수신자 수가 많으면(283명 × 발송 간격) 전체 루프 실행시간이 Supabase Edge Function 자체의 실행시간 제한에 근접/초과한다. 예전 코드는 발송 루프가 **끝난 뒤에야** `email_logs.insert()`를 한 번 실행했는데, 루프 도중 함수가 플랫폼에 의해 강제 종료되면 그 INSERT 자체가 실행되지 않아 — Resend로는 이미 다 나갔는데 WAAT 자체 기록은 하나도 안 남는다.
+
+**고침 (`send-email/index.ts`)**: 발송 루프 **시작 전에** `status: 'in_progress'` 행을 먼저 INSERT 하고, 매 건 발송 직후 그 행을 UPDATE (성공/실패 카운트, 상세 내역). 루프가 끝나면 `status: 'completed'`로 마무리 UPDATE. 함수가 중간에 죽어도 어디까지 갔는지 `email_logs`만 보면 안다 — `status = 'in_progress'` 인 채로 오래 멈춰 있는 행이 있으면 그 발송은 죽은 것.
+
+**의심되면**: admin.html 발송 이력 표가 아니라 **resend.com/emails 를 직접 확인**하는 게 최종 진실이다 (WAAT 자체 기록보다 우선).
