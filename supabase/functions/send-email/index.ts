@@ -186,7 +186,33 @@ serve(async (req: Request) => {
         // 테스트 모드: 첫 수신자에게만
         const targets = body.test ? cleanTo.slice(0, 1) : cleanTo;
 
-        // 5) 발송 (개별, 개인정보 보호상 BCC 미사용)
+        // 5) 발송 이력 행을 루프 시작 전에 먼저 써 둔다 (PO, 2026-08-18).
+        // 예전엔 루프가 다 끝난 뒤에야 INSERT 했는데, Supabase Edge Function 실행시간
+        // 제한에 걸려 루프 도중 함수가 통째로 죽으면 그 INSERT 자체가 실행되지 않아
+        // 발송 이력이 아예 안 남았다 - Resend 쪽엔 283명 전부 실제로 발송됐는데
+        // email_logs 는 빈 채로 남은 사고로 확인됨. 매 건 발송 직후 이 행을 갱신하므로,
+        // 도중에 죽어도 이 테이블만 보면 몇 명까지 나갔는지 안다.
+        const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
+        const { data: logRow, error: logInsertErr } = await supaAdmin
+            .from('email_logs')
+            .insert({
+                subject,
+                body_preview: html.slice(0, 500),
+                recipients_count: targets.length,
+                success_count: 0,
+                fail_count: 0,
+                recipients: targets,
+                details: [],
+                sent_by: user.id,
+                sent_by_email: callerEmail,
+                status: 'in_progress',
+            })
+            .select('id')
+            .single();
+        if (logInsertErr) console.error('email_logs 시작 행 insert 실패:', logInsertErr);
+        const logId = logRow?.id ?? null;
+
+        // 6) 발송 (개별, 개인정보 보호상 BCC 미사용)
         const from = `${FROM_NAME} <${FROM_EMAIL}>`;
         const results: ResendSendResult[] = [];
         for (const to of targets) {
@@ -199,30 +225,48 @@ serve(async (req: Request) => {
                 html,
             });
             results.push(r);
-            // Resend free tier rate-limit (2 req/sec) 회피용 짧은 지연
-            await new Promise((res) => setTimeout(res, 600));
+            if (logId !== null) {
+                const successSoFar = results.filter((x) => x.success).length;
+                // 진행 중 갱신 실패는 무시 -- 마지막 완료 갱신이 최종 진실이고, 중간
+                // 갱신 하나가 실패해도 다음 건 갱신이 이어서 따라잡는다.
+                const { error: progressErr } = await supaAdmin
+                    .from('email_logs')
+                    .update({
+                        success_count: successSoFar,
+                        fail_count: results.length - successSoFar,
+                        details: results,
+                        updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', logId);
+                if (progressErr) console.error('email_logs 진행 갱신 실패:', progressErr);
+            }
+            // Resend 유료 플랜 전환 (2026-08-18) 이후 지연 단축 -- 무료 플랜 2 req/sec
+            // 회피용 600ms 는 283명 기준 총 실행시간을 Edge Function 실행시간 제한에
+            // 근접시켜 타임아웃 위험을 키웠다. 유료 플랜의 실제 초당 한도는 확인 전이라
+            // 300ms 로 절반만 줄임 - 429 뜨면 다시 늘릴 것.
+            await new Promise((res) => setTimeout(res, 300));
         }
 
         const successCount = results.filter((r) => r.success).length;
         const failCount = results.length - successCount;
 
-        // 6) 발송 이력 저장 (SERVICE_ROLE 로 RLS 우회)
-        try {
-            const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
-            await supaAdmin.from('email_logs').insert({
-                subject,
-                body_preview: html.slice(0, 500),
-                recipients_count: targets.length,
-                success_count: successCount,
-                fail_count: failCount,
-                recipients: targets,
-                details: results,
-                sent_by: user.id,
-                sent_by_email: callerEmail,
-            });
-        } catch (e) {
-            console.error('email_logs insert 실패:', e);
-            // 로그 저장 실패는 무시 (발송 자체는 성공할 수 있음)
+        // 7) 발송 이력 완료 처리 (SERVICE_ROLE 로 RLS 우회)
+        if (logId !== null) {
+            try {
+                await supaAdmin
+                    .from('email_logs')
+                    .update({
+                        success_count: successCount,
+                        fail_count: failCount,
+                        details: results,
+                        status: 'completed',
+                        updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', logId);
+            } catch (e) {
+                console.error('email_logs 완료 갱신 실패:', e);
+                // 완료 표시만 실패한 것 -- 진행 중 갱신이 이미 최신 카운트를 남겨 뒀다.
+            }
         }
 
         return jsonResponse({
