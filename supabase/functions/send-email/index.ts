@@ -26,11 +26,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const ADMIN_EMAILS = ['wksun999@gmail.com', 'lsonic.lee@gmail.com'];
 // Resend 유료 플랜 전환 (2026-08-18) — 200명 상한은 무료 플랜 시절의 자체 안전장치였을 뿐
-// Resend API 자체 제한이 아니었음(발송은 이 파일 안에서 건별 순차 호출, 배치 API 미사용).
-// 안전장치로 여유 있게 상향, 완전히 제거하지는 않음.
+// Resend API 자체 제한이 아니었음. 안전장치로 여유 있게 상향, 완전히 제거하지는 않음.
 const MAX_RECIPIENTS = 2000;
 const MAX_SUBJECT_LEN = 200;
 const MAX_HTML_LEN = 100 * 1024; // 100KB
+// Resend 배치 API(`/emails/batch`) 1회 호출 상한 (PO, 2026-08-23). 건별 순차 호출 +
+// 300ms 지연으로는 회원 293명만으로도 Supabase Edge Function 실행시간 제한에 걸려
+// 200명대에서 함수가 강제 종료되는 사고가 반복됐다(email_logs에 success_count만
+// 남고 나머지는 details에 아예 없음 -- 실패가 아니라 시도조차 못 한 것). 100명씩
+// 묶어 배치 호출하면 293명이 3번 호출로 끝나 지연이 필요 없어진다.
+const BATCH_SIZE = 100;
 
 // Origin 화이트리스트 — 운영/프리뷰/로컬개발만 허용
 const ALLOWED_ORIGINS = [
@@ -80,38 +85,46 @@ function isValidEmail(s: string): boolean {
     return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(s);
 }
 
-async function sendOneEmail(opts: {
+// 개인정보 보호상 BCC는 여전히 쓰지 않는다 -- 배치 호출이어도 각 항목의 `to`는
+// 수신자 1명뿐이라, Resend가 한 요청으로 묶어 보낼 뿐 서로의 주소를 볼 일은 없다.
+async function sendBatch(opts: {
     apiKey: string;
     from: string;
     replyTo: string;
-    to: string;
+    to: string[];
     subject: string;
     html: string;
-}): Promise<ResendSendResult> {
+}): Promise<ResendSendResult[]> {
+    const payload = opts.to.map((to) => {
+        const item: Record<string, unknown> = { from: opts.from, to: [to], subject: opts.subject, html: opts.html };
+        if (opts.replyTo) item.reply_to = opts.replyTo;
+        return item;
+    });
     try {
-        const reqBody: Record<string, unknown> = {
-            from: opts.from,
-            to: [opts.to],
-            subject: opts.subject,
-            html: opts.html,
-        };
-        if (opts.replyTo) reqBody.reply_to = opts.replyTo;
-
-        const res = await fetch('https://api.resend.com/emails', {
+        const res = await fetch('https://api.resend.com/emails/batch', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${opts.apiKey}`,
             },
-            body: JSON.stringify(reqBody),
+            body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (!res.ok) {
-            return { email: opts.to, success: false, error: data?.message || `HTTP ${res.status}` };
+            // 배치 호출 자체가 실패하면 (인증 오류, 429 등) 이 묶음 전원을 실패로
+            // 기록한다 -- Resend 배치 API는 항목별 부분 실패를 알려주지 않는다.
+            const errMsg = data?.message || `HTTP ${res.status}`;
+            return opts.to.map((to) => ({ email: to, success: false, error: errMsg }));
         }
-        return { email: opts.to, success: true, resend_id: data?.id };
+        const items: Array<{ id?: string }> = Array.isArray(data?.data) ? data.data : [];
+        return opts.to.map((to, i) => ({
+            email: to,
+            success: Boolean(items[i]?.id),
+            resend_id: items[i]?.id,
+        }));
     } catch (e) {
-        return { email: opts.to, success: false, error: (e as Error).message };
+        const errMsg = (e as Error).message;
+        return opts.to.map((to) => ({ email: to, success: false, error: errMsg }));
     }
 }
 
@@ -209,70 +222,77 @@ serve(async (req: Request) => {
             })
             .select('id')
             .single();
-        if (logInsertErr) console.error('email_logs 시작 행 insert 실패:', logInsertErr);
-        const logId = logRow?.id ?? null;
+        if (logInsertErr || !logRow?.id) {
+            // 감사로그를 만들지 못한 상태로 발송을 시작하면, 메일은 실제로 나가도
+            // WAAT에는 아무 기록이 남지 않는다. 발송 전에 fail-closed 한다.
+            console.error('email_logs 시작 행 insert 실패:', logInsertErr || 'missing log id');
+            return jsonResponse(
+                {
+                    success: false,
+                    error: '발송 기록을 시작할 수 없어 발송을 중단했습니다.',
+                    code: 'EMAIL_LOG_INIT_FAILED',
+                },
+                503,
+                req,
+            );
+        }
+        const logId = logRow.id;
+        let logUpdateFailed = false;
 
-        // 6) 발송 (개별, 개인정보 보호상 BCC 미사용)
+        // 6) 발송 (100명씩 배치 호출 -- 293명이 293번이 아니라 3번의 요청으로 끝난다)
         const from = `${FROM_NAME} <${FROM_EMAIL}>`;
         const results: ResendSendResult[] = [];
-        for (const to of targets) {
-            const r = await sendOneEmail({
+        for (let i = 0; i < targets.length; i += BATCH_SIZE) {
+            const chunk = targets.slice(i, i + BATCH_SIZE);
+            const chunkResults = await sendBatch({
                 apiKey: RESEND_API_KEY,
                 from,
                 replyTo: REPLY_TO,
-                to,
+                to: chunk,
                 subject,
                 html,
             });
-            results.push(r);
-            if (logId !== null) {
-                const successSoFar = results.filter((x) => x.success).length;
-                // 진행 중 갱신 실패는 무시 -- 마지막 완료 갱신이 최종 진실이고, 중간
-                // 갱신 하나가 실패해도 다음 건 갱신이 이어서 따라잡는다.
-                const { error: progressErr } = await supaAdmin
-                    .from('email_logs')
-                    .update({
-                        success_count: successSoFar,
-                        fail_count: results.length - successSoFar,
-                        details: results,
-                        updated_at: new Date().toISOString(),
-                    })
-                    .eq('id', logId);
-                if (progressErr) console.error('email_logs 진행 갱신 실패:', progressErr);
+            results.push(...chunkResults);
+            const successSoFar = results.filter((x) => x.success).length;
+            const { error: progressErr } = await supaAdmin
+                .from('email_logs')
+                .update({
+                    success_count: successSoFar,
+                    fail_count: results.length - successSoFar,
+                    details: results,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', logId);
+            if (progressErr) {
+                logUpdateFailed = true;
+                console.error('email_logs 진행 갱신 실패:', progressErr);
             }
-            // Resend 유료 플랜 전환 (2026-08-18) 이후 지연 단축 -- 무료 플랜 2 req/sec
-            // 회피용 600ms 는 283명 기준 총 실행시간을 Edge Function 실행시간 제한에
-            // 근접시켜 타임아웃 위험을 키웠다. 유료 플랜의 실제 초당 한도는 확인 전이라
-            // 300ms 로 절반만 줄임 - 429 뜨면 다시 늘릴 것.
-            await new Promise((res) => setTimeout(res, 300));
         }
 
         const successCount = results.filter((r) => r.success).length;
         const failCount = results.length - successCount;
 
         // 7) 발송 이력 완료 처리 (SERVICE_ROLE 로 RLS 우회)
-        if (logId !== null) {
-            try {
-                await supaAdmin
-                    .from('email_logs')
-                    .update({
-                        success_count: successCount,
-                        fail_count: failCount,
-                        details: results,
-                        status: 'completed',
-                        updated_at: new Date().toISOString(),
-                    })
-                    .eq('id', logId);
-            } catch (e) {
-                console.error('email_logs 완료 갱신 실패:', e);
-                // 완료 표시만 실패한 것 -- 진행 중 갱신이 이미 최신 카운트를 남겨 뒀다.
-            }
+        const { error: completionErr } = await supaAdmin
+            .from('email_logs')
+            .update({
+                success_count: successCount,
+                fail_count: failCount,
+                details: results,
+                status: 'completed',
+                updated_at: new Date().toISOString(),
+            })
+            .eq('id', logId);
+        if (completionErr) {
+            logUpdateFailed = true;
+            console.error('email_logs 완료 갱신 실패:', completionErr);
         }
 
         return jsonResponse({
             success: true,
             sent: successCount,
             failed: failCount,
+            log_status: logUpdateFailed ? 'degraded' : 'completed',
             test_mode: !!body.test,
             details: results,
         }, 200, req);
