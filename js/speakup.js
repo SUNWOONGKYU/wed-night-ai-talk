@@ -98,13 +98,28 @@ function spUpdateAbdMembershipNotice() {
 var _viewedPosts = [];
 try { _viewedPosts = JSON.parse(sessionStorage.getItem('sp_viewed') || '[]'); } catch(e) {}
 
+// 비로그인 방문자 식별용 랜덤 키 (PO, 2026-08-22 -- 로그인 사용자만 조회수를 집계하던
+// 것을 풀어, 이메일 클릭처럼 대부분 비로그인인 유입도 잡히게 한다). sessionStorage와
+// 달리 브라우저를 껐다 켜도 남아야 재방문이 중복 집계되지 않으므로 localStorage에 둔다.
+// 로그인 사용자는 서버에서 auth.uid()를 우선 쓰므로 이 키는 무시된다.
+function _spGetAnonKey() {
+    try {
+        var key = localStorage.getItem('sp_anon_id');
+        if (!key) {
+            key = crypto.randomUUID();
+            localStorage.setItem('sp_anon_id', key);
+        }
+        return key;
+    } catch (e) {
+        return null;
+    }
+}
+
 async function trackPostView(postId) {
     if (_viewedPosts.indexOf(postId) !== -1) return;
     _viewedPosts.push(postId);
     try { sessionStorage.setItem('sp_viewed', JSON.stringify(_viewedPosts)); } catch(e) {}
-    // 서버 측에서 비로그인은 무시되므로 로그인 시에만 호출 (불필요한 요청 절약)
-    if (!spCurrentUser) return;
-    try { await DB.incrementViewCount(postId); } catch(e) {}
+    try { await DB.incrementViewCount(postId, _spGetAnonKey()); } catch(e) {}
 }
 
 var spViewObserver = null;

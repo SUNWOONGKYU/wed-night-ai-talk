@@ -514,8 +514,8 @@ var DB = {
         return data;
     },
 
-    async incrementViewCount(postId) {
-        var { error } = await _supabase.rpc('increment_post_view', { p_post_id: postId });
+    async incrementViewCount(postId, anonKey) {
+        var { error } = await _supabase.rpc('increment_post_view', { p_post_id: postId, p_anon_key: anonKey || null });
         if (error) throw error;
     },
 
@@ -744,7 +744,7 @@ var DB = {
         var lim = Math.min(Math.max(parseInt(limit) || 30, 1), 200);
         var { data, error } = await _supabase
             .from('email_logs')
-            .select('id, subject, recipients_count, success_count, fail_count, sent_by_email, created_at')
+            .select('id, subject, recipients_count, success_count, fail_count, sent_by_email, status, created_at, updated_at')
             .order('created_at', { ascending: false })
             .limit(lim);
         if (error) throw error;
