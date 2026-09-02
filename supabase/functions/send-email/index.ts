@@ -118,20 +118,40 @@ function withUnsubscribeFooter(html: string, token: string | null): string {
           + `수신거부하셔도 회원 자격은 그대로이고, 모임 신청과 게시판은 계속 이용하실 수 있습니다.</span>`
         : `이 메일을 더 받고 싶지 않으시면 이 메일에 회신해 주세요.`;
 
-    return `${html}<div style="${box}">${body}<br><br>`
+    const footer = `<div style="${box}">${body}<br><br>`
         + `<span style="color:#999;font-size:12px;">WAAT — Wednesday Afternoon AI Talk · `
         + `<a href="${SITE_ORIGIN}" style="color:#999;">waat.community</a></span></div>`;
+
+    // ⚠️ 붙이는 '위치'가 중요하다.
+    //    관리자 화면은 입력한 본문에 HTML 태그가 있으면 그대로 통과시킨다(buildEmailHtml).
+    //    그래서 완성된 HTML 문서를 붙여넣으면 본문이 `</body></html>` 로 끝난다.
+    //    거기에 그냥 이어 붙이면 푸터가 body 바깥에 놓이고, 메일 앱은 그걸 버린다
+    //    — 보내는 쪽은 붙였다고 생각하는데 받는 쪽엔 안 보이는 무음 실패다.
+    //    → </body> 가 있으면 그 '앞'에 넣는다.
+    const i = html.toLowerCase().lastIndexOf('</body>');
+    if (i !== -1) return html.slice(0, i) + footer + html.slice(i);
+    return html + footer;
 }
 
 // 메일 앱(Gmail·Outlook 등)이 발신자 이름 옆에 띄우는 '수신거부' 버튼용 헤더.
 // 본문을 어떻게 렌더링하든 이 버튼은 보이므로, 실질적인 수신거부 경로는 이쪽이다.
 // List-Unsubscribe-Post 를 함께 주면 Gmail 이 확인창 한 번으로 처리한다(RFC 8058).
-function unsubscribeHeaders(token: string | null): Record<string, string> | undefined {
-    if (!token) return undefined;
-    return {
-        'List-Unsubscribe': `<${UNSUB_ENDPOINT}?t=${token}>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-    };
+function unsubscribeHeaders(token: string | null, replyTo: string): Record<string, string> | undefined {
+    if (token) {
+        return {
+            'List-Unsubscribe': `<${UNSUB_ENDPOINT}?t=${token}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        };
+    }
+    // 회원 명단에 없는 주소(관리자가 직접 입력한 수신자)는 토큰을 만들 수 없다.
+    // 그래도 수신거부 수단은 있어야 하므로 mailto 형태로라도 헤더를 붙인다.
+    // Gmail·Outlook 은 이 형태도 '수신거부' 버튼으로 보여준다.
+    if (replyTo) {
+        return {
+            'List-Unsubscribe': `<mailto:${replyTo}?subject=unsubscribe>`,
+        };
+    }
+    return undefined;
 }
 
 // 개인정보 보호상 BCC는 여전히 쓰지 않는다 -- 배치 호출이어도 각 항목의 `to`는
@@ -154,7 +174,7 @@ async function sendBatch(opts: {
             html: withUnsubscribeFooter(opts.html, token),
         };
         if (opts.replyTo) item.reply_to = opts.replyTo;
-        const h = unsubscribeHeaders(token);
+        const h = unsubscribeHeaders(token, opts.replyTo);
         if (h) item.headers = h;
         return item;
     });
@@ -425,6 +445,14 @@ serve(async (req: Request) => {
             failed: failCount,
             log_status: logUpdateFailed ? 'degraded' : 'completed',
             excluded_opt_out: excludedCount,
+            // 수신거부 안내가 실제로 붙었는지 발송 직후 알 수 있게 돌려준다.
+            // 이게 없어서 "붙은 줄 알았는데 받는 쪽엔 없던" 상황을 원격에서 진단하지 못했다.
+            unsubscribe: {
+                with_link: targets.filter((e) => tokenByEmail[e]).length,
+                without_link: targets.filter((e) => !tokenByEmail[e]).length,
+                body_had_html_doc: /<\/body>/i.test(html),
+                footer_len: withUnsubscribeFooter('', tokenByEmail[targets[0]] || null).length,
+            },
             test_mode: !!body.test,
             details: results,
         }, 200, req);

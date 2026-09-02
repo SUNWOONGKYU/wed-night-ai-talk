@@ -1084,7 +1084,20 @@ async function refreshEmailRecipientPreview() {
         const sample = list.slice(0, 3).join(', ');
         const more = list.length > 3 ? ` 외 ${list.length - 3}명` : '';
         const excluded = _lastExcludedOptOut > 0 ? `  (수신거부 ${_lastExcludedOptOut}명 제외)` : '';
-        box.textContent = `수신자 ${list.length}명${excluded}: ${sample}${more}`;
+
+        // 회원 명단에 없는 주소는 수신거부 토큰을 만들 수 없어 '여기를 눌러 수신거부'
+        // 링크가 붙지 않는다(메일 앱 버튼은 회신 주소로 대체된다).
+        // 보내기 전에 알려준다 — 예전엔 보낸 뒤에야 알 수 있었다.
+        const memberEmails = new Set(
+            allMembers.map(m => (m.email || '').trim().toLowerCase()).filter(Boolean));
+        const nonMember = list.filter(e => !memberEmails.has(e)).length;
+        const nonMemberMsg = nonMember > 0
+            ? `
+⚠️ ${nonMember}명은 회원 명단에 없는 주소입니다 — 수신거부 링크가 붙지 않습니다.`
+            : '';
+
+        box.textContent = `수신자 ${list.length}명${excluded}: ${sample}${more}${nonMemberMsg}`;
+        box.style.whiteSpace = 'pre-line';
     } catch (e) {
         box.textContent = '오류: ' + e.message;
     }
@@ -1139,7 +1152,14 @@ async function sendTestEmail() {
             html: buildEmailHtml(bodyRaw),
             test: true
         });
-        setEmailStatus(`✅ 테스트 발송 완료 (성공 ${result.sent} / 실패 ${result.failed}). 본인 메일함을 확인하세요.`, 'success');
+        // 수신거부 안내가 실제로 붙었는지 여기서 바로 알려준다.
+        // (예전엔 붙었는지 보낸 쪽에서 확인할 방법이 없었다 — 2026-09-02)
+        const u = result.unsubscribe || {};
+        const unsubMsg = u.with_link
+            ? ` · 수신거부 링크 포함 ✓`
+            : ` · ⚠️ 수신거부 링크 없음 (이 주소가 회원 명단에 없습니다)`;
+        const docMsg = u.body_had_html_doc ? ' · 본문이 완성 HTML 문서 형식' : '';
+        setEmailStatus(`✅ 테스트 발송 완료 (성공 ${result.sent} / 실패 ${result.failed})${unsubMsg}${docMsg}. 본인 메일함을 확인하세요.`, 'success');
         loadEmailLogs();
     } catch (e) {
         setEmailStatus('❌ 발송 실패: ' + e.message, 'error');
