@@ -2,7 +2,7 @@
 
 > 수요일 오후 AI 수다. AI를 주제로 자유롭게 이야기하는 오프라인 모임 + 자유발언 게시판.
 
-🌐 운영 사이트: https://wed-night-ai-talk.vercel.app (또는 `WAAT_사이트_URL.txt` 참조)
+🌐 운영 사이트: https://waat.community (Vercel 배포, `wed-night-ai-talk.vercel.app` 도 같은 사이트)
 
 ## 기술 스택
 

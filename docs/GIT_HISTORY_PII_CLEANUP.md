@@ -1,84 +1,106 @@
-# Git History PII 정제 (사용자 확인 필요 — Destructive)
+# Git History PII 정제 — 종결 (2026-09-02)
 
 **작성일**: 2026-05-15
-**상태**: 작업 트리는 마스킹 완료. **git history는 아직 raw 상태**.
+**종결일**: 2026-09-02
+**상태**: ✅ **조치 불필요 — 실측으로 확인**
 
-## 배경
-다음 마이그레이션 파일들에 멤버 실명과 휴대폰이 평문으로 포함돼 있어 **git log 이력 탐색** 시 노출 가능:
+---
 
+## 결론 먼저
+
+**git history 에는 실명·휴대폰 평문이 없다.** 2026-05-15 문서가 경고하던
+"history 는 여전히 raw 상태"는 사실이 아니었다. history 재작성(`git filter-repo`)은
+필요하지 않고, 하지 않는다.
+
+2026-09-02 에 아래 두 가지를 실제로 돌려 확인했다.
+
+### 1) 대상 파일들의 '최초 커밋' 시점 내용이 이미 마스킹돼 있다
+
+```bash
+git show <최초커밋>:supabase/migrations/<파일>.sql | head -5
 ```
-supabase/migrations/20260511190000_remove_specific_attendance.sql
-supabase/migrations/20260511200000_remove_hantaehee.sql
-supabase/migrations/20260511220000_remove_kimgyeongmin.sql
-supabase/migrations/20260512000000_add_leeseongki_to_noeul.sql
-supabase/migrations/20260512010000_add_jeongpilwan_to_noeul.sql
-supabase/migrations/20260512020000_add_jeongpilwan_retry.sql
-supabase/migrations/20260512040000_remove_jeongpilwan_from_noeul.sql
-supabase/migrations/20260512060000_swap_seonunggyu_to_simuiyeol.sql
-supabase/migrations/20260512070000_remove_ohhyunjeong_kimmigeum.sql
-supabase/migrations/20260512080000_remove_leeseongki_from_noeul.sql
+
+| 파일(당시 이름) | 최초 커밋 | 그 시점 내용 |
+|---|---|---|
+| `20260511190000_remove_specific_attendance.sql` | `1cec1d1` | `[member-A]` / `[masked-phone]` |
+| `20260511200000_remove_hantaehee.sql` | `998e5aa` | `[member-B]` / `[masked-phone]` |
+| `20260512070000_remove_ohhyunjeong_kimmigeum.sql` | `f63bfdb` | `[member-F]`, `[member-G]` |
+| `20260512060000_swap_seonunggyu_to_simuiyeol.sql` | `f63bfdb` | `[member-H]` |
+
+즉 마스킹은 **커밋 전에** 끝나 있었다. 되돌려 꺼낼 원본이 history 에 없다.
+
+### 2) history 전체에서 휴대폰 평문을 찾아봤다
+
+```bash
+git log --all --oneline -G"01[016789][0-9]{7,8}" -- supabase/migrations
 ```
 
-## 현재 상태
-- ✅ 작업 트리 (working copy): 실명 → `[member-X]`, 휴대폰 → `[masked-phone]`
-- ❌ git history: 여전히 원본 평문 노출
+결과는 **커밋 1건**이고, 그건 2026-09-02 수신거부 검증용 임시 행
+(`20260902130000_tmp_unsubscribe_test_row.sql`)의 **가짜 번호 `01000000000`** 이다.
+실제 회원 번호가 아니다. (그 행은 `20260902140000` 에서 삭제했다)
 
-## 옵션
+---
 
-### A. 그대로 두고 신규 커밋만 정제 (추천 — 안전)
-- 다음 커밋부터 마스킹된 버전이 들어감
-- 과거 커밋의 노출은 git log/blame 깊이 파야 보임
-- 비공개 저장소면 위험 낮음
+## 남아 있던 진짜 문제 — 파일명 (2026-09-02 조치 완료)
 
-### B. git history 재작성 (Destructive — 사용자 결정)
+본문은 마스킹됐는데 **파일명에 로마자 실명이 그대로 남아** 있었다.
+이 저장소는 **PUBLIC** 이라 파일 목록만으로 "누구를 몇 회차 어느 슬롯에서 뺐다"가 읽혔다.
 
-⚠️ **모든 협업자가 강제 fetch/reset 해야 함. force push 필요.**
+2026-09-02 에 본문의 마스킹 라벨과 맞춰 이름을 바꿨다.
 
-#### 도구 추천: `git filter-repo` (BFG보다 안전)
+| 이전 | 이후 |
+|---|---|
+| `20260511200000_remove_hantaehee.sql` | `20260511200000_remove_member_b_from_haetsal.sql` |
+| `20260511220000_remove_kimgyeongmin.sql` | `20260511220000_remove_member_c_from_haetsal.sql` |
+| `20260512000000_add_leeseongki_to_noeul.sql` | `20260512000000_add_member_d_to_noeul.sql` |
+| `20260512010000_add_jeongpilwan_to_noeul.sql` | `20260512010000_add_member_e_to_noeul.sql` |
+| `20260512020000_add_jeongpilwan_retry.sql` | `20260512020000_add_member_e_retry.sql` |
+| `20260512030000_add_seonunggyu_to_dalbit.sql` | `20260512030000_add_operator_to_dalbit.sql` |
+| `20260512040000_remove_jeongpilwan_from_noeul.sql` | `20260512040000_remove_member_e_from_noeul.sql` |
+| `20260512060000_swap_seonunggyu_to_simuiyeol.sql` | `20260512060000_swap_operator_to_member_h.sql` |
+| `20260512070000_remove_ohhyunjeong_kimmigeum.sql` | `20260512070000_remove_member_f_and_member_g.sql` |
+| `20260512080000_remove_leeseongki_from_noeul.sql` | `20260512080000_remove_member_d_from_noeul.sql` |
 
-설치:
+`git mv` 로 바꿨고, `supabase migration list` 로 로컬 파일과 원격 적용 이력이
+여전히 1:1로 맞는 것을 확인했다 (Supabase 는 timestamp prefix 로 추적하므로 이름 변경은 무해하다).
+
+### 한계 — 정직하게 남긴다
+
+**옛 파일명은 git history 에 그대로 남는다.** 지우려면 history 재작성이 필요한데,
+- 노출되는 것은 로마자 성명뿐이고 (본문의 "누가 무엇을" 정보는 이미 마스킹돼 있다),
+- 모든 커밋 SHA 가 바뀌어 기존 clone·참조가 깨지며,
+- force push 가 필요하다.
+
+이 정도 노출에 history 재작성은 과하다고 판단해 하지 않았다.
+PO 가 원하면 위 옵션 B 절차(아래 보존)로 진행할 수 있다.
+
+---
+
+## 앞으로의 규칙
+
+`supabase/migrations/README.md` 정책 3번과 같다.
+
+- **SQL 본문에 실명·휴대폰 평문 금지.** UUID 로 지정하거나 `[member-X]` 라벨을 쓴다.
+- **파일명에도 실명 금지.** 본문에서 쓰는 라벨과 같은 이름을 쓴다.
+- 운영자 본인은 `operator` 로 표기한다.
+
+---
+
+## 부록 — history 재작성 절차 (필요해질 때만)
+
+⚠️ **Destructive. 모든 협업자가 강제 fetch/reset 해야 하고 force push 가 필요하다.**
+
 ```bash
 pip install git-filter-repo
-```
 
-실행 (저장소 백업 후):
-```bash
-# 1) 저장소 전체 백업
-cp -r WAAT WAAT.backup
+cp -r WAAT WAAT.backup          # 1) 백업
 
-# 2) 변경 대상 파일 목록
-cat > replacements.txt <<EOF
-[member-A]==>[member-A]
-[member-B]==>[member-B]
-[member-C]==>[member-C]
-[member-D]==>[member-D]
-[member-E]==>[member-E]
-[member-F]==>[member-F]
-[member-G]==>[member-G]
-[member-H]==>[member-H]
+cat > replacements.txt <<EOF    # 2) 치환 규칙 (좌변에 실제 값을 넣는다)
 regex:01\d{8,9}==>[masked-phone]
 EOF
 
-# 3) 정제 실행 (모든 브랜치 + 태그 적용)
-git filter-repo --replace-text replacements.txt --force
-
-# 4) 원격에 force push
-git push --force --all
-git push --force --tags
+git filter-repo --replace-text replacements.txt --force   # 3) 실행
+git push --force --all && git push --force --tags          # 4) 반영
 ```
 
-#### 영향
-- 모든 커밋 SHA가 바뀜 — 이슈/PR 참조 깨질 수 있음
-- 기존 clone은 재clone 필요
-- 협업자(있다면) 사전 공지 필수
-
-## 결정 요청
-
-다음 중 하나를 선택해주세요:
-- [ ] A: 작업 트리 마스킹만 적용 (즉시 가능, 과거 history는 둠)
-- [ ] B: git history 재작성 (사용자 명시적 승인 후 진행)
-
-## 참고
-- 비공개 저장소면 A로 충분
-- 공개 저장소거나 외부 협업자가 있으면 B 권장
-- B를 선택하면 별도 작업 세션에서 단계별로 실행
+파일명까지 지우려면 `--path-rename old:new` 를 함께 쓴다.

@@ -30,14 +30,18 @@
 
 예시:
 - `20260511190000_remove_specific_attendance.sql`
-- `20260511200000_remove_hantaehee.sql`
+- `20260511200000_remove_member_b_from_haetsal.sql`
 - `20260511210000_remove_haetsal_two_users.sql`
-- `20260511220000_remove_kimgyeongmin.sql`
+- `20260511220000_remove_member_c_from_haetsal.sql`
 - `20260511230000_split_guest_attendance.sql` (실제로는 스키마 마이그레이션이지만 데이터 split 포함)
-- `20260512000000_add_leeseongki_to_noeul.sql` ~ `20260512080000_remove_leeseongki_from_noeul.sql` (운영 중 수동 신청/취소 처리)
-- `20260512070000_remove_ohhyunjeong_kimmigeum.sql`
+- `20260512000000_add_member_d_to_noeul.sql` ~ `20260512080000_remove_member_d_from_noeul.sql` (운영 중 수동 신청/취소 처리)
+- `20260512070000_remove_member_f_and_member_g.sql`
 
-이 파일들은 **PII 마스킹 처리됨** (2026-05-15 작업 트리). git history에는 원본 잔존 — 정제 절차는 `docs/GIT_HISTORY_PII_CLEANUP.md` 참조.
+이 파일들은 **PII 마스킹 처리됨** — 본문은 2026-05-15, **파일명은 2026-09-02**.
+
+2026-09-02 에 git history 를 실측한 결과 **history 에도 실명·휴대폰 평문은 없다**
+(최초 커밋 시점부터 마스킹돼 있었다). 근거와 검증 명령은 `docs/GIT_HISTORY_PII_CLEANUP.md` 참조.
+남은 것은 **옛 파일명이 history 에 남는 것뿐**이며, history 재작성은 하지 않기로 했다.
 
 ### D. 디버그/조사용 (Investigative)
 실제 변경 없이 SELECT 위주. 이미 응답 받았으니 새 환경에서 다시 실행해도 무해.
@@ -51,7 +55,9 @@
 
 1. **새 마이그레이션은 항상 timestamp prefix** (`YYYYMMDDHHMMSS_`)
 2. **일회성 데이터 정리는 이름에 `_oneoff_` 또는 `data_` prefix 명시**해서 검토 시 식별 가능하게 한다
-3. **PII가 포함된 SQL은 작성 단계에서 user_id로 처리**한다 — 실명/휴대폰 평문 금지
+3. **PII가 포함된 SQL은 작성 단계에서 user_id로 처리**한다 — 실명/휴대폰 평문 금지.
+   **파일명도 마찬가지다** — 본문에서 쓰는 `[member-X]` 라벨과 같은 이름을 쓰고,
+   운영자 본인은 `operator` 로 표기한다. 이 저장소는 PUBLIC 이라 파일명만으로도 읽힌다.
 4. **debug_* 파일은 응답 확인 후 다음 마이그레이션에서 결과를 반영**한다. 디렉토리에 남기되 주석에 "응답 확인 완료" 표시
 
 ## 실행 추적
