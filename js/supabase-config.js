@@ -127,25 +127,37 @@ function waatNormalizeProfileUpdates(updates) {
 // ========== DB Helpers ==========
 var DB = {
     // -- Profiles --
-    async getProfile(userId) {
-        var { data, error } = await _supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
+    // 내 프로필 조회.
+    //
+    // ⚠️ 2026-09-02 이전에는 profiles 행을 통째로 select 했다. 그게 가능하려면
+    //    authenticated 에게 profiles 컬럼이 열려 있어야 했고, 그 말은 '가입만 하면
+    //    회원 전원의 이메일·전화번호를 조회할 수 있다' 는 뜻이었다.
+    //    → 지금은 서버의 get_my_profile() 이 auth.uid() 의 행만 돌려준다.
+    //       인자를 받지 않는다 — 남의 id 로 조회하는 것 자체가 불가능하다.
+    //
+    // 반환: 프로필 객체, 또는 아직 행이 없으면 null (가입 트리거 직후)
+    async getMyProfile() {
+        var { data, error } = await _supabase.rpc('get_my_profile');
         if (error) throw error;
-        return data;
+        return data || null;
     },
 
     async updateProfile(userId, updates) {
-        var { data, error } = await _supabase
+        // ⚠️ .select() 를 쓰지 않는다 — UPDATE ... RETURNING 은 반환 컬럼에 SELECT
+        //    권한을 요구하는데, 회원에게는 (id, name) 만 열려 있다.
+        //    갱신된 행은 get_my_profile() 로 따로 받아온다.
+        var { error } = await _supabase
             .from('profiles')
             .update(waatNormalizeProfileUpdates(updates))
-            .eq('id', userId)
-            .select()
-            .single();
+            .eq('id', userId);
         if (error) throw error;
-        return data;
+
+        var fresh = await this.getMyProfile();
+        if (!fresh) {
+            // RLS 로 대상 행이 없거나(남의 id) 아직 생성 전이면 여기로 온다.
+            throw new Error('프로필 업데이트 확인 실패: 내 프로필을 찾을 수 없습니다.');
+        }
+        return fresh;
     },
 
     // 예비멤버 행 흡수 — 같은 이메일의 예비멤버 profiles 행을 내 행으로 병합하고 옛 행을 삭제한다.
@@ -343,13 +355,11 @@ var DB = {
     },
 
     // -- Admin: Members --
+    // 서버의 admin_list_profiles() 가 is_admin() 으로 가드한다 — 관리자가 아니면 42501.
     async getAllProfiles() {
-        var { data, error } = await _supabase
-            .from('profiles')
-            .select('*')
-            .order('created_at', { ascending: false });
+        var { data, error } = await _supabase.rpc('admin_list_profiles');
         if (error) throw error;
-        return data;
+        return data || [];
     },
 
     // -- Admin: Events CRUD --
@@ -658,17 +668,16 @@ var DB = {
         if (error) throw error;
         attendances = attendances || [];
 
-        // 회원 프로필 매핑
+        // 회원 프로필 매핑 (관리자 전용 — 명단에 연락처를 함께 보여준다)
+        // 회원에게는 profiles 의 이메일·전화 컬럼이 닫혀 있으므로 admin_get_profiles()
+        // RPC 로 받는다. 서버가 is_admin() 으로 가드한다.
         var profileMap = {};
         if (attendances.length > 0) {
             var userIds = attendances.map(function(a) { return a.user_id; });
-            var { data: profiles } = await _supabase
-                .from('profiles')
-                .select('id, name, phone, email')
-                .in('id', userIds);
-            if (profiles) {
-                profiles.forEach(function(p) { profileMap[p.id] = p; });
-            }
+            var { data: profiles, error: pErr } = await _supabase
+                .rpc('admin_get_profiles', { p_ids: userIds });
+            if (pErr) throw pErr;
+            (profiles || []).forEach(function(p) { profileMap[p.id] = p; });
         }
 
         // 이벤트 슬롯 매핑 (event_slot_id → label/emoji)

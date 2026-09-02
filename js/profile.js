@@ -55,7 +55,7 @@ async function pfInit() {
             return;
         }
         pfCurrentUser = session.user;
-        try { pfCurrentProfile = await DB.getProfile(pfCurrentUser.id); } catch (e) { pfCurrentProfile = null; }
+        try { pfCurrentProfile = await DB.getMyProfile(); } catch (e) { pfCurrentProfile = null; }
     } catch (e) {
         loginPrompt.style.display = 'block';
         return;

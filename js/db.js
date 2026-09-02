@@ -26,54 +26,14 @@ var _dbExtensions = {
     //    현행 예비멤버 판별·병합은 `profiles.notes` 의 '예비 멤버' 마크를 쓴다.
     //    → 아래 checkProvisionalMember() 와 claim_provisional_profile() RPC 가 그 경로다.
 
-    // 기존 정식 멤버 조회 (이메일로)
-    async getExistingMember(email) {
-        try {
-            const { data, error } = await supabase.auth.admin.listUsers();
-            if (error) throw error;
-
-            return data?.users?.find(u => u.email === email.toLowerCase()) || null;
-        } catch (e) {
-            console.error('getExistingMember error:', e);
-            // 권한 없음인 경우 클라이언트 쿼리로 대체
-            return null;
-        }
-    },
-
-    // ===== 정식 멤버 (프로필) 관련 함수 =====
-
-    // 프로필 생성
-    async createProfile(profileData) {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .insert([profileData])
-                .select();
-
-            if (error) throw error;
-            return data?.[0] || null;
-        } catch (e) {
-            console.error('createProfile error:', e);
-            throw e;
-        }
-    },
-
-    // 프로필 조회
-    async getProfile(userId) {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
-
-            if (error && error.code !== 'PGRST116') throw error;
-            return data || null;
-        } catch (e) {
-            console.error('getProfile error:', e);
-            throw e;
-        }
-    },
+    // ⚠️ 2026-09-02 정리 — 아래 함수들을 제거했다. 전부 호출자가 없는 죽은 코드였고,
+    //    profiles 컬럼 권한을 (id, name) 으로 줄이면서 동작하지도 않게 됐다.
+    //      · getExistingMember — auth.admin.listUsers(). 브라우저 anon 키로는 애초에 불가.
+    //      · createProfile     — 프로필은 가입 트리거(handle_new_user)가 만든다.
+    //      · getProfile / updateProfile / getAllProfiles
+    //                          — supabase-config.js 판본이 쓰이고 있었다(아래 병합 규칙 참고).
+    //                            그쪽은 get_my_profile() / admin_list_profiles() RPC 로 옮겼다.
+    //      · getExistingEmails — 회원 전원의 이메일을 통째로 읽는 함수. 호출자 없음.
 
     // 예비멤버 여부 확인 (이메일로) — 가입 모달이 '로그인 전'에 쓴다.
     //
@@ -96,69 +56,11 @@ var _dbExtensions = {
         }
     },
 
-    // 프로필 업데이트
-    async updateProfile(userId, updates) {
-        try {
-            // interests(TEXT[]) 문자열→배열 정규화 — supabase-config.js 의 공용 헬퍼 사용
-            const normalized = (typeof waatNormalizeProfileUpdates === 'function')
-                ? waatNormalizeProfileUpdates(updates)
-                : updates;
-            const { data, error } = await supabase
-                .from('profiles')
-                .update(normalized)
-                .eq('id', userId)
-                .select();
-
-            if (error) throw error;
-            if (!data || data.length === 0) {
-                throw new Error('프로필 업데이트 실패: 해당 사용자 프로필이 없습니다. (ID: ' + userId + ')');
-            }
-            return data[0];
-        } catch (e) {
-            console.error('updateProfile error:', e);
-            throw e;
-        }
-    },
-
-    // 모든 프로필 조회 (관리자용)
-    async getAllProfiles() {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            return data || [];
-        } catch (e) {
-            console.error('getAllProfiles error:', e);
-            throw e;
-        }
-    },
-
-    // ===== 유틸 함수 =====
-
-    // 이메일로 기존 멤버 조회
-    async getExistingEmails() {
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('email');
-
-            if (error) throw error;
-            return (data || []).map(p => p.email?.toLowerCase()).filter(Boolean);
-        } catch (e) {
-            console.error('getExistingEmails error:', e);
-            return [];
-        }
-    },
-
 };
 
 // 기존 DB(supabase-config.js)에 '없는 메서드만' 추가한다.
-// getProfile / updateProfile / getAllProfiles 는 양쪽에 다 있는데,
-// admin.html 등은 지금까지 supabase-config.js 판본으로 동작해 왔으므로 그쪽을 유지한다.
-// (여기서 덮어쓰면 검증되지 않은 동작 변경이 된다)
+// (예전엔 getProfile / updateProfile / getAllProfiles 가 양쪽에 다 있었고 이 규칙 덕에
+//  supabase-config.js 판본이 쓰였다. 2026-09-02 에 중복분을 지워 이제 겹치지 않는다)
 Object.keys(_dbExtensions).forEach(function (k) {
     if (!(k in DB)) DB[k] = _dbExtensions[k];
 });

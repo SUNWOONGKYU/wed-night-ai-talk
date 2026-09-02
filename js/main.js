@@ -643,7 +643,7 @@ async function claimProvisionalIfAny(user) {
     try {
         // 트리거가 내 profiles 행을 만들기 전이면 병합할 대상이 없다 — 잠깐 기다린다(최대 5초).
         for (let i = 0; i < 10; i++) {
-            try { if (await DB.getProfile(user.id)) break; } catch (e) { /* 미생성(PGRST116) — 계속 */ }
+            try { if (await DB.getMyProfile()) break; } catch (e) { /* 미생성(PGRST116) — 계속 */ }
             await new Promise(r => setTimeout(r, 500));
         }
         const claim = await DB.claimProvisionalProfile();
@@ -668,7 +668,7 @@ async function completePendingProfile(user) {
     let profileCreated = false;
     for (let poll = 0; poll < 20; poll++) {
         try {
-            const profile = await DB.getProfile(user.id);
+            const profile = await DB.getMyProfile();
             if (profile) { profileCreated = true; break; }
         } catch (e) {
             // row 미생성(PGRST116) 포함 — 무시하고 계속 폴링
@@ -724,7 +724,7 @@ async function initAuth() {
             console.warn('가입 프로필 완성 실패:', e.message);
         });
         try {
-            currentProfile = await DB.getProfile(currentUser.id);
+            currentProfile = await DB.getMyProfile();
             currentProfile = await syncAdminRole(currentUser, currentProfile);
         } catch (e) {
             currentProfile = null;
@@ -767,7 +767,7 @@ async function initAuth() {
                 showToast('프로필 저장에 실패했습니다. [프로필 수정]에서 정보를 확인해주세요.', 'error');
             }
             try {
-                currentProfile = await DB.getProfile(currentUser.id);
+                currentProfile = await DB.getMyProfile();
                 currentProfile = await syncAdminRole(currentUser, currentProfile);
             } catch (e) {
                 currentProfile = null;

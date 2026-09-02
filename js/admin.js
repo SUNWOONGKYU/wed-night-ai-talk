@@ -21,7 +21,7 @@ async function initAdmin() {
         }
 
         try {
-            adminProfile = await DB.getProfile(adminUser.id);
+            adminProfile = await DB.getMyProfile();
         } catch (e) {
             adminProfile = null;
         }

@@ -392,7 +392,7 @@ async function spInitAuth() {
     if (session) {
         spCurrentUser = session.user;
         try {
-            spCurrentProfile = await DB.getProfile(spCurrentUser.id);
+            spCurrentProfile = await DB.getMyProfile();
         } catch (e) {
             spCurrentProfile = null;
         }
@@ -403,7 +403,7 @@ async function spInitAuth() {
         if (event === 'SIGNED_IN' && session) {
             spCurrentUser = session.user;
             try {
-                spCurrentProfile = await DB.getProfile(spCurrentUser.id);
+                spCurrentProfile = await DB.getMyProfile();
             } catch (e) {
                 spCurrentProfile = null;
             }
