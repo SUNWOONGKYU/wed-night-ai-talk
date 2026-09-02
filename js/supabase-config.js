@@ -26,11 +26,14 @@ if (_supabase) {
     });
 }
 
-// ========== Admin Emails ==========
-var ADMIN_EMAILS = [
-    'wksun999@gmail.com',
-    'lsonic.lee@gmail.com'
-];
+// ========== 관리자 판별 ==========
+// 2026-09-02 단일화 — 관리자 목록은 `profiles.role = 'admin'` 하나가 유일한 출처다.
+// 예전엔 여기에 ADMIN_EMAILS 배열이 있었고, send-email Edge Function 과 is_admin()
+// 함수에도 같은 목록이 따로 박혀 있어 세 곳을 동시에 고쳐야 했다.
+// 관리자를 바꾸려면 이제 DB 의 profiles.role 만 바꾸면 된다.
+//
+// 화면에서는 로그인 시 받아둔 프로필의 role 을 보고 판단한다(UX 가드).
+// 실제 권한은 서버의 is_admin() 이 막는다 — 클라이언트 판정은 방어선이 아니다.
 
 // ========== Auth Helpers ==========
 var Auth = {

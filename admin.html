@@ -117,8 +117,8 @@
                             <option value="provisional">예비 멤버만</option>
                             <option value="regular">정규 멤버만</option>
                         </select>
-                        <button class="btn-secondary btn-small" onclick="exportMembersExcel()" title="Excel 파일로 다운로드">📥 Excel 다운로드</button>
-                        <button class="btn-secondary btn-small" onclick="exportMembersCsv()" title="CSV 파일로 다운로드">📥 CSV 다운로드</button>
+                        <button class="btn-secondary btn-small" data-action="export-members-excel" title="Excel 파일로 다운로드">📥 Excel 다운로드</button>
+                        <button class="btn-secondary btn-small" data-action="export-members-csv" title="CSV 파일로 다운로드">📥 CSV 다운로드</button>
                     </div>
                     <div class="admin-table-wrap">
                         <table class="admin-table" id="members-table">
@@ -552,9 +552,9 @@
          ⚠️ 버전은 0.18.5 — SheetJS 가 npm 배포를 중단해 0.20.x 는 jsdelivr 에 없다(404).
             버전을 올리려면 먼저 해당 URL 이 200 인지 확인할 것. -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260902c"></script>
-    <script src="js/db.js?v=20260902c"></script>
-    <script src="js/admin.js?v=20260902c"></script>
+    <script src="js/supabase-config.js?v=20260902d"></script>
+    <script src="js/db.js?v=20260902d"></script>
+    <script src="js/admin.js?v=20260902d"></script>
 
 </body>
 </html>

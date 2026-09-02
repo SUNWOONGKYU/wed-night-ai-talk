@@ -14,16 +14,18 @@ async function initAdmin() {
 
         adminUser = session.user;
 
-        // ADMIN_EMAILS 체크 (supabase-config.js에 정의)
-        if (!ADMIN_EMAILS.includes(adminUser.email.toLowerCase())) {
-            showDenied();
-            return;
-        }
-
+        // 관리자 판별은 profiles.role 하나만 본다 (2026-09-02 단일화).
+        // 프로필을 먼저 받아야 판정할 수 있으므로 순서가 바뀌었다.
+        // 이 검사는 화면 가드일 뿐이다 — 실제 데이터는 서버의 is_admin() 이 막는다.
         try {
             adminProfile = await DB.getMyProfile();
         } catch (e) {
             adminProfile = null;
+        }
+
+        if (!adminProfile || adminProfile.role !== 'admin') {
+            showDenied();
+            return;
         }
 
         // 관리자 확인 완료 — 콘텐츠 표시
@@ -79,6 +81,50 @@ document.getElementById('admin-logout-btn').addEventListener('click', async () =
     window.location.href = 'index.html';
 });
 
+// ========== 버튼 동작 위임 ==========
+// 예전에는 표를 그릴 때 `onclick="deleteMember('...')"` 처럼 인라인 핸들러를 문자열로
+// 만들어 넣었다. 그러려면 CSP 에 script-src 'unsafe-inline' 이 필요했고, 그게 켜져
+// 있으면 XSS 가 주입한 스크립트도 함께 실행된다.
+// 2026-09-02 에 전부 data-action 으로 바꾸고 여기서 한 번에 받는다.
+//
+// 표는 다시 그려질 때마다 DOM 이 통째로 교체되므로, 각 버튼에 리스너를 다는 대신
+// document 에 하나만 걸어 위임한다 (새로 그려도 계속 동작한다).
+document.addEventListener('click', function (e) {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const d = el.dataset;
+
+    switch (d.action) {
+        // 멤버
+        case 'export-members-excel':  exportMembersExcel(); break;
+        case 'export-members-csv':    exportMembersCsv(); break;
+        case 'toggle-opt-out':        toggleEmailOptOut(d.id, d.value === 'true', d.name); break;
+        case 'delete-member':         deleteMember(d.id, d.name); break;
+
+        // 모임
+        case 'view-attendees':        viewAttendees(Number(d.id), d.title); break;
+        case 'edit-event':            editEvent(Number(d.id)); break;
+        case 'toggle-event-active':   toggleEventActive(Number(d.id), d.value === 'true'); break;
+        case 'delete-event':          deleteEvent(Number(d.id), d.title); break;
+
+        // 신청자
+        case 'delete-guest-attendee': deleteGuestAttendee(Number(d.id), d.name); break;
+        case 'delete-attendee':       deleteAttendee(d.userId, d.eventId, d.name); break;
+
+        // 장소
+        case 'edit-location':         editLocation(Number(d.id)); break;
+        case 'toggle-location-active':toggleLocationActive(Number(d.id), d.value === 'true'); break;
+        case 'delete-location':       deleteLocation(Number(d.id)); break;
+
+        // 문의
+        case 'view-inquiry':          viewInquiryDetail(Number(d.id)); break;
+        case 'delete-inquiry':        deleteInquiry(Number(d.id)); break;
+
+        default:
+            console.warn('알 수 없는 data-action:', d.action);
+    }
+});
+
 // ========== Members ==========
 let allMembers = [];
 let membersLoaded = false;
@@ -130,7 +176,7 @@ function renderMembers(members) {
         // 버튼을 눌러 관리자가 직접 켜고 끌 수 있다.
         const optOut = !!m.email_opt_out;
         const mailCell = `<button class="btn-secondary btn-small"
-                onclick="toggleEmailOptOut('${escapeAttr(m.id)}', ${optOut ? 'false' : 'true'}, '${escapeAttr(m.name || m.email || '')}')"
+                data-action="toggle-opt-out" data-id="${escapeAttr(m.id)}" data-value="${optOut ? 'false' : 'true'}" data-name="${escapeAttr(m.name || m.email || '')}"
                 title="${optOut ? '다시 받도록 되돌립니다' : '이 회원에게 메일을 보내지 않습니다'}"
                 style="${optOut ? 'color:var(--accent-pink);' : ''}">${optOut ? '수신거부' : '수신'}</button>`;
 
@@ -144,7 +190,7 @@ function renderMembers(members) {
             <td>${escapeHtml(m.message || '-')}</td>
             <td>${noteCell}</td>
             <td>${date}</td>
-            <td><button class="btn-secondary btn-small" onclick="deleteMember('${escapeAttr(m.id)}', '${escapeAttr(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
+            <td><button class="btn-secondary btn-small" data-action="delete-member" data-id="${escapeAttr(m.id)}" data-name="${escapeAttr(m.name || m.email || '')}" style="color:var(--accent-pink);">삭제</button></td>
         </tr>`;
     }).join('');
 
@@ -260,11 +306,11 @@ function renderEvents(events) {
             <td>${time}</td>
             <td>${escapeHtml(ev.location || '-')}</td>
             <td>${status}</td>
-            <td><button class="btn-secondary btn-small" onclick="viewAttendees(${ev.id}, '${escapeAttr(ev.title)}')">보기</button></td>
+            <td><button class="btn-secondary btn-small" data-action="view-attendees" data-id="${ev.id}" data-title="${escapeAttr(ev.title)}">보기</button></td>
             <td>
-                <button class="btn-secondary btn-small" onclick="editEvent(${ev.id})">수정</button>
-                <button class="btn-secondary btn-small" onclick="toggleEventActive(${ev.id}, ${ev.is_active})">${ev.is_active ? '비활성화' : '활성화'}</button>
-                <button class="btn-secondary btn-small" onclick="deleteEvent(${ev.id}, '${escapeAttr(ev.title)}')" style="color:var(--accent-pink);">삭제</button>
+                <button class="btn-secondary btn-small" data-action="edit-event" data-id="${ev.id}">수정</button>
+                <button class="btn-secondary btn-small" data-action="toggle-event-active" data-id="${ev.id}" data-value="${ev.is_active}">${ev.is_active ? '비활성화' : '활성화'}</button>
+                <button class="btn-secondary btn-small" data-action="delete-event" data-id="${ev.id}" data-title="${escapeAttr(ev.title)}" style="color:var(--accent-pink);">삭제</button>
             </td>
         </tr>`;
     }).join('');
@@ -557,8 +603,8 @@ async function viewAttendees(eventId, eventTitle) {
                 var isGuest = !!a.is_guest;
                 var nameDisplay = isGuest ? (escapeHtml(name) + ' <span style="color:var(--accent-pink); font-size:0.78rem; margin-left:0.3rem;">[게스트]</span>') : escapeHtml(name);
                 var deleteBtn = isGuest
-                    ? '<button class="btn-secondary btn-small" onclick="deleteGuestAttendee(' + a.guest_id + ', \'' + escapeAttr(name) + '\')" style="color:var(--accent-pink);">삭제</button>'
-                    : '<button class="btn-secondary btn-small" onclick="deleteAttendee(\'' + escapeAttr(a.user_id) + '\', \'' + escapeAttr(a.event_id) + '\', \'' + escapeAttr(name) + '\')" style="color:var(--accent-pink);">삭제</button>';
+                    ? '<button class="btn-secondary btn-small" data-action="delete-guest-attendee" data-id="' + a.guest_id + '" data-name="' + escapeAttr(name) + '" style="color:var(--accent-pink);">삭제</button>'
+                    : '<button class="btn-secondary btn-small" data-action="delete-attendee" data-user-id="' + escapeAttr(a.user_id) + '" data-event-id="' + escapeAttr(a.event_id) + '" data-name="' + escapeAttr(name) + '" style="color:var(--accent-pink);">삭제</button>';
                 html += '<tr>' +
                     '<td>' + nameDisplay + '</td>' +
                     '<td>' + escapeHtml(slotLabelCell) + '</td>' +
@@ -634,9 +680,9 @@ function renderLocations(locations) {
             <td>${escapeHtml(typeLabel)}</td>
             <td>${status}</td>
             <td>
-                <button class="btn-secondary btn-small" onclick="editLocation(${loc.id})">수정</button>
-                <button class="btn-secondary btn-small" onclick="toggleLocationActive(${loc.id}, ${loc.is_active})">${loc.is_active ? '비활성화' : '활성화'}</button>
-                <button class="btn-secondary btn-small" onclick="deleteLocation(${loc.id})" style="color:var(--accent-pink);">삭제</button>
+                <button class="btn-secondary btn-small" data-action="edit-location" data-id="${loc.id}">수정</button>
+                <button class="btn-secondary btn-small" data-action="toggle-location-active" data-id="${loc.id}" data-value="${loc.is_active}">${loc.is_active ? '비활성화' : '활성화'}</button>
+                <button class="btn-secondary btn-small" data-action="delete-location" data-id="${loc.id}" style="color:var(--accent-pink);">삭제</button>
             </td>
         </tr>`;
     }).join('');
@@ -809,8 +855,8 @@ function renderInquiries(inquiries) {
             <td title="${escapeHtml(inq.message || '')}">${escapeHtml((inq.message || '').substring(0, 50))}${(inq.message || '').length > 50 ? '...' : ''}</td>
             <td>${date}</td>
             <td>
-                <button class="btn-secondary btn-small" onclick="viewInquiryDetail(${inq.id})">상세</button>
-                <button class="btn-secondary btn-small" onclick="deleteInquiry(${inq.id})" style="color:var(--accent-pink);">삭제</button>
+                <button class="btn-secondary btn-small" data-action="view-inquiry" data-id="${inq.id}">상세</button>
+                <button class="btn-secondary btn-small" data-action="delete-inquiry" data-id="${inq.id}" style="color:var(--accent-pink);">삭제</button>
             </td>
         </tr>`;
     }).join('');
@@ -906,7 +952,7 @@ function escapeHtml(str) {
     div.textContent = str;
     return div.innerHTML;
 }
-// HTML 속성값(특히 onclick='...' 안)에 안전한 이스케이프
+// HTML 속성값(data-* 등)에 안전한 이스케이프
 function escapeAttr(str) {
     return String(str == null ? '' : str)
         .replace(/&/g, '&amp;')

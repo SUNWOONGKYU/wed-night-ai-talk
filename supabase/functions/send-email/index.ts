@@ -17,14 +17,16 @@
 //
 // 보안:
 //   - JWT 검증 활성화 (deploy 시 --no-verify-jwt 옵션 사용 금지)
-//   - 호출자가 ADMIN_EMAILS 에 포함되는지 확인
+//   - 호출자의 profiles.role = 'admin' 확인 (관리자 목록의 단일 출처)
 //   - to 배열 최대 200개, subject 200자, html 100KB 제한
 // =============================================
 
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const ADMIN_EMAILS = ['wksun999@gmail.com', 'lsonic.lee@gmail.com'];
+// 관리자 판별은 profiles.role = 'admin' 하나만 본다 (2026-09-02 단일화).
+// 예전엔 여기에 ADMIN_EMAILS 배열이 따로 박혀 있어, 관리자를 바꾸려면
+// js/supabase-config.js · is_admin() 함수 · 이 파일 세 곳을 다 고쳐야 했다.
 // Resend 유료 플랜 전환 (2026-08-18) — 200명 상한은 무료 플랜 시절의 자체 안전장치였을 뿐
 // Resend API 자체 제한이 아니었음. 안전장치로 여유 있게 상향, 완전히 제거하지는 않음.
 const MAX_RECIPIENTS = 2000;
@@ -191,9 +193,25 @@ serve(async (req: Request) => {
             return jsonResponse({ success: false, error: '인증 실패' }, 401, req);
         }
 
-        // 3) 관리자 권한 확인
+        // 3) 관리자 권한 확인 — profiles.role 을 조회한다.
+        //    service role 로 읽는다: 회원에게는 profiles 의 role 컬럼이 닫혀 있다
+        //    (2026-09-02 컬럼 권한 회수). 조회에 실패하면 fail-closed 한다.
         const callerEmail = (user.email || '').toLowerCase();
-        if (!ADMIN_EMAILS.includes(callerEmail)) {
+        const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
+        const { data: callerProfile, error: roleErr } = await supaAdmin
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle();
+        if (roleErr) {
+            console.error('관리자 권한 조회 실패:', roleErr);
+            return jsonResponse(
+                { success: false, error: '권한을 확인할 수 없어 중단했습니다.', code: 'ROLE_CHECK_FAILED' },
+                503,
+                req,
+            );
+        }
+        if (!callerProfile || callerProfile.role !== 'admin') {
             return jsonResponse({ success: false, error: '관리자만 사용 가능합니다.' }, 403, req);
         }
 
@@ -226,7 +244,6 @@ serve(async (req: Request) => {
         // 그건 편의일 뿐이고, 여기서 한 번 더 걸러야 실수로라도 나가지 않는다.
         // 같은 조회로 사람별 unsubscribe_token 도 가져와 메일 하단 링크에 쓴다.
         // (토큰은 service role 로만 읽을 수 있다 — 클라이언트에는 절대 내려가지 않는다)
-        const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
         const { data: profileRows, error: profileErr } = await supaAdmin
             .from('profiles')
             .select('email, email_opt_out, unsubscribe_token')

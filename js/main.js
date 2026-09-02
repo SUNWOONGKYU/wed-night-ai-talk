@@ -598,7 +598,7 @@ function setStatus(el, message, type) {
 // ========== Admin Role Sync ==========
 // 보안: 클라이언트가 직접 profile.role 을 'admin' 으로 쓰는 행위는 차단됨
 // (DB 트리거/RLS WITH CHECK 가 role 컬럼 변경을 금지)
-// 관리자 판별은 JWT 기반 is_admin() RPC + 클라이언트 ADMIN_EMAILS UX 가드로만 수행
+// 관리자 판별은 서버의 is_admin()(profiles.role 기반) + 클라이언트 role 확인 UX 가드로만 수행
 async function syncAdminRole(user, profile) {
     return profile;
 }

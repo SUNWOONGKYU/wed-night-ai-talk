@@ -425,10 +425,12 @@ function isOwner(userId) {
     return spCurrentUser && spCurrentUser.id === userId;
 }
 
+// 관리자 판별은 profiles.role 하나만 본다 (2026-09-02 단일화).
+// 예전엔 ADMIN_EMAILS 배열과 이메일을 대조했는데, 같은 사이트 안에서 main.js·profile.js 는
+// 이미 role 로 판별하고 있어 기준이 둘로 갈려 있었다.
+// 여기 판정은 화면 표시용(UX)일 뿐이고, 실제 권한은 서버의 is_admin() 이 막는다.
 function isAdmin() {
-    var email = spCurrentUser && spCurrentUser.email;
-    return !!email && Array.isArray(ADMIN_EMAILS) &&
-        ADMIN_EMAILS.indexOf(email.toLowerCase()) !== -1;
+    return !!(spCurrentProfile && spCurrentProfile.role === 'admin');
 }
 
 // ========== Load Posts ==========
