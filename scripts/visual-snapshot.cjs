@@ -39,6 +39,9 @@ function compare(a, b) {
     const page = await browser.newPage();
     const diffs = [];
 
+    // 스크롤 연출(GSAP ScrollTrigger 등)이 매번 다르게 잡히지 않도록 모션을 줄인다.
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+
     for (const vp of VIEWPORTS) {
         await page.setViewport({ width: vp.width, height: vp.height });
         for (const p of PAGES) {
@@ -46,10 +49,14 @@ function compare(a, b) {
             const file = path.join(OUT, name);
             try {
                 await page.goto(BASE + p, { waitUntil: 'networkidle2', timeout: 45000 });
-                await new Promise(r => setTimeout(r, 3000));
-                // 애니메이션·전환을 멈춰 매번 같은 그림이 나오게 한다
-                await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;}' });
-                await new Promise(r => setTimeout(r, 500));
+                // 애니메이션이 끝난 뒤를 찍어야 매번 같은 그림이 나온다.
+                //
+                // ⚠️ 예전엔 addStyleTag 로 animation:none 을 주입했는데, 2026-09-02
+                //    CSP 에서 style-src-elem 의 'unsafe-inline' 을 빼면서 그 주입이
+                //    차단된다("Could not load style"). 사이트가 아니라 이 스크립트가
+                //    막힌 것이다 — CSP 가 실제로 동작한다는 뜻이기도 하다.
+                //    → 스타일을 주입하지 않고, 모션 감소를 흉내 낸 뒤 충분히 기다린다.
+                await new Promise(r => setTimeout(r, 4500));
                 await page.screenshot({ path: file, fullPage: true });
             } catch (e) {
                 console.log(`  촬영 실패 ${name}: ${String(e.message || e).slice(0, 60)}`);
@@ -69,7 +76,11 @@ function compare(a, b) {
     if (BASELINE) {
         console.log(`\n===== 달라진 화면 ${diffs.length}건 =====`);
         diffs.forEach(d => console.log('  · ' + d));
-        console.log('\n(달라졌다고 반드시 잘못된 건 아니다 — 게시글 조회수처럼 매번 바뀌는 값이 있으면');
-        console.log(' 차이가 난다. 두 이미지를 직접 비교해 판단할 것.)');
+        console.log('\n[읽는 법] 달라졌다고 곧 회귀는 아니다.');
+        console.log(' 2026-09-02 에 같은 버전을 두 번 찍어 대조군을 만들어 본 결과,');
+        console.log(' index / speakup / profile 의 desktop·mobile 5장은 아무것도 바꾸지 않아도');
+        console.log(' 매번 수십 바이트씩 달라진다 (조회수 증가, 애니메이션 타이밍).');
+        console.log(' 나머지 9장은 완전히 일치했다 — 그쪽이 달라지면 진짜 회귀를 의심할 것.');
+        console.log(' 확신이 서지 않으면 같은 버전을 두 번 찍어 대조군부터 만들어라.');
     }
 })().catch(e => { console.error('스냅샷 오류:', e); process.exit(3); });
