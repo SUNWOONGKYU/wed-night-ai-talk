@@ -57,28 +57,33 @@ function check(name, pass, detail) {
     console.log('\n[2] 외부로 분리한 스크립트 동작');
     const page = await browser.newPage();
 
+    // speakup.html 에 있던 문의 모달은 여는 경로가 없는 죽은 마크업이어서
+    // 2026-09-02 에 통째로 삭제했다(PO 결정). 문의는 index.html 에서만 받는다.
+    // → 잔재가 남지 않았는지, 그리고 게시판이 멀쩡한지 확인한다.
     await page.goto(BASE + '/speakup.html', { waitUntil: 'networkidle2', timeout: 45000 });
+    await new Promise(r => setTimeout(r, 3000));
+    const sp = await page.evaluate(() => ({
+        deadModal: !!document.getElementById('inquiry-modal'),
+        deadScript: Array.from(document.scripts).some(s => /speakup-inquiry\.js/.test(s.src)),
+        posts: document.querySelectorAll('.post-card').length,
+        footerInquiry: !!document.querySelector('a[href*="footer-inquiry-link"]')
+    }));
+    check('speakup — 죽은 문의 모달 제거됨', !sp.deadModal, sp.deadModal ? '아직 남아 있음' : '없음');
+    check('speakup — 죽은 스크립트 참조 제거됨', !sp.deadScript);
+    check('speakup — 게시글 목록 정상', sp.posts > 0, `${sp.posts}건`);
+    check('speakup — 푸터 문의하기 링크 유지', sp.footerInquiry);
+
+    // index.html 의 진짜 문의 모달은 계속 동작해야 한다
+    await page.goto(BASE + '/index.html', { waitUntil: 'networkidle2', timeout: 45000 });
     await new Promise(r => setTimeout(r, 2500));
-    const inqLoaded = await page.evaluate(() =>
-        Array.from(document.scripts).some(s => /speakup-inquiry\.js/.test(s.src)));
-    check('speakup — 문의 모달 스크립트 로드됨', inqLoaded);
-    // 분리한 스크립트가 실제로 '실행'되어 핸들러를 붙였는지 확인한다.
-    //
-    // ⚠️ 이 스크립트가 참조하는 `nav-inquiry-link` 는 speakup.html 을 포함해 어느
-    //    페이지에도 없다(원래부터 없던 죽은 참조 — 2026-09-02 확인). speakup 푸터의
-    //    '문의하기'는 index.html#footer-inquiry-link 로 이동하므로, 이 페이지의
-    //    문의 모달은 여는 경로가 없다. 이번 CSP 작업과 무관한 기존 상태다.
-    //    → 열리는지 대신 '닫기 핸들러가 붙었는지'로 스크립트 실행을 확인한다.
-    const closeWorks = await page.evaluate(() => {
+    const idxInquiry = await page.evaluate(() => {
+        const link = document.getElementById('footer-inquiry-link');
         const modal = document.getElementById('inquiry-modal');
-        const btn = document.getElementById('inquiry-close-btn');
-        if (!modal || !btn) return 'element-missing';
-        modal.classList.add('open');
-        btn.click();
-        return modal.classList.contains('open') ? 'handler-not-bound' : 'handler-bound';
+        if (!link || !modal) return 'element-missing';
+        link.click();
+        return modal.classList.contains('open') ? 'opened' : 'not-opened';
     });
-    check('speakup — 문의 모달 닫기 핸들러가 붙음 (스크립트 실행 확인)',
-        closeWorks === 'handler-bound', closeWorks);
+    check('index — 문의하기 클릭 시 모달 열림', idxInquiry === 'opened', idxInquiry);
 
     await page.goto(BASE + '/privacy.html', { waitUntil: 'networkidle2', timeout: 45000 });
     await new Promise(r => setTimeout(r, 1500));

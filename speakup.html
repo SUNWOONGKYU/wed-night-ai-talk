@@ -130,41 +130,6 @@
         </div>
     </section>
 
-    <!-- 문의하기 모달 -->
-    <div id="inquiry-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" id="inquiry-close-btn">&times;</button>
-            <h2 class="modal-title">문의하기</h2>
-            <p style="color:var(--text-muted); margin-bottom:1.5rem;">궁금한 점이나 제안사항을 보내주세요.</p>
-            <form id="inquiry-form" class="site-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="inq-name">이름 <span class="required">*</span></label>
-                        <input type="text" id="inq-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inq-phone">전화번호</label>
-                        <input type="tel" id="inq-phone" name="phone" placeholder="010-1234-5678" maxlength="11">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inq-email">이메일</label>
-                    <input type="email" id="inq-email" name="email" placeholder="email@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="inq-subject">제목 <span class="required">*</span></label>
-                    <input type="text" id="inq-subject" name="subject" required placeholder="문의 제목">
-                </div>
-                <div class="form-group">
-                    <label for="inq-message">내용 <span class="required">*</span></label>
-                    <textarea id="inq-message" name="message" rows="5" required maxlength="500" placeholder="문의 내용을 입력해주세요"></textarea>
-                </div>
-                <button type="submit" class="btn-primary form-submit">문의 보내기 →</button>
-                <div class="form-status" id="inquiry-status"></div>
-            </form>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -205,8 +170,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260902d"></script>
-    <script src="js/speakup.js?v=20260902d"></script>
-    <script src="js/speakup-inquiry.js?v=20260902d"></script>
+    <script src="js/supabase-config.js?v=20260902e"></script>
+    <script src="js/speakup.js?v=20260902e"></script>
 </body>
 </html>
