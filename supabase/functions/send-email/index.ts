@@ -91,18 +91,47 @@ function isValidEmail(s: string): boolean {
     return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(s);
 }
 
+// 수신거부 엔드포인트 (Edge Function). 메일 앱이 사용자를 대신해 부르므로 JWT 없이 열려 있고,
+// 인증은 URL 의 토큰이 대신한다.
+const UNSUB_ENDPOINT = `${Deno.env.get('SUPABASE_URL')}/functions/v1/unsubscribe`;
+
 // 수신거부 안내 푸터.
 // 사람마다 토큰이 달라 본문이 달라지므로, 배치 호출도 수신자별 html 을 따로 만든다.
 // 토큰이 없는 주소(회원 명단에 없는 수동 입력 수신자)는 링크 대신 회신 안내만 넣는다.
+//
+// ⚠️ 2026-09-02 개정 — 처음엔 12px 회색 한 줄로 넣었는데 "받는 사람 입장에서
+//    수신거부할 방법이 안 보인다"는 지적을 받았다(PO). 메일 앱이 본문 끝의 작은
+//    회색 글씨를 접어버리면 사실상 없는 것과 같다.
+//    → 글씨를 키우고 테두리 박스로 감싸 접히더라도 눈에 띄게 하고,
+//      동시에 List-Unsubscribe 헤더를 붙여 메일 앱 자체 버튼도 뜨게 했다.
 function withUnsubscribeFooter(html: string, token: string | null): string {
-    const style = 'margin:32px 0 0;padding-top:16px;border-top:1px solid #e5e5e5;'
-        + 'font-size:12px;line-height:1.6;color:#888;font-family:sans-serif;';
+    const box = 'margin:36px 0 0;padding:16px 18px;border:1px solid #dcdce4;border-radius:10px;'
+        + 'background:#fafafc;font-size:14px;line-height:1.7;color:#444;'
+        + 'font-family:-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;';
+    const linkStyle = 'color:#1a1a6e;font-weight:700;text-decoration:underline;';
+
     const body = token
-        ? `이 메일을 더 받고 싶지 않으시면 <a href="${SITE_ORIGIN}/unsubscribe.html?t=${token}"`
-          + ` style="color:#888;">여기를 눌러 수신거부</a>하실 수 있습니다.`
-          + ` 수신거부해도 모임 신청과 게시판은 그대로 이용하실 수 있습니다.`
+        ? `이 메일을 더 받고 싶지 않으신가요?<br>`
+          + `<a href="${UNSUB_ENDPOINT}?t=${token}" style="${linkStyle}">여기를 눌러 수신거부</a>`
+          + ` 하시면 앞으로 보내지 않습니다.`
+          + `<br><span style="color:#777;font-size:13px;">`
+          + `수신거부하셔도 회원 자격은 그대로이고, 모임 신청과 게시판은 계속 이용하실 수 있습니다.</span>`
         : `이 메일을 더 받고 싶지 않으시면 이 메일에 회신해 주세요.`;
-    return `${html}<div style="${style}">${body}<br>WAAT (Wednesday Afternoon AI Talk)</div>`;
+
+    return `${html}<div style="${box}">${body}<br><br>`
+        + `<span style="color:#999;font-size:12px;">WAAT — Wednesday Afternoon AI Talk · `
+        + `<a href="${SITE_ORIGIN}" style="color:#999;">waat.community</a></span></div>`;
+}
+
+// 메일 앱(Gmail·Outlook 등)이 발신자 이름 옆에 띄우는 '수신거부' 버튼용 헤더.
+// 본문을 어떻게 렌더링하든 이 버튼은 보이므로, 실질적인 수신거부 경로는 이쪽이다.
+// List-Unsubscribe-Post 를 함께 주면 Gmail 이 확인창 한 번으로 처리한다(RFC 8058).
+function unsubscribeHeaders(token: string | null): Record<string, string> | undefined {
+    if (!token) return undefined;
+    return {
+        'List-Unsubscribe': `<${UNSUB_ENDPOINT}?t=${token}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    };
 }
 
 // 개인정보 보호상 BCC는 여전히 쓰지 않는다 -- 배치 호출이어도 각 항목의 `to`는
@@ -117,13 +146,16 @@ async function sendBatch(opts: {
     tokenByEmail: Record<string, string>;
 }): Promise<ResendSendResult[]> {
     const payload = opts.to.map((to) => {
+        const token = opts.tokenByEmail[to] || null;
         const item: Record<string, unknown> = {
             from: opts.from,
             to: [to],
             subject: opts.subject,
-            html: withUnsubscribeFooter(opts.html, opts.tokenByEmail[to] || null),
+            html: withUnsubscribeFooter(opts.html, token),
         };
         if (opts.replyTo) item.reply_to = opts.replyTo;
+        const h = unsubscribeHeaders(token);
+        if (h) item.headers = h;
         return item;
     });
     try {
@@ -244,10 +276,13 @@ serve(async (req: Request) => {
         // 그건 편의일 뿐이고, 여기서 한 번 더 걸러야 실수로라도 나가지 않는다.
         // 같은 조회로 사람별 unsubscribe_token 도 가져와 메일 하단 링크에 쓴다.
         // (토큰은 service role 로만 읽을 수 있다 — 클라이언트에는 절대 내려가지 않는다)
+        // ⚠️ `.in('email', cleanTo)` 는 대소문자를 구분한다. 가입 경로에 따라 profiles.email
+        //    이 'Foo@Gmail.com' 처럼 저장된 행이 있으면 매칭에 실패해 수신거부 토큰을 못 찾고,
+        //    그러면 그 사람 메일에는 수신거부 링크가 붙지 않는다(무음 실패).
+        //    → 전체를 받아 와서 소문자로 맞춰 대조한다. 회원 수백 명 규모라 비용이 무의미하다.
         const { data: profileRows, error: profileErr } = await supaAdmin
             .from('profiles')
-            .select('email, email_opt_out, unsubscribe_token')
-            .in('email', cleanTo);
+            .select('email, email_opt_out, unsubscribe_token');
         if (profileErr) {
             // 수신거부 여부를 확인하지 못한 채로 보내면 거부한 사람에게 메일이 간다.
             // fail-closed 한다.
@@ -299,7 +334,13 @@ serve(async (req: Request) => {
             .from('email_logs')
             .insert({
                 subject,
-                body_preview: html.slice(0, 500),
+                // 실제로 나간 형태를 남긴다 — 본문 앞부분 + 수신거부 푸터.
+                // 예전엔 푸터 이전 본문만 저장해서 "수신거부 안내가 붙었는지"를
+                // 발송 이력만 봐서는 확인할 수 없었다.
+                body_preview: (
+                    html.slice(0, 300) + (html.length > 300 ? ' …(중략)… ' : '') +
+                    withUnsubscribeFooter('', tokenByEmail[targets[0]] || null)
+                ).slice(0, 2000),
                 recipients_count: targets.length,
                 success_count: 0,
                 fail_count: 0,

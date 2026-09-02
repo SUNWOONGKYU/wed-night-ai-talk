@@ -57,7 +57,12 @@
 
             document.getElementById('unsub-email').textContent = d.email_masked || '';
             // 이미 수신거부 상태였으면 "처리했습니다"가 아니라 사실대로 알려준다.
-            if (d.already) {
+            //
+            // 단, 메일의 수신거부 링크를 눌러 들어온 경우(done=1)는 예외다.
+            // 그 링크는 Edge Function 을 거치는데 거기서 이미 처리를 끝내고 오므로,
+            // 여기서 다시 물으면 처음 누른 사람도 항상 '이미 상태'가 된다.
+            var viaEndpoint = new URLSearchParams(window.location.search).get('done') === '1';
+            if (d.already && !viaEndpoint) {
                 document.getElementById('unsub-done-title').textContent = '이미 수신거부 상태입니다';
             }
             show('unsub-done');
