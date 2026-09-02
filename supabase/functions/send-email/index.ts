@@ -37,6 +37,10 @@ const MAX_HTML_LEN = 100 * 1024; // 100KB
 // 묶어 배치 호출하면 293명이 3번 호출로 끝나 지연이 필요 없어진다.
 const BATCH_SIZE = 100;
 
+// 수신거부 링크가 가리킬 사이트 주소. 메일 본문에 들어가므로 프리뷰가 아니라
+// 항상 운영 도메인이어야 한다.
+const SITE_ORIGIN = 'https://waat.community';
+
 // Origin 화이트리스트 — 운영/프리뷰/로컬개발만 허용
 const ALLOWED_ORIGINS = [
     'https://waat.community',
@@ -85,6 +89,20 @@ function isValidEmail(s: string): boolean {
     return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(s);
 }
 
+// 수신거부 안내 푸터.
+// 사람마다 토큰이 달라 본문이 달라지므로, 배치 호출도 수신자별 html 을 따로 만든다.
+// 토큰이 없는 주소(회원 명단에 없는 수동 입력 수신자)는 링크 대신 회신 안내만 넣는다.
+function withUnsubscribeFooter(html: string, token: string | null): string {
+    const style = 'margin:32px 0 0;padding-top:16px;border-top:1px solid #e5e5e5;'
+        + 'font-size:12px;line-height:1.6;color:#888;font-family:sans-serif;';
+    const body = token
+        ? `이 메일을 더 받고 싶지 않으시면 <a href="${SITE_ORIGIN}/unsubscribe.html?t=${token}"`
+          + ` style="color:#888;">여기를 눌러 수신거부</a>하실 수 있습니다.`
+          + ` 수신거부해도 모임 신청과 게시판은 그대로 이용하실 수 있습니다.`
+        : `이 메일을 더 받고 싶지 않으시면 이 메일에 회신해 주세요.`;
+    return `${html}<div style="${style}">${body}<br>WAAT (Wednesday Afternoon AI Talk)</div>`;
+}
+
 // 개인정보 보호상 BCC는 여전히 쓰지 않는다 -- 배치 호출이어도 각 항목의 `to`는
 // 수신자 1명뿐이라, Resend가 한 요청으로 묶어 보낼 뿐 서로의 주소를 볼 일은 없다.
 async function sendBatch(opts: {
@@ -94,9 +112,15 @@ async function sendBatch(opts: {
     to: string[];
     subject: string;
     html: string;
+    tokenByEmail: Record<string, string>;
 }): Promise<ResendSendResult[]> {
     const payload = opts.to.map((to) => {
-        const item: Record<string, unknown> = { from: opts.from, to: [to], subject: opts.subject, html: opts.html };
+        const item: Record<string, unknown> = {
+            from: opts.from,
+            to: [to],
+            subject: opts.subject,
+            html: withUnsubscribeFooter(opts.html, opts.tokenByEmail[to] || null),
+        };
         if (opts.replyTo) item.reply_to = opts.replyTo;
         return item;
     });
@@ -196,16 +220,64 @@ serve(async (req: Request) => {
         const subject = String(body.subject).slice(0, MAX_SUBJECT_LEN);
         const html = String(body.html).slice(0, MAX_HTML_LEN);
 
-        // 테스트 모드: 첫 수신자에게만
-        const targets = body.test ? cleanTo.slice(0, 1) : cleanTo;
+        // 5) 수신거부자 제외 + 수신거부 토큰 확보  ← 최종 방어선
+        //
+        // 수신자 목록은 클라이언트(admin.js)가 만들어 보낸다. 관리자 화면에서도 걸러주지만
+        // 그건 편의일 뿐이고, 여기서 한 번 더 걸러야 실수로라도 나가지 않는다.
+        // 같은 조회로 사람별 unsubscribe_token 도 가져와 메일 하단 링크에 쓴다.
+        // (토큰은 service role 로만 읽을 수 있다 — 클라이언트에는 절대 내려가지 않는다)
+        const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
+        const { data: profileRows, error: profileErr } = await supaAdmin
+            .from('profiles')
+            .select('email, email_opt_out, unsubscribe_token')
+            .in('email', cleanTo);
+        if (profileErr) {
+            // 수신거부 여부를 확인하지 못한 채로 보내면 거부한 사람에게 메일이 간다.
+            // fail-closed 한다.
+            console.error('수신거부 조회 실패:', profileErr);
+            return jsonResponse(
+                {
+                    success: false,
+                    error: '수신거부 여부를 확인할 수 없어 발송을 중단했습니다.',
+                    code: 'OPT_OUT_CHECK_FAILED',
+                },
+                503,
+                req,
+            );
+        }
 
-        // 5) 발송 이력 행을 루프 시작 전에 먼저 써 둔다 (PO, 2026-08-18).
+        const optedOut = new Set<string>();
+        const tokenByEmail: Record<string, string> = {};
+        for (const row of (profileRows || [])) {
+            const em = String(row.email || '').trim().toLowerCase();
+            if (!em) continue;
+            if (row.email_opt_out) optedOut.add(em);
+            if (row.unsubscribe_token) tokenByEmail[em] = String(row.unsubscribe_token);
+        }
+
+        const allowed = cleanTo.filter((e) => !optedOut.has(e));
+        const excludedCount = cleanTo.length - allowed.length;
+        if (allowed.length === 0) {
+            return jsonResponse(
+                {
+                    success: false,
+                    error: '수신자 전원이 수신거부 상태입니다.',
+                    excluded_opt_out: excludedCount,
+                },
+                400,
+                req,
+            );
+        }
+
+        // 테스트 모드: 첫 수신자에게만
+        const targets = body.test ? allowed.slice(0, 1) : allowed;
+
+        // 6) 발송 이력 행을 루프 시작 전에 먼저 써 둔다 (PO, 2026-08-18).
         // 예전엔 루프가 다 끝난 뒤에야 INSERT 했는데, Supabase Edge Function 실행시간
         // 제한에 걸려 루프 도중 함수가 통째로 죽으면 그 INSERT 자체가 실행되지 않아
         // 발송 이력이 아예 안 남았다 - Resend 쪽엔 283명 전부 실제로 발송됐는데
         // email_logs 는 빈 채로 남은 사고로 확인됨. 매 건 발송 직후 이 행을 갱신하므로,
         // 도중에 죽어도 이 테이블만 보면 몇 명까지 나갔는지 안다.
-        const supaAdmin = createClient(SUPABASE_URL, SERVICE_ROLE);
         const { data: logRow, error: logInsertErr } = await supaAdmin
             .from('email_logs')
             .insert({
@@ -239,7 +311,7 @@ serve(async (req: Request) => {
         const logId = logRow.id;
         let logUpdateFailed = false;
 
-        // 6) 발송 (100명씩 배치 호출 -- 293명이 293번이 아니라 3번의 요청으로 끝난다)
+        // 7) 발송 (100명씩 배치 호출 -- 293명이 293번이 아니라 3번의 요청으로 끝난다)
         const from = `${FROM_NAME} <${FROM_EMAIL}>`;
         const results: ResendSendResult[] = [];
         for (let i = 0; i < targets.length; i += BATCH_SIZE) {
@@ -251,6 +323,7 @@ serve(async (req: Request) => {
                 to: chunk,
                 subject,
                 html,
+                tokenByEmail,
             });
             results.push(...chunkResults);
             const successSoFar = results.filter((x) => x.success).length;
@@ -272,7 +345,7 @@ serve(async (req: Request) => {
         const successCount = results.filter((r) => r.success).length;
         const failCount = results.length - successCount;
 
-        // 7) 발송 이력 완료 처리 (SERVICE_ROLE 로 RLS 우회)
+        // 8) 발송 이력 완료 처리 (SERVICE_ROLE 로 RLS 우회)
         const { error: completionErr } = await supaAdmin
             .from('email_logs')
             .update({
@@ -293,6 +366,7 @@ serve(async (req: Request) => {
             sent: successCount,
             failed: failCount,
             log_status: logUpdateFailed ? 'degraded' : 'completed',
+            excluded_opt_out: excludedCount,
             test_mode: !!body.test,
             details: results,
         }, 200, req);

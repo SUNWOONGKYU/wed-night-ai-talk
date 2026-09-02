@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>메일 수신거부 — WAAT</title>
+    <meta name="description" content="WAAT 안내 메일 수신거부">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260603a">
+    <style>
+        /* 메일에서 바로 들어오는 페이지라 네비게이션 없이 단독으로 둔다. */
+        .unsub-wrap {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 2rem 1.25rem;
+        }
+        .unsub-card {
+            width: 100%; max-width: 520px;
+            background: #fff; border: 1px solid #e8e8ec; border-radius: 18px;
+            padding: 2.5rem 2rem; text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        }
+        .unsub-logo { width: 132px; margin: 0 auto 1.75rem; display: block; }
+        .unsub-icon { font-size: 2.5rem; line-height: 1; margin-bottom: 1rem; }
+        .unsub-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 .75rem; color: #1a1a2e; }
+        .unsub-msg { font-size: .95rem; line-height: 1.7; color: #555; margin: 0 0 .5rem; }
+        .unsub-email {
+            display: inline-block; margin: .25rem 0 1.25rem;
+            font-family: 'JetBrains Mono', monospace; font-size: .9rem;
+            background: #f4f4f7; border-radius: 8px; padding: .35rem .7rem; color: #333;
+        }
+        .unsub-actions { margin-top: 1.75rem; display: flex; flex-direction: column; gap: .6rem; }
+        .unsub-actions .btn-secondary, .unsub-actions .btn-primary { width: 100%; }
+        .unsub-foot { margin-top: 1.75rem; font-size: .8rem; color: #999; line-height: 1.6; }
+        .unsub-foot a { color: #999; text-decoration: underline; }
+        .unsub-hidden { display: none; }
+    </style>
+</head>
+<body class="speakup-light">
+
+    <div class="unsub-wrap">
+        <div class="unsub-card">
+            <a href="index.html">
+                <img src="logo-waat.png?v=20260510i" alt="WAAT" class="unsub-logo">
+            </a>
+
+            <!-- 처리 중 -->
+            <div id="unsub-loading">
+                <div class="unsub-icon">⏳</div>
+                <h1 class="unsub-title">처리 중입니다</h1>
+                <p class="unsub-msg">잠시만 기다려 주세요.</p>
+            </div>
+
+            <!-- 수신거부 완료 -->
+            <div id="unsub-done" class="unsub-hidden">
+                <div class="unsub-icon">✅</div>
+                <h1 class="unsub-title" id="unsub-done-title">수신거부 처리되었습니다</h1>
+                <p class="unsub-msg">앞으로 아래 주소로 WAAT 안내 메일을 보내지 않습니다.</p>
+                <span class="unsub-email" id="unsub-email"></span>
+                <p class="unsub-msg">
+                    회원 자격은 그대로입니다. 모임 신청과 게시판은 계속 이용하실 수 있습니다.
+                </p>
+                <div class="unsub-actions">
+                    <button class="btn-secondary" id="unsub-resub-btn">잘못 눌렀어요 — 다시 받을래요</button>
+                    <a class="btn-primary" href="index.html">WAAT 홈으로</a>
+                </div>
+            </div>
+
+            <!-- 재구독 완료 -->
+            <div id="unsub-resubbed" class="unsub-hidden">
+                <div class="unsub-icon">📬</div>
+                <h1 class="unsub-title">다시 받으시도록 되돌렸습니다</h1>
+                <p class="unsub-msg">아래 주소로 계속 안내 메일을 보내드립니다.</p>
+                <span class="unsub-email" id="unsub-resub-email"></span>
+                <div class="unsub-actions">
+                    <a class="btn-primary" href="index.html">WAAT 홈으로</a>
+                </div>
+            </div>
+
+            <!-- 오류 -->
+            <div id="unsub-error" class="unsub-hidden">
+                <div class="unsub-icon">🔗</div>
+                <h1 class="unsub-title">링크가 올바르지 않습니다</h1>
+                <p class="unsub-msg" id="unsub-error-msg">
+                    주소가 잘리거나 만료된 링크일 수 있습니다.
+                    메일에 회신해 주시면 직접 처리해 드리겠습니다.
+                </p>
+                <div class="unsub-actions">
+                    <a class="btn-primary" href="index.html">WAAT 홈으로</a>
+                </div>
+            </div>
+
+            <p class="unsub-foot">
+                WAAT — Wednesday Afternoon AI Talk<br>
+                <a href="index.html">waat.community</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js?v=20260902c"></script>
+    <script src="js/unsubscribe.js?v=20260902c"></script>
+</body>
+</html>

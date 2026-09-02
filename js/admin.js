@@ -94,7 +94,7 @@ function loadMembers() {
             applyMemberFilters();   // 검색어·구분 필터가 걸려 있으면 그대로 유지한 채 그린다
         } catch (e) {
             document.getElementById('members-tbody').innerHTML =
-                '<tr><td colspan="9" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
+                '<tr><td colspan="10" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
         } finally {
             membersLoadPromise = null;
         }
@@ -111,7 +111,7 @@ function isProvisionalMember(m) {
 function renderMembers(members) {
     const tbody = document.getElementById('members-tbody');
     if (members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="admin-empty">조건에 맞는 멤버가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" class="admin-empty">조건에 맞는 멤버가 없습니다.</td></tr>';
         updateMemberCount(0);
         return;
     }
@@ -126,10 +126,19 @@ function renderMembers(members) {
             ? `<span class="member-badge-provisional">예비 멤버</span>` +
               (source ? `<span class="member-note-source">${escapeHtml(source)}</span>` : '')
             : escapeHtml(m.notes || '-');
+        // 메일 수신 여부 — 수신거부자는 발송 대상에서 빠진다(서버에서도 한 번 더 걸러진다).
+        // 버튼을 눌러 관리자가 직접 켜고 끌 수 있다.
+        const optOut = !!m.email_opt_out;
+        const mailCell = `<button class="btn-secondary btn-small"
+                onclick="toggleEmailOptOut('${escapeAttr(m.id)}', ${optOut ? 'false' : 'true'}, '${escapeAttr(m.name || m.email || '')}')"
+                title="${optOut ? '다시 받도록 되돌립니다' : '이 회원에게 메일을 보내지 않습니다'}"
+                style="${optOut ? 'color:var(--accent-pink);' : ''}">${optOut ? '수신거부' : '수신'}</button>`;
+
         return `<tr${prov ? ' class="row-provisional"' : ''}>
             <td>${escapeHtml(m.name || '-')}</td>
             <td>${escapeHtml(m.phone || '-')}</td>
             <td>${escapeHtml(m.email || '-')}</td>
+            <td>${mailCell}</td>
             <td>${escapeHtml(m.current_job || '-')}</td>
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.message || '-')}</td>
@@ -148,7 +157,9 @@ function updateMemberCount(shownCount) {
     if (!el) return;
     const total = allMembers.length;
     const prov = allMembers.filter(isProvisionalMember).length;
+    const optOut = allMembers.filter(m => m.email_opt_out).length;
     let text = `전체 ${total}명 · 정규 ${total - prov}명 · 예비 ${prov}명`;
+    if (optOut > 0) text += ` · 메일 수신거부 ${optOut}명`;
     if (shownCount !== total) text += `  →  현재 ${shownCount}명 표시 중`;
     el.textContent = text;
 }
@@ -732,6 +743,35 @@ async function deleteMember(userId, displayName) {
     }
 }
 
+// ========== 메일 수신거부 토글 ==========
+// 회원이 직접 끌 수 있게 메일 하단에 수신거부 링크가 붙지만, "메일로 요청해 온"
+// 경우를 위해 관리자도 직접 켜고 끌 수 있어야 한다.
+//
+// 서버(admin_set_email_opt_out)가 is_admin() 으로 가드한다 — 화면 확인만으로는
+// 권한이 보장되지 않는다.
+async function toggleEmailOptOut(userId, value, displayName) {
+    const who = displayName || '이 회원';
+    const msg = value
+        ? `${who} 에게 앞으로 메일을 보내지 않습니다.\n\n회원 자격과 모임 신청 기록은 그대로 유지됩니다.`
+        : `${who} 에게 다시 메일을 보냅니다.`;
+    if (!confirm(msg)) return;
+
+    try {
+        await DB.setEmailOptOut(userId, value);
+        // 서버가 진실이므로 목록을 다시 받아온다 (로컬만 고치면 화면과 DB가 어긋난다)
+        membersLoaded = false;
+        allMembers = await DB.getAllProfiles();
+        applyMemberFilters();
+        // 발송 대상 미리보기 캐시도 무효화 — 안 그러면 제외된 사람이 계속 카운트된다
+        _emailEventAttendees = {};
+        if (typeof refreshEmailRecipientPreview === 'function') {
+            try { refreshEmailRecipientPreview(); } catch (e) { /* 이메일 탭 미초기화 */ }
+        }
+    } catch (e) {
+        alert('수신 설정 변경 중 오류가 발생했습니다: ' + (e.message || e));
+    }
+}
+
 // ========== Inquiries ==========
 let allInquiries = [];
 
@@ -932,12 +972,22 @@ function onEmailModeChange() {
     refreshEmailRecipientPreview();
 }
 
+// 직전 계산에서 수신거부로 빠진 인원 — 미리보기에 사실대로 적기 위한 값.
+let _lastExcludedOptOut = 0;
+
 async function getEmailRecipients() {
     const mode = document.querySelector('input[name="em-recipient-mode"]:checked').value;
+    _lastExcludedOptOut = 0;
 
+    // ⚠️ 수신거부자 제외는 여기서도 하지만, 진짜 방어선은 Edge Function 이다.
+    //    (send-email 이 service role 로 다시 걸러낸다 — 여기를 빠뜨려도 안 나간다)
+    //    여기서 거르는 건 발송 전 인원수·미리보기를 사실과 맞추기 위한 것이다.
     if (mode === 'all') {
         // allMembers는 loadMembers()에서 이미 채워짐
+        const valid = m => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((m.email || '').trim().toLowerCase());
+        _lastExcludedOptOut = allMembers.filter(m => m.email_opt_out && valid(m)).length;
         return allMembers
+            .filter(m => !m.email_opt_out)
             .map(m => (m.email || '').trim().toLowerCase())
             .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
     }
@@ -950,7 +1000,9 @@ async function getEmailRecipients() {
 
         try {
             const rows = await DB.getEventAttendees(parseInt(eid));
+            _lastExcludedOptOut = rows.filter(r => r.profiles && r.profiles.email_opt_out).length;
             const emails = rows
+                .filter(r => !(r.profiles && r.profiles.email_opt_out))
                 .map(r => (r.profiles && r.profiles.email) || '')
                 .map(e => (e || '').trim().toLowerCase())
                 .filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
@@ -985,7 +1037,8 @@ async function refreshEmailRecipientPreview() {
         }
         const sample = list.slice(0, 3).join(', ');
         const more = list.length > 3 ? ` 외 ${list.length - 3}명` : '';
-        box.textContent = `수신자 ${list.length}명: ${sample}${more}`;
+        const excluded = _lastExcludedOptOut > 0 ? `  (수신거부 ${_lastExcludedOptOut}명 제외)` : '';
+        box.textContent = `수신자 ${list.length}명${excluded}: ${sample}${more}`;
     } catch (e) {
         box.textContent = '오류: ' + e.message;
     }

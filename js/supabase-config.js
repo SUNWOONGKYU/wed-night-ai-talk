@@ -362,6 +362,16 @@ var DB = {
         return data || [];
     },
 
+    // 메일 수신거부 켜기/끄기 (관리자). 회원 본인은 메일 하단 링크로 직접 처리한다.
+    async setEmailOptOut(userId, value) {
+        var { data, error } = await _supabase.rpc('admin_set_email_opt_out', {
+            p_id: userId,
+            p_value: !!value
+        });
+        if (error) throw error;
+        return data;
+    },
+
     // -- Admin: Events CRUD --
     async createEvent(event) {
         var { data, error } = await _supabase
