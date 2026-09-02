@@ -1,0 +1,29 @@
+/* 메일 수신거부 결과 페이지 전용 스타일 */
+/* 2026-09-02: CSP style-src-elem 에서 'unsafe-inline' 을 빼면서
+   unsubscribe.html 안에 있던 <style> 블록을 그대로 옮겼다. 내용 변경 없음. */
+/* 메일에서 바로 들어오는 페이지라 네비게이션 없이 단독으로 둔다. */
+        .unsub-wrap {
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 2rem 1.25rem;
+        }
+        .unsub-card {
+            width: 100%; max-width: 520px;
+            background: #fff; border: 1px solid #e8e8ec; border-radius: 18px;
+            padding: 2.5rem 2rem; text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        }
+        .unsub-logo { width: 132px; margin: 0 auto 1.75rem; display: block; }
+        .unsub-icon { font-size: 2.5rem; line-height: 1; margin-bottom: 1rem; }
+        .unsub-title { font-size: 1.35rem; font-weight: 700; margin: 0 0 .75rem; color: #1a1a2e; }
+        .unsub-msg { font-size: .95rem; line-height: 1.7; color: #555; margin: 0 0 .5rem; }
+        .unsub-email {
+            display: inline-block; margin: .25rem 0 1.25rem;
+            font-family: 'JetBrains Mono', monospace; font-size: .9rem;
+            background: #f4f4f7; border-radius: 8px; padding: .35rem .7rem; color: #333;
+        }
+        .unsub-actions { margin-top: 1.75rem; display: flex; flex-direction: column; gap: .6rem; }
+        .unsub-actions .btn-secondary, .unsub-actions .btn-primary { width: 100%; }
+        .unsub-foot { margin-top: 1.75rem; font-size: .8rem; color: #999; line-height: 1.6; }
+        .unsub-foot a { color: #999; text-decoration: underline; }
+        .unsub-hidden { display: none; }

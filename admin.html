@@ -6,51 +6,7 @@
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=20260816h">
-    <style>
-        /* 멤버 테이블 칼럼 너비 조정 */
-        #members-table th:nth-child(1),
-        #members-table td:nth-child(1) { width: 60px; min-width: 60px; } /* 이름 */
-
-        #members-table th:nth-child(2),
-        #members-table td:nth-child(2) { width: 90px; min-width: 90px; } /* 전화번호 */
-
-        #members-table th:nth-child(3),
-        #members-table td:nth-child(3) { width: 140px; min-width: 140px; } /* 이메일 */
-
-        #members-table th:nth-child(4),
-        #members-table td:nth-child(4) { width: 250px; min-width: 250px; } /* 현재 하는 일 */
-
-        #members-table th:nth-child(5),
-        #members-table td:nth-child(5) { width: 250px; min-width: 250px; } /* 관심 분야 */
-
-        #members-table th:nth-child(6),
-        #members-table td:nth-child(6) { width: 200px; min-width: 200px; } /* 하고 싶은 말 */
-
-        /* ⚠️ 아래 폭 규칙은 컬럼 '순서'에 묶여 있다. 컬럼을 추가/삭제하면 여기 번호도 함께 고쳐야 한다.
-           (2026-08-16 '비고'를 7번에 넣으면서 가입일·관리가 한 칸씩 밀려 잘렸다) */
-        #members-table th:nth-child(7),
-        #members-table td:nth-child(7) { width: 150px; min-width: 150px; } /* 비고 */
-
-        #members-table th:nth-child(8),
-        #members-table td:nth-child(8) { width: 90px; min-width: 90px; } /* 가입일 */
-
-        #members-table th:nth-child(9),
-        #members-table td:nth-child(9) { width: 60px; min-width: 60px; } /* 관리 */
-
-        #members-table td {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* 현재 하는 일, 관심 분야, 하고 싶은 말은 줄바꿈 허용 */
-        #members-table td:nth-child(4),
-        #members-table td:nth-child(5),
-        #members-table td:nth-child(6) {
-            white-space: normal;
-            word-break: break-word;
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin.css?v=20260902h">
 </head>
 <body>
     <!-- Background Effects -->
