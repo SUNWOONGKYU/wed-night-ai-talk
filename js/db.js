@@ -20,27 +20,11 @@
 var supabase = _supabase;
 
 var _dbExtensions = {
-    // ===== provisional_members 테이블 함수 =====
-    // ⚠️ 유일한 호출자였던 join.html·js/join.js 는 2026-08-16 삭제됐다(어디서도 링크되지 않는 고아 페이지).
-    //    테이블(provisional_members, 111건)과 아래 함수는 남겨둔다 — 데이터가 살아있고 admin 쪽에서 쓸 수 있다.
-    //    현행 예비멤버 판별은 이 테이블이 아니라 `profiles.notes` 의 '예비 멤버' 마크를 쓴다(92건).
-
-    // 예비 멤버 조회 (이메일로)
-    async getProvisionalMember(email) {
-        try {
-            const { data, error } = await supabase
-                .from('provisional_members')
-                .select('*')
-                .eq('email', email.toLowerCase())
-                .single();
-
-            if (error && error.code !== 'PGRST116') throw error;
-            return data || null;
-        } catch (e) {
-            console.error('getProvisionalMember error:', e);
-            throw e;
-        }
-    },
+    // ⚠️ provisional_members 테이블 접근 함수들은 2026-09-02 테이블과 함께 제거했다.
+    //    (20260902010000_drop_provisional_members.sql — RLS 가 USING (true) 라 이름·이메일이
+    //     익명 조회로 전부 열려 있었고, 정작 호출자는 이미 없었다)
+    //    현행 예비멤버 판별·병합은 `profiles.notes` 의 '예비 멤버' 마크를 쓴다.
+    //    → 아래 checkProvisionalMember() 와 claim_provisional_profile() RPC 가 그 경로다.
 
     // 기존 정식 멤버 조회 (이메일로)
     async getExistingMember(email) {
@@ -53,80 +37,6 @@ var _dbExtensions = {
             console.error('getExistingMember error:', e);
             // 권한 없음인 경우 클라이언트 쿼리로 대체
             return null;
-        }
-    },
-
-    // 모든 예비 멤버 조회
-    async getAllProvisionalMembers(includeSubmitted = false) {
-        try {
-            let query = supabase
-                .from('provisional_members')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (!includeSubmitted) {
-                query = query.is('submitted_at', null);
-            }
-
-            const { data, error } = await query;
-            if (error) throw error;
-            return data || [];
-        } catch (e) {
-            console.error('getAllProvisionalMembers error:', e);
-            throw e;
-        }
-    },
-
-    // 예비 멤버 일괄 등록
-    async insertProvisionalMembers(members) {
-        try {
-            // members: [{ email, name, source }, ...]
-            const { data, error } = await supabase
-                .from('provisional_members')
-                .insert(members)
-                .select();
-
-            if (error) throw error;
-            return data || [];
-        } catch (e) {
-            console.error('insertProvisionalMembers error:', e);
-            throw e;
-        }
-    },
-
-    // 예비 멤버 제출 완료 마킹
-    async markProvisionalSubmitted(provisionalId, profileData = {}) {
-        try {
-            const { data, error } = await supabase
-                .from('provisional_members')
-                .update({
-                    submitted_at: new Date().toISOString(),
-                    notes: profileData ? JSON.stringify(profileData) : null
-                })
-                .eq('id', provisionalId)
-                .select();
-
-            if (error) throw error;
-            return data?.[0] || null;
-        } catch (e) {
-            console.error('markProvisionalSubmitted error:', e);
-            throw e;
-        }
-    },
-
-    // 예비 멤버 삭제
-    async deleteProvisionalMember(provisionalId) {
-        try {
-            const { error } = await supabase
-                .from('provisional_members')
-                .delete()
-                .eq('id', provisionalId);
-
-            if (error) throw error;
-            return true;
-        } catch (e) {
-            console.error('deleteProvisionalMember error:', e);
-            throw e;
         }
     },
 
@@ -165,28 +75,23 @@ var _dbExtensions = {
         }
     },
 
-    // 프로필 조회 (이메일로)
-    async getProfileByEmail(email) {
+    // 예비멤버 여부 확인 (이메일로) — 가입 모달이 '로그인 전'에 쓴다.
+    //
+    // ⚠️ 2026-09-02 이전에는 여기서 profiles 행을 통째로 select 했다. 그게 가능하려면
+    //    anon 에게 profiles 컬럼이 열려 있어야 했고, 실제로 이름·이메일·전화번호가
+    //    회원 298명분 전부 익명 조회되고 있었다.
+    //    → 지금은 서버의 check_provisional_member() RPC 가 '예/아니오 + 이름'만 돌려준다.
+    //       (전화번호는 반환하지 않는다 — 남의 이메일로도 채워지던 노출이었다)
+    //
+    // 반환: { is_provisional: bool, email?: string, name?: string }
+    async checkProvisionalMember(email) {
         try {
-            // profiles.email 에는 UNIQUE 제약이 없어 같은 이메일 행이 여러 개일 수 있다.
-            // .single() 은 그때 PGRST116 으로 실패해 예비멤버를 놓치므로 쓰지 않는다.
             const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('email', String(email || '').toLowerCase())
-                .order('created_at', { ascending: true })
-                .limit(20);
-
+                .rpc('check_provisional_member', { p_email: String(email || '') });
             if (error) throw error;
-            if (!data || data.length === 0) return null;
-
-            // 여러 행이면 '예비 멤버' 마크가 붙은 행을 우선 반환한다(전환 안내가 목적).
-            const provisional = data.find(function(row) {
-                return row.notes && row.notes.indexOf('예비 멤버') !== -1;
-            });
-            return provisional || data[0];
+            return data || { is_provisional: false };
         } catch (e) {
-            console.error('getProfileByEmail error:', e);
+            console.error('checkProvisionalMember error:', e);
             throw e;
         }
     },
@@ -248,43 +153,6 @@ var _dbExtensions = {
         }
     },
 
-    // 예비 멤버 통계
-    async getProvisionalStats() {
-        try {
-            const all = await this.getAllProvisionalMembers(true);
-            const submitted = all.filter(p => p.submitted_at).length;
-            const pending = all.length - submitted;
-
-            return {
-                total: all.length,
-                submitted: submitted,
-                pending: pending,
-                bySource: this._groupBySource(all),
-                byDate: this._groupByDate(all)
-            };
-        } catch (e) {
-            console.error('getProvisionalStats error:', e);
-            throw e;
-        }
-    },
-
-    _groupBySource(members) {
-        const result = {};
-        members.forEach(m => {
-            const src = m.source || 'unknown';
-            result[src] = (result[src] || 0) + 1;
-        });
-        return result;
-    },
-
-    _groupByDate(members) {
-        const result = {};
-        members.forEach(m => {
-            const date = m.created_at.split('T')[0];
-            result[date] = (result[date] || 0) + 1;
-        });
-        return result;
-    }
 };
 
 // 기존 DB(supabase-config.js)에 '없는 메서드만' 추가한다.

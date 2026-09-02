@@ -1096,7 +1096,7 @@ async function loadEmailLogs() {
     try {
         const logs = await DB.getEmailLogs(30);
         if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">발송 이력이 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">발송 이력이 없습니다.</td></tr>';
             return;
         }
         tbody.innerHTML = logs.map(log => {
@@ -1108,11 +1108,15 @@ async function loadEmailLogs() {
                 <td>${log.recipients_count}</td>
                 <td style="color:var(--accent-cyan);">${log.success_count}</td>
                 <td style="color:${log.fail_count > 0 ? 'var(--accent-pink)' : 'inherit'};">${log.fail_count}</td>
+                <td>${escapeHtml(
+                    log.status === 'completed' ? '완료' :
+                    log.status === 'in_progress' ? '진행 중/중단 확인 필요' : (log.status || '알 수 없음')
+                )}</td>
                 <td>${escapeHtml(log.sent_by_email || '-')}</td>
             </tr>`;
         }).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="6" class="admin-empty">이력 조회 실패: ${escapeHtml(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="admin-empty">이력 조회 실패: ${escapeHtml(e.message)}</td></tr>`;
     }
 }
 

@@ -288,14 +288,12 @@ document.getElementById('signup-optional-toggle').addEventListener('click', (e) 
 // 예비멤버 = profiles 행은 있지만 로그인 계정(auth.users)이 없는 사람. notes 에 '예비 멤버' 마크가 붙어 있다.
 // PO 방침(2026-08-16): 예비멤버에게 일괄 안내 메일을 발송하지 않는다.
 //   대신 모임 신청 등으로 가입 모달에 닿았을 때 여기서 알아보고 전환 신청을 유도한다.
-// 이 기능은 DB.getProfileByEmail() 에 의존한다 — index.html 이 js/db.js 를 반드시 로드해야 한다.
+// 이 기능은 DB.checkProvisionalMember() 에 의존한다 — index.html 이 js/db.js 를 반드시 로드해야 한다.
+// (2026-09-02: profiles 행을 직접 읽던 방식에서 서버 RPC 로 교체 — 익명에게 회원 이메일·전화번호가
+//  통째로 열려 있던 원인이 이 조회였다. 이제 '예비멤버 예/아니오 + 이름'만 받는다.)
 var provisionalCheckTimer = null;
 var provisionalCheckSeq = 0;       // 늦게 도착한 옛 응답이 최신 결과를 덮어쓰지 않도록 하는 순번
 var provisionalMatched = null;     // 예비멤버로 확인된 profiles 행 (가입 제출 시 재사용)
-
-function isProvisionalProfile(profile) {
-    return !!(profile && profile.notes && profile.notes.indexOf('예비 멤버') !== -1);
-}
 
 function hideProvisionalNotice() {
     provisionalMatched = null;
@@ -320,10 +318,10 @@ function showProvisionalNotice(profile) {
     el.style.display = 'block';
 
     // 전환 신청 유도 — 이미 아는 정보는 채워주고, 다음 입력칸으로 보낸다.
+    // 전화번호 자동입력은 2026-09-02 제거했다 — 남의 이메일을 넣어도 그 사람 번호가
+    // 채워지는 노출이었고, 본인이라면 어차피 자기 번호라 직접 입력하면 된다.
     var nameEl = document.getElementById('s-name');
     if (nameEl && !nameEl.value.trim() && profile && profile.name) nameEl.value = profile.name;
-    var phoneEl = document.getElementById('s-contact');
-    if (phoneEl && !phoneEl.value.trim() && profile && profile.phone) phoneEl.value = profile.phone;
     var pwEl = document.getElementById('s-password');
     if (pwEl && !pwEl.value) pwEl.focus();
 }
@@ -337,8 +335,8 @@ async function runProvisionalCheck(email) {
         hideProvisionalNotice();
         return null;
     }
-    if (typeof DB === 'undefined' || typeof DB.getProfileByEmail !== 'function') {
-        console.warn('[예비멤버] DB.getProfileByEmail 없음 — js/db.js 가 로드되지 않았습니다.');
+    if (typeof DB === 'undefined' || typeof DB.checkProvisionalMember !== 'function') {
+        console.warn('[예비멤버] DB.checkProvisionalMember 없음 — js/db.js 가 로드되지 않았습니다.');
         hideProvisionalNotice();
         return null;
     }
@@ -351,11 +349,11 @@ async function runProvisionalCheck(email) {
     }
 
     try {
-        var profile = await DB.getProfileByEmail(email);
+        var res = await DB.checkProvisionalMember(email);
         if (seq !== provisionalCheckSeq) return null;   // 그 사이 더 최신 조회가 시작됨 → 이 결과는 버린다
-        if (isProvisionalProfile(profile)) {
-            showProvisionalNotice(profile);
-            return profile;
+        if (res && res.is_provisional) {
+            showProvisionalNotice(res);                 // { is_provisional, email, name }
+            return res;
         }
         hideProvisionalNotice();
         return null;
