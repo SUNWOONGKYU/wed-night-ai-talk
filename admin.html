@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260816h">
+    <link rel="stylesheet" href="css/style.css?v=20260913a">
     <link rel="stylesheet" href="css/admin.css?v=20260902h">
 </head>
 <body>
@@ -111,19 +111,88 @@
                         <input type="hidden" id="edit-event-id" value="">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label for="ev-title">모임 제목 <span class="required">*</span></label>
-                                <input type="text" id="ev-title" required placeholder="2차 정기 모임">
+                                <label for="ev-type">종류 <span class="required">*</span></label>
+                                <select id="ev-type" required>
+                                    <option value="meeting">모임 (Meeting — 정기 수요일 모임)</option>
+                                    <option value="event">행사 (Event — 특별 행사)</option>
+                                </select>
+                                <span class="form-hint">행사는 메인 페이지 '행사' 섹션에 제목 그대로 표시됩니다.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-title">제목 <span class="required">*</span></label>
+                                <input type="text" id="ev-title" required placeholder="2차 정기 모임 / 연말 송년회">
                             </div>
                             <div class="form-group">
                                 <label for="ev-date">날짜 <span class="required">*</span></label>
                                 <input type="date" id="ev-date" required>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!-- 모임 전용: 타임 슬롯 -->
+                        <div class="form-group" id="ev-meeting-fields">
                             <label>타임 슬롯 (각 타임이 별도 세부 모임이 됨)</label>
                             <div id="ev-slots-list" class="ev-slots-list"></div>
                             <button type="button" id="ev-slots-add" class="btn-secondary btn-small" style="margin-top:0.5rem;">＋ 타임 추가</button>
                             <span class="form-hint">예: ☀️ 햇살 13:00 / 🌅 노을 16:00 / 🌙 달빛 19:00. 라벨/이모지/시간 자유롭게 변경 가능.</span>
+                        </div>
+                        <!-- 행사(강의) 전용: 단일 시간 + 강사·커리큘럼·수강료 등 (저장 시 '📚 강의' 슬롯 하나가 자동 생성됨) -->
+                        <div id="ev-lecture-fields" style="display:none;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ev-lec-start">시작 시간 <span class="required">*</span></label>
+                                    <input type="time" id="ev-lec-start">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ev-lec-end">종료 시간</label>
+                                    <input type="time" id="ev-lec-end">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ev-instructor-name">강사 이름</label>
+                                    <input type="text" id="ev-instructor-name" placeholder="홍길동">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ev-instructor-title">소속 / 직함</label>
+                                    <input type="text" id="ev-instructor-title" placeholder="○○ AI Lab 리드">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-instructor-bio">강사 한 줄 소개</label>
+                                <input type="text" id="ev-instructor-bio" placeholder="10년차 ML 엔지니어, LLM 서비스 3건 출시">
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-curriculum">커리큘럼 (한 줄에 한 항목)</label>
+                                <textarea id="ev-curriculum" rows="4" placeholder="1부. Claude Code 기본기&#10;2부. 실전 프로젝트 셋업&#10;3부. Q&amp;A"></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ev-audience">수강 대상 · 난이도</label>
+                                    <input type="text" id="ev-audience" placeholder="입문 — 코딩 경험 없어도 가능">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ev-materials">준비물</label>
+                                    <input type="text" id="ev-materials" placeholder="노트북, Claude 계정">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="ev-fee">수강료</label>
+                                    <input type="text" id="ev-fee" placeholder="30,000원">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ev-deadline">신청 마감일 (당일까지 신청 가능)</label>
+                                    <input type="date" id="ev-deadline">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-payment-info">입금 안내</label>
+                                <textarea id="ev-payment-info" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-handout-url">교안 URL (신청자에게만 노출)</label>
+                                <input type="url" id="ev-handout-url" placeholder="https://drive.google.com/...">
+                                <span class="form-hint">비로그인·미신청자는 이 링크를 볼 수 없습니다. 비워두면 표시 안 함.</span>
+                            </div>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
@@ -152,14 +221,14 @@
                         <input type="hidden" id="ev-address" value="">
                         <input type="hidden" id="ev-map-url" value="">
                         <div class="form-group">
-                            <label for="ev-desc">모임 내용</label>
+                            <label for="ev-desc" id="ev-desc-label">모임 내용</label>
                             <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="ev-capacity">모집 정원 (선착순)</label>
                             <input type="number" id="ev-capacity" value="10" min="1" max="200" placeholder="10">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="ev-provision-group">
                             <label for="ev-provision">제공사항 및 참가비</label>
                             <textarea id="ev-provision" rows="4" placeholder="제공사항과 참가비 안내를 입력하세요."></textarea>
                         </div>
@@ -183,6 +252,7 @@
                             <table class="admin-table" id="events-table">
                                 <thead>
                                     <tr>
+                                        <th>종류</th>
                                         <th>제목</th>
                                         <th>날짜</th>
                                         <th>시간</th>
@@ -193,7 +263,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="events-tbody">
-                                    <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
+                                    <tr><td colspan="8" class="admin-loading">로딩 중...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -508,9 +578,9 @@
          ⚠️ 버전은 0.18.5 — SheetJS 가 npm 배포를 중단해 0.20.x 는 jsdelivr 에 없다(404).
             버전을 올리려면 먼저 해당 URL 이 200 인지 확인할 것. -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260902g"></script>
+    <script src="js/supabase-config.js?v=20260913a"></script>
     <script src="js/db.js?v=20260902g"></script>
-    <script src="js/admin.js?v=20260902g"></script>
+    <script src="js/admin.js?v=20260913a"></script>
 
 </body>
 </html>

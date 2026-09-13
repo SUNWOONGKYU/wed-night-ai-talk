@@ -93,12 +93,19 @@ function pfUpdateNav() {
     }
 }
 
+// 강의 교안 URL (event_id → url). RLS가 본인이 신청한 강의 것만 돌려준다.
+var pfHandouts = {};
+
 async function pfLoadAttendances() {
     var listEl = document.getElementById('my-attendances');
     listEl.innerHTML = '<div class="admin-loading">불러오는 중...</div>';
 
     try {
         var rows = await DB.getMyAttendancesFull();
+        try {
+            var ids = rows.map(function(r) { return r.event_id; }).filter(Boolean);
+            pfHandouts = ids.length ? await DB.getEventHandouts(ids) : {};
+        } catch (e) { console.warn('getEventHandouts failed:', e); pfHandouts = {}; }
 
         // 클라이언트 정렬 보강 (서버 정렬 변경에 견고하게) — event_date ASC
         // pfToLocalDate로 통일하여 classify/render 경로와 형 일관화
@@ -187,6 +194,11 @@ function pfRenderRow(r) {
         '<button class="my-att-cancel-btn btn-secondary" data-event-id="' + r.event_id + '" data-slot-id="' + (r.event_slot_id || '') + '">신청 취소</button>';
     var stateCls = isCancelled ? ' cancelled' : (isPast ? ' past' : '');
     var statusBadge = isCancelled ? '<span class="my-att-status-badge cancelled">취소됨</span>' : '';
+    // 강의 교안 — 신청한 강의에만 존재 (지난 강의도 계속 볼 수 있게 과거 여부와 무관하게 표시)
+    var handoutUrl = pfHandouts[r.event_id];
+    var handoutLink = handoutUrl
+        ? '<a href="' + pfEscape(handoutUrl) + '" target="_blank" rel="noopener noreferrer" class="my-att-handout">📘 교안 보기 →</a>'
+        : '';
 
     return '' +
         '<div class="my-att-item' + stateCls + '">' +
@@ -197,7 +209,7 @@ function pfRenderRow(r) {
                 (timeStr ? '<span class="my-att-time">' + pfEscape(timeStr) + '</span>' : '') +
             '</div>' +
             (r.event_title ? '<div class="my-att-title">' + pfEscape(r.event_title) + '</div>' : '') +
-            (cancelBtn ? '<div class="my-att-actions">' + cancelBtn + '</div>' : '') +
+            ((cancelBtn || handoutLink) ? '<div class="my-att-actions">' + handoutLink + cancelBtn + '</div>' : '') +
         '</div>';
 }
 

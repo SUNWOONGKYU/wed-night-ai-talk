@@ -4620,3 +4620,88 @@ footer {
 .post-content em { font-style: italic; }
 .post-content ul.post-ul { margin: 0.4rem 0; padding-left: 1.35rem; }
 .post-content ul.post-ul li { list-style: disc; margin: 0.15rem 0; }
+
+/* ========== 강의 카드 (행사 섹션, index.html #event) ========== */
+/* 모임 카드(.schedule-card) 골격을 그대로 쓰고, 슬롯 카드 자리에 신청 버튼 하나(.lecture-apply)만 둔다 */
+.lecture-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.1rem 0.5rem;
+    margin-right: 0.35rem;
+    border-radius: 999px;
+    background: var(--accent-gold);
+    color: #fff;
+    vertical-align: middle;
+}
+.lecture-card .schedule-meeting-no {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1.05rem;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.5;
+}
+.lecture-time {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0.35rem 0 1rem;
+}
+.lecture-apply {
+    max-width: 420px;
+    margin: 0.5rem auto 0;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(0,0,0,0.06);
+    text-align: center;
+}
+.lecture-seats {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.7rem;
+}
+.lecture-seats strong { color: var(--text-primary); }
+.waat-slot-btn.lecture-apply-btn { width: 100%; }
+.lecture-handout-link {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-decoration: none;
+}
+.lecture-handout-link:hover { text-decoration: underline; }
+.lecture-apply .slot-attendees,
+.lecture-apply .slot-attendees-empty { margin-top: 0.9rem; }
+.lecture-instructor-title {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-left: 0.3rem;
+}
+.lecture-instructor-bio,
+.lecture-payment-info {
+    margin-top: 0.3rem;
+    font-size: 0.93em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.curriculum-list {
+    margin: 0.2rem 0 0;
+    padding-left: 1.4rem;
+    line-height: 1.7;
+}
+.curriculum-list li { list-style: decimal; }
+
+/* 프로필 — 내 신청 내역의 강의 교안 링크 */
+.my-att-actions { gap: 0.75rem; align-items: center; }
+.my-att-handout {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-decoration: none;
+    margin-right: auto;
+}
+.my-att-handout:hover { text-decoration: underline; }

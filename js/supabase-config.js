@@ -189,21 +189,25 @@ var DB = {
     },
 
     // -- Events --
-    async getEvents() {
+    // eventType: 'meeting'(수요일 모임, 기본) | 'event'(행사). 메인 페이지 #schedule / #event 섹션이 각각 호출.
+    async getEvents(eventType) {
         var { data, error } = await _supabase
             .from('events')
             .select('*')
             .eq('is_active', true)
+            .eq('event_type', eventType || 'meeting')
             .order('event_date', { ascending: true });
         if (error) throw error;
         return data;
     },
 
     // 회차 번호 계산용 — 비활성 포함 전체 이벤트 (event_date ASC = 생성 순서)
-    async getAllEventsForNumbering() {
+    // 종류별로 따로 센다 — 행사가 끼어도 "제N회 모임" 번호가 밀리지 않도록.
+    async getAllEventsForNumbering(eventType) {
         var { data, error } = await _supabase
             .from('events')
             .select('id, event_date')
+            .eq('event_type', eventType || 'meeting')
             .order('event_date', { ascending: true });
         if (error) throw error;
         return data;
@@ -332,6 +336,34 @@ var DB = {
                 await this.createEventSlot(payload);
             }
         }
+    },
+
+    // -- 교안 URL (event_handouts) --
+    // RLS: 관리자 또는 해당 강의 신청자만 행이 보인다. 신청 안 한 강의는 결과에서 빠질 뿐 에러가 아니다.
+    async getEventHandouts(eventIds) {
+        if (!eventIds || !eventIds.length) return {};
+        var { data, error } = await _supabase
+            .from('event_handouts')
+            .select('event_id, url')
+            .in('event_id', eventIds);
+        if (error) throw error;
+        var map = {};
+        (data || []).forEach(function(r) { map[r.event_id] = r.url; });
+        return map;
+    },
+
+    // 관리자: 빈 URL이면 행 삭제, 있으면 upsert
+    async setEventHandout(eventId, url) {
+        var clean = (url || '').trim();
+        if (!clean) {
+            var { error: delErr } = await _supabase.from('event_handouts').delete().eq('event_id', eventId);
+            if (delErr) throw delErr;
+            return;
+        }
+        var { error } = await _supabase
+            .from('event_handouts')
+            .upsert({ event_id: eventId, url: clean, updated_at: new Date().toISOString() }, { onConflict: 'event_id' });
+        if (error) throw error;
     },
 
     async getMyAttendance(userId) {

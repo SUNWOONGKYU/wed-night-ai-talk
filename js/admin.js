@@ -260,7 +260,7 @@ async function loadEvents() {
         await loadLocationSelect();
     } catch (e) {
         document.getElementById('events-tbody').innerHTML =
-            '<tr><td colspan="7" class="admin-empty">모임 목록을 불러올 수 없습니다.</td></tr>';
+            '<tr><td colspan="8" class="admin-empty">모임 목록을 불러올 수 없습니다.</td></tr>';
     }
 }
 
@@ -289,7 +289,7 @@ document.getElementById('ev-location-select').addEventListener('change', functio
 function renderEvents(events) {
     const tbody = document.getElementById('events-tbody');
     if (events.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">등록된 모임이 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-empty">등록된 모임이 없습니다.</td></tr>';
         return;
     }
 
@@ -299,8 +299,10 @@ function renderEvents(events) {
         const status = ev.is_active
             ? '<span class="admin-badge active">활성</span>'
             : '<span class="admin-badge inactive">비활성</span>';
+        const typeLabel = ev.event_type === 'event' ? '행사' : '모임';
 
         return `<tr>
+            <td>${typeLabel}</td>
             <td>${escapeHtml(ev.title)}</td>
             <td>${date}</td>
             <td>${time}</td>
@@ -329,6 +331,23 @@ const DEFAULT_SLOTS = [
 
 // 제공사항 및 참가비 디폴트
 const DEFAULT_PROVISION = '제공사항: 커피/생수\n참가비: 1만원\n입금계좌: 하나은행 620-241128-571 선웅규\n* 음료 지참의 불편함 해소 및 노쇼 방지 목적';
+// 강의(행사) 입금 안내 기본값 — 강의마다 수정 가능
+const DEFAULT_PAYMENT_INFO = '입금계좌: 하나은행 620-241128-571 선웅규\n입금자명은 신청하신 이름과 동일하게 해주세요.';
+// 강의 슬롯 — 강의는 타임슬롯 없이 시간 하나. 신청 RPC(attend_event)가 슬롯을 요구하므로 이 슬롯 하나를 자동 생성한다.
+const LECTURE_SLOT = { slot_emoji: '📚', slot_label: '강의' };
+
+// 종류(모임/행사)에 따라 폼 블록 전환
+function applyEventTypeUI() {
+    const isLecture = document.getElementById('ev-type').value === 'event';
+    document.getElementById('ev-meeting-fields').style.display = isLecture ? 'none' : '';
+    document.getElementById('ev-lecture-fields').style.display = isLecture ? '' : 'none';
+    document.getElementById('ev-provision-group').style.display = isLecture ? 'none' : '';
+    document.getElementById('ev-desc-label').textContent = isLecture ? '강의 내용' : '모임 내용';
+    document.getElementById('ev-lec-start').required = isLecture;
+    const pay = document.getElementById('ev-payment-info');
+    if (isLecture && !pay.value) pay.value = DEFAULT_PAYMENT_INFO;
+}
+document.getElementById('ev-type').addEventListener('change', applyEventTypeUI);
 
 function renderSlotRows(slots) {
     const list = document.getElementById('ev-slots-list');
@@ -394,8 +413,21 @@ eventForm.addEventListener('submit', async (e) => {
     const btn = eventForm.querySelector('.form-submit');
     const editId = document.getElementById('edit-event-id').value;
 
+    const isLecture = document.getElementById('ev-type').value === 'event';
+    const lec = function(id) { const v = document.getElementById(id).value.trim(); return (isLecture && v) ? v : null; };
     const eventData = {
+        event_type: isLecture ? 'event' : 'meeting',
         title: document.getElementById('ev-title').value.trim(),
+        // 강의 전용 컬럼 — 모임이면 전부 NULL로 비운다 (종류를 바꿔 저장해도 잔재가 남지 않게)
+        instructor_name: lec('ev-instructor-name'),
+        instructor_title: lec('ev-instructor-title'),
+        instructor_bio: lec('ev-instructor-bio'),
+        curriculum: lec('ev-curriculum'),
+        audience: lec('ev-audience'),
+        materials: lec('ev-materials'),
+        fee: lec('ev-fee'),
+        payment_info: lec('ev-payment-info'),
+        apply_deadline: lec('ev-deadline'),
         event_date: document.getElementById('ev-date').value,
         day_label: document.getElementById('ev-day-label').value,
         location: document.getElementById('ev-location').value.trim(),
@@ -407,11 +439,33 @@ eventForm.addEventListener('submit', async (e) => {
         youtube_url: document.getElementById('ev-youtube').value.trim() || null
     };
 
-    const slotInputs = readSlotRows();
-    if (slotInputs.length === 0) {
-        statusEl.textContent = '최소 한 개의 타임 슬롯이 필요합니다.';
-        statusEl.className = 'form-status error';
-        return;
+    let slotInputs;
+    if (isLecture) {
+        // 강의: '📚 강의' 슬롯 하나. 수정 시에는 기존 슬롯 id를 이어받아 신청 내역이 끊기지 않게 한다.
+        const start = document.getElementById('ev-lec-start').value;
+        if (!start) {
+            statusEl.textContent = '강의 시작 시간을 입력해주세요.';
+            statusEl.className = 'form-status error';
+            return;
+        }
+        const existing = editId ? (allEvents.find(e => e.id === parseInt(editId)) || {}) : {};
+        const prevSlot = (existing._slots || []).find(s => s.is_active !== false) || (existing._slots || [])[0];
+        slotInputs = [{
+            id: prevSlot ? prevSlot.id : undefined,
+            slot_emoji: LECTURE_SLOT.slot_emoji,
+            slot_label: LECTURE_SLOT.slot_label,
+            slot_time: start,
+            slot_end_time: document.getElementById('ev-lec-end').value || null,
+            sort_order: 1
+        }];
+        eventData.provision = '';
+    } else {
+        slotInputs = readSlotRows();
+        if (slotInputs.length === 0) {
+            statusEl.textContent = '최소 한 개의 타임 슬롯이 필요합니다.';
+            statusEl.className = 'form-status error';
+            return;
+        }
     }
 
     statusEl.textContent = '저장 중...';
@@ -431,7 +485,11 @@ eventForm.addEventListener('submit', async (e) => {
         // 슬롯 동기화 (소프트 삭제 + 신규/업데이트)
         await DB.replaceEventSlots(evId, slotInputs);
 
-        statusEl.textContent = editId ? '모임이 수정되었습니다.' : '모임이 등록되었습니다.';
+        // 교안 URL — 별도 테이블(신청자·관리자만 조회 가능). 모임이거나 빈 값이면 행 삭제.
+        await DB.setEventHandout(evId, isLecture ? document.getElementById('ev-handout-url').value : '');
+
+        const noun = isLecture ? '강의' : '모임';
+        statusEl.textContent = editId ? noun + '이 수정되었습니다.' : noun + '이 등록되었습니다.';
         statusEl.className = 'form-status success';
         resetEventForm();
         loadEvents();
@@ -449,7 +507,26 @@ async function editEvent(id) {
     if (!ev) return;
 
     document.getElementById('edit-event-id').value = ev.id;
+    document.getElementById('ev-type').value = ev.event_type === 'event' ? 'event' : 'meeting';
     document.getElementById('ev-title').value = ev.title;
+    // 강의 전용 필드
+    document.getElementById('ev-instructor-name').value = ev.instructor_name || '';
+    document.getElementById('ev-instructor-title').value = ev.instructor_title || '';
+    document.getElementById('ev-instructor-bio').value = ev.instructor_bio || '';
+    document.getElementById('ev-curriculum').value = ev.curriculum || '';
+    document.getElementById('ev-audience').value = ev.audience || '';
+    document.getElementById('ev-materials').value = ev.materials || '';
+    document.getElementById('ev-fee').value = ev.fee || '';
+    document.getElementById('ev-deadline').value = ev.apply_deadline || '';
+    document.getElementById('ev-payment-info').value = ev.payment_info || '';
+    document.getElementById('ev-handout-url').value = '';
+    if (ev.event_type === 'event') {
+        try {
+            const handouts = await DB.getEventHandouts([ev.id]);
+            document.getElementById('ev-handout-url').value = handouts[ev.id] || '';
+        } catch (e) { console.warn('getEventHandouts failed:', e); }
+    }
+    applyEventTypeUI();
     document.getElementById('ev-date').value = ev.event_date;
     document.getElementById('ev-day-label').value = ev.day_label || '';
     document.getElementById('ev-location').value = ev.location || '';
@@ -471,9 +548,14 @@ async function editEvent(id) {
     // 활성 슬롯만 표시 (비활성/소프트삭제 슬롯 제외)
     const activeSlots = (slots || []).filter(function(s) { return s.is_active !== false; });
     renderSlotRows(activeSlots.length ? activeSlots : DEFAULT_SLOTS);
+    // 강의: 단일 슬롯의 시간을 시작/종료 시간 입력에 채움
+    const lecSlot = activeSlots[0] || (slots || [])[0];
+    document.getElementById('ev-lec-start').value = lecSlot && lecSlot.slot_time ? String(lecSlot.slot_time).slice(0, 5) : '';
+    document.getElementById('ev-lec-end').value = lecSlot && lecSlot.slot_end_time ? String(lecSlot.slot_end_time).slice(0, 5) : '';
 
-    document.getElementById('event-form-title').textContent = '모임 수정';
-    eventForm.querySelector('.form-submit').textContent = '모임 수정 →';
+    const noun = ev.event_type === 'event' ? '강의' : '모임';
+    document.getElementById('event-form-title').textContent = noun + ' 수정';
+    eventForm.querySelector('.form-submit').textContent = noun + ' 수정 →';
     eventFormReset.style.display = 'inline-flex';
 
     // 폼으로 스크롤
@@ -483,6 +565,10 @@ async function editEvent(id) {
 function resetEventForm() {
     eventForm.reset();
     document.getElementById('edit-event-id').value = '';
+    document.getElementById('ev-type').value = 'meeting';
+    document.getElementById('ev-payment-info').value = '';
+    document.getElementById('ev-handout-url').value = '';
+    applyEventTypeUI();
     document.getElementById('ev-location').value = '';
     document.getElementById('ev-address').value = '';
     document.getElementById('ev-map-url').value = '';
@@ -500,6 +586,7 @@ function resetEventForm() {
 
 // 페이지 로드 시 디폴트 슬롯 row + 제공사항 디폴트 렌더링
 renderSlotRows(DEFAULT_SLOTS);
+applyEventTypeUI();
 (function() {
     var p = document.getElementById('ev-provision');
     if (p && !p.value) p.value = DEFAULT_PROVISION;

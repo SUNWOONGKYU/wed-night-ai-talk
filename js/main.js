@@ -940,24 +940,38 @@ function formatEventTime(timeStr) {
 }
 
 // ========== Render events from DB ==========
+// events.event_type 별 섹션 설정 — 'meeting'(#schedule) / 'event'(#event).
+// 카드·슬롯 신청 UI는 완전히 같고, 문구와 컨테이너만 다르다.
+const EVENT_KINDS = {
+    meeting: { containerId: 'events-container', noun: '모임', showRooms: true },
+    event:   { containerId: 'event-list-container', noun: '행사', showRooms: false }
+};
+
+// 모임·행사 두 섹션을 함께 그린다 (신청/취소 후 재렌더 호출자들이 이 이름을 쓴다).
 async function renderScheduleEvents() {
-    const container = document.getElementById('events-container');
+    await Promise.all(Object.keys(EVENT_KINDS).map(function(type) { return renderEventCards(type); }));
+}
+
+async function renderEventCards(eventType) {
+    const kind = EVENT_KINDS[eventType] || EVENT_KINDS.meeting;
+    const container = document.getElementById(kind.containerId);
+    if (!container) return;
     try {
-        const events = await DB.getEvents();
+        const events = await DB.getEvents(eventType);
 
         if (events.length === 0) {
-            container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">예정된 모임이 없습니다.</div>';
+            container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">예정된 ' + kind.noun + '이 없습니다.</div>';
             return;
         }
 
-        // 첫 번째 활성 이벤트를 참여 신청용으로 설정
-        currentEventId = events[0].id;
+        // 첫 번째 활성 모임을 참여 신청용으로 설정 (레거시 폴백 — 슬롯에 event_id가 있으면 그쪽 우선)
+        if (eventType === 'meeting') currentEventId = events[0].id;
 
-        // 회차 번호 매핑 — 비활성 포함 전체 이벤트 기준 (event_date ASC 순서)
+        // 회차 번호 매핑 — 비활성 포함 같은 종류 전체 기준 (event_date ASC 순서)
         // 1회 비활성화돼도 2회는 그대로 "제2회"로 표시되도록 함
         const meetingNoMap = {};
         try {
-            const allEvents = await DB.getAllEventsForNumbering();
+            const allEvents = await DB.getAllEventsForNumbering(eventType);
             allEvents.forEach((ev, i) => { meetingNoMap[ev.id] = i + 1; });
         } catch (e) {
             console.warn('getAllEventsForNumbering failed, falling back to active idx:', e);
@@ -977,7 +991,10 @@ async function renderScheduleEvents() {
             events.forEach((ev, i) => { attendeesByEvent[ev.id] = attResults[i] || []; });
         } catch (e) { console.warn('getSlotAttendees failed:', e); }
         // currentSlots: 전체 이벤트 슬롯 합침 (getSlotById가 모든 이벤트에서 찾을 수 있게)
-        currentSlots = events.flatMap(ev => (slotsByEvent[ev.id] || []).map(s => ({ ...s, event_id: ev.id })));
+        // 모임·행사 섹션이 각각 렌더되므로 이 종류의 이벤트 슬롯만 갈아끼우고 다른 종류 것은 남긴다.
+        const theseEventIds = new Set(events.map(ev => ev.id));
+        currentSlots = currentSlots.filter(s => !theseEventIds.has(s.event_id))
+            .concat(events.flatMap(ev => (slotsByEvent[ev.id] || []).map(s => ({ ...s, event_id: ev.id }))));
         if (currentUser) {
             try {
                 const myAtt = await DB.getMyAttendance(currentUser.id);
@@ -985,11 +1002,27 @@ async function renderScheduleEvents() {
                      .forEach(a => myAttendedSlotIds.add(Number(a.event_slot_id)));
             } catch (e) { console.warn('getMyAttendance failed:', e); }
         }
+        // 교안 URL — RLS가 신청자 본인(또는 관리자) 것만 돌려준다. 비로그인은 조회 자체를 안 한다.
+        let handoutByEvent = {};
+        if (eventType === 'event' && currentUser) {
+            try { handoutByEvent = await DB.getEventHandouts(events.map(ev => ev.id)); }
+            catch (e) { console.warn('getEventHandouts failed:', e); }
+        }
 
         container.innerHTML = events.map((ev, idx) => {
             const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
             const timeDisplay = formatEventTimes(ev.event_times, ev.event_time);
             const slots = slotsByEvent[ev.id] || [];
+
+            // 행사(강의)는 타임슬롯 없이 단일 시간 + 신청 버튼 하나 — 전용 카드로 분기
+            if (eventType === 'event') {
+                return renderLectureCard(ev, {
+                    display, dayName, slots,
+                    attendees: attendeesByEvent[ev.id] || [],
+                    myAttendedSlotIds,
+                    handoutUrl: handoutByEvent[ev.id] || ''
+                });
+            }
 
             // 상세 정보 항목들 — 장소는 이름 하나만 (Location 섹션 카드로 연결)
             let detailItems = '';
@@ -1002,7 +1035,7 @@ async function renderScheduleEvents() {
                             <div class="info-label">장소</div>
                             <div class="info-value">
                                 <a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>
-                                <span class="info-rooms">(햇살: 2번 회의실 · 달빛: 5번 회의실)</span>
+                                ${kind.showRooms ? '<span class="info-rooms">(햇살: 2번 회의실 · 달빛: 5번 회의실)</span>' : ''}
                             </div>
                         </div>
                     </div>`;
@@ -1014,7 +1047,7 @@ async function renderScheduleEvents() {
                     <div class="schedule-info-item">
                         <div class="schedule-info-icon">📋</div>
                         <div class="schedule-info-text">
-                            <div class="info-label">모임 내용</div>
+                            <div class="info-label">${kind.noun} 내용</div>
                             <div class="info-value description-value">${escapeHtml(ev.description).replace(/\n/g, '<br>')}</div>
                         </div>
                     </div>`;
@@ -1139,7 +1172,7 @@ async function renderScheduleEvents() {
                 </div>
             ` : '';
 
-            // 모임 회차: 비활성 모임 포함 전체 순서 기준 (비활성화돼도 회차 번호 유지)
+            // 회차: 비활성 포함 같은 종류 전체 순서 기준 (비활성화돼도 회차 번호 유지)
             const meetingNo = meetingNoMap[ev.id] || (idx + 1);
 
             return `
@@ -1153,7 +1186,7 @@ async function renderScheduleEvents() {
                     </div>
                     ${detailItems ? `
                     <div class="schedule-details">
-                        <h3>모임 정보</h3>
+                        <h3>${kind.noun} 정보</h3>
                         <div class="schedule-info">
                             ${detailItems}
                         </div>
@@ -1161,8 +1194,9 @@ async function renderScheduleEvents() {
                 </div>`;
         }).join('');
 
-        // 동적으로 생성된 버튼에 이벤트 리스너 재연결
-        rebindAttendButtons();
+        // 동적으로 생성된 버튼에 이벤트 리스너 재연결 — 이 섹션 안의 버튼만
+        // (모임·행사 섹션이 각각 렌더되므로 document 전체를 다시 묶으면 다른 섹션 버튼에 중복 바인딩된다)
+        rebindAttendButtons(container);
 
         // 로그인 상태에 따라 참여 버튼 UI 업데이트
         updateAttendUI();
@@ -1173,9 +1207,156 @@ async function renderScheduleEvents() {
         }
 
     } catch (e) {
-        console.error('renderScheduleEvents error:', e);
-        container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">모임 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
+        console.error('renderEventCards(' + eventType + ') error:', e);
+        container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">' + kind.noun + ' 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
     }
+}
+
+// ========== 강의 카드 (행사 섹션) ==========
+// 모임 카드와 같은 .schedule-card 골격을 쓰되, 슬롯 카드 대신 신청 버튼 하나.
+// 신청 버튼은 .waat-slot-btn + data-event-slot-id 규약을 그대로 따르므로
+// rebindAttendButtons / memberAttendSlot / memberCancelSlot 이 수정 없이 동작한다.
+// (관리자 폼이 강의마다 '📚 강의' 슬롯 하나를 자동 생성한다)
+function multilineHtml(text) {
+    return escapeHtml(text || '').replace(/\n/g, '<br>');
+}
+
+function lectureInfoItem(icon, label, valueHtml) {
+    if (!valueHtml) return '';
+    return `
+        <div class="schedule-info-item">
+            <div class="schedule-info-icon">${icon}</div>
+            <div class="schedule-info-text">
+                <div class="info-label">${label}</div>
+                <div class="info-value">${valueHtml}</div>
+            </div>
+        </div>`;
+}
+
+function kstToday() {
+    // 브라우저 로컬이 아닌 KST 기준 오늘 (서버 attend_event 마감 판정과 맞춤)
+    const now = new Date();
+    const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    return new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
+}
+
+function renderLectureCard(ev, ctx) {
+    const slot = (ctx.slots || []).find(s => s.is_active !== false) || ctx.slots[0] || null;
+    const sid = slot ? Number(slot.id) : 0;
+    const count = slot ? Number(slot.count || 0) : 0;
+    const cap = (slot && slot.capacity != null) ? Number(slot.capacity) : (Number(ev.capacity) || 20);
+    const attended = sid ? ctx.myAttendedSlotIds.has(sid) : false;
+
+    // 마감: 마감일이 지났거나(당일 포함 허용) 정원이 찼거나 슬롯이 없을 때
+    let deadlineStr = '';
+    let deadlinePassed = false;
+    if (ev.apply_deadline) {
+        const dl = formatEventDate(ev.apply_deadline, '');
+        deadlineStr = dl.display + ' ' + dl.dayName;
+        const parts = ev.apply_deadline.split('-');
+        deadlinePassed = kstToday() > new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    }
+    const isFull = !attended && count >= cap;
+    const closed = !attended && (deadlinePassed || isFull || !slot);
+
+    let btnClass, btnText, btnDisabled;
+    if (attended) {
+        btnClass = 'waat-slot-btn lecture-apply-btn slot-attended';
+        btnText = '✓ 신청됨 — 취소';
+        btnDisabled = '';
+    } else if (closed) {
+        btnClass = 'waat-slot-btn lecture-apply-btn slot-full';
+        btnText = deadlinePassed ? '신청 마감' : (isFull ? '정원 마감' : '준비 중');
+        btnDisabled = 'disabled';
+    } else {
+        btnClass = 'btn-primary waat-slot-btn lecture-apply-btn';
+        btnText = '수강 신청하기';
+        btnDisabled = '';
+    }
+
+    // 신청자 명단 (모임과 동일 — 서버 is_me 플래그로 본인 표시)
+    const attendees = (ctx.attendees || []).filter(a => !sid || Number(a.event_slot_id) === sid);
+    const attendeesHtml = attendees.length ? `
+        <div class="slot-attendees">
+            <div class="slot-attendees-label">신청자 ${attendees.length}명</div>
+            <div class="slot-attendees-list">
+                ${attendees.map(a => {
+                    const isMe = a.is_me === true;
+                    return `<span class="attendee-tag${isMe ? ' is-me' : ''}" title="${escapeHtml(a.name)}">${escapeHtml(truncDisplayName(a.name))}${isMe ? ' (나)' : ''}</span>`;
+                }).join('')}
+            </div>
+        </div>` : '<div class="slot-attendees-empty">아직 신청자가 없어요.<br>첫 번째 신청자가 되어주세요!</div>';
+
+    // 내 신청 현황 — 로그인 사용자 한정
+    let myStatusHtml = '';
+    if (currentUser) {
+        myStatusHtml = attended ? `
+            <div class="my-attend-status attended">
+                <div class="my-attend-status-label">✓ 수강 신청 완료</div>
+                <div class="my-attend-status-value">${ev.payment_info ? '아래 입금 안내를 확인해 주세요.' : ''}</div>
+                <a href="profile.html" class="my-attend-status-link">내 신청 내역 보기 →</a>
+            </div>` : (closed ? '' : `
+            <div class="my-attend-status not-attended">
+                <div class="my-attend-status-label">📌 아직 신청 안 함</div>
+                <div class="my-attend-status-value">아래 버튼으로 수강 신청해 주세요.</div>
+            </div>`);
+    }
+
+    const handoutHtml = (attended && ctx.handoutUrl) ? `
+        <a href="${escapeHtml(ctx.handoutUrl)}" target="_blank" rel="noopener noreferrer" class="lecture-handout-link">📘 교안 보기 →</a>` : '';
+
+    const timeStr = slot ? slotTimeStr(slot) : '';
+    const seatsHtml = `신청 <strong>${count}/${cap}명</strong>` + (deadlineStr ? ` · 신청 마감 ${escapeHtml(deadlineStr)}` : '');
+
+    // 상세 정보
+    let detailItems = '';
+    if (ev.instructor_name) {
+        const title = ev.instructor_title ? ` <span class="lecture-instructor-title">${escapeHtml(ev.instructor_title)}</span>` : '';
+        const bio = ev.instructor_bio ? `<div class="lecture-instructor-bio">${multilineHtml(ev.instructor_bio)}</div>` : '';
+        detailItems += lectureInfoItem('👤', '강사', `<strong>${escapeHtml(ev.instructor_name)}</strong>${title}${bio}`);
+    }
+    if (ev.location) {
+        const locSlug = encodeURIComponent(ev.location);
+        detailItems += lectureInfoItem('📍', '장소', `<a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>`);
+    }
+    if (ev.description) detailItems += lectureInfoItem('📋', '강의 내용', `<span class="description-value">${multilineHtml(ev.description)}</span>`);
+    if (ev.curriculum) {
+        const lines = String(ev.curriculum).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        detailItems += lectureInfoItem('📚', '커리큘럼', `<ol class="curriculum-list">${lines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ol>`);
+    }
+    if (ev.audience) detailItems += lectureInfoItem('🎯', '수강 대상 · 난이도', multilineHtml(ev.audience));
+    if (ev.materials) detailItems += lectureInfoItem('🎒', '준비물', multilineHtml(ev.materials));
+    if (ev.fee || ev.payment_info) {
+        const feeHtml = (ev.fee ? `<strong>${escapeHtml(ev.fee)}</strong>` : '') +
+            (ev.payment_info ? `<div class="lecture-payment-info">${multilineHtml(ev.payment_info)}</div>` : '');
+        detailItems += lectureInfoItem('💳', '수강료 · 입금 안내', feeHtml);
+    }
+    if (ev.youtube_url) detailItems += lectureInfoItem('🎬', '온라인 참여', `<a href="${escapeHtml(ev.youtube_url)}" target="_blank" rel="noopener noreferrer">유튜브 라이브 참여하기 →</a>`);
+
+    return `
+        <div class="schedule-card reveal lecture-card">
+            <div class="schedule-highlight">
+                <div class="schedule-meeting-no"><span class="lecture-badge">강의</span> ${escapeHtml(ev.title || '')}</div>
+                <div class="schedule-date-line">
+                    <span class="month">${ctx.display}</span> <span class="day-name">${ctx.dayName}</span>
+                </div>
+                ${timeStr ? `<div class="lecture-time">🕒 ${escapeHtml(timeStr)}</div>` : ''}
+                ${myStatusHtml}
+                <div class="lecture-apply">
+                    <div class="lecture-seats">${seatsHtml}</div>
+                    <button type="button" class="${btnClass}" data-event-slot-id="${sid}" data-attended="${attended ? '1' : '0'}" data-full="${closed ? '1' : '0'}" ${btnDisabled}>${btnText}</button>
+                    ${handoutHtml}
+                    ${attendeesHtml}
+                </div>
+            </div>
+            ${detailItems ? `
+            <div class="schedule-details">
+                <h3>강의 정보</h3>
+                <div class="schedule-info">
+                    ${detailItems}
+                </div>
+            </div>` : ''}
+        </div>`;
 }
 
 // ========== Schedule → Location 점프 링크 ==========
@@ -1199,9 +1380,9 @@ document.addEventListener('click', function(e) {
 });
 
 // ========== Rebind attend buttons after dynamic render ==========
-function rebindAttendButtons() {
-    // 타임 슬롯 버튼: 로그인 상태 + 신청 상태 분기
-    document.querySelectorAll('.waat-slot-btn').forEach(btn => {
+function rebindAttendButtons(scope) {
+    // 타임 슬롯 버튼: 로그인 상태 + 신청 상태 분기 (scope = 방금 innerHTML을 갈아끼운 섹션 컨테이너)
+    (scope || document).querySelectorAll('.waat-slot-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
             const eventSlotId = Number(btn.getAttribute('data-event-slot-id'));
@@ -1932,18 +2113,22 @@ function startApp() {
 
     if ((!dbReady || !authReady) && startAttempts <= 10) {
         console.warn('startApp attempt ' + startAttempts + ' — DB:' + dbReady + ' Auth:' + authReady + ' supabase:' + sbReady);
-        var ec = document.getElementById('events-container');
-        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">로딩 중... (시도 ' + startAttempts + '/10)</div>';
+        ['events-container', 'event-list-container'].forEach(function(id) {
+            var ec = document.getElementById(id);
+            if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">로딩 중... (시도 ' + startAttempts + '/10)</div>';
+        });
         setTimeout(startApp, 500);
         return;
     }
 
     if (!dbReady || !authReady) {
         // 10번 시도 후에도 실패 — 에러 표시
-        var ec = document.getElementById('events-container');
         var lc = document.getElementById('locations-container');
         var msg = escapeHtml('Supabase 로드 실패 (DB:' + dbReady + ', Auth:' + authReady + '). 페이지를 새로고침 해주세요.');
-        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
+        ['events-container', 'event-list-container'].forEach(function(id) {
+            var ec = document.getElementById(id);
+            if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
+        });
         if (lc) lc.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
         return;
     }
