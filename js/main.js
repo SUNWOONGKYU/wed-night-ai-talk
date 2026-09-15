@@ -1324,10 +1324,13 @@ function lectureInfoItem(icon, label, valueHtml) {
         </div>`;
 }
 
-function kstToday() {
-    // 브라우저 로컬이 아닌 KST 기준 오늘 (서버 attend_event 마감 판정과 맞춤)
+// 브라우저 로컬이 아닌 KST 벽시계 시각 (서버 attend_event 마감 판정과 맞춤)
+function kstNow() {
     const now = new Date();
-    const kst = new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+    return new Date(now.getTime() + (now.getTimezoneOffset() + 540) * 60000);
+}
+function kstToday() {
+    const kst = kstNow();
     return new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
 }
 
@@ -1338,14 +1341,19 @@ function renderLectureCard(ev, ctx) {
     const cap = (slot && slot.capacity != null) ? Number(slot.capacity) : (Number(ev.capacity) || 20);
     const attended = sid ? ctx.myAttendedSlotIds.has(sid) : false;
 
-    // 마감: 마감일이 지났거나(당일 포함 허용) 정원이 찼거나 슬롯이 없을 때
-    let deadlineStr = '';
+    // 마감: 강의 시작 시각이 지났거나, (따로 정한) 마감일이 지났거나(당일 포함 허용), 정원이 찼거나, 슬롯이 없을 때
+    let deadlineStr = '강의 시작 전까지';
     let deadlinePassed = false;
+    if (slot && slot.slot_time && ev.event_date) {
+        const d = ev.event_date.split('-').map(Number);
+        const t = String(slot.slot_time).split(':').map(Number);
+        deadlinePassed = kstNow() >= new Date(d[0], d[1] - 1, d[2], t[0] || 0, t[1] || 0);
+    }
     if (ev.apply_deadline) {
         const dl = formatEventDate(ev.apply_deadline, '');
         deadlineStr = dl.display + ' ' + dl.dayName;
         const parts = ev.apply_deadline.split('-');
-        deadlinePassed = kstToday() > new Date(+parts[0], +parts[1] - 1, +parts[2]);
+        deadlinePassed = deadlinePassed || kstToday() > new Date(+parts[0], +parts[1] - 1, +parts[2]);
     }
     const isFull = !attended && count >= cap;
     const closed = !attended && (deadlinePassed || isFull || !slot);
@@ -1397,7 +1405,7 @@ function renderLectureCard(ev, ctx) {
         <a href="${escapeHtml(ctx.handoutUrl)}" target="_blank" rel="noopener noreferrer" class="lecture-handout-link">📘 교안 보기 →</a>` : '';
 
     const timeStr = slot ? slotTimeStr(slot) : '';
-    const seatsHtml = `신청 <strong>${count}/${cap}명</strong>` + (deadlineStr ? ` · 신청 마감 ${escapeHtml(deadlineStr)}` : '');
+    const seatsHtml = `신청 <strong>${count}/${cap}명</strong> · 신청 마감 ${escapeHtml(deadlineStr)}`;
 
     // 상세 정보
     let detailItems = '';
