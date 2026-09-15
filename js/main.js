@@ -943,8 +943,8 @@ function formatEventTime(timeStr) {
 // events.event_type 별 섹션 설정 — 'meeting'(#schedule) / 'event'(#event).
 // 카드·슬롯 신청 UI는 완전히 같고, 문구와 컨테이너만 다르다.
 const EVENT_KINDS = {
-    meeting: { containerId: 'events-container', noun: '모임', showRooms: true },
-    event:   { containerId: 'event-list-container', noun: '행사', showRooms: false }
+    meeting: { containerId: 'events-container', noun: '모임', emptyMsg: '예정된 모임이 없습니다.', showRooms: true },
+    event:   { containerId: 'event-list-container', noun: '행사', emptyMsg: '예정된 행사가 없습니다.', showRooms: false }
 };
 
 // 모임·행사 두 섹션을 함께 그린다 (신청/취소 후 재렌더 호출자들이 이 이름을 쓴다).
@@ -960,7 +960,7 @@ async function renderEventCards(eventType) {
         const events = await DB.getEvents(eventType);
 
         if (events.length === 0) {
-            container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">예정된 ' + kind.noun + '이 없습니다.</div>';
+            container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">' + kind.emptyMsg + '</div>';
             return;
         }
 
