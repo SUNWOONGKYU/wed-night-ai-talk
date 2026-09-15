@@ -959,10 +959,14 @@ async function renderEventCards(eventType) {
     try {
         const events = await DB.getEvents(eventType);
 
+        // 활성 건이 없으면 섹션 자체를 숨긴다 (PO, 2026-09-15: 빈 "예정된 모임/행사가 없습니다" 안내 대신 통째로 비표시)
+        const section = container.closest('section');
         if (events.length === 0) {
             container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">' + kind.emptyMsg + '</div>';
+            if (section) section.style.display = 'none';
             return;
         }
+        if (section) section.style.display = '';
 
         // 첫 번째 활성 모임을 참여 신청용으로 설정 (레거시 폴백 — 슬롯에 event_id가 있으면 그쪽 우선)
         if (eventType === 'meeting') currentEventId = events[0].id;
