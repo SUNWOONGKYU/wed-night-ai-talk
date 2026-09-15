@@ -1294,6 +1294,16 @@ function multilineHtml(text) {
     return escapeHtml(text || '').replace(/\n/g, '<br>');
 }
 
+// 이스케이프된 텍스트 안의 http(s) URL만 클릭 가능한 링크로 (강의 내용·강사 소개의 자료 링크용)
+function linkifyHtml(text) {
+    return multilineHtml(text).replace(/https?:\/\/[^\s<]+/g, function(url) {
+        var trail = '';
+        var m = /[.,)\]]+$/.exec(url);
+        if (m) { trail = m[0]; url = url.slice(0, -trail.length); }
+        return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>' + trail;
+    });
+}
+
 function lectureInfoItem(icon, label, valueHtml) {
     if (!valueHtml) return '';
     return `
@@ -1385,18 +1395,14 @@ function renderLectureCard(ev, ctx) {
     let detailItems = '';
     if (ev.instructor_name) {
         const title = ev.instructor_title ? ` <span class="lecture-instructor-title">${escapeHtml(ev.instructor_title)}</span>` : '';
-        const bio = ev.instructor_bio ? `<div class="lecture-instructor-bio">${multilineHtml(ev.instructor_bio)}</div>` : '';
+        const bio = ev.instructor_bio ? `<div class="lecture-instructor-bio">${linkifyHtml(ev.instructor_bio)}</div>` : '';
         detailItems += lectureInfoItem('👤', '강사', `<strong>${escapeHtml(ev.instructor_name)}</strong>${title}${bio}`);
     }
     if (ev.location) {
         const locSlug = encodeURIComponent(ev.location);
         detailItems += lectureInfoItem('📍', '장소', `<a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>`);
     }
-    if (ev.description) detailItems += lectureInfoItem('📋', '강의 내용', `<span class="description-value">${multilineHtml(ev.description)}</span>`);
-    if (ev.curriculum) {
-        const lines = String(ev.curriculum).split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        detailItems += lectureInfoItem('📚', '커리큘럼', `<ol class="curriculum-list">${lines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ol>`);
-    }
+    if (ev.description) detailItems += lectureInfoItem('📋', '강의 내용', `<span class="description-value">${linkifyHtml(ev.description)}</span>`);
     if (ev.audience) detailItems += lectureInfoItem('🎯', '수강 대상 · 난이도', multilineHtml(ev.audience));
     if (ev.materials) detailItems += lectureInfoItem('🎒', '준비물', multilineHtml(ev.materials));
     if (ev.fee || ev.payment_info) {

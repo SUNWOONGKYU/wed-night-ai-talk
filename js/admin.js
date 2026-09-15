@@ -433,7 +433,7 @@ eventForm.addEventListener('submit', async (e) => {
         instructor_name: lec('ev-instructor-name'),
         instructor_title: lec('ev-instructor-title'),
         instructor_bio: lec('ev-instructor-bio'),
-        curriculum: lec('ev-curriculum'),
+        curriculum: null,   // 커리큘럼 항목 제거 (PO, 2026-09-15: 강의 내용과 중복) — 컬럼은 남기되 항상 비운다
         audience: lec('ev-audience'),
         materials: lec('ev-materials'),
         fee: lec('ev-fee'),
@@ -524,7 +524,6 @@ async function editEvent(id) {
     document.getElementById('ev-instructor-name').value = ev.instructor_name || '';
     document.getElementById('ev-instructor-title').value = ev.instructor_title || '';
     document.getElementById('ev-instructor-bio').value = ev.instructor_bio || '';
-    document.getElementById('ev-curriculum').value = ev.curriculum || '';
     document.getElementById('ev-audience').value = ev.audience || '';
     document.getElementById('ev-materials').value = ev.materials || '';
     document.getElementById('ev-fee').value = ev.fee || '';

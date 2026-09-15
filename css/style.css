@@ -4688,12 +4688,6 @@ footer {
     color: var(--text-secondary);
     line-height: 1.6;
 }
-.curriculum-list {
-    margin: 0.2rem 0 0;
-    padding-left: 1.4rem;
-    line-height: 1.7;
-}
-.curriculum-list li { list-style: decimal; }
 
 /* 프로필 — 내 신청 내역의 강의 교안 링크 */
 .my-att-actions { gap: 0.75rem; align-items: center; }
