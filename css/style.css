@@ -4736,3 +4736,6 @@ footer {
 @media (max-width: 640px) {
     .share-link-btn { margin-left: 0; }
 }
+
+/* 딥링크(?event=id) 스크롤 시 고정 네비에 카드 상단이 가리지 않도록 */
+.schedule-card { scroll-margin-top: 100px; }
