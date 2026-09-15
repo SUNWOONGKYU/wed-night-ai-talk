@@ -18,3 +18,4 @@ supabase/functions/**/.env
 
 # audit trail (do not commit - prevents post-commit recursion)
 _audit/
+node_modules
