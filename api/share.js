@@ -33,6 +33,8 @@ module.exports = async function (req, res) {
         const image = SITE + '/api/og?event=' + ev.id;
         const title = kind + ' · ' + ev.title;
         const desc = [ev.when, ev.where, ev.who].filter(Boolean).join(' · ');
+        // /e/<id> 경로에서 index.html 의 상대 경로(css/, js/, 이미지, speakup.html…)가 /e/ 아래로 풀리지 않도록
+        html = html.replace(/<head>/i, '<head>\n    <base href="/">');
         html = html.replace(/<title>[^<]*<\/title>/, '<title>' + esc('WAAT 행사 안내 | ' + title) + '</title>');
         html = setMeta(html, 'name', 'description', desc);
         html = setMeta(html, 'property', 'og:site_name', 'WAAT 행사 안내');
