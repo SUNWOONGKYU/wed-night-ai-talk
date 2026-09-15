@@ -1,4 +1,5 @@
-// GET /?event=<id> (vercel.json rewrite) → index.html 의 OG/Twitter 메타만 행사 내용으로 바꿔 응답.
+// GET /e/<id> (vercel.json rewrite → /api/share?event=<id>) → index.html 의 OG/Twitter 메타만 행사 내용으로 바꿔 응답.
+// (/?event=<id> 는 정적 index.html 이 먼저 잡혀 rewrite 가 안 걸리므로 별도 경로를 쓴다)
 // 메신저 봇은 JS 를 안 돌리므로 서버에서 메타를 채워야 미리보기가 행사별로 나온다.
 // 사람에게는 평소 index.html 과 같은 페이지 — main.js 의 focusSharedEvent 가 ?event= 를 읽어 카드로 스크롤한다.
 const fs = require('fs');
@@ -28,7 +29,7 @@ module.exports = async function (req, res) {
     try { ev = await loadEvent(req.query.event); } catch (e) { ev = null; }
     if (ev) {
         const kind = ev.event_type === 'event' ? '강의' : '모임';
-        const pageUrl = SITE + '/?event=' + ev.id;
+        const pageUrl = SITE + '/e/' + ev.id;
         const image = SITE + '/api/og?event=' + ev.id;
         const title = kind + ' · ' + ev.title;
         const desc = [ev.when, ev.where, ev.who].filter(Boolean).join(' · ');

@@ -1218,10 +1218,18 @@ async function renderEventCards(eventType) {
 }
 
 // ========== 건별 공유 URL ==========
-// 모임·강의 카드마다 "공유 링크 복사" 버튼. 링크 형식: https://waat.community/?event=<id>
-// 그 링크로 들어오면 렌더 후 해당 카드로 스크롤 + 잠깐 강조(focusSharedEvent).
+// 모임·강의 카드마다 "공유 링크 복사" 버튼. 링크 형식: https://waat.community/e/<id>
+// /e/<id> 는 vercel.json rewrite → api/share.js 가 행사별 OG 메타(미리보기 제목·썸네일)를 채운 index.html 을 준다.
+// 그 링크로 들어오면 렌더 후 해당 카드로 스크롤 + 잠깐 강조(focusSharedEvent). 옛 형식 ?event=<id> 도 계속 인식.
 function eventShareUrl(eventId) {
-    return window.location.origin + '/?event=' + eventId;
+    return window.location.origin + '/e/' + eventId;
+}
+
+function sharedEventIdFromUrl() {
+    const q = new URLSearchParams(window.location.search).get('event');
+    if (q) return q;
+    const m = /^\/e\/(\d+)\/?$/.exec(window.location.pathname);
+    return m ? m[1] : '';
 }
 
 function shareLinkButtonHtml(eventId) {
@@ -1270,7 +1278,7 @@ document.addEventListener('click', async function(e) {
 let _sharedEventHandled = false;
 function focusSharedEvent() {
     if (_sharedEventHandled) return;
-    const id = new URLSearchParams(window.location.search).get('event');
+    const id = sharedEventIdFromUrl();
     if (!id) { _sharedEventHandled = true; return; }
     const card = document.querySelector('.schedule-card[data-event-id="' + Number(id) + '"]');
     _sharedEventHandled = true;

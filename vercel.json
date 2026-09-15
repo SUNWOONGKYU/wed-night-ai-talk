@@ -52,24 +52,8 @@
   ],
   "rewrites": [
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "query",
-          "key": "event"
-        }
-      ],
-      "destination": "/api/share"
-    },
-    {
-      "source": "/index.html",
-      "has": [
-        {
-          "type": "query",
-          "key": "event"
-        }
-      ],
-      "destination": "/api/share"
+      "source": "/e/:id(\\d+)",
+      "destination": "/api/share?event=:id"
     }
   ],
   "functions": {

@@ -287,9 +287,9 @@ document.getElementById('ev-location-select').addEventListener('change', functio
     document.getElementById('ev-map-url').value = loc ? (loc.map_url || '') : '';
 });
 
-// 건별 공유 URL — 메인 페이지가 ?event=<id> 를 받아 해당 카드로 스크롤·강조한다 (main.js focusSharedEvent)
+// 건별 공유 URL — /e/<id> (api/share.js 가 행사별 미리보기 메타를 채움). 메인 페이지가 해당 카드로 스크롤·강조한다.
 async function copyEventLink(id, btn) {
-    const url = window.location.origin + '/?event=' + id;
+    const url = window.location.origin + '/e/' + id;
     let ok = false;
     try { await navigator.clipboard.writeText(url); ok = true; } catch (e) { ok = false; }
     if (!ok) { window.prompt('아래 링크를 복사하세요', url); return; }
