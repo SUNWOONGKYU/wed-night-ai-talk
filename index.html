@@ -45,8 +45,8 @@
                 <img src="logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
             </a>
             <ul class="nav-links nav-links-center">
-                <li><a href="#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
                 <li><a href="#event"><span class="nav-en">Event</span><span class="nav-ko">행사</span></a></li>
+                <li><a href="#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
                 <li><a href="speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
                 <li><a href="speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">유망 AI Biz 발굴</span></a></li>
             </ul>
@@ -165,19 +165,6 @@
         </div>
     </section>
 
-    <!-- Schedule -->
-    <section id="schedule">
-        <div class="section-inner">
-            <h2 class="section-title">모임 일정 <span class="section-title-en">Schedule</span></h2>
-            <p class="section-desc">매주 수요일 오후에 모임이 열립니다.</p>
-
-            <!-- 동적 이벤트 목록 (DB에서 로드) -->
-            <div id="events-container">
-                <div class="admin-loading">모임 정보를 불러오는 중...</div>
-            </div>
-        </div>
-    </section>
-
     <!-- Event (행사) — 모임과 같은 카드·슬롯 신청 UI, events.event_type = 'event' -->
     <section id="event">
         <div class="section-inner">
@@ -187,6 +174,19 @@
             <!-- 동적 행사 목록 (DB에서 로드) -->
             <div id="event-list-container">
                 <div class="admin-loading">행사 정보를 불러오는 중...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule">
+        <div class="section-inner">
+            <h2 class="section-title">모임 일정 <span class="section-title-en">Schedule</span></h2>
+            <p class="section-desc">매주 수요일 오후에 모임이 열립니다.</p>
+
+            <!-- 동적 이벤트 목록 (DB에서 로드) -->
+            <div id="events-container">
+                <div class="admin-loading">모임 정보를 불러오는 중...</div>
             </div>
         </div>
     </section>
