@@ -1400,7 +1400,8 @@ function renderLectureCard(ev, ctx) {
     }
     if (ev.location) {
         const locSlug = encodeURIComponent(ev.location);
-        detailItems += lectureInfoItem('📍', '장소', `<a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>`);
+        const roomNote = ev.room ? ` <span class="info-rooms">(${escapeHtml(ev.room)})</span>` : '';
+        detailItems += lectureInfoItem('📍', '장소', `<a href="#location" class="location-jump-link" data-location-name="${locSlug}">${escapeHtml(ev.location)} →</a>${roomNote}`);
     }
     if (ev.description) detailItems += lectureInfoItem('📋', '강의 내용', `<span class="description-value">${linkifyHtml(ev.description)}</span>`);
     if (ev.audience) detailItems += lectureInfoItem('🎯', '수강 대상 · 난이도', multilineHtml(ev.audience));

@@ -343,7 +343,7 @@ const DEFAULT_SLOTS = [
 // 제공사항 및 참가비 디폴트
 const DEFAULT_PROVISION = '제공사항: 커피/생수\n참가비: 1만원\n입금계좌: 하나은행 620-241128-571 선웅규\n* 음료 지참의 불편함 해소 및 노쇼 방지 목적';
 // 강의(행사) 입금 안내 기본값 — 강의마다 수정 가능
-const DEFAULT_PAYMENT_INFO = '입금계좌: 하나은행 620-241128-571 선웅규\n입금자명은 신청하신 이름과 동일하게 해주세요.';
+const DEFAULT_PAYMENT_INFO = '입금계좌: 신한은행 140-016-325238 (주)선명에이엑스랩\n입금자명은 신청자 이름과 동일하게.';
 // 강의 슬롯 — 강의는 타임슬롯 없이 시간 하나. 신청 RPC(attend_event)가 슬롯을 요구하므로 이 슬롯 하나를 자동 생성한다.
 const LECTURE_SLOT = { slot_emoji: '📚', slot_label: '강의' };
 
@@ -430,6 +430,7 @@ eventForm.addEventListener('submit', async (e) => {
         event_type: isLecture ? 'event' : 'meeting',
         title: document.getElementById('ev-title').value.trim(),
         // 강의 전용 컬럼 — 모임이면 전부 NULL로 비운다 (종류를 바꿔 저장해도 잔재가 남지 않게)
+        room: lec('ev-room'),
         instructor_name: lec('ev-instructor-name'),
         instructor_title: lec('ev-instructor-title'),
         instructor_bio: lec('ev-instructor-bio'),
@@ -521,6 +522,7 @@ async function editEvent(id) {
     document.getElementById('ev-type').value = ev.event_type === 'event' ? 'event' : 'meeting';
     document.getElementById('ev-title').value = ev.title;
     // 강의 전용 필드
+    document.getElementById('ev-room').value = ev.room || '';
     document.getElementById('ev-instructor-name').value = ev.instructor_name || '';
     document.getElementById('ev-instructor-title').value = ev.instructor_title || '';
     document.getElementById('ev-instructor-bio').value = ev.instructor_bio || '';
