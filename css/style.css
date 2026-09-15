@@ -4705,3 +4705,34 @@ footer {
     margin-right: auto;
 }
 .my-att-handout:hover { text-decoration: underline; }
+
+/* ========== 건별 공유 링크 (모임·강의 카드) ========== */
+.share-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0 0 1rem 0.5rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 999px;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+}
+.share-link-btn:hover {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    background: rgba(201, 169, 97, 0.10);
+}
+.schedule-card.share-highlight {
+    box-shadow: 0 0 0 3px var(--accent-gold), 0 12px 40px rgba(201, 169, 97, 0.25);
+    transition: box-shadow 0.4s ease;
+}
+@media (max-width: 640px) {
+    .share-link-btn { margin-left: 0; }
+}

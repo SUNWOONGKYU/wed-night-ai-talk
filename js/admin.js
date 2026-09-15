@@ -106,6 +106,7 @@ document.addEventListener('click', function (e) {
         case 'edit-event':            editEvent(Number(d.id)); break;
         case 'toggle-event-active':   toggleEventActive(Number(d.id), d.value === 'true'); break;
         case 'delete-event':          deleteEvent(Number(d.id), d.title); break;
+        case 'copy-event-link':       copyEventLink(Number(d.id), el); break;
 
         // 신청자
         case 'delete-guest-attendee': deleteGuestAttendee(Number(d.id), d.name); break;
@@ -286,6 +287,15 @@ document.getElementById('ev-location-select').addEventListener('change', functio
     document.getElementById('ev-map-url').value = loc ? (loc.map_url || '') : '';
 });
 
+// 건별 공유 URL — 메인 페이지가 ?event=<id> 를 받아 해당 카드로 스크롤·강조한다 (main.js focusSharedEvent)
+async function copyEventLink(id, btn) {
+    const url = window.location.origin + '/?event=' + id;
+    let ok = false;
+    try { await navigator.clipboard.writeText(url); ok = true; } catch (e) { ok = false; }
+    if (!ok) { window.prompt('아래 링크를 복사하세요', url); return; }
+    if (btn) { const t = btn.textContent; btn.textContent = '✓ 복사됨'; setTimeout(() => { btn.textContent = t; }, 1800); }
+}
+
 function renderEvents(events) {
     const tbody = document.getElementById('events-tbody');
     if (events.length === 0) {
@@ -310,6 +320,7 @@ function renderEvents(events) {
             <td>${status}</td>
             <td><button class="btn-secondary btn-small" data-action="view-attendees" data-id="${ev.id}" data-title="${escapeAttr(ev.title)}">보기</button></td>
             <td>
+                <button class="btn-secondary btn-small" data-action="copy-event-link" data-id="${ev.id}" title="메인 페이지에서 이 건으로 바로 열리는 링크">🔗 링크</button>
                 <button class="btn-secondary btn-small" data-action="edit-event" data-id="${ev.id}">수정</button>
                 <button class="btn-secondary btn-small" data-action="toggle-event-active" data-id="${ev.id}" data-value="${ev.is_active}">${ev.is_active ? '비활성화' : '활성화'}</button>
                 <button class="btn-secondary btn-small" data-action="delete-event" data-id="${ev.id}" data-title="${escapeAttr(ev.title)}" style="color:var(--accent-pink);">삭제</button>

@@ -1180,9 +1180,10 @@ async function renderEventCards(eventType) {
             const meetingNo = meetingNoMap[ev.id] || (idx + 1);
 
             return `
-                <div class="schedule-card reveal">
+                <div class="schedule-card reveal" data-event-id="${ev.id}">
                     <div class="schedule-highlight">
                         <div class="schedule-meeting-no">제${meetingNo}회 모임</div>
+                        ${shareLinkButtonHtml(ev.id)}
                         <div class="schedule-date-line">
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
@@ -1214,6 +1215,74 @@ async function renderEventCards(eventType) {
         console.error('renderEventCards(' + eventType + ') error:', e);
         container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">' + kind.noun + ' 로드 오류: ' + escapeHtml(String(e.message || e)) + '</div>';
     }
+}
+
+// ========== 건별 공유 URL ==========
+// 모임·강의 카드마다 "공유 링크 복사" 버튼. 링크 형식: https://waat.community/?event=<id>
+// 그 링크로 들어오면 렌더 후 해당 카드로 스크롤 + 잠깐 강조(focusSharedEvent).
+function eventShareUrl(eventId) {
+    return window.location.origin + '/?event=' + eventId;
+}
+
+function shareLinkButtonHtml(eventId) {
+    return `<button type="button" class="share-link-btn" data-share-event-id="${eventId}" title="이 페이지 링크 복사">🔗 공유 링크 복사</button>`;
+}
+
+async function copyTextToClipboard(text) {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+    } catch (e) { /* 아래 폴백 */ }
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+    } catch (e) { return false; }
+}
+
+document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('.share-link-btn');
+    if (!btn) return;
+    e.preventDefault();
+    const url = eventShareUrl(btn.getAttribute('data-share-event-id'));
+    const ok = await copyTextToClipboard(url);
+    if (ok) {
+        showToast('🔗 링크가 복사되었습니다: ' + url);
+        const label = btn.textContent;
+        btn.textContent = '✓ 복사됨';
+        setTimeout(function() { btn.textContent = label; }, 1800);
+    } else {
+        // 클립보드가 막힌 환경(일부 인앱 브라우저) — 주소를 직접 보여준다
+        window.prompt('아래 링크를 복사하세요', url);
+    }
+});
+
+// ?event=<id> 로 들어온 경우: 카드로 스크롤 + 강조. 없으면(비활성·삭제) 안내.
+let _sharedEventHandled = false;
+function focusSharedEvent() {
+    if (_sharedEventHandled) return;
+    const id = new URLSearchParams(window.location.search).get('event');
+    if (!id) { _sharedEventHandled = true; return; }
+    const card = document.querySelector('.schedule-card[data-event-id="' + Number(id) + '"]');
+    _sharedEventHandled = true;
+    if (!card) {
+        showToast('해당 모임/행사를 찾을 수 없습니다. 이미 마감됐거나 삭제된 링크예요.', 'error');
+        return;
+    }
+    setTimeout(function() {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        card.classList.add('share-highlight');
+        setTimeout(function() { card.classList.remove('share-highlight'); }, 3200);
+    }, 250);
 }
 
 // ========== 강의 카드 (행사 섹션) ==========
@@ -1338,9 +1407,10 @@ function renderLectureCard(ev, ctx) {
     if (ev.youtube_url) detailItems += lectureInfoItem('🎬', '온라인 참여', `<a href="${escapeHtml(ev.youtube_url)}" target="_blank" rel="noopener noreferrer">유튜브 라이브 참여하기 →</a>`);
 
     return `
-        <div class="schedule-card reveal lecture-card">
+        <div class="schedule-card reveal lecture-card" data-event-id="${ev.id}">
             <div class="schedule-highlight">
                 <div class="schedule-meeting-no"><span class="lecture-badge">강의</span> ${escapeHtml(ev.title || '')}</div>
+                ${shareLinkButtonHtml(ev.id)}
                 <div class="schedule-date-line">
                     <span class="month">${ctx.display}</span> <span class="day-name">${ctx.dayName}</span>
                 </div>
@@ -2147,7 +2217,7 @@ function startApp() {
 
     // 정상 실행: 카드 렌더링 완료 후 인증 초기화 (참여 UI가 DOM에 있어야 함)
     renderScheduleEvents()
-        .then(function() { return initAuth(); })
+        .then(function() { focusSharedEvent(); return initAuth(); })
         .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
     loadMemberCount();
