@@ -196,7 +196,8 @@ var DB = {
             .select('*')
             .eq('is_active', true)
             .eq('event_type', eventType || 'meeting')
-            .order('event_date', { ascending: true });
+            .order('event_date', { ascending: true })
+            .order('id', { ascending: true });   // 같은 날짜면 등록 순
         if (error) throw error;
         return data;
     },
