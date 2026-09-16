@@ -4,6 +4,7 @@
 // 사람에게는 평소 index.html 과 같은 페이지 — main.js 의 focusSharedEvent 가 ?event= 를 읽어 카드로 스크롤한다.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { loadEvent } = require('./_event.js');
 
 const SITE = 'https://waat.community';
@@ -30,7 +31,9 @@ module.exports = async function (req, res) {
     if (ev) {
         const kind = ev.event_type === 'event' ? '강의' : '모임';
         const pageUrl = SITE + '/e/' + ev.id;
-        const image = SITE + '/api/og?event=' + ev.id;
+        // 내용(제목·일시·장소·강사)이 바뀌면 이미지 URL 도 바뀌게 — Vercel·메신저 캐시가 옛 썸네일을 붙들지 않도록
+        const ver = crypto.createHash('sha1').update(JSON.stringify([ev.title, ev.when, ev.where, ev.who])).digest('hex').slice(0, 8);
+        const image = SITE + '/api/og?event=' + ev.id + '&v=' + ver;
         const title = kind + ' · ' + ev.title;
         const desc = [ev.when, ev.where, ev.who].filter(Boolean).join(' · ');
         // /e/<id> 경로에서 index.html 의 상대 경로(css/, js/, 이미지, speakup.html…)가 /e/ 아래로 풀리지 않도록
@@ -50,6 +53,6 @@ module.exports = async function (req, res) {
         html = html.replace(/<link rel="canonical" href="[^"]*">/, '<link rel="canonical" href="' + esc(pageUrl) + '">');
     }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600');
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=600');
     res.end(html);
 };
