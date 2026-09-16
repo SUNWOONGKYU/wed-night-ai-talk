@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 — WAAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260915d">
+    <link rel="stylesheet" href="css/style.css?v=20260916a">
     <link rel="stylesheet" href="css/admin.css?v=20260902h">
 </head>
 <body>
@@ -209,6 +209,20 @@
                                     <option value="SUN">일요일 (SUN)</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-group" role="radiogroup" aria-label="진행 방식">
+                            <label>진행 방식 <span class="required">*</span></label>
+                            <div class="ev-mode-options">
+                                <label class="post-category-chip"><input type="radio" name="ev-mode" value="offline" checked><span>🏢 오프라인</span></label>
+                                <label class="post-category-chip"><input type="radio" name="ev-mode" value="online"><span>💻 온라인</span></label>
+                                <label class="post-category-chip"><input type="radio" name="ev-mode" value="hybrid"><span>🏢+💻 온·오프 병행</span></label>
+                            </div>
+                            <span class="form-hint">카드 상단 배지와 '진행 방식' 항목으로 표시됩니다.</span>
+                        </div>
+                        <div class="form-group" id="ev-online-url-group" style="display:none;">
+                            <label for="ev-online-url">온라인 입장 링크 (Zoom · Google Meet 등)</label>
+                            <input type="url" id="ev-online-url" placeholder="https://zoom.us/j/...">
+                            <span class="form-hint">신청 완료한 멤버에게만 보입니다. 모임의 공개 유튜브 라이브는 아래 '유튜브 라이브 URL'에 그대로 두세요.</span>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
@@ -579,9 +593,9 @@
          ⚠️ 버전은 0.18.5 — SheetJS 가 npm 배포를 중단해 0.20.x 는 jsdelivr 에 없다(404).
             버전을 올리려면 먼저 해당 URL 이 200 인지 확인할 것. -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="js/supabase-config.js?v=20260913a"></script>
+    <script src="js/supabase-config.js?v=20260916a"></script>
     <script src="js/db.js?v=20260902g"></script>
-    <script src="js/admin.js?v=20260915g"></script>
+    <script src="js/admin.js?v=20260916a"></script>
 
 </body>
 </html>

@@ -24,7 +24,7 @@ const hhmm = (t) => (t ? String(t).slice(0, 5) : '');
 async function loadEvent(id) {
     const n = Number(id);
     if (!Number.isInteger(n) || n <= 0) return null;
-    const rows = await sbGet('events?select=id,event_type,title,event_date,location,room,instructor_name,is_active,created_at&id=eq.' + n + '&is_active=eq.true&limit=1');
+    const rows = await sbGet('events?select=id,event_type,title,event_date,location,room,instructor_name,attendance_mode,is_active,created_at&id=eq.' + n + '&is_active=eq.true&limit=1');
     const ev = rows && rows[0];
     if (!ev) return null;
     const slots = await sbGet('event_slots?select=slot_time,slot_end_time,slot_label,sort_order&event_id=eq.' + n + '&is_active=eq.true&order=sort_order.asc');
@@ -42,7 +42,8 @@ async function loadEvent(id) {
         event_type: ev.event_type === 'event' ? 'event' : 'meeting',
         title: ev.title || '',
         when: [fmtDate(ev.event_date), timeStr].filter(Boolean).join(' '),
-        where: [ev.location, ev.room].filter(Boolean).join(' '),
+        where: (ev.attendance_mode === 'online' ? '온라인'
+             : (ev.attendance_mode === 'hybrid' ? '현장+온라인 · ' : '오프라인 · ') + [ev.location, ev.room].filter(Boolean).join(' ')),
         who: ev.instructor_name ? '강사 ' + ev.instructor_name : ''
     };
 }

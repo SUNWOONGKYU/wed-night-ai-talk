@@ -4733,3 +4733,34 @@ footer {
 
 /* 딥링크(?event=id) 스크롤 시 고정 네비에 카드 상단이 가리지 않도록 */
 .schedule-card { scroll-margin-top: 100px; }
+
+/* ========== 진행 방식 배지 (오프라인 / 온라인 / 병행) ========== */
+.mode-badge {
+    display: inline-block;
+    margin: 0 0 1rem 0.5rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 999px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.mode-badge.mode-offline { background: rgba(26, 34, 56, 0.08); color: var(--text-primary); }
+.mode-badge.mode-online  { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+.mode-badge.mode-hybrid  { background: rgba(201, 169, 97, 0.18); color: #8a6d1f; }
+.online-join { margin-top: 0.4rem; }
+.online-join-link {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    background: #1d4ed8;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+}
+.online-join-link:hover { background: #1e40af; }
+.online-join-note { margin-top: 0.3rem; font-size: 0.88em; color: var(--text-muted); }
+.ev-mode-options { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; }
+@media (max-width: 640px) {
+    .mode-badge { margin-left: 0; }
+}

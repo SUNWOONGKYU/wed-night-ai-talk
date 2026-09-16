@@ -1012,6 +1012,12 @@ async function renderEventCards(eventType) {
             try { handoutByEvent = await DB.getEventHandouts(events.map(ev => ev.id)); }
             catch (e) { console.warn('getEventHandouts failed:', e); }
         }
+        // 온라인 입장 링크 — 역시 신청자 본인(또는 관리자) 것만 돌아온다
+        let onlineByEvent = {};
+        if (currentUser && events.some(ev => ev.attendance_mode && ev.attendance_mode !== 'offline')) {
+            try { onlineByEvent = await DB.getEventOnlineLinks(events.map(ev => ev.id)); }
+            catch (e) { console.warn('getEventOnlineLinks failed:', e); }
+        }
 
         container.innerHTML = events.map((ev, idx) => {
             const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
@@ -1024,12 +1030,16 @@ async function renderEventCards(eventType) {
                     display, dayName, slots,
                     attendees: attendeesByEvent[ev.id] || [],
                     myAttendedSlotIds,
-                    handoutUrl: handoutByEvent[ev.id] || ''
+                    handoutUrl: handoutByEvent[ev.id] || '',
+                    onlineUrl: onlineByEvent[ev.id] || ''
                 });
             }
 
             // 상세 정보 항목들 — 장소는 이름 하나만 (Location 섹션 카드로 연결)
             let detailItems = '';
+            const meetingMode = attendanceModeInfo(ev);
+            const meetingAttended = (slots || []).some(s => myAttendedSlotIds.has(Number(s.id)));
+            detailItems += attendanceModeItem(ev, meetingMode, meetingAttended, onlineByEvent[ev.id] || '');
             if (ev.location) {
                 const locSlug = encodeURIComponent(ev.location);
                 detailItems += `
@@ -1183,6 +1193,7 @@ async function renderEventCards(eventType) {
                 <div class="schedule-card reveal" data-event-id="${ev.id}">
                     <div class="schedule-highlight">
                         <div class="schedule-meeting-no">제${meetingNo}회 모임</div>
+                        <span class="mode-badge mode-${meetingMode.key}">${meetingMode.badge}</span>
                         ${shareLinkButtonHtml(ev.id)}
                         <div class="schedule-date-line">
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
@@ -1334,6 +1345,48 @@ function kstToday() {
     return new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
 }
 
+// ========== 진행 방식 (오프라인 / 온라인 / 병행) ==========
+function attendanceModeInfo(ev) {
+    const m = ev.attendance_mode === 'online' ? 'online' : (ev.attendance_mode === 'hybrid' ? 'hybrid' : 'offline');
+    return {
+        offline: { key: 'offline', badge: '🏢 오프라인', label: '오프라인 (현장 참석)' },
+        online:  { key: 'online',  badge: '💻 온라인',   label: '온라인' },
+        hybrid:  { key: 'hybrid',  badge: '🏢+💻 온·오프 병행', label: '현장 참석 또는 온라인 참석' }
+    }[m];
+}
+
+function onlinePlatformName(url) {
+    const u = String(url || '').toLowerCase();
+    if (u.includes('zoom.')) return 'Zoom';
+    if (u.includes('meet.google')) return 'Google Meet';
+    if (u.includes('youtube') || u.includes('youtu.be')) return 'YouTube';
+    if (u.includes('teams.microsoft')) return 'Teams';
+    return '온라인';
+}
+
+// "진행 방식" 정보 항목 — 온라인·병행이면 신청자에게만 입장 링크, 미신청자에겐 안내 문구
+function attendanceModeItem(ev, mode, attended, onlineUrl) {
+    let value = `<strong>${mode.label}</strong>`;
+    if (mode.key === 'offline' && ev.location) {
+        value += ` · ${escapeHtml(ev.location)}${ev.room ? ' ' + escapeHtml(ev.room) : ''}`;
+    }
+    if (mode.key !== 'offline') {
+        if (attended && onlineUrl) {
+            value += `<div class="online-join"><a href="${escapeHtml(onlineUrl)}" target="_blank" rel="noopener noreferrer" class="online-join-link">💻 ${escapeHtml(onlinePlatformName(onlineUrl))} 온라인 입장 →</a></div>`;
+        } else {
+            value += `<div class="online-join-note">온라인 입장 링크는 신청 완료한 멤버에게 표시됩니다.</div>`;
+        }
+    }
+    return `
+        <div class="schedule-info-item">
+            <div class="schedule-info-icon">${mode.key === 'offline' ? '🏢' : (mode.key === 'online' ? '💻' : '🔀')}</div>
+            <div class="schedule-info-text">
+                <div class="info-label">진행 방식</div>
+                <div class="info-value">${value}</div>
+            </div>
+        </div>`;
+}
+
 function renderLectureCard(ev, ctx) {
     const slot = (ctx.slots || []).find(s => s.is_active !== false) || ctx.slots[0] || null;
     const sid = slot ? Number(slot.id) : 0;
@@ -1407,8 +1460,9 @@ function renderLectureCard(ev, ctx) {
     const timeStr = slot ? slotTimeStr(slot) : '';
     const seatsHtml = `신청 <strong>${count}/${cap}명</strong> · 신청 마감 ${escapeHtml(deadlineStr)}`;
 
-    // 상세 정보
-    let detailItems = '';
+    // 상세 정보 — 진행 방식을 맨 위에 (온·오프라인 혼동 방지)
+    const mode = attendanceModeInfo(ev);
+    let detailItems = attendanceModeItem(ev, mode, attended, ctx.onlineUrl || '');
     if (ev.instructor_name) {
         const title = ev.instructor_title ? ` <span class="lecture-instructor-title">${escapeHtml(ev.instructor_title)}</span>` : '';
         const bio = ev.instructor_bio ? `<div class="lecture-instructor-bio">${linkifyHtml(ev.instructor_bio)}</div>` : '';
@@ -1433,6 +1487,7 @@ function renderLectureCard(ev, ctx) {
         <div class="schedule-card reveal lecture-card" data-event-id="${ev.id}">
             <div class="schedule-highlight">
                 <div class="schedule-meeting-no"><span class="lecture-badge">강의</span> ${escapeHtml(ev.title || '')}</div>
+                <span class="mode-badge mode-${mode.key}">${mode.badge}</span>
                 ${shareLinkButtonHtml(ev.id)}
                 <div class="schedule-date-line">
                     <span class="month">${ctx.display}</span> <span class="day-name">${ctx.dayName}</span>

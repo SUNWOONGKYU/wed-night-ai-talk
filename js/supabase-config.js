@@ -354,14 +354,35 @@ var DB = {
 
     // 관리자: 빈 URL이면 행 삭제, 있으면 upsert
     async setEventHandout(eventId, url) {
+        return this._setPrivateLink('event_handouts', eventId, url);
+    },
+
+    // -- 온라인 입장 링크 (event_online_links) — 교안과 같은 RLS(관리자·신청자만) --
+    async getEventOnlineLinks(eventIds) {
+        if (!eventIds || !eventIds.length) return {};
+        var { data, error } = await _supabase
+            .from('event_online_links')
+            .select('event_id, url')
+            .in('event_id', eventIds);
+        if (error) throw error;
+        var map = {};
+        (data || []).forEach(function(r) { map[r.event_id] = r.url; });
+        return map;
+    },
+
+    async setEventOnlineLink(eventId, url) {
+        return this._setPrivateLink('event_online_links', eventId, url);
+    },
+
+    async _setPrivateLink(table, eventId, url) {
         var clean = (url || '').trim();
         if (!clean) {
-            var { error: delErr } = await _supabase.from('event_handouts').delete().eq('event_id', eventId);
+            var { error: delErr } = await _supabase.from(table).delete().eq('event_id', eventId);
             if (delErr) throw delErr;
             return;
         }
         var { error } = await _supabase
-            .from('event_handouts')
+            .from(table)
             .upsert({ event_id: eventId, url: clean, updated_at: new Date().toISOString() }, { onConflict: 'event_id' });
         if (error) throw error;
     },

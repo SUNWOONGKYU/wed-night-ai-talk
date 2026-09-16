@@ -95,6 +95,8 @@ function pfUpdateNav() {
 
 // 강의 교안 URL (event_id → url). RLS가 본인이 신청한 강의 것만 돌려준다.
 var pfHandouts = {};
+// 온라인 입장 링크 (event_id → url). 같은 RLS.
+var pfOnlineLinks = {};
 
 async function pfLoadAttendances() {
     var listEl = document.getElementById('my-attendances');
@@ -106,6 +108,10 @@ async function pfLoadAttendances() {
             var ids = rows.map(function(r) { return r.event_id; }).filter(Boolean);
             pfHandouts = ids.length ? await DB.getEventHandouts(ids) : {};
         } catch (e) { console.warn('getEventHandouts failed:', e); pfHandouts = {}; }
+        try {
+            var ids2 = rows.map(function(r) { return r.event_id; }).filter(Boolean);
+            pfOnlineLinks = ids2.length ? await DB.getEventOnlineLinks(ids2) : {};
+        } catch (e) { console.warn('getEventOnlineLinks failed:', e); pfOnlineLinks = {}; }
 
         // 클라이언트 정렬 보강 (서버 정렬 변경에 견고하게) — event_date ASC
         // pfToLocalDate로 통일하여 classify/render 경로와 형 일관화
@@ -199,6 +205,10 @@ function pfRenderRow(r) {
     var handoutLink = handoutUrl
         ? '<a href="' + pfEscape(handoutUrl) + '" target="_blank" rel="noopener noreferrer" class="my-att-handout">📘 교안 보기 →</a>'
         : '';
+    var onlineUrl = pfOnlineLinks[r.event_id];
+    if (onlineUrl) {
+        handoutLink += '<a href="' + pfEscape(onlineUrl) + '" target="_blank" rel="noopener noreferrer" class="my-att-handout">💻 온라인 입장 →</a>';
+    }
 
     return '' +
         '<div class="my-att-item' + stateCls + '">' +

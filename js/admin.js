@@ -309,7 +309,8 @@ function renderEvents(events) {
         const status = ev.is_active
             ? '<span class="admin-badge active">활성</span>'
             : '<span class="admin-badge inactive">비활성</span>';
-        const typeLabel = ev.event_type === 'event' ? '행사' : '모임';
+        const typeLabel = (ev.event_type === 'event' ? '행사' : '모임') +
+            (ev.attendance_mode === 'online' ? ' · 온라인' : (ev.attendance_mode === 'hybrid' ? ' · 병행' : ''));
 
         return `<tr>
             <td>${typeLabel}</td>
@@ -359,6 +360,21 @@ function applyEventTypeUI() {
     if (isLecture && !pay.value) pay.value = DEFAULT_PAYMENT_INFO;
 }
 document.getElementById('ev-type').addEventListener('change', applyEventTypeUI);
+
+// 진행 방식 — 온라인·병행일 때만 온라인 링크 칸
+function getEventMode() {
+    const r = document.querySelector('input[name="ev-mode"]:checked');
+    return r ? r.value : 'offline';
+}
+function setEventMode(mode) {
+    const r = document.querySelector('input[name="ev-mode"][value="' + (mode || 'offline') + '"]') || document.querySelector('input[name="ev-mode"][value="offline"]');
+    if (r) r.checked = true;
+    applyEventModeUI();
+}
+function applyEventModeUI() {
+    document.getElementById('ev-online-url-group').style.display = getEventMode() === 'offline' ? 'none' : '';
+}
+document.querySelectorAll('input[name="ev-mode"]').forEach(r => r.addEventListener('change', applyEventModeUI));
 
 function renderSlotRows(slots) {
     const list = document.getElementById('ev-slots-list');
@@ -428,6 +444,7 @@ eventForm.addEventListener('submit', async (e) => {
     const lec = function(id) { const v = document.getElementById(id).value.trim(); return (isLecture && v) ? v : null; };
     const eventData = {
         event_type: isLecture ? 'event' : 'meeting',
+        attendance_mode: getEventMode(),
         title: document.getElementById('ev-title').value.trim(),
         // 강의 전용 컬럼 — 모임이면 전부 NULL로 비운다 (종류를 바꿔 저장해도 잔재가 남지 않게)
         room: lec('ev-room'),
@@ -499,6 +516,8 @@ eventForm.addEventListener('submit', async (e) => {
 
         // 교안 URL — 별도 테이블(신청자·관리자만 조회 가능). 모임이거나 빈 값이면 행 삭제.
         await DB.setEventHandout(evId, isLecture ? document.getElementById('ev-handout-url').value : '');
+        // 온라인 입장 링크 — 같은 방식. 오프라인이면 행 삭제.
+        await DB.setEventOnlineLink(evId, getEventMode() === 'offline' ? '' : document.getElementById('ev-online-url').value);
 
         const noun = isLecture ? '강의' : '모임';
         statusEl.textContent = editId ? noun + '이 수정되었습니다.' : noun + '이 등록되었습니다.';
@@ -537,6 +556,14 @@ async function editEvent(id) {
             const handouts = await DB.getEventHandouts([ev.id]);
             document.getElementById('ev-handout-url').value = handouts[ev.id] || '';
         } catch (e) { console.warn('getEventHandouts failed:', e); }
+    }
+    setEventMode(ev.attendance_mode);
+    document.getElementById('ev-online-url').value = '';
+    if (ev.attendance_mode && ev.attendance_mode !== 'offline') {
+        try {
+            const links = await DB.getEventOnlineLinks([ev.id]);
+            document.getElementById('ev-online-url').value = links[ev.id] || '';
+        } catch (e) { console.warn('getEventOnlineLinks failed:', e); }
     }
     applyEventTypeUI();
     document.getElementById('ev-date').value = ev.event_date;
@@ -580,6 +607,8 @@ function resetEventForm() {
     document.getElementById('ev-type').value = 'meeting';
     document.getElementById('ev-payment-info').value = '';
     document.getElementById('ev-handout-url').value = '';
+    document.getElementById('ev-online-url').value = '';
+    setEventMode('offline');
     applyEventTypeUI();
     document.getElementById('ev-location').value = '';
     document.getElementById('ev-address').value = '';
