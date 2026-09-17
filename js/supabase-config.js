@@ -331,6 +331,8 @@ var DB = {
                 sort_order: s.sort_order || (j + 1),
                 is_active: s.is_active !== false
             };
+            // capacity 는 넘겨준 경우에만 반영 (모임 슬롯의 개별 정원은 건드리지 않는다)
+            if (Object.prototype.hasOwnProperty.call(s, 'capacity')) payload.capacity = s.capacity;
             if (s.id) {
                 await this.updateEventSlot(s.id, payload);
             } else {

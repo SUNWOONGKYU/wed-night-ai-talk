@@ -485,7 +485,10 @@ eventForm.addEventListener('submit', async (e) => {
             slot_label: LECTURE_SLOT.slot_label,
             slot_time: start,
             slot_end_time: document.getElementById('ev-lec-end').value || null,
-            sort_order: 1
+            sort_order: 1,
+            // 강의 정원은 폼의 '정원'(events.capacity) 하나로 관리 — 슬롯 정원은 비워 폴백시킨다.
+            // (event_slots.capacity 는 DB DEFAULT 10 이라 명시적으로 NULL 을 넣지 않으면 폼 값과 어긋난다)
+            capacity: null
         }];
         eventData.provision = '';
     } else {
