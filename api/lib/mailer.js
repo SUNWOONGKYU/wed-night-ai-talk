@@ -54,8 +54,8 @@ function purchaseEmailHtml(p) {
     <h3 style="font-size:15px;margin:0 0 10px;">설치 순서</h3>
     <ol style="margin:0;padding-left:20px;color:#4A5670;font-size:14px;line-height:1.8;">
       <li>안드로이드 폰에서 위 버튼으로 APK를 내려받아 설치합니다. ("출처를 알 수 없는 앱" 경고가 뜨면 <b>이 출처 허용</b>)</li>
-      <li>PC 준비: <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">${esc(p.consoleGuideLink)}</a> 의 안내대로 Claude Code를 켜고 한 줄을 붙여넣으면 PC 쪽 설치가 자동으로 진행되고 <b>페어링 코드</b>가 나옵니다.</li>
-      <li>앱을 열고 페어링 코드를 입력하면 연결됩니다.</li>
+      <li>앱을 열면 첫 화면에 "PC에 설치하는 방법"이 나옵니다. 그대로 따라 PC에 원맥스를 설치하면 <b>코드 8자리</b>가 나옵니다. (PC 브라우저에서 <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">waat.community/console</a> 을 열어도 같은 안내를 볼 수 있습니다)</li>
+      <li>그 코드를 앱에 넣으면 핸드폰과 PC가 연결됩니다.</li>
     </ol>
   </div>
 
