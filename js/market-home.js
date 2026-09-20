@@ -63,7 +63,7 @@
 
     function renderGrid() {
         var list = APPS.filter(function (a) {
-            var okCat = cat === '전체' || (cat === '무료' ? a.price === 0 : a.cat === cat);
+            var okCat = cat === '전체' || a.cat === cat;
             var hay = (a.name + ' ' + a.sub + ' ' + a.desc + ' ' + (a.tags || []).join(' ')).toLowerCase();
             return okCat && (!q || hay.indexOf(q) !== -1);
         });

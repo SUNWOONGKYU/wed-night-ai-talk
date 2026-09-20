@@ -31,5 +31,5 @@ window.MARKET_APPS = [
     price: null, tags: ['출시 예정'], icon: '…', color: 'var(--bg2)', url: null, soon: true, soonText: '준비 중' }
 ];
 
-// 카테고리 칩 순서. '전체'·'무료' 는 필터 전용(상품 cat 값이 아님).
-window.MARKET_CATS = ['전체', 'AI 도구', '트레이딩', '문서·보고서', '무료'];
+// 카테고리 칩 순서. '전체' 는 필터 전용(상품 cat 값이 아님).
+window.MARKET_CATS = ['전체', 'AI 도구', '트레이딩', '문서·보고서'];  // '무료' 필터 메뉴는 PO 지시로 제거(2026-09-21)
