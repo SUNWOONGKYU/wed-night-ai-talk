@@ -4,6 +4,12 @@
   "description": "WAAT — 정적 사이트 + 공유 미리보기용 Vercel 함수(api/)",
   "dependencies": {
     "@resvg/resvg-js": "2.6.2",
+    "googleapis": "^128.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.7",
     "satori": "0.12.1"
+  },
+  "scripts": {
+    "init-sheets": "node scripts/init-sheets.js"
   }
 }

@@ -1,0 +1,17 @@
+/* ========== /console — PC 준비 안내 (market.css 의 카탈로그 토큰 위에 얹는 스타일) ========== */
+body.console{padding-bottom:40px}
+.cs-step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.cs-step h3{margin-bottom:6px}
+.cs-step p{font-size:15px;margin-top:4px}
+.cs-step p+p{margin-top:8px}
+.cs-step-key{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.cs-step-key h3{color:#93c5fd;font-size:19px}
+.cs-cmd{display:flex;gap:8px;align-items:stretch;margin:10px 0 6px;background:#0e1424;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.cs-cmd code{flex:1;font-family:Consolas,"JetBrains Mono",monospace;font-size:14px;color:#e8edf7;word-break:break-all;line-height:1.5;align-self:center}
+.cs-cmd-key{border-color:var(--accent);background:#0f1a33}
+.cs-cmd-key code{font-size:15px;color:#fff}
+.cs-copy{flex:none;background:var(--accent);color:#fff;border:0;border-radius:9px;padding:0 14px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;min-height:36px}
+.cs-copy.is-done{background:var(--ok);color:#052e16}
+.warnbox .cs-copy{margin-top:10px;width:100%;min-height:40px}
+.cs-link{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}
+@media (max-width:480px){ .cs-cmd{flex-direction:column} .cs-copy{min-height:40px} }
