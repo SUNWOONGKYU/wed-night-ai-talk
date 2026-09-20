@@ -396,7 +396,7 @@
         <p class="pay-title">결제 방법을 고르세요</p>
         <p class="sub" style="margin-bottom:12px">송금 후 아래에 이메일을 입력하면 다운로드 링크가 메일로 갑니다.</p>
         <button type="button" class="btn btn-kakao" data-pay="kakaopay">카카오페이 송금<small>카카오톡만 있으면 됩니다 · 수수료 없음</small></button>
-        <button type="button" class="btn btn-bank" data-pay="bank">계좌 이체<small>계좌번호 복사 → 은행 앱에서 이체</small></button>
+        <button type="button" class="btn btn-bank" data-pay="bank">무통장 입금<small>계좌번호 복사 → 은행 앱에서 입금</small></button>
         <button type="button" class="btn btn-outline" data-pay="email">이미 송금했어요 → 이메일 입력</button>
       </div>
 
@@ -426,9 +426,9 @@
         <button type="button" class="btn btn-outline" data-pay="back">← 결제 방법 다시 선택</button>
       </div>
 
-      <!-- 단계 2-2: 계좌이체 -->
+      <!-- 단계 2-2: 무통장 입금 -->
       <div class="pay-step" id="pay-step-bank">
-        <p class="pay-title">계좌 이체</p>
+        <p class="pay-title">무통장 입금</p>
         <div class="kv-box">
           <div class="kv"><b>입금 금액</b><span><span data-price>9,900</span>원</span></div>
           <div class="kv"><b>은행</b><span id="pay-bank-name">하나은행</span></div>
@@ -437,7 +437,7 @@
         </div>
         <button type="button" class="btn btn-bank" id="pay-bank-copy">계좌번호 복사하기</button>
         <p class="note" style="margin:8px 0 12px">입금자명에 <b style="color:var(--fg)">본인 이름</b>을 적어 주세요 (다음 단계에 같은 이름을 입력합니다).</p>
-        <button type="button" class="btn btn-go" data-pay="email">이체 완료 → 이메일 입력</button>
+        <button type="button" class="btn btn-go" data-pay="email">입금 완료 → 이메일 입력</button>
         <button type="button" class="btn btn-outline" data-pay="back">← 결제 방법 다시 선택</button>
       </div>
 
@@ -470,7 +470,7 @@
         <a class="btn btn-go" href="/console">다음: PC 준비하기 (/console)</a>
       </div>
 
-      <p class="note" style="margin-top:14px">결제 수단: 카카오페이 송금 · 계좌이체. Google Play 등록은 준비 중이며, 등록 후에도 같은 가격입니다.</p>
+      <p class="note" style="margin-top:14px">결제 수단: 카카오페이 송금 · 무통장 입금. Google Play 등록은 준비 중이며, 등록 후에도 같은 가격입니다.</p>
     </div>
 
     <div class="card" style="margin-top:12px">

@@ -1,12 +1,12 @@
 // ========== 앱 마켓 (market.html) — 결제 흐름 ==========
 //
 // 출처: PO 의 기존 판매 시스템 index.html 결제 UI (2025-10) 를 원맥스 One MACS용으로 이식.
-//   단계 1 결제 방법 선택 → 단계 2 카카오페이(모바일: 링크 / PC: QR 이미지) 또는 계좌이체(복사)
+//   단계 1 결제 방법 선택 → 단계 2 카카오페이(모바일: 링크 / PC: QR 이미지) 또는 무통장 입금(복사)
 //   → 단계 3 이메일·이름 입력 → POST /api/send-download → 단계 4 완료
 //   (입금 확인 없이 자기 신고로 즉시 발송 — Sheets 에 SELF_REPORTED 로 남겨 나중에 대조)
 //
 // 설정(가격·카카오페이 링크·계좌)은 GET /api/market-config 에서 받는다 (Vercel 환경변수, 없으면 기존 계좌·링크 기본값).
-// 결제 수단은 카카오페이 송금·계좌이체 2개뿐 (PG 미도입 — PO 결정). PC 의 카카오페이 QR 은 market/img/kakaopay-qr.jpg.
+// 결제 수단은 카카오페이 송금·무통장 입금 2개뿐 (PG 미도입 — PO 결정). PC 의 카카오페이 QR 은 market/img/kakaopay-qr.jpg.
 // 인라인 스크립트는 CSP 가 막으므로 전부 이 파일에 둔다.
 
 (function () {
@@ -83,7 +83,7 @@
         var done = function () {
             if (!btn) return;
             var t = btn.innerHTML;
-            btn.textContent = '복사됨 — 은행 앱에서 이체해 주세요';
+            btn.textContent = '복사됨 — 은행 앱에서 입금해 주세요';
             setTimeout(function () { btn.innerHTML = t; }, 1800);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {

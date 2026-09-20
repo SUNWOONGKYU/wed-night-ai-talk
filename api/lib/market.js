@@ -6,7 +6,7 @@
  *   PRODUCT_PRICE           판매가 (원, 기본 9900)
  *   PRODUCT_VERSION         표시용 버전 (기본 v1.0)
  *   KAKAOPAY_LINK           카카오페이 송금 링크 https://qr.kakaopay.com/...
- *   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER   계좌이체 정보
+ *   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER   무통장 입금 정보
  *   APK_DOWNLOAD_URL        APK 실제 위치 (직접 URL — 예: Supabase Storage 무작위 경로)
  *   APK_FILE_ID             또는 Google Drive 파일 ID (기존 시스템의 PDF_FILE_ID 와 같은 방식)
  *   BASE_URL                https://www.waat.community
@@ -71,7 +71,7 @@ function isValidEmail(email) {
 
 const PAYMENT_METHODS = {
     kakaopay: '카카오페이',
-    bank: '계좌이체'
+    bank: '무통장 입금'
 };
 
 function paymentMethodLabel(m) {
