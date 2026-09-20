@@ -65,6 +65,8 @@ ROOT\
 
 **Q5. 프로젝트** — "기본 프로젝트 '트레이딩 시그널' 폴더를 만들어 드리겠습니다(주식 262종목 스캐너 + 샘플 전략 + 말로 전략 만들기). 다른 프로젝트도 지금 추가할까요?" 선택지: `트레이딩 시그널만` / `추가 (이름 입력, 쉼표로 여러 개)`. 추가 이름은 `ROOT\<이름>\` 빈 폴더로 만든다 → `WIZ.projects`.
 
+**Q5-1. 자동 실행** — "PC를 켤 때 원맥스가 자동으로 시작되게 할까요? (안 하면 매번 검은 창을 직접 켜야 합니다)" 선택지: `네, 자동 시작` (기본) / `아니오`. → `WIZ.autostart`
+
 **Q6. 확인** — 먼저 정한 내용을 **일반 텍스트 표로 화면에 출력**(PC 이름표 / 함께 쓰는 AI / 모델 / 프로젝트 / 폴더 위치), 그 다음에 AskUserQuestion 으로 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감). 표 없이 묻지 않는다.
 
 ### 2. 배포판 확보
@@ -126,6 +128,14 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 쓰지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
 4. `PROJECT\_mobile_remote\페어링코드.txt` 를 읽는다 → 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소.
 
+### 6-1. 로그온 시 자동 실행 등록 (`WIZ.autostart` 가 예일 때)
+PC 를 껐다 켜도 폰이 바로 연결되도록 Windows 작업 스케줄러에 등록한다(관리자 권한 불필요):
+```powershell
+schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMACS\" /min \"<ROOT>\_mobile_remote\1클릭_실행.bat\""
+```
+- 등록 확인: `schtasks /Query /TN "OneMACS Console"` 이 항목을 보여주면 OK. 실패하면 대신 `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\OneMACS.lnk` 바로가기(대상 = 1클릭_실행.bat)를 만든다.
+- 사용자에게: "PC를 다시 켜도 원맥스가 자동으로 뜹니다(검은 창이 최소화된 채로). 끄고 싶으면 '자동 시작 꺼줘'라고 하세요." → 끄기 = `schtasks /Delete /F /TN "OneMACS Console"`.
+
 ### 7. 미러링 확인
 콘솔은 프로젝트 폴더(`ROOT\트레이딩 시그널`)에서 켜진 Claude Code 창을 폰에 비춘다. 기동 후 콘솔이 그 폴더에 Claude Code 창을 **자동으로 하나 연다**(창이 뜨는 데 10~20초). 규칙: **프로젝트 폴더당 Claude Code 창은 하나만** — 이 설치용 창(`ROOT`)은 프로젝트 창이 아니므로 그대로 둬도 된다.
 확인: `http://127.0.0.1:<port>/api/live-transcript?limit=1&pin=<pin>&project=트레이딩 시그널` 의 `windowPid` 가 숫자면 연결 OK, 30초 지나도 `null` 이면 "탐색기에서 `ROOT\트레이딩 시그널` 폴더를 열고 주소창에 `claude` 를 쳐서 창을 하나 켜 두세요".
@@ -134,6 +144,7 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 ```
 설치 완료 — 원맥스 One MACS
 - ★ 검은 창(1클릭_실행.bat)은 최소화만 하세요. 닫으면 폰 연결이 끊깁니다.
+- 자동 시작: 켬/끔 (켬이면 "PC를 다시 켜도 원맥스가 자동으로 뜹니다")
 - 콘솔 폴더: <ROOT>\_mobile_remote
 - 기본 프로젝트: <ROOT>\트레이딩 시그널  (자동 생성됨 — 폰 프로젝트 선택기에 이 이름으로 표시)
 - 페어링 코드: <8자리>        ← 폰의 원맥스 One MACS 앱에 입력 (앱: https://www.waat.community/market)
