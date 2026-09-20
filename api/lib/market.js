@@ -54,7 +54,7 @@ function generateLicenseKey() {
 }
 
 function baseUrl(req) {
-    if (process.env.BASE_URL) return process.env.BASE_URL.replace(/\/$/, '');
+    if (clean(process.env.BASE_URL)) return clean(process.env.BASE_URL).replace(/\/$/, '');
     const host = (req && req.headers && (req.headers['x-forwarded-host'] || req.headers.host)) || 'www.waat.community';
     const proto = (req && req.headers && req.headers['x-forwarded-proto']) || 'https';
     return `${proto}://${host}`;
@@ -62,7 +62,7 @@ function baseUrl(req) {
 
 /** APK 실제 다운로드 주소. 둘 다 없으면 null */
 function apkDownloadUrl() {
-    if (process.env.APK_DOWNLOAD_URL) return process.env.APK_DOWNLOAD_URL;
+    if (clean(process.env.APK_DOWNLOAD_URL)) return clean(process.env.APK_DOWNLOAD_URL);  // BOM·개행 제거(2026-09-21 404 원인)
     if (process.env.APK_FILE_ID) return `https://drive.google.com/uc?export=download&id=${process.env.APK_FILE_ID}`;
     return null;
 }
