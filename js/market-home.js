@@ -51,7 +51,7 @@
         var body =
             (a.img ? '<div class="ic" style="background:#131826;padding:0;overflow:hidden"><img src="' + esc(a.img) + '" alt="" width="56" height="56" style="width:100%;height:100%;display:block"></div>' : '<div class="ic" style="background:' + esc(a.color) + '">' + esc(a.icon) + '</div>') +
             '<div class="body"><b>' + esc(a.name) + '<small>' + esc(a.sub) + '</small></b><p>' + esc(a.desc) + '</p>' +
-            '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div></div>' +
+            '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div>' + (a.maker ? '<div class="maker-line">만든 곳: ' + esc(a.maker) + '</div>' : '') + '</div>' +
             '<div class="pr">' + (a.soon
                 ? '<span class="pill soon">' + esc(a.soonText || '출시 예정') + '</span>'
                 : '<b>' + esc(won(a.price)) + '</b><small>' + (a.price ? 'VAT 포함' : '누구나') + '</small>') + '</div>';

@@ -70,3 +70,5 @@ a.app:active,a.app:hover{border-color:var(--accent)}
 .maker a,.foot a{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}
 .foot{margin-top:36px;padding:24px 0 48px;border-top:1px solid var(--line);font-size:12px;color:var(--fg3);line-height:1.6}
 .foot p+p{margin-top:6px}
+
+.app .maker-line{margin-top:6px;font-size:11px;color:var(--fg3)}
