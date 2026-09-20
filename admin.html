@@ -58,6 +58,7 @@
                 <button class="admin-tab" data-tab="locations">장소 관리</button>
                 <button class="admin-tab" data-tab="inquiries">문의 관리</button>
                 <button class="admin-tab" data-tab="email">📧 이메일 발송</button>
+                <button class="admin-tab" data-tab="orders">🛒 앱 주문</button>
             </div>
 
 <!-- 멤버 관리 -->
@@ -402,6 +403,96 @@
                 </div>
             </div>
 
+            <!-- 앱 주문 (앱 마켓 /market) -->
+            <div id="panel-orders" class="admin-panel">
+                <div class="admin-horizontal">
+                    <!-- 좌측: 마켓 설정 -->
+                    <div class="admin-card event-form-card">
+                        <h3>앱 마켓 설정</h3>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1rem;">
+                            구매자 화면(/market)의 결제 안내에 그대로 표시됩니다. 은행·계좌·예금주·카카오페이 링크는 여기서 채워야 주문 화면에 나옵니다.
+                        </p>
+                        <form id="app-settings-form" class="site-form">
+                            <div class="form-group">
+                                <label for="as-bank-name">은행명</label>
+                                <input type="text" id="as-bank-name" placeholder="예: 카카오뱅크">
+                            </div>
+                            <div class="form-group">
+                                <label for="as-bank-account">계좌번호</label>
+                                <input type="text" id="as-bank-account" placeholder="예: 3333-00-0000000">
+                            </div>
+                            <div class="form-group">
+                                <label for="as-bank-holder">예금주</label>
+                                <input type="text" id="as-bank-holder" placeholder="예금주명">
+                            </div>
+                            <div class="form-group">
+                                <label for="as-kakaopay-link">카카오페이 송금 링크</label>
+                                <input type="url" id="as-kakaopay-link" placeholder="https://qr.kakaopay.com/...">
+                                <span class="form-hint">카카오톡 &gt; 카카오페이 &gt; 송금 &gt; 송금 코드(QR) &gt; 링크 복사. 주문 화면에 버튼 + QR 로 표시됩니다.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="as-product-price">판매가 (원, VAT 포함)</label>
+                                <input type="number" id="as-product-price" min="0" step="100" placeholder="9900">
+                            </div>
+                            <div class="form-group">
+                                <label for="as-product-version">앱 버전 표기</label>
+                                <input type="text" id="as-product-version" placeholder="v1.0">
+                            </div>
+                            <div class="form-group">
+                                <label for="as-download-url">다운로드 주소 (APK)</label>
+                                <input type="url" id="as-download-url" placeholder="https://.../consolesystem-v1.0.apk">
+                                <span class="form-hint">결제 확인(paid)된 주문에만 내려갑니다. 공개 화면·공개 RPC 에는 절대 노출되지 않습니다.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="as-seller-info">판매자 정보 (상세페이지 하단 표기)</label>
+                                <textarea id="as-seller-info" rows="5" placeholder="상호 / 대표자 / 사업자등록번호 / 통신판매업 신고번호 / 연락처 / 환불 기준"></textarea>
+                            </div>
+                            <p id="app-settings-msg" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.8rem;"></p>
+                            <button type="submit" class="btn-primary" id="app-settings-save-btn">설정 저장</button>
+                        </form>
+                    </div>
+
+                    <!-- 우측: 주문 목록 -->
+                    <div class="admin-card">
+                        <h3>앱 주문 목록</h3>
+                        <div class="admin-actions">
+                            <select class="admin-search" id="order-filter" style="max-width:180px;">
+                                <option value="all">전체</option>
+                                <option value="pending" selected>입금 대기</option>
+                                <option value="paid">결제 확인</option>
+                                <option value="cancelled">취소</option>
+                            </select>
+                            <input type="text" class="admin-search" id="order-search" placeholder="주문번호 · 이름 · 연락처 검색">
+                            <button type="button" class="btn-secondary btn-small" data-action="reload-orders">새로고침</button>
+                        </div>
+                        <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:0.8rem;">
+                            통장·카카오페이에 입금이 들어오면 입금자명(또는 송금 메모)의 주문번호를 찾아 [입금 확인]을 누르세요. 누르는 순간 라이선스 키가 만들어지고 구매자 화면에 다운로드가 열립니다.
+                        </p>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>주문번호</th>
+                                        <th>이름</th>
+                                        <th>연락처</th>
+                                        <th>방법</th>
+                                        <th>금액</th>
+                                        <th>상태</th>
+                                        <th>주문 시각</th>
+                                        <th>라이선스 키</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-tbody">
+                                    <tr><td colspan="9" class="admin-loading">로딩 중...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p id="order-count" style="margin-top:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
+                    </div>
+                </div><!-- /admin-horizontal -->
+            </div>
+
             <!-- 이메일 발송 -->
             <div id="panel-email" class="admin-panel">
                 <div class="admin-horizontal">
@@ -594,8 +685,8 @@
             버전을 올리려면 먼저 해당 URL 이 200 인지 확인할 것. -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="js/supabase-config.js?v=20260916b"></script>
-    <script src="js/db.js?v=20260902g"></script>
-    <script src="js/admin.js?v=20260916a"></script>
+    <script src="js/db.js?v=20260920a"></script>
+    <script src="js/admin.js?v=20260920a"></script>
 
 </body>
 </html>

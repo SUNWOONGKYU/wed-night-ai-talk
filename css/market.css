@@ -71,11 +71,14 @@ body{padding-bottom:84px}
 .warnbox{border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.06);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--fg2)}
 @media (min-width:600px){ h1{font-size:36px} .wrap{max-width:640px} }
 
-/* ========== WAAT 추가: 상단 바 · 결제 단계 · 재발급 (카탈로그 원본에 없던 부분) ========== */
+/* ========== WAAT 추가: 상단 바 · 주문/결제 단계 · 만든 사람 (카탈로그 원본에 없던 부분) ========== */
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:560px;margin:0 auto;padding:12px 16px 0;font-size:13px;color:var(--fg3)}
 .topbar a{color:var(--fg2);text-decoration:none;font-weight:700}
 .topbar a:hover{color:var(--fg)}
 @media (min-width:600px){ .topbar{max-width:640px} }
+.maker b{color:var(--fg)}
+.maker p{font-size:15px}
+.maker a,.foot a{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}
 .pay-step{display:none;text-align:left}
 .pay-step.active{display:block}
 .pay-title{font-size:18px;font-weight:800;color:var(--fg);text-align:center;margin:6px 0 14px}
@@ -84,25 +87,31 @@ body{padding-bottom:84px}
 .btn-kakao{background:#FEE500;color:#191919;box-shadow:0 10px 30px rgba(254,229,0,.25)}
 .btn-kakao small{color:#5a5000}
 .btn-bank{background:#4A90E2;color:#fff;box-shadow:0 10px 30px rgba(74,144,226,.3)}
-.btn-card{background:#1f2a44;color:#fff;box-shadow:none}
-.btn-ghost{background:var(--bg2);color:var(--fg3);box-shadow:none;border:1px solid var(--line)!important;cursor:default}
 .btn-outline{background:transparent;color:var(--fg2);box-shadow:none;border:1px solid var(--line)!important;font-size:15px;font-weight:600}
 .btn-go{background:var(--ok);color:#052e16;box-shadow:0 10px 30px rgba(34,197,94,.25)}
 .btn[disabled]{opacity:.55;cursor:wait}
+.btn.is-disabled{opacity:.4;pointer-events:none}
 .kv-box{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:4px 14px;margin-bottom:14px}
 .mono{font-family:Consolas,"JetBrains Mono",monospace;letter-spacing:.5px;color:var(--fg)}
 .qr-box{background:#fff;border-radius:14px;padding:16px;text-align:center;margin-bottom:12px}
-.qr-box p{color:#1a2238}
-.qr-box .note{color:#5a6478}
-.qr{display:inline-block;line-height:0}
-.qr svg{width:200px;height:200px;display:block}
 .pay-label{display:block;font-size:13px;color:var(--fg2);margin:12px 0 6px;font-weight:600}
 .pay-input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--fg);font-size:16px;font-family:inherit;outline:none}
 .pay-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+.mk-radio-group{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:4px}
+.mk-radio{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--fg);cursor:pointer}
+.mk-radio input{accent-color:var(--accent);width:18px;height:18px}
 .pay-check{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--fg2);margin:14px 0 12px;line-height:1.5;cursor:pointer}
 .pay-check input{margin-top:3px;accent-color:var(--accent)}
+.pay-check a{color:#93c5fd}
 .pay-error{color:#fca5a5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 12px}
-.pay-error.ok{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.35)}
-.done-box{text-align:center;padding:10px 0 18px}
+.done-box{text-align:center;padding:6px 0 10px}
 .done-icon{width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,.15);color:var(--ok);font-size:30px;font-weight:900;line-height:56px;margin:0 auto 10px}
-#renew summary{font-size:15px}
+.mk-order-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.mk-order-no{font-size:22px;font-weight:800;letter-spacing:1px}
+.mk-status{font-size:12px;font-weight:800;padding:5px 11px;border-radius:999px;background:rgba(245,158,11,.18);color:#fbbf24;white-space:nowrap}
+.mk-status.is-paid{background:rgba(34,197,94,.18);color:#4ade80}
+.mk-status.is-cancelled{background:rgba(122,134,163,.2);color:var(--fg3)}
+.mk-copy{background:transparent;border:1px solid var(--line);border-radius:8px;color:#93c5fd;font-size:12px;padding:3px 9px;cursor:pointer;font-family:inherit;vertical-align:middle}
+.mk-copy.is-done{color:#4ade80;border-color:#4ade80}
+.warnbox a{color:#93c5fd}
+@media (max-width:480px){ .mk-order-head{flex-direction:column;align-items:flex-start} .mk-order-no{font-size:19px} }
