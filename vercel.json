@@ -110,6 +110,10 @@
     {
       "source": "/console",
       "destination": "/console.html"
+    },
+    {
+      "source": "/market/onemacs",
+      "destination": "/market/onemacs.html"
     }
   ],
   "functions": {
