@@ -1,4 +1,4 @@
-# Claude Code 자동 설치 지시문 — 콘솔 시스템 (배포판 v2.1 · 페어링 · 기본 프로젝트 '트레이딩 시그널')
+# Claude Code 설치 마법사 지시문 — 콘솔 시스템 (배포판 v2.2 · 문답으로 내 시스템 만들기)
 
 > **사용자는 이것만 하면 된다**: PC에 콘솔 폴더를 하나 만들고(예: `C:\콘솔`) 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
@@ -27,10 +27,43 @@ ROOT\
 - `PROJECT` 밖은 건드리지 않는다. 토큰·비밀번호·페어링 코드 외 비밀값은 출력하지 않는다.
 - Windows 전용. PowerShell 명령을 쓴다. `NoDefaultCurrentDirectoryInExePath` 환경변수가 있으면 배치 실행 시 `.\` 접두를 쓴다.
 
-### 1. 환경 점검
-`node -v`, `claude --version`, `codex --version`, `agy --version`, `grok --version` 각각 실행(없으면 오류가 정상).
+### 1. 환경 점검 → 사용자에게 보고
+`node -v`, `claude --version`, `codex --version`, `agy --version`, `grok --version`, `python --version` 각각 실행(없으면 오류가 정상). 결과를 **사람 말로** 보고한다. 예:
+```
+점검 결과
+- Node.js: 있음 (v22)
+- Claude Code: 설치되어 있군요 (v2.x) — 메인 AI로 씁니다
+- Codex(ChatGPT): 없음 — 쓰시려면 설치가 필요합니다
+- Antigravity(Google): 없음
+- Grok(xAI): 없음
+- Python: 있음/없음 (주식 스캐너 실행에 필요, 나중에 해도 됨)
+```
 - Node 없음 → https://nodejs.org LTS 설치 요청 후 중단.
-- codex/agy/grok 은 선택. 없으면 "해당 탭은 비활성"이라고만 알리고 계속.
+- 컴퓨터 이름은 `hostname` 으로 읽어 둔다(`HOST`).
+
+### 1-1. 설치 마법사 — 문답으로 이 사람의 시스템을 정한다 (AskUserQuestion 사용, 한 번에 하나씩)
+샘플을 깔아 놓고 고치라고 하지 않는다. **처음부터 사용자가 정한 대로** 만든다. 답은 아래 `WIZ` 에 모아 4단계 설정에 쓴다.
+
+**Q1. 이 PC 이름표** — "폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지: `PC HOST` (기본, 컴퓨터 이름 그대로) / 직접 입력. → `WIZ.pc_label` (기본 선택이면 `"PC " + HOST`).
+
+**Q2. 함께 쓸 AI** — "Claude Code 외에 어떤 AI를 같이 쓰시겠어요? 각각 본인 구독이 필요합니다." 복수 선택: `Codex (ChatGPT 구독)` / `Antigravity (Google)` / `Grok (xAI)` / `Claude Code만 쓰겠다`. 고르지 않은 AI는 **탭 자체가 안 보이게** 끈다 → `WIZ.workers.<codex|agy|grok>.enabled`.
+
+**Q3. 고른 AI 중 미설치인 것** — 하나씩: "Codex가 아직 없습니다. 지금 설치할까요?" 선택지: `설치 명령 알려주세요` / `나중에(탭 끔)`.
+- 설치는 사용자가 한다. 명령만 보여준다:
+  - Codex: `npm install -g @openai/codex` → 새 터미널에서 `codex` 실행해 ChatGPT 로그인
+  - Antigravity: https://antigravity.google 에서 Antigravity 설치(agy CLI 포함) → 터미널에서 `agy` 실행해 Google 로그인
+  - Grok: `npm install -g @xai-official/grok` → 터미널에서 `grok` 실행해 xAI 로그인
+- "끝났다"는 답을 받으면 `--version` 으로 다시 확인. 실패하면 이유를 말하고 `나중에(탭 끔)` 로 처리.
+
+**Q4. 모델** — 켜진 AI마다 하나씩 묻는다(기본값을 첫 선택지로):
+- Claude Code: "Claude Code 탭에 표시할 모델 이름" `Opus 5` / `Sonnet 5` / 직접 입력 (실제 모델은 Claude Code 안의 `/model` 설정을 따름, 여기선 표시 이름) → `WIZ.workers.claude.model`
+- Codex: `gpt-5.6-terra` / `gpt-5.6-astra` / 직접 입력 → `WIZ.workers.codex.model`
+- Antigravity: `gemini-3.8-flash-high` / `gemini-3.8-pro-high` / 직접 입력 → `WIZ.workers.agy.model`
+- Grok: `grok-4.6` / 직접 입력 → `WIZ.workers.grok.model`
+
+**Q5. 프로젝트** — "기본 프로젝트 '트레이딩 시그널' 폴더를 만들어 드리겠습니다(주식 262종목 스캐너 + 샘플 전략 + 말로 전략 만들기). 다른 프로젝트도 지금 추가할까요?" 선택지: `트레이딩 시그널만` / `추가 (이름 입력, 쉼표로 여러 개)`. 추가 이름은 `ROOT\<이름>\` 빈 폴더로 만든다 → `WIZ.projects`.
+
+**Q6. 확인** — 정한 내용을 표로 보여주고 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감).
 
 ### 2. 배포판 확보
 이미 `DIST`(이 지시문이 들어 있는 폴더, `server.js`·`cloudflared.exe` 존재)가 있으면 그것을 쓴다. 없으면 내려받는다:
@@ -59,13 +92,23 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 3. 전략 빌더 스킬 설치: `PROJECT\skills\전략만들기\` 가 있으면 `%USERPROFILE%\.claude\skills\전략만들기\` 로 복사(없으면 건너뜀). 이후 사용자는 폰에서 "RSI 35 이하 + 거래량 1.5배 전략 만들어줘" 처럼 말로 전략을 만든다.
 4. 스캐너 **실행**(Python 3.11+ · 라이브러리 · 증권사 키)은 이 지시문에서 하지 않는다. 사용자가 원하면 `PROJECT\CLAUDE_CODE_봇설치지시문.md`(= https://www.waat.community/console/trading-bot.md) 를 이어서 수행한다고만 알린다. 키 없이도 콘솔·전략 카드·전략 만들기는 동작한다.
 
-### 4. 설정 (console_config.json, UTF-8·BOM 없이)
+### 4. 설정 (console_config.json, UTF-8·BOM 없이) — 마법사 답(`WIZ`)을 그대로 적는다
+0. `pc_label`: `WIZ.pc_label` (예: `"PC DESKTOP-ABC"`)
+0-1. `workers`:
+```json
+"workers": {
+  "claude": { "model": "Opus 5" },
+  "codex":  { "enabled": true,  "model": "gpt-5.6-terra" },
+  "agy":    { "enabled": false, "model": "gemini-3.8-flash-high" },
+  "grok":   { "enabled": false, "model": "grok-4.6" }
+}
+```
+   (`enabled: false` 인 AI는 폰에 탭이 안 보인다. `agy_model` 도 `workers.agy.model` 과 같게 맞춘다.)
 1. `pin`: 6자리 숫자를 **새로 생성**(1234 금지). 사용자에게 한 번 알려준다.
 2. `port`: 7890 (사용 중이면 7891).
 3. `agy_model`: `gemini-3.8-flash-high`.
-4. `projects`: `[ { "name": "트레이딩 시그널", "dir": "<ROOT>\\트레이딩 시그널" } ]` — 경로의 `\` 는 JSON 에서 `\\`.
+4. `projects`: `[ { "name": "트레이딩 시그널", "dir": "<ROOT>\\트레이딩 시그널" }, ...WIZ.projects ]` — 경로의 `\` 는 JSON 에서 `\\`.
 4-0. `projects_root`: `"<ROOT>"` — 폰에서 '프로젝트 추가' 를 누르면 이 폴더 아래에 새 프로젝트 폴더가 생긴다.
-4-1. `pc_label`: 사용자가 PC 를 여러 대 쓸 계획이면 "PC 1번" 처럼 정해 넣는다(폰 탭에 이 이름으로 표시). 한 대면 생략.
 5. `pair_hub_url`·`pair_code` 는 비워 둔다(실행 시 자동 생성).
 6. 텔레그램·고정 주소 항목은 비워 둔다(선택 기능, 가이드 참조).
 
@@ -90,8 +133,11 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 - 페어링 코드: <8자리>        ← 폰의 콘솔 시스템 앱에 입력 (앱: https://www.waat.community/market)
 - 브라우저로도 가능: https://console-hub.consolesystem.workers.dev/?code=<8자리>
 - PIN: <pin>  (앱/브라우저에서 PC 처음 열 때 한 번)
-- 메인 워커: Claude Code (이 창) · 미러링: OK/미연결
-- 서브 워커: Codex OK/없음 · Antigravity OK/없음 · Grok OK/없음
+- 이 PC 이름표: <pc_label>
+- 메인 AI: Claude Code (<model 표시명>) · 프로젝트 창 미러링: OK/미연결
+- 함께 쓰는 AI: Codex(<model>) 켬/끔 · Antigravity(<model>) 켬/끔 · Grok(<model>) 켬/끔
+- 프로젝트: 트레이딩 시그널 (+ 추가한 것들)
+- 바꾸고 싶으면: 이 창에서 "AI 구성 바꿔줘 / 모델 바꿔줘 / 프로젝트 추가해줘" 라고 말하면 console_config.json 을 고치고 콘솔을 재시작한다.
 - 주의: 검은 창을 닫으면 폰 연결이 끊김. 다음에 켤 때는 <ROOT>\_mobile_remote\1클릭_실행.bat 하나면 된다(프로젝트 창은 자동으로 뜸).
 ```
 
