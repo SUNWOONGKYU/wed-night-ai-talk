@@ -2,11 +2,12 @@
  * Google Sheets 데이터베이스 헬퍼 — 앱 마켓(콘솔 시스템) 주문
  *
  * 출처: PO 의 기존 판매 시스템 (Claude설치가이드/v2.0/sales-system/api/lib/sheets.js, 2025-10)
- * 변경: ESM → CommonJS (WAAT api/ 는 module.exports 규약), Orders 시트에 N·O 열 추가
- *       (paymentMethod, licenseKey). A~M 은 원본과 같은 순서라 기존 스프레드시트에 시트만 추가해도 된다.
+ * 변경: ESM → CommonJS (WAAT api/ 는 module.exports 규약), Orders 시트에 N·O·P 열 추가
+ *       (paymentMethod, licenseKey, product). A~M 은 원본과 같은 순서라 기존 스프레드시트를 그대로 써도 되고,
+ *       P 열 product 로 옛 가이드 판매 행(빈 값)과 콘솔 시스템 행을 필터로 구분한다.
  *
  * 스프레드시트 구조:
- *   Orders       : 주문 정보 (A~O)
+ *   Orders       : 주문 정보 (A~P)
  *   DownloadLogs : 다운로드 기록
  *   EmailLogs    : 이메일 발송 기록
  *
@@ -15,12 +16,12 @@
 
 const { google } = require('googleapis');
 
-const ORDERS_RANGE = 'Orders!A:O';
+const ORDERS_RANGE = 'Orders!A:P';
 const ORDER_HEADERS = [
     'orderId', 'paymentKey', 'amount', 'customerEmail', 'customerName',
     'customerPhone', 'status', 'createdAt', 'paidAt', 'refundedAt',
     'downloadToken', 'alimtalkSent', 'alimtalkMessageId',
-    'paymentMethod', 'licenseKey'
+    'paymentMethod', 'licenseKey', 'product'
 ];
 
 function getGoogleAuth() {
@@ -61,7 +62,8 @@ function rowToOrder(row, rowIndex) {
         alimtalkSent: row[11] === 'true' || row[11] === true,
         alimtalkMessageId: row[12] || '',
         paymentMethod: row[13] || '',
-        licenseKey: row[14] || ''
+        licenseKey: row[14] || '',
+        product: row[15] || ''
     };
 }
 
@@ -81,7 +83,8 @@ function orderToRow(o) {
         o.alimtalkSent ? 'true' : 'false',
         o.alimtalkMessageId || '',
         o.paymentMethod || '',
-        o.licenseKey || ''
+        o.licenseKey || '',
+        o.product || ''            // P: 상품 구분 — 옛 'Claude 완벽가이드' 판매 행(빈 값)과 구분
     ];
 }
 
@@ -148,7 +151,7 @@ async function updateOrder(orderId, updates) {
     try {
         await sheets.spreadsheets.values.update({
             spreadsheetId: spreadsheetId(),
-            range: `Orders!A${order.rowIndex}:O${order.rowIndex}`,
+            range: `Orders!A${order.rowIndex}:P${order.rowIndex}`,
             valueInputOption: 'USER_ENTERED',
             resource: { values: [orderToRow(merged)] }
         });
@@ -238,7 +241,7 @@ async function initializeSpreadsheet() {
         });
     }
     await sheets.spreadsheets.values.update({
-        spreadsheetId: id, range: 'Orders!A1:O1', valueInputOption: 'USER_ENTERED',
+        spreadsheetId: id, range: 'Orders!A1:P1', valueInputOption: 'USER_ENTERED',
         resource: { values: [ORDER_HEADERS] }
     });
     await sheets.spreadsheets.values.update({

@@ -5,7 +5,7 @@
  *   node scripts/init-sheets.js
  *
  * 기존 판매 시스템의 스프레드시트를 그대로 쓰는 경우에도 실행해도 된다 —
- * 있는 시트는 건드리지 않고 헤더만 다시 쓰며(Orders 는 N·O 열 헤더가 추가됨), 없는 시트만 만든다.
+ * 있는 시트는 건드리지 않고 헤더만 다시 쓰며(Orders 는 N·O·P 열 헤더 paymentMethod·licenseKey·product 가 추가됨), 없는 시트만 만든다.
  */
 
 const fs = require('fs');

@@ -97,6 +97,32 @@
   </div>
 </section>
 
+<section id="bot" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">트레이딩 봇 · 무료</span>
+    <h2>트레이딩 봇 설치 (선택)</h2>
+    <p class="sub">콘솔 시스템의 "트레이딩 시그널" 프로젝트가 쓰는 PC 봇. 결제 없이 누구나 받을 수 있습니다. 위 ①~④(Node.js·Claude Code·로그인)가 끝난 상태에서 진행하세요.</p>
+    <div class="cs-step" style="margin-bottom:12px">
+      <b style="color:var(--fg)">준비물</b>
+      <ul style="padding-left:18px;margin-top:6px;font-size:15px;color:var(--fg2);line-height:1.7">
+        <li><b>Python 3.11 이상</b> — <a href="https://www.python.org/downloads/" target="_blank" rel="noopener" class="cs-link">python.org</a> ("Add python.exe to PATH" 체크)</li>
+        <li><b>한국투자증권 Open API 모의투자 키</b> — <a href="https://apiportal.koreainvestment.com" target="_blank" rel="noopener" class="cs-link">apiportal.koreainvestment.com</a> 에서 발급(앱키·시크릿·계좌번호). 기본은 모의투자 모드.</li>
+        <li><b>텔레그램 봇</b> — 텔레그램에서 @BotFather 로 봇 토큰 발급, 본인 채팅 ID. (매수 전 승인 알림에 씁니다)</li>
+      </ul>
+    </div>
+    <div class="cs-step cs-step-key">
+      <div class="row"><span class="num">B</span><div>
+        <h3>봇을 둘 폴더에서 Claude Code 를 켜고 한 줄 붙여넣기</h3>
+        <div class="cs-cmd"><code>mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude</code><button type="button" class="cs-copy" data-copy="mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude">복사</button></div>
+        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/console/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/console/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘">복사</button></div>
+        <p style="color:var(--fg)">Claude Code 가 배포판을 내려받아 라이브러리 설치 → <span class="mono">.env</span> 에 키 입력(사용자가 값을 줄 때만) → 시험 기동까지 합니다. 증권사 로그인·키 발급·텔레그램 봇 생성은 대신 하지 않습니다.</p>
+        <p class="note">URL 을 못 읽으면 <a href="console/trading-bot_v1.zip" class="cs-link">trading-bot_v1.zip</a>(148KB)을 받아 폴더에 풀고 "<span class="mono">CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘</span>". 지시문 원문: <a href="console/trading-bot.md" class="cs-link" target="_blank" rel="noopener">trading-bot.md</a></p>
+        <p class="note">이 봇은 투자 자문·일임이 아니며 샘플 전략은 교육용입니다. 승인 없이는 주문하지 않으며, 실계좌 전환은 README 의 절차를 읽고 본인이 결정합니다.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
 <section>
   <div class="wrap">
     <span class="eyebrow">자주 막히는 3가지</span>

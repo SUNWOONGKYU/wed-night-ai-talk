@@ -57,7 +57,8 @@ module.exports = async function handler(req, res) {
             paidAt: '',
             downloadToken,
             paymentMethod,
-            licenseKey
+            licenseKey,
+            product: m.PRODUCT.label
         });
 
         // 2. 메일 발송

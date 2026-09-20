@@ -66,7 +66,7 @@ module.exports = async function handler(req, res) {
             customerPhone: payment.customerMobilePhone || '',
             status: 'PAID',
             paidAt: payment.approvedAt || new Date().toISOString(),
-            downloadToken, paymentMethod: 'card', licenseKey
+            downloadToken, paymentMethod: 'card', licenseKey, product: m.PRODUCT.label
         });
 
         await sendPurchaseEmail({
