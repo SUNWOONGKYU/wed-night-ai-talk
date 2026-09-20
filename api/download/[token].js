@@ -43,7 +43,7 @@ function errorPage(res, status, title, message, withRenew) {
 <div class="err">
   <h1>${esc(title)}</h1>
   <p>${esc(message)}</p>
-  ${withRenew ? `<a class="btn" href="/market#renew">링크 재발급 받기</a>` : ''}
+  ${withRenew ? `<a class="btn" href="/market/onemacs#renew">링크 재발급 받기</a>` : ''}
   ${support ? `<p style="font-size:13px;margin-top:16px;">문의: ${esc(support)}</p>` : ''}
 </div>`));
 }

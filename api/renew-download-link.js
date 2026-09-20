@@ -49,7 +49,7 @@ module.exports = async function handler(req, res) {
             amount: order.amount, paymentMethod: order.paymentMethod, licenseKey: order.licenseKey,
             downloadLink: `${base}/api/download/${downloadToken}`,
             consoleGuideLink: `${base}/console`,
-            renewLink: `${base}/market#renew`,
+            renewLink: `${base}/market/onemacs#renew`,
             expiryHours: expiryHours(),
             maxDownloads
         });
