@@ -105,7 +105,7 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
    (`enabled: false` 인 AI는 폰에 탭이 안 보인다. `agy_model` 도 `workers.agy.model` 과 같게 맞춘다.)
 1. `pin`: 6자리 숫자를 **새로 생성**(1234 금지). 사용자에게 한 번 알려준다.
-2. `port`: 7890 (사용 중이면 7891).
+2. `port`: 7890 부터 시작해 **비어 있는 포트**를 쓴다(`netstat -ano | findstr :7890` 이 비면 7890, 아니면 7900, 7910 … 순서로 10씩 올려 확인). 콘솔은 그 포트 다음 번호들(+1, +2 …)을 프로젝트마다 쓰므로 10 단위로 띄운다.
 3. `agy_model`: `gemini-3.8-flash-high`.
 4. `projects`: `[ { "name": "트레이딩 시그널", "dir": "<ROOT>\\트레이딩 시그널" }, ...WIZ.projects ]` — 경로의 `\` 는 JSON 에서 `\\`.
 4-0. `projects_root`: `"<ROOT>"` — 폰에서 '프로젝트 추가' 를 누르면 이 폴더 아래에 새 프로젝트 폴더가 생긴다.
