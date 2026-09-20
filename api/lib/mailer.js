@@ -36,6 +36,7 @@ function purchaseEmailHtml(p) {
   </div>
 
   <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
+    <div style="font-size:14px;opacity:.85;margin-bottom:10px;">먼저 PC에서 <a href="https://www.waat.community/console" style="color:#C9A961;font-weight:700;">waat.community/console</a> 을 여세요 — 앱은 화면이고, 일은 PC가 합니다(PC 준비 약 10분).</div>
     <div style="font-size:14px;opacity:.85;margin-bottom:12px;">보안 다운로드 링크</div>
     <a href="${esc(p.downloadLink)}" style="display:inline-block;background:#C9A961;color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:17px;">원맥스 One MACS APK 다운로드</a>
     <div style="margin-top:14px;font-size:13px;opacity:.85;">링크 유효 ${p.expiryHours}시간 · 최대 ${p.maxDownloads}회</div>

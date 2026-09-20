@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" width="640" height="200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 170" width="700" height="170">
 <style>text{font-family:Montserrat,Pretendard,Arial,sans-serif;font-weight:900}</style>
-<text x="88" y="150" font-size="132" fill="#fff" letter-spacing="-3">MACS</text>
-<circle cx="80" cy="100" r="56" fill="none" stroke="#4F7FFF" stroke-width="22"/>
+<circle cx="72" cy="88" r="46" fill="none" stroke="#4F7FFF" stroke-width="20"/>
+<text x="122" y="140" font-size="44" fill="#4F7FFF">ne</text>
+<text x="188" y="140" font-size="128" fill="#fff" letter-spacing="-3">MACS</text>
 </svg>

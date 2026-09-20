@@ -17,11 +17,11 @@ const crypto = require('crypto');
 
 const PRODUCT = {
     code: 'console_system',
-    name: '콘솔시스템',
+    name: '원맥스 One MACS',
     /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로, 없으면 '콘솔시스템 v1.0' */
     get label() { return process.env.PRODUCT_NAME || `${this.name} ${this.version}`; },
     get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
-    get version() { return process.env.PRODUCT_VERSION || 'v1.0'; }
+    get version() { return process.env.PRODUCT_VERSION || 'v1.3.1'; }
 };
 
 const DEFAULTS = {
