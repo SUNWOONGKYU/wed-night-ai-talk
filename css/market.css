@@ -1,0 +1,273 @@
+/* ========== 앱 마켓 (market.html) 전용 스타일 ==========
+   style.css 의 변수(--accent-cyan 네이비 / --accent-gold 골드)를 그대로 쓴다.
+   CSP 에 style-src-elem 'unsafe-inline' 이 없으므로 인라인 <style> 대신 이 파일. */
+
+.market-page { padding-bottom: 4rem; }
+
+/* ---------- 상품 카드 ---------- */
+.mk-product {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 40px rgba(26, 34, 56, 0.06);
+    margin-bottom: 1.5rem;
+}
+
+.mk-product-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1.5rem;
+    align-items: start;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+}
+
+.mk-product-icon {
+    width: 84px; height: 84px;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: var(--accent-gold-soft);
+    flex: 0 0 auto;
+}
+
+.mk-product-title h3 {
+    font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0.35rem 0 0.2rem;
+    color: var(--text-primary);
+}
+.mk-tagline { color: var(--text-secondary); font-size: 1rem; margin: 0; }
+
+.mk-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    margin-right: 0.35rem;
+    text-transform: uppercase;
+}
+.mk-badge-platform { background: rgba(26, 34, 56, 0.08); color: var(--accent-cyan); }
+.mk-badge-ver { background: rgba(201, 169, 97, 0.18); color: #8a6d2b; }
+
+.mk-price-box { text-align: right; }
+.mk-price {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    line-height: 1.1;
+}
+.mk-price small { font-size: 1rem; margin-left: 0.15rem; font-weight: 600; }
+.mk-price-note { font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0.8rem; }
+.mk-buy-btn { padding: 0.8rem 1.8rem; }
+
+.mk-lead { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 1.5rem; }
+.mk-lead strong { color: var(--accent-cyan); }
+
+.mk-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.mk-feature {
+    background: var(--bg-secondary);
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+}
+.mk-feature h4 { font-size: 0.98rem; margin-bottom: 0.4rem; color: var(--accent-cyan); }
+.mk-feature p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+.mk-structure {
+    border-left: 4px solid var(--accent-gold);
+    background: rgba(201, 169, 97, 0.08);
+    border-radius: 0 12px 12px 0;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+}
+.mk-structure h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+.mk-structure ul, .mk-col ul { padding-left: 1.2rem; margin: 0; }
+.mk-structure li, .mk-col li { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+
+.mk-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.mk-col h4 { font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+
+.mk-disclaimer {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mk-paymethods { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.mk-pm {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+}
+.mk-pm-on { background: rgba(26, 34, 56, 0.06); color: var(--accent-cyan); font-weight: 600; }
+.mk-pm-off { color: var(--text-muted); }
+.mk-pm em, .mk-radio-off em { font-style: normal; font-size: 0.72rem; color: var(--accent-gold); margin-left: 0.2rem; }
+
+/* ---------- 패널 공통 (주문 폼 / 주문 결과 / 조회) ---------- */
+.mk-panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 40px rgba(26, 34, 56, 0.06);
+}
+.mk-panel h3 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+.mk-panel-desc { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.5rem; }
+.mk-panel .site-form { max-width: 560px; margin: 0; }
+
+.mk-radio-group { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; }
+.mk-radio, .mk-check {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-weight: 500 !important; font-size: 0.92rem !important;
+    cursor: pointer;
+}
+.mk-radio input, .mk-check input { width: auto !important; margin: 0; accent-color: var(--accent-cyan); }
+.mk-radio-off { color: var(--text-muted); cursor: not-allowed; }
+.mk-check { align-items: flex-start; line-height: 1.5; }
+.mk-check input { margin-top: 0.3rem; }
+.mk-check a { color: var(--accent-cyan); }
+
+.mk-form-error {
+    color: #b3261e;
+    background: rgba(179, 38, 30, 0.07);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+}
+.mk-form-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ---------- 주문 결과 ---------- */
+.mk-order-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+}
+.mk-order-label { font-size: 0.78rem; color: var(--text-muted); letter-spacing: 1px; }
+.mk-order-no {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 1px;
+}
+.mk-status {
+    font-size: 0.82rem; font-weight: 700; padding: 0.35rem 0.9rem; border-radius: 999px;
+    background: rgba(201, 169, 97, 0.18); color: #8a6d2b; white-space: nowrap;
+}
+.mk-status.is-paid { background: rgba(91, 138, 114, 0.15); color: #3f6b55; }
+.mk-status.is-cancelled { background: rgba(138, 143, 158, 0.15); color: var(--text-muted); }
+
+.mk-order-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem;
+    margin: 0 0 1.5rem;
+}
+.mk-order-meta div { background: var(--bg-secondary); border-radius: 10px; padding: 0.6rem 0.9rem; }
+.mk-order-meta dt { font-size: 0.72rem; color: var(--text-muted); }
+.mk-order-meta dd { margin: 0; font-size: 0.92rem; font-weight: 600; word-break: break-all; }
+
+.mk-guide h4, .mk-paid h4 { font-size: 1.05rem; margin-bottom: 0.8rem; }
+.mk-paid h5 { font-size: 0.95rem; margin: 1.2rem 0 0.5rem; }
+
+.mk-bank {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem;
+    background: var(--bg-secondary); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+}
+.mk-bank div { display: flex; align-items: center; gap: 0.5rem; font-size: 0.92rem; flex-wrap: wrap; }
+.mk-bank span { color: var(--text-muted); font-size: 0.8rem; min-width: 3.5rem; }
+.mk-bank strong { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+
+.mk-steps { padding-left: 1.3rem; margin: 0.5rem 0 1rem; }
+.mk-steps li { font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.45rem; line-height: 1.6; }
+
+.mk-copy, .mk-linkbtn {
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 0.75rem; padding: 0.15rem 0.55rem; cursor: pointer; color: var(--accent-cyan);
+    font-family: inherit;
+}
+.mk-copy:hover, .mk-linkbtn:hover { border-color: var(--accent-cyan); background: rgba(26, 34, 56, 0.05); }
+.mk-copy.is-done { color: #3f6b55; border-color: #3f6b55; }
+.mk-linkbtn { font-size: 0.9rem; padding: 0.3rem 0.9rem; }
+
+.mk-bank-missing { font-size: 0.88rem; color: #b3261e; margin-bottom: 0.8rem; }
+
+.mk-kakao { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.8rem; }
+.mk-kakao-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: #FEE500; color: #191919; font-weight: 700; font-size: 1rem;
+    padding: 0.85rem 1.6rem; border-radius: 12px; text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mk-kakao-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(254, 229, 0, 0.45); }
+.mk-kakao-btn.is-disabled { opacity: 0.4; pointer-events: none; }
+.mk-qr { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 0.6rem; display: inline-block; line-height: 0; }
+.mk-qr:empty { display: none; }
+.mk-qr svg, .mk-qr img { width: 168px; height: 168px; display: block; }
+.mk-qr-hint { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+.mk-poll-note { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+.mk-poll-note a { color: var(--accent-cyan); }
+.mk-poll-note .btn-small { margin-left: 0.4rem; padding: 0.25rem 0.8rem; font-size: 0.78rem; }
+
+.mk-paid { border-top: 2px solid var(--accent-green); padding-top: 1.2rem; }
+.mk-download-btn { margin-bottom: 1rem; }
+.mk-license {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    background: var(--bg-secondary); border-radius: 12px; padding: 0.8rem 1rem;
+}
+.mk-license span { font-size: 0.8rem; color: var(--text-muted); }
+.mk-license code {
+    font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700;
+    letter-spacing: 2px; color: var(--accent-cyan);
+}
+.mk-cancelled p { color: var(--text-muted); }
+
+.mk-lookup-link { text-align: center; color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 2rem; }
+
+/* ---------- 판매자 정보 ---------- */
+.mk-seller { border-top: 1px solid var(--border); padding-top: 1.5rem; }
+.mk-seller h4 { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+.mk-seller-info {
+    font-family: inherit; white-space: pre-wrap; word-break: break-word;
+    font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-secondary);
+    border-radius: 10px; padding: 0.8rem 1rem; margin: 0 0 0.6rem;
+}
+.mk-seller-note { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+.mk-seller-note a { color: var(--accent-cyan); }
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 900px) {
+    .mk-features { grid-template-columns: 1fr 1fr; }
+    .mk-order-meta { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+    .mk-product, .mk-panel { padding: 1.25rem; border-radius: 16px; }
+    .mk-product-head { grid-template-columns: auto 1fr; }
+    .mk-product-icon { width: 60px; height: 60px; border-radius: 14px; }
+    .mk-product-icon svg { width: 40px; height: 40px; }
+    .mk-product-title h3 { font-size: 1.5rem; }
+    .mk-price-box { grid-column: 1 / -1; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; }
+    .mk-price-note { margin: 0; }
+    .mk-buy-btn { width: 100%; justify-content: center; }
+    .mk-features, .mk-cols, .mk-bank { grid-template-columns: 1fr; }
+    .mk-order-head { flex-direction: column; align-items: flex-start; }
+    .mk-order-no { font-size: 1.25rem; }
+    .mk-form-actions .btn-primary, .mk-form-actions .btn-secondary { width: 100%; justify-content: center; }
+    .mk-download-btn { width: 100%; justify-content: center; }
+    .mk-kakao { align-items: stretch; }
+    .mk-kakao-btn { justify-content: center; }
+    .mk-qr { align-self: center; }
+}

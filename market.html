@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>앱 마켓 — 콘솔 시스템 | WAAT</title>
+    <meta name="description" content="콘솔 시스템 — 내 PC의 AI 4종(Claude Code·Codex·Antigravity·Grok)을 스마트폰 한 화면에서 지휘하는 안드로이드 앱. 9,900원(VAT 포함).">
+    <meta property="og:title" content="콘솔 시스템 — 내 PC의 AI 4종 원격 지휘">
+    <meta property="og:description" content="폰에서 내 PC의 Claude Code·Codex·Antigravity·Grok을 한 화면으로 지휘. PC가 서버, 앱은 화면.">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="https://waat.community/market">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260916a">
+    <link rel="stylesheet" href="css/market.css?v=20260920a">
+</head>
+<body class="speakup-light market-body">
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img">
+            </a>
+            <ul class="nav-links nav-links-center">
+                <li><a href="index.html#event"><span class="nav-en">Event</span><span class="nav-ko">행사</span></a></li>
+                <li><a href="index.html#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
+                <li><a href="speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+                <li><a href="speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">ABD</span></a></li>
+                <li><a href="market.html" class="speakup-nav-active"><span class="nav-en">Market</span><span class="nav-ko">앱 마켓</span></a></li>
+            </ul>
+            <ul class="nav-links nav-links-right">
+                <li id="nav-login-link"><a href="index.html?auth=login" class="nav-login-btn">Login</a></li>
+                <li id="nav-signup-link"><a href="index.html?auth=signup" class="nav-cta">Sign Up</a></li>
+                <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
+                    <button class="nav-user-btn" id="nav-user-btn">
+                        <span id="nav-user-name">사용자</span> ▼
+                    </button>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="profile.html" class="dropdown-item">내 프로필</a>
+                        <a href="admin.html" class="dropdown-item" id="nav-admin-link" style="display:none;">관리자 페이지</a>
+                        <button class="dropdown-item" data-action="logout">로그아웃</button>
+                    </div>
+                </li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+        </div>
+    </nav>
+
+    <section class="speakup-page market-page">
+        <div class="section-inner">
+            <div class="section-label">WAAT APP MARKET</div>
+            <h2 class="section-title">앱 마켓 <span class="section-title-en">Market</span></h2>
+            <p class="section-desc">WAAT 멤버들이 만든 도구를 직접 판매합니다. 결제 확인 후 이 페이지에서 바로 내려받습니다.</p>
+
+            <!-- ============ 상품 카드 ============ -->
+            <article class="mk-product" id="mk-product">
+                <div class="mk-product-head">
+                    <div class="mk-product-icon" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="20" y="6" width="24" height="52" rx="5"/>
+                            <line x1="28" y1="12" x2="36" y2="12"/>
+                            <circle cx="32" cy="50" r="2"/>
+                            <path d="M6 24h8M6 32h8M6 40h8M50 24h8M50 32h8M50 40h8"/>
+                        </svg>
+                    </div>
+                    <div class="mk-product-title">
+                        <span class="mk-badge mk-badge-platform">Android</span>
+                        <span class="mk-badge mk-badge-ver" id="mk-version">v1.0</span>
+                        <h3>콘솔 시스템</h3>
+                        <p class="mk-tagline">내 PC의 AI 4종 원격 지휘 앱</p>
+                    </div>
+                    <div class="mk-price-box">
+                        <div class="mk-price"><span id="mk-price">9,900</span><small>원</small></div>
+                        <div class="mk-price-note">VAT 포함 · 1회 결제</div>
+                        <button type="button" class="btn-primary mk-buy-btn" id="mk-buy-btn">구매하기</button>
+                    </div>
+                </div>
+
+                <p class="mk-lead">
+                    폰에서 내 PC의 <strong>Claude Code · Codex · Antigravity · Grok</strong>을 한 화면으로 지휘합니다.
+                    회사에서, 이동 중에, 침대에서 — 폰으로 지시를 보내면 집·사무실 PC의 AI가 일하고, 결과가 말풍선으로 돌아옵니다.
+                </p>
+
+                <div class="mk-features">
+                    <div class="mk-feature">
+                        <h4>AI 4종을 한 화면에</h4>
+                        <p>탭 하나로 전환. 한 AI의 답을 다른 AI에게 검토시키고 결과를 비교합니다.</p>
+                    </div>
+                    <div class="mk-feature">
+                        <h4>진짜 내 PC를 움직입니다</h4>
+                        <p>폰에 쓴 글이 PC의 Claude Code 창에 그대로 타이핑되고, PC 창의 대화가 폰에 그대로 비칩니다. 파일을 읽고 쓰고 명령을 실행하는 실제 작업이 됩니다.</p>
+                    </div>
+                    <div class="mk-feature">
+                        <h4>프로젝트 = 폴더, 무제한</h4>
+                        <p>폴더 하나가 프로젝트 하나. 트레이딩·블로그·논문·쇼핑몰… 폴더가 곧 지식베이스라 프로젝트끼리 섞이지 않습니다.</p>
+                    </div>
+                    <div class="mk-feature">
+                        <h4>말로 만드는 전략</h4>
+                        <p>기본 프로젝트 "트레이딩 시그널" 동봉. 국내 주식 262종목 스캐너와 샘플 전략이 들어 있고, 조건을 문장으로 말하면 전략 파일·검증·백테스트까지 코드 0줄로 끝납니다.</p>
+                    </div>
+                    <div class="mk-feature">
+                        <h4>사진·파일 전송, 남은 한도 표시</h4>
+                        <p>📎 하나로 카메라·파일을 올리면 AI가 바로 분석. Claude·Codex 구독의 5시간/7일 잔여 한도를 헤더에서 바로 봅니다.</p>
+                    </div>
+                    <div class="mk-feature">
+                        <h4>가볍다 · 한 줄 설치</h4>
+                        <p>앱 1.4MB, 설치 10분, 추가 서버 비용 없음. PC에서 Claude Code를 켜고 설치 지시문 한 줄만 붙여넣으면 Claude Code가 설치를 대신 합니다.</p>
+                    </div>
+                </div>
+
+                <div class="mk-structure">
+                    <h4>구조 — PC가 서버, 앱은 화면</h4>
+                    <ul>
+                        <li>AI 대화·파일·시세·주문은 전부 <strong>사용자 PC 안에서만</strong> 오갑니다.</li>
+                        <li>우리 서버(허브)가 아는 것은 "어느 PC가 지금 어느 주소에 켜져 있나"뿐입니다. 저장 항목: 기기명·프로젝트명·접속 주소·마지막 확인 시각.</li>
+                        <li>AI 사용료는 각자의 구독(Claude Pro/Max, ChatGPT 등)으로 처리됩니다. 이 앱은 AI 사용을 중개하거나 재판매하지 않습니다.</li>
+                    </ul>
+                </div>
+
+                <div class="mk-cols">
+                    <div class="mk-col">
+                        <h4>준비물</h4>
+                        <ul>
+                            <li>Windows PC(켜 두어야 함) + Node.js + Claude Code(필수). Codex·Antigravity·Grok은 선택.</li>
+                            <li>트레이딩 시그널의 2단계 정밀 신호·실매매는 본인의 증권사(한국투자증권) Open API 키가 필요합니다. 키가 없어도 1단계 스캔과 다른 모든 기능은 동작합니다.</li>
+                        </ul>
+                    </div>
+                    <div class="mk-col">
+                        <h4>솔직한 한계</h4>
+                        <ul>
+                            <li>PC가 꺼져 있으면 아무것도 안 됩니다(PC가 서버).</li>
+                            <li>Claude Code 등 각 AI는 사용자가 직접 구독·로그인해야 합니다.</li>
+                            <li>현재 Windows PC + 안드로이드만. iOS·Mac은 다음 버전.</li>
+                            <li>무료 터널을 쓰면 PC를 켤 때마다 주소가 바뀌지만, 앱은 페어링 코드로 자동 추적합니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p class="mk-disclaimer">
+                    이 앱은 투자 자문·일임 서비스가 아니며, 동봉된 샘플 전략은 교육·출발점용입니다. 수익을 보장하지 않으며 모든 매매 판단과 결과는 사용자 본인의 책임입니다.
+                    원격으로 PC를 움직이는 도구이므로 페어링 코드와 PIN을 타인과 공유하지 마세요.
+                </p>
+
+                <div class="mk-paymethods">
+                    <span class="mk-pm mk-pm-on">무통장 입금</span>
+                    <span class="mk-pm mk-pm-on">카카오페이 송금</span>
+                    <span class="mk-pm mk-pm-off">네이버페이 <em>준비 중</em></span>
+                    <span class="mk-pm mk-pm-off">구글페이 <em>준비 중</em></span>
+                </div>
+            </article>
+
+            <!-- ============ 주문 폼 ============ -->
+            <section class="mk-panel" id="mk-order-form-panel" hidden>
+                <h3>주문하기</h3>
+                <p class="mk-panel-desc">주문번호를 발급해 드립니다. 입금(송금) 확인 후 같은 화면에서 다운로드가 열립니다.</p>
+                <form id="mk-order-form" class="site-form" novalidate>
+                    <div class="form-group">
+                        <label for="mk-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="mk-name" maxlength="50" required placeholder="입금자명과 같게 적어 주세요" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="mk-contact">이메일 또는 휴대폰 <span class="required">*</span></label>
+                        <input type="text" id="mk-contact" maxlength="100" required placeholder="you@example.com 또는 010-0000-0000" autocomplete="email">
+                        <span class="form-hint">주문 조회와 결제 확인 연락에만 씁니다.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>결제 방법 <span class="required">*</span></label>
+                        <div class="mk-radio-group">
+                            <label class="mk-radio"><input type="radio" name="mk-method" value="bank" checked> 무통장 입금</label>
+                            <label class="mk-radio"><input type="radio" name="mk-method" value="kakaopay"> 카카오페이 송금</label>
+                            <label class="mk-radio mk-radio-off"><input type="radio" name="mk-method" value="naverpay" disabled> 네이버페이 <em>준비 중</em></label>
+                            <label class="mk-radio mk-radio-off"><input type="radio" name="mk-method" value="googlepay" disabled> 구글페이 <em>준비 중</em></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="mk-check"><input type="checkbox" id="mk-agree" required> 이 앱은 투자 자문·일임이 아니며 샘플 전략은 교육용임을 확인했습니다. <a href="terms.html" target="_blank" rel="noopener">이용약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a></label>
+                    </div>
+                    <p class="mk-form-error" id="mk-form-error" role="alert" hidden></p>
+                    <div class="mk-form-actions">
+                        <button type="submit" class="btn-primary" id="mk-submit-btn">주문번호 받기</button>
+                        <button type="button" class="btn-secondary" id="mk-cancel-btn">취소</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ============ 주문 결과 / 결제 안내 / 다운로드 ============ -->
+            <section class="mk-panel" id="mk-order-panel" hidden>
+                <div class="mk-order-head">
+                    <div>
+                        <div class="mk-order-label">주문번호</div>
+                        <div class="mk-order-no" id="mk-order-no">CS-00000000-0000</div>
+                    </div>
+                    <span class="mk-status" id="mk-status">입금 대기</span>
+                </div>
+                <dl class="mk-order-meta">
+                    <div><dt>상품</dt><dd>콘솔 시스템 <span id="mk-order-version"></span></dd></div>
+                    <div><dt>금액</dt><dd><span id="mk-order-amount">9,900</span>원 (VAT 포함)</dd></div>
+                    <div><dt>주문자</dt><dd id="mk-order-name">-</dd></div>
+                    <div><dt>결제 방법</dt><dd id="mk-order-method">-</dd></div>
+                </dl>
+
+                <!-- 결제 안내 (pending) -->
+                <div id="mk-pay-guide">
+                    <div class="mk-guide" id="mk-guide-bank" hidden>
+                        <h4>무통장 입금 안내</h4>
+                        <div class="mk-bank" id="mk-bank-box">
+                            <div><span>은행</span><strong id="mk-bank-name">-</strong></div>
+                            <div><span>계좌번호</span><strong id="mk-bank-account">-</strong> <button type="button" class="mk-copy" data-copy-target="mk-bank-account">복사</button></div>
+                            <div><span>예금주</span><strong id="mk-bank-holder">-</strong></div>
+                            <div><span>금액</span><strong><span id="mk-bank-amount">9,900</span>원</strong></div>
+                        </div>
+                        <p class="mk-bank-missing" id="mk-bank-missing" hidden>입금 계좌가 아직 등록되지 않았습니다. 판매자에게 문의해 주세요.</p>
+                        <ol class="mk-steps">
+                            <li>위 계좌로 <strong><span class="mk-amount-inline">9,900</span>원</strong>을 입금합니다.</li>
+                            <li>입금자명에 <strong>주문번호</strong>(또는 주문 시 이름)를 적어 주세요. <button type="button" class="mk-copy" data-copy-target="mk-order-no">주문번호 복사</button></li>
+                            <li>판매자가 입금을 확인하면 이 화면에 다운로드가 열립니다. (영업시간 기준 보통 몇 시간 이내)</li>
+                        </ol>
+                    </div>
+
+                    <div class="mk-guide" id="mk-guide-kakaopay" hidden>
+                        <h4>카카오페이 송금 안내</h4>
+                        <div class="mk-kakao">
+                            <a class="mk-kakao-btn" id="mk-kakao-btn" href="#" target="_blank" rel="noopener">카카오페이로 <span class="mk-amount-inline">9,900</span>원 보내기</a>
+                            <div class="mk-qr" id="mk-kakao-qr" aria-label="카카오페이 송금 QR"></div>
+                            <p class="mk-qr-hint">PC에서 보고 계시면 폰 카메라로 QR을 찍어 주세요.</p>
+                        </div>
+                        <p class="mk-bank-missing" id="mk-kakao-missing" hidden>카카오페이 송금 링크가 아직 등록되지 않았습니다. 판매자에게 문의해 주세요.</p>
+                        <ol class="mk-steps">
+                            <li>버튼(또는 QR)으로 카카오페이 송금 화면을 열고 <strong><span class="mk-amount-inline">9,900</span>원</strong>을 보냅니다.</li>
+                            <li>송금 메모(보내는 메시지)에 <strong>주문번호</strong>를 적어 주세요. <button type="button" class="mk-copy" data-copy-target="mk-order-no">주문번호 복사</button></li>
+                            <li>판매자가 송금을 확인하면 이 화면에 다운로드가 열립니다.</li>
+                        </ol>
+                    </div>
+
+                    <p class="mk-poll-note">
+                        결제 확인 여부를 15초마다 자동으로 다시 확인합니다. 이 페이지를 닫아도 괜찮습니다 —
+                        나중에 <a id="mk-order-link" href="#">이 주문 링크</a>를 열면 같은 화면이 나옵니다.
+                        <button type="button" class="btn-secondary btn-small" id="mk-refresh-btn">지금 확인</button>
+                    </p>
+                </div>
+
+                <!-- 결제 확인됨 (paid) -->
+                <div class="mk-paid" id="mk-paid" hidden>
+                    <h4>결제가 확인되었습니다. 감사합니다.</h4>
+                    <a class="btn-primary mk-download-btn" id="mk-download-btn" href="#" download>콘솔시스템 APK 다운로드</a>
+                    <p class="mk-bank-missing" id="mk-download-missing" hidden>다운로드 파일이 아직 등록되지 않았습니다. 판매자에게 문의해 주세요.</p>
+                    <div class="mk-license">
+                        <span>라이선스 키</span>
+                        <code id="mk-license-key">XXXX-XXXX-XXXX-XXXX</code>
+                        <button type="button" class="mk-copy" data-copy-target="mk-license-key">복사</button>
+                    </div>
+                    <h5>설치 안내</h5>
+                    <ol class="mk-steps">
+                        <li>안드로이드 폰에서 위 버튼으로 APK를 내려받습니다.</li>
+                        <li>내려받은 파일을 열면 "출처를 알 수 없는 앱" 경고가 뜹니다 — 설정에서 <strong>이 출처 허용</strong>을 켠 뒤 설치합니다. (Google Play 외부 배포라 나오는 정상 절차입니다)</li>
+                        <li>PC에서 Claude Code를 켜고 설치 지시문 한 줄을 붙여넣어 PC 쪽 워커를 설치합니다. 설치가 끝나면 PC 화면에 <strong>페어링 코드</strong>가 표시됩니다.</li>
+                        <li>앱을 열고 페어링 코드를 입력하면 연결됩니다. 라이선스 키는 앱의 설정 &gt; 라이선스에 입력해 두세요.</li>
+                    </ol>
+                    <p class="mk-poll-note">이 페이지 링크와 라이선스 키는 보관해 두세요. 페어링 코드와 PIN은 타인과 공유하지 마세요.</p>
+                </div>
+
+                <!-- 취소됨 -->
+                <div class="mk-cancelled" id="mk-cancelled" hidden>
+                    <p>이 주문은 취소되었습니다. 다시 구매하시려면 새로 주문해 주세요.</p>
+                </div>
+            </section>
+
+            <!-- ============ 주문 조회 (연락처 재확인) ============ -->
+            <section class="mk-panel" id="mk-lookup-panel" hidden>
+                <h3>주문 조회</h3>
+                <p class="mk-panel-desc">주문번호와 주문 시 입력한 연락처(이메일 또는 휴대폰)가 모두 맞아야 조회됩니다.</p>
+                <form id="mk-lookup-form" class="site-form" novalidate>
+                    <div class="form-group">
+                        <label for="mk-lookup-no">주문번호 <span class="required">*</span></label>
+                        <input type="text" id="mk-lookup-no" required placeholder="CS-20260920-AB12" autocapitalize="characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="mk-lookup-contact">이메일 또는 휴대폰 <span class="required">*</span></label>
+                        <input type="text" id="mk-lookup-contact" required placeholder="주문 시 입력한 연락처">
+                    </div>
+                    <p class="mk-form-error" id="mk-lookup-error" role="alert" hidden></p>
+                    <div class="mk-form-actions">
+                        <button type="submit" class="btn-primary">조회</button>
+                        <button type="button" class="btn-secondary" id="mk-lookup-cancel-btn">닫기</button>
+                    </div>
+                </form>
+            </section>
+
+            <p class="mk-lookup-link">이미 주문하셨나요? <button type="button" class="mk-linkbtn" id="mk-lookup-open-btn">주문번호로 조회하기</button></p>
+
+            <!-- ============ 판매자 정보 ============ -->
+            <section class="mk-seller" id="mk-seller">
+                <h4>판매자 정보</h4>
+                <pre id="mk-seller-info" class="mk-seller-info">판매자 정보(상호·대표자·사업자등록번호·통신판매업 신고번호·연락처)는 입력 예정입니다.</pre>
+                <p class="mk-seller-note">환불·교환 기준은 판매자 정보와 함께 안내됩니다. 주문·결제 관련 문의는 <a href="index.html#footer-inquiry-link">문의하기</a>로 보내 주세요.</p>
+            </section>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-poster">
+                <img src="waat-poster.jpg?v=20260510a" alt="WAAT 수요일 오후 AI 수다 — Wednesday Afternoon AI Talk" loading="lazy">
+            </div>
+            <div class="footer-brand">Wednesday Afternoon<br>AI Talk</div>
+            <div class="footer-links">
+                <a href="terms.html">이용약관</a>
+                <span class="footer-sep">·</span>
+                <a href="privacy.html">개인정보처리방침</a>
+                <span class="footer-sep">·</span>
+                <a href="index.html#footer-inquiry-link">문의하기</a>
+            </div>
+            <div class="footer-meta">
+                운영자: Sunny
+                <span class="footer-sep">|</span>
+                공인회계사 선웅규
+                <span class="footer-sep">|</span>
+                <a href="https://www.facebook.com/share/1RDFNuTt9t/" target="_blank" rel="noopener">Facebook</a>
+            </div>
+            <div class="footer-since">Since 2026.05.09</div>
+            <div class="footer-related">
+                <a href="https://www.saa.house" target="_blank" rel="noopener">
+                    <span class="related-name">SAA</span>
+                    <span class="related-desc">AI 에이전트 큐레이션</span>
+                </a>
+                <a href="https://www.ax-on.net" target="_blank" rel="noopener">
+                    <span class="related-name">AX-On</span>
+                    <span class="related-desc">AX 실행 플랫폼</span>
+                </a>
+                <a href="https://buzzlab.world" target="_blank" rel="noopener">
+                    <span class="related-name">BuzzLab</span>
+                    <span class="related-desc">AI 군중·집단지능 토론</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+    <script src="js/supabase-config.js?v=20260916b"></script>
+    <script src="js/db.js?v=20260920a"></script>
+    <script src="js/market.js?v=20260920a"></script>
+</body>
+</html>
