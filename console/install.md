@@ -1,6 +1,6 @@
-# Claude Code 설치 마법사 지시문 — 원맥스 One MACS (배포판 v3 · 문답으로 내 시스템 만들기)
+# Claude Code 설치 마법사 지시문 — 원맥스 One MACS (배포판 v3.1 · 문답으로 내 시스템 만들기)
 
-> **사용자는 이것만 하면 된다**: PC에 콘솔 폴더를 하나 만들고(예: `C:\콘솔`) 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
+> **사용자는 이것만 하면 된다**: PC에 `C:\원맥스` 폴더를 만들고 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
 > https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스(One MACS)를 설치·실행해줘.
@@ -13,7 +13,7 @@
 
 ## Claude Code에게 (실행 절차)
 
-너는 사용자가 만든 콘솔 폴더(현재 작업 디렉토리 = `ROOT`, 예: `C:\콘솔`)에서 실행 중이다. 설치가 끝나면 이 폴더는 아래 모양이 된다:
+너는 사용자가 만든 원맥스 폴더(현재 작업 디렉토리 = `ROOT`, 보통 `C:\원맥스`)에서 실행 중이다. 설치가 끝나면 이 폴더는 아래 모양이 된다:
 ```
 ROOT\
   _mobile_remote\        ← 콘솔 본체(폰과 연결)
@@ -81,7 +81,7 @@ Expand-Archive -Path $zip -DestinationPath "$env:TEMP\consolesystem_v2" -Force
 ### 3. 파일 설치
 **3A. 콘솔**
 1. `ROOT\_mobile_remote\` 가 없으면 만든다.
-2. `DIST` 의 모든 파일(`hub` 하위 폴더, `cloudflared.exe` 포함)을 `ROOT\_mobile_remote\` 로 복사. 이미 있는 `console_config.json` 은 덮어쓰지 않는다.
+2. `DIST` 의 모든 파일(`cloudflared.exe` 포함)을 `ROOT\_mobile_remote\` 로 복사. 이미 있는 `console_config.json` 은 덮어쓰지 않는다.
 3. `server.js`, `start_all.js`, `project_router.js`, `quota.js`, `cloudflared.exe` 존재 확인.
 
 **3B. 기본 프로젝트 '트레이딩 시그널' 폴더 자동 생성** (`ROOT\트레이딩 시그널\scanner_web.py` 가 이미 있으면 건너뜀)
@@ -126,7 +126,7 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 1. `PROJECT\_mobile_remote` 에서 `node check_setup.js` 결과를 그대로 보여준다. Node·Claude Code·cloudflared 가 OK 가 아니면 중단.
 2. 새 창으로 기동: `Start-Process -FilePath cmd -ArgumentList "/k",".\1클릭_실행.bat" -WorkingDirectory "<PROJECT>\_mobile_remote"` (검은 창은 최소화만, 닫으면 폰 연결 끊김).
 3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 쓰지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
-4. `PROJECT\_mobile_remote\페어링코드.txt` 를 읽는다 → 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소.
+4. `ROOT\_mobile_remote\페어링코드.txt` 는 인터넷 터널이 연결된 뒤(보통 서버 기동 후 5~30초) 생긴다 → **3초 간격으로 최대 40회 폴링**해 파일이 생기면 읽는다. 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소. 2분이 지나도 없으면 `start_all.log` 마지막 10줄을 보고 원인(인터넷·cloudflared)을 사용자에게 알린다.
 
 ### 6-1. 로그온 시 자동 실행 등록 (`WIZ.autostart` 가 예일 때)
 PC 를 껐다 켜도 폰이 바로 연결되도록 Windows 작업 스케줄러에 등록한다(관리자 권한 불필요):
