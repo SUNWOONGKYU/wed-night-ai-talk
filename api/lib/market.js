@@ -25,7 +25,7 @@ const PRODUCT = {
 };
 
 const DEFAULTS = {
-    kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx138303594',
+    kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
     bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' }
 };
 
