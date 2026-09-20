@@ -2,7 +2,7 @@
  * 앱 마켓 공통 — 상품 정보, 주문번호·라이선스 키 생성, 다운로드 파일 위치, 입력 검증
  *
  * 환경변수 (전부 Vercel Environment Variables 에 PO 가 입력):
- *   PRODUCT_NAME            상품명 (기본 '콘솔시스템') — Orders 시트 P열 product 에 '이름 버전' 으로 기록
+ *   PRODUCT_NAME            Orders 시트 P열 product 값 (기본 '콘솔시스템 v1.0')
  *   PRODUCT_PRICE           판매가 (원, 기본 9900)
  *   PRODUCT_VERSION         표시용 버전 (기본 v1.0)
  *   KAKAOPAY_LINK           카카오페이 송금 링크 https://qr.kakaopay.com/...
@@ -17,9 +17,9 @@ const crypto = require('crypto');
 
 const PRODUCT = {
     code: 'console_system',
-    get name() { return process.env.PRODUCT_NAME || '콘솔시스템'; },
-    /** 시트 product 열에 쓰는 값: '콘솔시스템 v1.0' */
-    get label() { return `${this.name} ${this.version}`; },
+    name: '콘솔시스템',
+    /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로, 없으면 '콘솔시스템 v1.0' */
+    get label() { return process.env.PRODUCT_NAME || `${this.name} ${this.version}`; },
     get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
     get version() { return process.env.PRODUCT_VERSION || 'v1.0'; }
 };
