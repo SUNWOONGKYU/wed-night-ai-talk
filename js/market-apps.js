@@ -13,7 +13,7 @@
 window.MARKET_APPS = [
   { id: 'onemacs', name: '원맥스 One MACS', sub: 'One-stop Multi AI Console System', cat: 'AI 도구', featured: true,
     desc: '당신의 Claude Code에 AI 3개(Codex·Antigravity·Grok)를 더 붙이고, 여러 PC의 프로젝트를 폰 한 화면에서 부립니다.',
-    price: 9900, tags: ['Android', 'Claude Code 필요', 'API 요금 0원'], icon: '1M',
+    price: 9900, tags: ['Android', 'Claude Code 필요', 'API 요금 0원'], icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs' },
 
   { id: 'trading-signal', name: '트레이딩 시그널', sub: '262종목 스캐너 + 실행기', cat: '트레이딩',

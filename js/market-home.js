@@ -49,7 +49,7 @@
 
     function card(a) {
         var body =
-            '<div class="ic" style="background:' + esc(a.color) + '">' + esc(a.icon) + '</div>' +
+            (a.img ? '<div class="ic" style="background:#131826;padding:0;overflow:hidden"><img src="' + esc(a.img) + '" alt="" width="56" height="56" style="width:100%;height:100%;display:block"></div>' : '<div class="ic" style="background:' + esc(a.color) + '">' + esc(a.icon) + '</div>') +
             '<div class="body"><b>' + esc(a.name) + '<small>' + esc(a.sub) + '</small></b><p>' + esc(a.desc) + '</p>' +
             '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div></div>' +
             '<div class="pr">' + (a.soon
