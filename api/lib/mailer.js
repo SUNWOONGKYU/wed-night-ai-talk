@@ -26,11 +26,13 @@ const esc = (s) => String(s == null ? '' : s)
  * @param {{name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, consoleGuideLink, expiryHours, maxDownloads, renewal}} p
  */
 function purchaseEmailHtml(p) {
-    const name = esc(p.name || '고객');
+    // 이름: 깨진 글자(인코딩 오류)·빈 값이면 '고객' — 폰 캡처에서 mojibake 로 뜬 사례(2026-09-21)
+    const rawName = String(p.name || '').replace(/[\uFFFD\u0000-\u001f]/g, '').trim();
+    const name = esc(/^[\w\s가-힣A-Za-z.\-·()]{1,40}$/.test(rawName) ? rawName : '고객');
     return `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
   <div style="text-align:center;margin-bottom:28px;">
-    <div style="display:inline-block;width:64px;height:64px;border-radius:16px;background:#1A2238;color:#E8D9B0;font-size:30px;line-height:64px;font-weight:800;">C</div>
+    <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="원맥스 One MACS" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 원맥스 One MACS ${p.renewal ? '다운로드 링크를 다시 보내드립니다' : '구매해 주셔서 감사합니다'}</h1>
     <p style="color:#4A5670;font-size:15px;margin:0;">${esc(PRODUCT.name)} ${esc(PRODUCT.version)} · 내 PC의 AI 4종 원격 지휘 앱 (Android)</p>
   </div>

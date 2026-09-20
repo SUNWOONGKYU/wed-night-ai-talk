@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
 
     const body = req.body || {};
     const email = String(body.email || '').trim();
-    const name = String(body.name || '').trim().slice(0, 50);
+    const name = String(body.name || '').replace(/[\uFFFD\u0000-\u001f]/g, '').trim().slice(0, 50);
     const phone = String(body.phone || '').trim().slice(0, 30);
     const paymentMethod = String(body.paymentMethod || '').trim();
 
