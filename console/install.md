@@ -1,9 +1,9 @@
-# Claude Code 설치 마법사 지시문 — 맥스 MACS (배포판 v2.2 · 문답으로 내 시스템 만들기)
+# Claude Code 설치 마법사 지시문 — 원맥스 One MACS (배포판 v2.2 · 문답으로 내 시스템 만들기)
 
 > **사용자는 이것만 하면 된다**: PC에 콘솔 폴더를 하나 만들고(예: `C:\콘솔`) 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
-> https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 맥스(MACS)를 설치·실행해줘.
+> https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스(One MACS)를 설치·실행해줘.
 > ```
 > (zip을 이미 받아 풀었다면: `<푼 폴더>\CLAUDE_CODE_설치지시문.md 파일을 읽고 그대로 수행해줘`)
 >
@@ -132,11 +132,11 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 
 ### 8. 완료 보고 (이 형식 그대로)
 ```
-설치 완료 — 맥스 MACS
+설치 완료 — 원맥스 One MACS
 - ★ 검은 창(1클릭_실행.bat)은 최소화만 하세요. 닫으면 폰 연결이 끊깁니다.
 - 콘솔 폴더: <ROOT>\_mobile_remote
 - 기본 프로젝트: <ROOT>\트레이딩 시그널  (자동 생성됨 — 폰 프로젝트 선택기에 이 이름으로 표시)
-- 페어링 코드: <8자리>        ← 폰의 맥스 MACS 앱에 입력 (앱: https://www.waat.community/market)
+- 페어링 코드: <8자리>        ← 폰의 원맥스 One MACS 앱에 입력 (앱: https://www.waat.community/market)
 - 브라우저로도 가능: https://console-hub.consolesystem.workers.dev/?code=<8자리>
 - PIN: <pin>  (앱/브라우저에서 PC 처음 열 때 한 번)
 - 이 PC 이름표: <pc_label>
