@@ -56,58 +56,6 @@ var _dbExtensions = {
         }
     },
 
-    // ========== 앱 마켓 (2026-09-20) — 관리자 전용 ==========
-    // app_orders / app_settings 는 RLS 가 is_admin() 으로 잠겨 있어 관리자 세션에서만 읽고 쓴다.
-    // 구매자 쪽(market.js)은 이 함수들을 쓰지 않고 create_app_order / get_app_order RPC 만 쓴다.
-
-    async getAppOrders() {
-        const { data, error } = await supabase
-            .from('app_orders')
-            .select('*')
-            .order('created_at', { ascending: false });
-        if (error) throw error;
-        return data || [];
-    },
-
-    // status: 'paid' | 'cancelled' | 'pending'
-    // paid 로 바꾸면 서버 트리거가 paid_at 과 license_key 를 채운다 (클라이언트가 만들지 않는다).
-    async setAppOrderStatus(id, status, adminNote) {
-        const patch = { status: status };
-        if (adminNote !== undefined) patch.admin_note = adminNote;
-        const { data, error } = await supabase
-            .from('app_orders')
-            .update(patch)
-            .eq('id', id)
-            .select()
-            .single();
-        if (error) throw error;
-        return data;
-    },
-
-    async deleteAppOrder(id) {
-        const { error } = await supabase.from('app_orders').delete().eq('id', id);
-        if (error) throw error;
-    },
-
-    // { key: value } 로 반환
-    async getAppSettings() {
-        const { data, error } = await supabase.from('app_settings').select('key, value, updated_at');
-        if (error) throw error;
-        const out = {};
-        (data || []).forEach(function (r) { out[r.key] = r.value; });
-        return out;
-    },
-
-    // { key: value } 를 받아 upsert
-    async saveAppSettings(map) {
-        const rows = Object.keys(map).map(function (k) {
-            return { key: k, value: String(map[k] == null ? '' : map[k]), updated_at: new Date().toISOString() };
-        });
-        if (!rows.length) return;
-        const { error } = await supabase.from('app_settings').upsert(rows, { onConflict: 'key' });
-        if (error) throw error;
-    },
-
 };
 
 // 기존 DB(supabase-config.js)에 '없는 메서드만' 추가한다.

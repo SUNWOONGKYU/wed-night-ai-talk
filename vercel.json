@@ -90,8 +90,17 @@
     "api/share.js": {
       "includeFiles": "index.html"
     },
-    "api/market/sheet-sync.js": {
+    "api/send-download.js": {
       "maxDuration": 15
+    },
+    "api/renew-download-link.js": {
+      "maxDuration": 15
+    },
+    "api/confirm-payment.js": {
+      "maxDuration": 15
+    },
+    "api/download/[token].js": {
+      "maxDuration": 10
     }
   }
 }
