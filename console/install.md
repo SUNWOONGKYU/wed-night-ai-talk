@@ -1,9 +1,9 @@
-# Claude Code 설치 마법사 지시문 — 콘솔 시스템 (배포판 v2.2 · 문답으로 내 시스템 만들기)
+# Claude Code 설치 마법사 지시문 — 맥스 MACS (배포판 v2.2 · 문답으로 내 시스템 만들기)
 
 > **사용자는 이것만 하면 된다**: PC에 콘솔 폴더를 하나 만들고(예: `C:\콘솔`) 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
-> https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 콘솔 시스템을 설치·실행해줘.
+> https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 맥스(MACS)를 설치·실행해줘.
 > ```
 > (zip을 이미 받아 풀었다면: `<푼 폴더>\CLAUDE_CODE_설치지시문.md 파일을 읽고 그대로 수행해줘`)
 >
@@ -24,11 +24,12 @@ ROOT\
 
 ### 0. 원칙
 - 로그인(claude / codex / agy / grok)은 **절대 대신 하지 않는다**. 명령만 알려주고 사용자가 끝냈다고 하면 이어간다.
-- `PROJECT` 밖은 건드리지 않는다. 토큰·비밀번호·페어링 코드 외 비밀값은 출력하지 않는다.
+- `ROOT` 밖은 건드리지 않는다. 예외 두 곳뿐: `%USERPROFILE%\.claude\skills\전략만들기\`(복사) 와, **사용자가 Q2에서 Antigravity를 켠 경우에만** `%USERPROFILE%\.gemini\antigravity-cli\settings.json` 의 model 값. 토큰·비밀번호·페어링 코드 외 비밀값은 출력하지 않는다.
+- 고객이 보는 화면이다. **기다림은 `sleep` 이 아니라 폴링**(아래 6단계)으로, 실패한 명령은 조용히 다른 방법으로 다시 하고 최종 결과만 말한다. 기술 용어(JSON·프로세스·포트 등)는 꼭 필요할 때만.
 - Windows 전용. PowerShell 명령을 쓴다. `NoDefaultCurrentDirectoryInExePath` 환경변수가 있으면 배치 실행 시 `.\` 접두를 쓴다.
 
 ### 1. 환경 점검 → 사용자에게 보고
-`node -v`, `claude --version`, `codex --version`, `agy --version`, `grok --version`, `python --version` 각각 실행(없으면 오류가 정상). 결과를 **사람 말로** 보고한다. 예:
+`node -v`, `claude --version`, `codex --version`, `agy --version`, `grok --version`, `python --version` 각각 실행(없으면 오류가 정상). 결과를 **반드시 아래 모양의 일반 텍스트(코드블록)로 화면에 출력**한다 — 생각 속에만 적고 넘어가면 고객은 아무것도 못 본다. 예:
 ```
 점검 결과
 - Node.js: 있음 (v22)
@@ -44,7 +45,8 @@ ROOT\
 ### 1-1. 설치 마법사 — 문답으로 이 사람의 시스템을 정한다 (AskUserQuestion 사용, 한 번에 하나씩)
 샘플을 깔아 놓고 고치라고 하지 않는다. **처음부터 사용자가 정한 대로** 만든다. 답은 아래 `WIZ` 에 모아 4단계 설정에 쓴다.
 
-**Q1. 이 PC 이름표** — "폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지: `PC HOST` (기본, 컴퓨터 이름 그대로) / 직접 입력. → `WIZ.pc_label` (기본 선택이면 `"PC " + HOST`).
+**Q1. 이 PC 이름표** — "폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지는 **반드시 2개 이상**: ① `PC <HOST>` (기본, 컴퓨터 이름 그대로) ② `다른 이름으로` (고르면 이어서 이름을 물어봄). → `WIZ.pc_label` (기본이면 `"PC " + HOST`).
+   (AskUserQuestion 은 선택지가 1개면 거부된다. 모든 질문에 선택지 2개 이상.)
 
 **Q2. 함께 쓸 AI** — "Claude Code 외에 어떤 AI를 같이 쓰시겠어요? 각각 본인 구독이 필요합니다." 복수 선택: `Codex (ChatGPT 구독)` / `Antigravity (Google)` / `Grok (xAI)` / `Claude Code만 쓰겠다`. 고르지 않은 AI는 **탭 자체가 안 보이게** 끈다 → `WIZ.workers.<codex|agy|grok>.enabled`.
 
@@ -55,15 +57,15 @@ ROOT\
   - Grok: `npm install -g @xai-official/grok` → 터미널에서 `grok` 실행해 xAI 로그인
 - "끝났다"는 답을 받으면 `--version` 으로 다시 확인. 실패하면 이유를 말하고 `나중에(탭 끔)` 로 처리.
 
-**Q4. 모델** — 켜진 AI마다 하나씩 묻는다(기본값을 첫 선택지로):
-- Claude Code: "Claude Code 탭에 표시할 모델 이름" `Opus 5` / `Sonnet 5` / 직접 입력 (실제 모델은 Claude Code 안의 `/model` 설정을 따름, 여기선 표시 이름) → `WIZ.workers.claude.model`
+**Q4. 모델** — 켜진 AI의 모델을 묻는다(기본값을 첫 선택지로, 한 위젯에 여러 문항을 묶어도 됨):
+- Claude Code: "Claude Code 탭 아래에 적을 모델 이름을 고르세요" `Opus 5` / `Sonnet 5` / 직접 입력 (설명은 이 한 줄만: "이름표입니다. 실제 모델은 Claude Code 에서 쓰시는 그대로입니다.") → `WIZ.workers.claude.model`
 - Codex: `gpt-5.6-terra` / `gpt-5.6-astra` / 직접 입력 → `WIZ.workers.codex.model`
 - Antigravity: `gemini-3.8-flash-high` / `gemini-3.8-pro-high` / 직접 입력 → `WIZ.workers.agy.model`
 - Grok: `grok-4.6` / 직접 입력 → `WIZ.workers.grok.model`
 
 **Q5. 프로젝트** — "기본 프로젝트 '트레이딩 시그널' 폴더를 만들어 드리겠습니다(주식 262종목 스캐너 + 샘플 전략 + 말로 전략 만들기). 다른 프로젝트도 지금 추가할까요?" 선택지: `트레이딩 시그널만` / `추가 (이름 입력, 쉼표로 여러 개)`. 추가 이름은 `ROOT\<이름>\` 빈 폴더로 만든다 → `WIZ.projects`.
 
-**Q6. 확인** — 정한 내용을 표로 보여주고 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감).
+**Q6. 확인** — 먼저 정한 내용을 **일반 텍스트 표로 화면에 출력**(PC 이름표 / 함께 쓰는 AI / 모델 / 프로젝트 / 폴더 위치), 그 다음에 AskUserQuestion 으로 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감). 표 없이 묻지 않는다.
 
 ### 2. 배포판 확보
 이미 `DIST`(이 지시문이 들어 있는 폴더, `server.js`·`cloudflared.exe` 존재)가 있으면 그것을 쓴다. 없으면 내려받는다:
@@ -112,13 +114,16 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 5. `pair_hub_url`·`pair_code` 는 비워 둔다(실행 시 자동 생성).
 6. 텔레그램·고정 주소 항목은 비워 둔다(선택 기능, 가이드 참조).
 
-### 5. Antigravity 모델 고정 (agy 가 있을 때만)
-`%USERPROFILE%\.gemini\antigravity-cli\settings.json` 이 있으면 `"model"` 을 `"Gemini 3.8 Flash (High)"` 로(JSON 유지). 없으면 건너뜀.
+### 5. Antigravity 모델 고정 (**Q2 에서 Antigravity 를 켠 경우에만**, 아니면 이 단계 전체 건너뜀)
+`%USERPROFILE%\.gemini\antigravity-cli\settings.json` 이 있고 `model` 값이 이미 원하는 값(`gemini-3.8-flash-high` → `"Gemini 3.8 Flash (High)"`, pro → `"Gemini 3.8 Pro (High)"`)이면 **손대지 않는다**. 다를 때만 node 로 바꾼다(PowerShell ConvertTo-Json 은 따옴표를 \u0027 로 깨뜨리므로 금지):
+```powershell
+node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.readFileSync(p,'utf8'));j.model=process.argv[2];fs.writeFileSync(p,JSON.stringify(j,null,2))" "$env:USERPROFILE\.gemini\antigravity-cli\settings.json" "Gemini 3.8 Flash (High)"
+```
 
 ### 6. 점검 → 기동
 1. `PROJECT\_mobile_remote` 에서 `node check_setup.js` 결과를 그대로 보여준다. Node·Claude Code·cloudflared 가 OK 가 아니면 중단.
 2. 새 창으로 기동: `Start-Process -FilePath cmd -ArgumentList "/k",".\1클릭_실행.bat" -WorkingDirectory "<PROJECT>\_mobile_remote"` (검은 창은 최소화만, 닫으면 폰 연결 끊김).
-3. 45초 기다린 뒤 `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST → `success:true` 면 서버 정상.
+3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 쓰지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
 4. `PROJECT\_mobile_remote\페어링코드.txt` 를 읽는다 → 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소.
 
 ### 7. 미러링 확인
@@ -127,10 +132,11 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 
 ### 8. 완료 보고 (이 형식 그대로)
 ```
-설치 완료 — 콘솔 시스템
+설치 완료 — 맥스 MACS
+- ★ 검은 창(1클릭_실행.bat)은 최소화만 하세요. 닫으면 폰 연결이 끊깁니다.
 - 콘솔 폴더: <ROOT>\_mobile_remote
 - 기본 프로젝트: <ROOT>\트레이딩 시그널  (자동 생성됨 — 폰 프로젝트 선택기에 이 이름으로 표시)
-- 페어링 코드: <8자리>        ← 폰의 콘솔 시스템 앱에 입력 (앱: https://www.waat.community/market)
+- 페어링 코드: <8자리>        ← 폰의 맥스 MACS 앱에 입력 (앱: https://www.waat.community/market)
 - 브라우저로도 가능: https://console-hub.consolesystem.workers.dev/?code=<8자리>
 - PIN: <pin>  (앱/브라우저에서 PC 처음 열 때 한 번)
 - 이 PC 이름표: <pc_label>

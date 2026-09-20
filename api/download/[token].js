@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).send(page('다운로드 시작', `
 <h1>다운로드를 시작합니다</h1>
 <div class="spin"></div>
-<p>잠시 후 콘솔시스템 APK 다운로드가 자동으로 시작됩니다.<br>시작되지 않으면 아래 버튼을 누르세요.</p>
+<p>잠시 후 맥스 MACS APK 다운로드가 자동으로 시작됩니다.<br>시작되지 않으면 아래 버튼을 누르세요.</p>
 <a class="btn" href="${esc(fileUrl)}">APK 직접 내려받기</a>
 <div class="info">
   주문번호: ${esc(orderId)}<br>
