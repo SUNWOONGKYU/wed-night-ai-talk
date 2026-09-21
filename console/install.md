@@ -20,7 +20,7 @@ ROOT\
   트레이딩 시그널\         ← 기본 프로젝트(자동 생성: 주식 스캐너·샘플 전략·전략 빌더)
   (이후 추가되는 프로젝트 폴더들 — 폰의 [프로젝트 ▾] → 프로젝트 추가, 또는 무료 에이전트 zip을 여기에 풀면 됨)
 ```
-폰의 프로젝트 선택기에는 처음에 **'트레이딩 시그널' 하나**가 보인다. 아래에서 `PROJECT` 라고 적으면 `ROOT\트레이딩 시그널` 을 뜻한다. 아래 단계를 **순서대로** 수행하고, 각 단계 결과를 한 줄씩 보고하라. 실패한 단계는 원인과 사용자가 직접 할 일을 정확히 알려주고 멈춰라. 추측으로 넘어가지 마라.
+핸드폰의 프로젝트 선택기에는 처음에 **'트레이딩 시그널' 하나**가 보인다. 아래에서 `PROJECT` 라고 적으면 `ROOT\트레이딩 시그널` 을 뜻한다. 아래 단계를 **순서대로** 수행하고, 각 단계 결과를 한 줄씩 보고하라. 실패한 단계는 원인과 사용자가 직접 할 일을 정확히 알려주고 멈춰라. 추측으로 넘어가지 마라.
 
 ### 0. 원칙
 - 로그인(claude / codex / agy / grok)은 **절대 대신 하지 않는다**. 명령만 알려주고 사용자가 끝냈다고 하면 이어간다.
@@ -45,7 +45,7 @@ ROOT\
 ### 1-1. 설치 마법사 — 문답으로 이 사람의 시스템을 정한다 (AskUserQuestion 사용, 한 번에 하나씩)
 샘플을 깔아 놓고 고치라고 하지 않는다. **처음부터 사용자가 정한 대로** 만든다. 답은 아래 `WIZ` 에 모아 4단계 설정에 사용한다.
 
-**Q1. 이 PC 이름표** — "폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지는 **반드시 2개 이상**: ① `PC <HOST>` (기본, 컴퓨터 이름 그대로) ② `다른 이름으로` (고르면 이어서 이름을 물어봄). → `WIZ.pc_label` (기본이면 `"PC " + HOST`).
+**Q1. 이 PC 이름표** — "핸드폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지는 **반드시 2개 이상**: ① `PC <HOST>` (기본, 컴퓨터 이름 그대로) ② `다른 이름으로` (고르면 이어서 이름을 물어봄). → `WIZ.pc_label` (기본이면 `"PC " + HOST`).
    (AskUserQuestion 은 선택지가 1개면 거부된다. 모든 질문에 선택지 2개 이상.)
 
 **Q2. 함께 사용할 AI** — "Claude Code 외에 어떤 AI를 같이 사용하시겠어요? 각각 본인 구독이 필요합니다." 복수 선택: `Codex (ChatGPT 구독)` / `Antigravity (Google)` / `Grok (xAI)` / `Claude Code만 사용하겠다`. 고르지 않은 AI는 **탭 자체가 안 보이게** 끈다 → `WIZ.workers.<codex|agy|grok>.enabled`.
@@ -98,8 +98,8 @@ Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/trading-bot_v1
 Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
    풀린 폴더 안에서 `scanner_web.py` 가 있는 폴더의 내용을 `PROJECT\`(= `ROOT\트레이딩 시그널\`) 로 복사.
-2. `PROJECT\scanner_web.py`, `PROJECT\strategies\5대장2졸병.json`, `PROJECT\strategy_engine.py` 존재 확인. 이것이 폰의 **스캐너 버튼 · 전략 카드**의 재료다.
-3. 전략 빌더 스킬 설치: `PROJECT\skills\전략만들기\` 가 있으면 `%USERPROFILE%\.claude\skills\전략만들기\` 로 복사(없으면 건너뜀). 이후 사용자는 폰에서 "RSI 35 이하 + 거래량 1.5배 전략 만들어줘" 처럼 말로 전략을 만든다.
+2. `PROJECT\scanner_web.py`, `PROJECT\strategies\5대장2졸병.json`, `PROJECT\strategy_engine.py` 존재 확인. 이것이 핸드폰의 **스캐너 버튼 · 전략 카드**의 재료다.
+3. 전략 빌더 스킬 설치: `PROJECT\skills\전략만들기\` 가 있으면 `%USERPROFILE%\.claude\skills\전략만들기\` 로 복사(없으면 건너뜀). 이후 사용자는 핸드폰에서 "RSI 35 이하 + 거래량 1.5배 전략 만들어줘" 처럼 말로 전략을 만든다.
 4. 스캐너·봇의 **실행 준비**(Python 3.11+ · 라이브러리 · 증권사 키 · 텔레그램)는 Q5-2 답에 따라 8단계 뒤에 `PROJECT\CLAUDE_CODE_봇설치지시문.md`(= https://www.waat.community/market/onemacs/trading-bot.md) 로 이어서 한다. 키 없이도 콘솔·전략 카드·전략 만들기는 동작한다.
 
 ### 4. 설정 (console_config.json, UTF-8·BOM 없이) — 마법사 답(`WIZ`)을 그대로 적는다
@@ -113,12 +113,12 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
   "grok":   { "enabled": false, "model": "grok-4.6" }
 }
 ```
-   (`enabled: false` 인 AI는 폰에 탭이 안 보인다. `agy_model` 도 `workers.agy.model` 과 같게 맞춘다.)
+   (`enabled: false` 인 AI는 핸드폰에 탭이 안 보인다. `agy_model` 도 `workers.agy.model` 과 같게 맞춘다.)
 1. `pin`: 6자리 숫자를 **새로 생성**(1234 금지). 사용자에게 한 번 알려준다.
 2. `port`: 7890 부터 시작해 **비어 있는 포트**를 사용한다(`netstat -ano | findstr :7890` 이 비면 7890, 아니면 7900, 7910 … 순서로 10씩 올려 확인). 콘솔은 그 포트 다음 번호들(+1, +2 …)을 프로젝트마다 사용하므로 10 단위로 띄운다.
 3. `agy_model`: `gemini-3.8-flash-high`.
 4. `projects`: `[ { "name": "트레이딩 시그널", "dir": "<ROOT>\\트레이딩 시그널" }, ...WIZ.projects ]` — 경로의 `\` 는 JSON 에서 `\\`.
-4-0. `projects_root`: `"<ROOT>"` — 폰에서 '프로젝트 추가' 를 누르면 이 폴더 아래에 새 프로젝트 폴더가 생긴다.
+4-0. `projects_root`: `"<ROOT>"` — 핸드폰에서 '프로젝트 추가' 를 누르면 이 폴더 아래에 새 프로젝트 폴더가 생긴다.
 5. `pair_hub_url`·`pair_code` 는 비워 둔다(실행 시 자동 생성).
 6. 텔레그램·고정 주소 항목은 비워 둔다(선택 기능, 가이드 참조).
 
@@ -130,12 +130,12 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 
 ### 6. 점검 → 기동
 1. `PROJECT\_mobile_remote` 에서 `node check_setup.js` 결과를 그대로 보여준다. Node·Claude Code·cloudflared 가 OK 가 아니면 중단.
-2. 새 창으로 기동: `Start-Process -FilePath cmd -ArgumentList "/k",".\1클릭_실행.bat" -WorkingDirectory "<PROJECT>\_mobile_remote"` (검은 창은 최소화만, 닫으면 폰 연결 끊김).
+2. 새 창으로 기동: `Start-Process -FilePath cmd -ArgumentList "/k",".\1클릭_실행.bat" -WorkingDirectory "<PROJECT>\_mobile_remote"` (검은 창은 최소화만, 닫으면 핸드폰 연결 끊김).
 3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 사용하지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
-4. `ROOT\_mobile_remote\페어링코드.txt` 는 인터넷 터널이 연결된 뒤(보통 서버 기동 후 5~30초) 생긴다 → **3초 간격으로 최대 40회 폴링**해 파일이 생기면 읽는다. 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소. 2분이 지나도 없으면 `start_all.log` 마지막 10줄을 보고 원인(인터넷·cloudflared)을 사용자에게 알린다.
+4. `ROOT\_mobile_remote\페어링코드.txt` 는 인터넷 연결이 연결된 뒤(보통 서버 기동 후 5~30초) 생긴다 → **3초 간격으로 최대 40회 폴링**해 파일이 생기면 읽는다. 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소. 2분이 지나도 없으면 `start_all.log` 마지막 10줄을 보고 원인(인터넷·cloudflared)을 사용자에게 알린다.
 
 ### 6-1. 로그온 시 자동 실행 등록 (`WIZ.autostart` 가 예일 때)
-PC 를 껐다 켜도 폰이 바로 연결되도록 Windows 작업 스케줄러에 등록한다(관리자 권한 불필요):
+PC 를 껐다 켜도 핸드폰이 바로 연결되도록 Windows 작업 스케줄러에 등록한다(관리자 권한 불필요):
 ```powershell
 schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMACS\" /min \"<ROOT>\_mobile_remote\1클릭_실행.bat\""
 ```
@@ -143,7 +143,7 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 - 사용자에게: "PC를 다시 켜도 원맥스가 자동으로 뜹니다(검은 창이 최소화된 채로). 끄고 싶으면 '자동 시작 꺼줘'라고 하세요." → 끄기 = `schtasks /Delete /F /TN "OneMACS Console"`.
 
 ### 7. 미러링 확인
-콘솔은 프로젝트 폴더(`ROOT\트레이딩 시그널`)에서 켜진 Claude Code 창을 폰에 비춘다. 기동 후 콘솔이 그 폴더에 Claude Code 창을 **자동으로 하나 연다**(창이 뜨는 데 10~20초). 규칙: **프로젝트 폴더당 Claude Code 창은 하나만** — 이 설치용 창(`ROOT`)은 프로젝트 창이 아니므로 그대로 둬도 된다.
+콘솔은 프로젝트 폴더(`ROOT\트레이딩 시그널`)에서 켜진 Claude Code 창을 핸드폰에 비춘다. 기동 후 콘솔이 그 폴더에 Claude Code 창을 **자동으로 하나 연다**(창이 뜨는 데 10~20초). 규칙: **프로젝트 폴더당 Claude Code 창은 하나만** — 이 설치용 창(`ROOT`)은 프로젝트 창이 아니므로 그대로 둬도 된다.
 확인: `http://127.0.0.1:<port>/api/live-transcript?limit=1&pin=<pin>&project=트레이딩 시그널` 의 `windowPid` 가 숫자면 연결 OK, 30초 지나도 `null` 이면 "탐색기에서 `ROOT\트레이딩 시그널` 폴더를 열고 주소창에 `claude` 를 쳐서 창을 하나 켜 두세요".
 
 ### 8. 완료 보고 (이 형식 그대로)
@@ -173,7 +173,7 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 ### 9. 이후 사용법 (한 번 알려줄 것)
 - 앱: 페어링 코드 입력 → PC 탭 → PIN 한 번 → 켜 둔 AI 탭. Claude Code 탭 입력은 이 창에 그대로 타이핑된다. 📎 = 사진·파일, 🛑 = 긴급 정지, 헤더 `[프로젝트 ▾]` 로 폴더 전환·추가.
 - 기본 프로젝트 '트레이딩 시그널': 헤더 오른쪽 **스캐너** 버튼 → 전략 카드(5대장2졸병 샘플 · 내가 만든 전략 A/B/C 켜기·끄기). 동봉된 스캐너·매매 자동화 봇은 원맥스에 자동으로 따라오며, 실행 준비는 Q5-2 에서 정한 대로(나중이면 "매매 자동화 봇 설정해줘").
-- 무료 에이전트(보고서 작성 등)는 zip 을 `<ROOT>` 아래 폴더로 풀고 폰의 `[프로젝트 ▾] → 프로젝트 추가` 에서 그 폴더 이름을 넣으면 프로젝트로 붙는다.
+- 무료 에이전트(보고서 작성 등)는 zip 을 `<ROOT>` 아래 폴더로 풀고 핸드폰의 `[프로젝트 ▾] → 프로젝트 추가` 에서 그 폴더 이름을 넣으면 프로젝트로 붙는다.
 
 ---
 
