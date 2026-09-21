@@ -103,7 +103,6 @@
         setMsg(err, '');
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '올바른 이메일 주소를 입력해 주세요.'); $('pay-email').focus(); return; }
         if (!name) { setMsg(err, '이름(입금자명)을 입력해 주세요.'); $('pay-name').focus(); return; }
-        if (!$('pay-agree').checked) { setMsg(err, '안내 사항 확인에 체크해 주세요.'); return; }
 
         var btn = $('pay-send-btn');
         var orig = btn.textContent;
@@ -161,7 +160,7 @@
             cfg = await r.json();
         } catch (e) {
             console.warn('market-config 실패 (정적 미리보기?):', e);
-            cfg = { product: { price: 9900, version: 'v1.0', name: '원맥스 / One MACS' },
+            cfg = { product: { price: 9900, version: 'v1.0', name: 'One MACS / 원맥스' },
                     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
                     bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' } };
         }

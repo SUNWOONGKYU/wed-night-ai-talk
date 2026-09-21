@@ -1,4 +1,4 @@
-// ========== 원맥스 / One MACS 상품 상세 (market/onemacs.html) — 하단 고정 CTA ==========
+// ========== One MACS / 원맥스 상품 상세 (market/onemacs.html) — 하단 고정 CTA ==========
 // 히어로의 "9,900원에 받기" 버튼이 화면 위로 지나가면 하단 고정 CTA 를 보인다. (카탈로그 v3 인라인 스크립트 → CSP 때문에 파일로)
 (function () {
     'use strict';

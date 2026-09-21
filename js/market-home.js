@@ -8,7 +8,7 @@
     // ---------- 옛 링크 → 상세 ----------
     var h = window.location.hash;
     if (h === '#buy' || h === '#renew' || h === '#faq' || h === '#bot') {
-        window.location.replace('/market/onemacs' + h);
+        window.location.replace('/market/onemacs' + (h === '#bot' ? '#buy' : h));  // 봇 섹션은 상세에서 제거됨(포함 구성으로 통합) → 결제 블록으로
         return;
     }
 
@@ -41,17 +41,17 @@
         var link = f.url ? esc(f.url) : '#';
         $('feat').innerHTML =
             '<div class="in"><div><span class="tag">추천 · ' + esc(f.cat) + '</span>' +
-            '<h2>' + esc(f.name) + (f.full ? '<small>' + esc(f.full) + '</small>' : '') + '</h2>' +
+            '<h2>' + esc(f.name) + (f.fullname ? '<small>' + esc(f.fullname) + '</small>' : '') + '</h2>' +
             '<p class="topic">' + esc(f.desc) + '</p>' + (f.sub ? '<p class="sub">' + esc(f.sub) + '</p>' : '') + '</div>' +
             '<div class="price">' + esc(won(f.price)) + '<small>VAT 포함 · 1회</small></div></div>' +
-            '<div class="cta"><a class="btn" href="' + link + '#buy">9,900원에 받기</a>' +
+            '<div class="cta"><a class="btn" href="' + link + '#buy">' + esc(won(f.price)) + '에 받기</a>' +
             '<a class="btn ghost" href="' + link + '">자세히 보기</a></div><div class="bar"></div>';
     }
 
     function card(a) {
         var body =
             (a.img ? '<div class="ic" style="background:#131826;padding:0;overflow:hidden"><img src="' + esc(a.img) + '" alt="" width="56" height="56" style="width:100%;height:100%;display:block"></div>' : '<div class="ic" style="background:' + esc(a.color) + '">' + esc(a.icon) + '</div>') +
-            '<div class="body"><b>' + esc(a.name) + '</b><p class="topic">' + esc(a.desc) + '</p>' + (a.sub ? '<small class="sub">' + esc(a.sub) + '</small>' : '') +
+            '<div class="body"><b>' + esc(a.name) + '</b>' + (a.fullname ? '<small class="fullname">' + esc(a.fullname) + '</small>' : '') + '<p class="topic">' + esc(a.desc) + '</p>' + (a.sub ? '<small class="sub">' + esc(a.sub) + '</small>' : '') +
             '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div>' +
             (a.bundle && a.bundle.length ? '<div class="bundle">포함 구성: ' + esc(a.bundle.join(' · ')) + '</div>' : '') +
             (a.maker ? '<div class="maker-line">만든 곳: ' + esc(a.maker) + '</div>' : '') + '</div>' +

@@ -1,17 +1,19 @@
 <!DOCTYPE html>
+<!-- 원칙(PO 2026-09-21): 마켓 홈에는 특정 앱의 기능·고지·제작자·상표·면책을 쓰지 않는다 — 앱에 관한 것은 카드 필드(js/market-apps.js)와 그 앱의 상세 페이지에만.
+     홈에 두는 것: 헤더(검색·카테고리) · 판매 중인 앱 카드 · 마켓 안내 · 마켓 운영자 · 내 앱 올리기 · 정책 링크. -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WAAT 앱마켓</title>
-<meta name="description" content="파인더월드가 만들고 매일 쓰는 AI 앱을 파는 곳. 원맥스 / One MACS — 트레이딩 시그널·보고서 작성 AI 에이전트 포함.">
+<meta name="description" content="WAAT 앱마켓 — 제작자들이 만든 AI 앱을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
 <meta property="og:title" content="WAAT 앱마켓">
-<meta property="og:description" content="원맥스 / One MACS 9,900원 1회. 트레이딩 시그널·보고서 작성 AI 에이전트 포함.">
+<meta property="og:description" content="제작자들이 만든 AI 앱을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
 <meta property="og:url" content="https://www.waat.community/market">
 <meta property="og:image" content="https://www.waat.community/market/img/hero_hub.png">
 <link rel="canonical" href="https://www.waat.community/market">
 <link rel="stylesheet" href="/css/site-nav.css?v=20260920f">
-<link rel="stylesheet" href="/css/market-home.css?v=20260921a">
+<link rel="stylesheet" href="/css/market-home.css?v=20260921b">
 </head>
 <body class="market-home">
 <!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
@@ -31,7 +33,7 @@
 
 <div class="hdr"><div class="wrap">
   <a class="logo" href="/market"><i></i>WAAT<small>앱마켓</small></a>
-  <label class="search"><span aria-hidden="true">🔍</span><input id="q" type="search" placeholder="앱 검색 — 트레이딩, 보고서, 원맥스…" autocomplete="off"></label>
+  <label class="search"><span aria-hidden="true">🔍</span><input id="q" type="search" placeholder="앱 검색" autocomplete="off"></label>
 </div></div>
 
 <div class="wrap">
@@ -43,20 +45,20 @@
 
   <div class="sec"><h3>판매 중인 앱 <small id="cnt"></small></h3><div class="grid" id="grid"></div></div>
 
-  </div>
-
   <div class="foot">
-    <p>각 앱의 실행 방식·요금은 상품 상세 페이지를 따릅니다.</p>
-    <p>트레이딩 관련 앱은 자동매매 프로그램 판매가 아니며 투자 자문·일임 서비스가 아닙니다. 동봉 샘플 전략은 교육용이며 수익을 보장하지 않습니다. 실행기는 사용자 본인의 증권사 키로, 주문 전 승인을 거쳐야 동작합니다. 매매 판단과 결과는 사용자 본인의 책임입니다.</p>
-    <p>Claude Code·Codex·Antigravity·Grok은 각 회사의 상표이며 제휴 관계가 없습니다.</p>
-    <p style="margin-top:12px">판매자: 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고 준비 중<br>소개 <a href="https://saa.house/about" target="_blank" rel="noopener">https://saa.house/about</a> · Facebook <a href="https://www.facebook.com/tlc500" target="_blank" rel="noopener">https://www.facebook.com/tlc500</a> · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
-    <p><a href="/">WAAT 홈</a> · <a href="/console">PC 준비 안내</a> · <a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+    <p><b style="color:var(--fg2)">마켓 안내</b></p>
+    <p>결제: 카카오페이 송금 · 무통장 입금. 다운로드 링크는 이메일로 발송하며 유효기간 24시간 · 5회입니다. 각 앱의 실행 방식·요금은 상품 상세 페이지를 따릅니다.</p>
+    <p>문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p style="margin-top:12px"><b style="color:var(--fg2)">마켓 운영자</b></p>
+    <p>WAAT 앱마켓 운영 — 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고 준비 중 · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p style="margin-top:12px">내 앱을 이 마켓에 올리고 싶다면 → 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p style="margin-top:12px"><a href="/">WAAT 홈</a> · <a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
     <p>© 2026 파인더월드 · WAAT 앱마켓</p>
   </div>
 </div>
 
 <script src="/js/nav-mobile.js?v=20260920f"></script>
-<script src="/js/market-apps.js?v=20260921c"></script>
-<script src="/js/market-home.js?v=20260920e"></script>
+<script src="/js/market-apps.js?v=20260921d"></script>
+<script src="/js/market-home.js?v=20260921d"></script>
 </body>
 </html>
