@@ -44,7 +44,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(-
 .chip.plus{color:var(--fg3);border-style:dashed}
 
 /* 스탯 타일 */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center}
 .stat b{display:block;font-size:20px;font-weight:900;letter-spacing:-.02em;line-height:1.1}
 .stat small{display:block;font-size:11px;color:var(--fg3);margin-top:4px;line-height:1.3}
