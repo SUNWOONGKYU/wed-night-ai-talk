@@ -15,6 +15,8 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 | 설치 지시문(Claude Code 가 읽음) | `/market/onemacs/install.md` | `console/install.md` (rewrite) |
 | 배포판 zip | `/market/onemacs/consolesystem_v2.zip` | `console/consolesystem_v2.zip` (rewrite) |
 | 동봉물 설치 지시문·zip | `/market/onemacs/trading-bot.md` · `/market/onemacs/trading-bot_v1.zip` | `console/trading-bot.md` · `console/trading-bot_v1.zip` (rewrite) |
+| 자주 묻는 질문 | `/market/onemacs/faq` | `market/onemacs/faq.html` |
+| CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 앱을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
 - 부속 페이지 진입은 **그 앱의 상세 페이지 버튼·구매/예약 완료 화면·메일 링크**에서만. 전역 nav·홈 카드에는 넣지 않는다.
@@ -48,7 +50,24 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 `PRODUCT_MODE` 환경변수(Vercel): `reserve`(기본 — 출시 알림 예약만 받음) | `sale`(결제 UI). 상세·홈 프런트는 `/api/market-config` 의 `mode` 만 본다.
 출시 첫날: `PRODUCT_MODE=sale` 로 바꾸고 `node scripts/notify-reservations.js`(PO 지시 때만; `--dry-run` 으로 먼저 확인).
 
-## 5. 문안 규칙 요약 (PO 반복 지적)
+## 5. 지원 부담 축소 — FAQ · compat.json · "원맥스 진단해줘"
+
+- 상세 페이지 결제/예약 블록 아래 "지원 범위" 한 단락: 설치는 PC의 Claude Code 가 안내 · 이메일 문의는 영업일 2일 안에 답 · 원격 설치 대행 없음 · 문제가 생기면 먼저 Claude Code 에 "원맥스 진단해줘".
+- `/market/onemacs/faq`: 자주 오는 문제 10개. 각 답 끝에 "그래도 안 되면 PC의 Claude Code 에 '원맥스 진단해줘'". 진단 지시문(`원맥스_진단.md`)은 배포판에 동봉(배포판 담당).
+- `install.md` 끝에도 같은 안내 한 단락.
+
+### compat.json 갱신 절차
+`market/onemacs/compat.json` 은 앱이 CLI(Claude Code·Codex·Antigravity·Grok) 버전 호환 안내를 읽는 정적 파일이다. 스키마:
+
+```json
+{"updated":"2026-09-21","notices":[{"ai":"codex","min_unsupported":"0.156.0","message":"Codex 0.156 이상은 아직 확인되지 않았습니다. 문제가 생기면 Claude Code 에게 맡기세요."}]}
+```
+
+- `ai`: `claude` | `codex` | `antigravity` | `grok`. `min_unsupported`: 이 버전 이상은 미확인. `message`: 앱에 그대로 보이는 사람 말(면책 문구 금지).
+- 갱신은 **담당 세션이 파일을 수정해 커밋·push** 한다(Vercel 자동 배포, 캐시 5분). 확인된 뒤에는 항목을 지우고 `updated` 를 갱신. 지금은 `notices: []`.
+- Content-Type `application/json` 과 CORS `*` 는 `vercel.json` headers 에 선언되어 있다.
+
+## 6. 문안 규칙 요약 (PO 반복 지적)
 
 - 브랜드 제목 2행: `One MACS · 원맥스` / `One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템` (가운뎃점, 영어 먼저). 본문에서는 "원맥스".
 - AI 4종(Claude Code·Codex·Antigravity·Grok)은 **협업** — "팀장/부하/부린다" 금지. 제목에 "API 요금" 넣지 않음.

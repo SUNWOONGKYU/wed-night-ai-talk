@@ -152,6 +152,23 @@
           "value": "public, max-age=300"
         }
       ]
+    },
+    {
+      "source": "/market/onemacs/compat.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -182,6 +199,10 @@
     {
       "source": "/market/onemacs/trading-bot_v1.zip",
       "destination": "/console/trading-bot_v1.zip"
+    },
+    {
+      "source": "/market/onemacs/faq",
+      "destination": "/market/onemacs/faq.html"
     }
   ],
   "functions": {

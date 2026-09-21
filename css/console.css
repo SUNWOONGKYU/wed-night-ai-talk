@@ -20,3 +20,11 @@ body.console{padding-bottom:40px}
 .topbar.crumb{justify-content:flex-start;flex-wrap:wrap;gap:6px}
 .topbar.crumb .sep{color:var(--fg3)}
 .topbar.crumb .cur{color:var(--fg);font-weight:700}
+
+/* FAQ (/market/onemacs/faq) */
+.faq-list details+details{margin-top:10px}
+.faq-list details .body{padding:0 0 16px}
+.faq-list details .body p{font-size:15px;line-height:1.65;color:var(--fg2)}
+.faq-list details .body p+p{margin-top:8px}
+.faq-list details .body p.note{font-size:13px;color:var(--fg3)}
+.faq-list summary{font-size:15px;font-weight:800;color:var(--fg)}

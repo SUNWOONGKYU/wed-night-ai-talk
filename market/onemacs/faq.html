@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자주 묻는 질문 — One MACS · 원맥스 | WAAT 앱마켓</title>
+<link rel="canonical" href="https://www.waat.community/market/onemacs/faq">
+<meta name="description" content="원맥스를 사용하다 자주 막히는 10가지: 설치 폴더, PIN을 잊었을 때, 페어링 코드가 안 뜰 때, CLI 업데이트, 터널 끊김, AI 사용 한도, 실행 창을 닫았을 때, PC가 꺼져 있을 때, 여러 PC 등록, 앱 재설치.">
+<link rel="stylesheet" href="/css/site-nav.css?v=20260920f">
+<link rel="stylesheet" href="/css/market.css?v=20260920e">
+<link rel="stylesheet" href="/css/console.css?v=20260921b">
+</head>
+<body class="market console faq">
+<!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
+<nav class="site-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo"><img src="/logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img"></a>
+        <ul class="nav-links nav-links-center">
+            <li><a href="/#event"><span class="nav-en">Event</span><span class="nav-ko">행사</span></a></li>
+            <li><a href="/#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
+            <li><a href="/speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+            <li><a href="/speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">유망 AI Biz 발굴</span></a></li>
+            <li class="on"><a href="/market"><span class="nav-en">App Market</span><span class="nav-ko">앱 마켓</span></a></li>
+        </ul>
+        <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+    </div>
+</nav>
+<!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/faq). 전역 nav 에 노출하지 않고 상세 하단·설치 페이지에서만 진입 — market/README.md -->
+<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">자주 묻는 질문</span></div>
+
+<section style="padding-top:28px">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><img src="/market/img/onemacs_icon.png" alt="One MACS · 원맥스 로고" width="40" height="40" style="border-radius:12px"><div><b style="font-size:20px;letter-spacing:-.02em;color:var(--fg)">One MACS · 원맥스</b><span style="display:block;font-size:12px;color:var(--fg3)">One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템</span></div></div>
+    <span class="eyebrow">자주 묻는 질문</span>
+    <h1>자주 막히는 10가지</h1>
+    <p class="lead" style="margin-top:12px">대부분은 PC의 검은 실행 창(1클릭_실행.bat)과 <span class="mono">C:\원맥스\_mobile_remote</span> 폴더 안에서 해결됩니다. 아래에서 해당 항목을 여세요.</p>
+    <div class="bar"></div>
+    <div class="warnbox" style="margin-top:16px">
+      어느 항목이든 그래도 안 되면 PC의 Claude Code 에 <b>"원맥스 진단해줘"</b> 라고 하세요. 배포판에 동봉된 <span class="mono">원맥스_진단.md</span> 를 읽고 원인을 찾아 알려줍니다.
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap faq-list">
+
+    <details open id="q1">
+      <summary>1. 원맥스는 PC 어디에 설치되나요?</summary>
+      <div class="body">
+        <p>설치 안내대로 했다면 <span class="mono">C:\원맥스</span> 입니다. 그 안의 <span class="mono">_mobile_remote</span> 폴더가 콘솔 본체(핸드폰과 연결되는 부분)이고, <span class="mono">트레이딩 시그널</span> 같은 프로젝트 폴더가 옆에 놓입니다.</p>
+        <p>다른 폴더에 설치했다면 Claude Code 를 켰던 그 폴더입니다. 설정 파일은 항상 <span class="mono">&lt;설치 폴더&gt;\_mobile_remote\console_config.json</span> 입니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q2">
+      <summary>2. PIN 을 잊었어요</summary>
+      <div class="body">
+        <p>PC의 <span class="mono">C:\원맥스\_mobile_remote\console_config.json</span> 파일을 메모장으로 열면 <span class="mono">"pin": "숫자"</span> 줄이 있습니다. 그 숫자가 PIN 입니다.</p>
+        <p>바꾸고 싶으면 그 값을 새 숫자로 고쳐 저장하고, 검은 실행 창을 닫았다가 <span class="mono">1클릭_실행.bat</span> 으로 다시 켜세요. 파일을 직접 만지기 부담스러우면 PC의 Claude Code 에 "PIN 바꿔줘" 라고 해도 됩니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q3">
+      <summary>3. 페어링 코드가 안 떠요</summary>
+      <div class="body">
+        <p>페어링 코드는 PC가 인터넷 터널(cloudflared)에 연결된 뒤에 나옵니다. 실행 후 보통 5~30초, 길면 <b>1분까지 기다려</b> 보세요. 코드는 <span class="mono">C:\원맥스\_mobile_remote\페어링코드.txt</span> 첫 줄에도 저장됩니다.</p>
+        <p>1분이 지나도 없으면 순서대로 확인합니다: ① PC가 인터넷에 연결되어 있는지 ② <span class="mono">_mobile_remote</span> 폴더에 <span class="mono">cloudflared.exe</span> 가 있는지 ③ 검은 실행 창에 빨간 오류 줄이 있는지(백신·방화벽이 cloudflared 를 막는 경우가 있습니다 → 허용).</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q4">
+      <summary>4. Claude Code(또는 Codex·Antigravity·Grok) 를 업데이트했더니 안 돼요</summary>
+      <div class="body">
+        <p>CLI 를 업데이트하면 로그인이 풀리거나 실행 방식이 바뀌는 경우가 있습니다. 먼저 터미널에서 해당 CLI 를 직접 한 번 켜서(<span class="mono">claude</span> 등) 로그인이 살아 있는지 확인하고, 검은 실행 창을 닫았다가 <span class="mono">1클릭_실행.bat</span> 으로 다시 켜세요.</p>
+        <p>특정 버전과 맞지 않는 경우는 앱이 알려줍니다(원맥스가 <a href="/market/onemacs/compat.json" class="cs-link" target="_blank" rel="noopener">호환 안내</a>를 확인합니다). 안내가 뜨면 그 내용대로 하세요.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q5">
+      <summary>5. 잘 쓰다가 갑자기 핸드폰에서 연결이 끊겨요 (터널 끊김)</summary>
+      <div class="body">
+        <p>PC의 인터넷이 잠깐 끊기거나 절전 모드에 들어가면 터널이 끊깁니다. PC를 깨우고 인터넷을 확인한 뒤, 앱에서 PC 탭을 다시 열어 보세요. 대부분 자동으로 다시 붙습니다.</p>
+        <p>계속 안 되면 검은 실행 창을 닫고 <span class="mono">1클릭_실행.bat</span> 으로 다시 켜세요. 페어링 코드와 PIN 은 그대로입니다. 노트북이라면 전원 옵션에서 절전 모드를 끄면 재발이 줄어듭니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q6">
+      <summary>6. AI 가 "사용 한도를 초과했습니다" 라고 해요</summary>
+      <div class="body">
+        <p>원맥스는 각 AI 를 사용자 본인의 구독으로 씁니다. 한도는 원맥스가 아니라 그 AI 의 구독(Claude·Codex·Antigravity·Grok)에서 정해집니다. 앱 헤더의 <b>남은 한도</b> 표시를 확인하고, 한도가 풀리는 시각까지 기다리거나 다른 AI 탭으로 이어서 작업하세요.</p>
+        <p>자주 한도에 걸리면 그 AI 의 상위 요금제를 사용하거나, 대화창 없이 뒤에서 도는 AI 로 일을 나누는 방법이 있습니다. 원맥스는 AI 사용료를 받거나 중개하지 않습니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q7">
+      <summary>7. 검은 실행 창을 닫았더니 핸드폰에서 안 돼요</summary>
+      <div class="body">
+        <p>그 실행 창이 PC 쪽 서버입니다. 닫으면 연결이 끊깁니다. <span class="mono">C:\원맥스\_mobile_remote\1클릭_실행.bat</span> 을 다시 실행하면 됩니다(프로젝트 창도 자동으로 뜹니다). 다음부터는 닫지 말고 <b>최소화</b>하세요.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q8">
+      <summary>8. PC 가 꺼져 있을 때도 핸드폰에서 쓸 수 있나요?</summary>
+      <div class="body">
+        <p>아니요. PC 가 서버라서 PC 가 켜져 있고 실행 창이 떠 있어야 합니다. 밖에서 쓰려면 PC 를 켜 두고 절전 모드를 끄세요. PC 가 꺼져 있으면 앱의 PC 탭에 "연결 안 됨"으로 표시됩니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q9">
+      <summary>9. PC 를 여러 대 등록하고 싶어요</summary>
+      <div class="body">
+        <p>PC 마다 같은 설치 안내를 한 번씩 하면 됩니다(PC 마다 페어링 코드가 따로 나옵니다). 앱에서 새 페어링 코드를 입력하면 PC 탭이 하나 더 생기고, 탭을 눌러 오가며 각 PC 의 프로젝트를 씁니다. PC 이름표는 설치할 때 정하거나, 그 PC 의 Claude Code 에 "PC 이름표 바꿔줘" 라고 하면 바뀝니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+    <details id="q10">
+      <summary>10. 앱을 지웠다 다시 설치했더니 PIN 을 또 물어봐요</summary>
+      <div class="body">
+        <p>정상입니다. 앱을 다시 설치하면 핸드폰에 저장된 PC 목록과 PIN 이 지워집니다. 페어링 코드(<span class="mono">페어링코드.txt</span> 첫 줄)를 다시 입력하고, PC 탭을 처음 열 때 PIN 을 한 번 더 입력하면 됩니다. PC 쪽은 아무것도 바꿀 필요가 없습니다. 라이선스 키는 구매 메일에 있습니다.</p>
+        <p class="note">그래도 안 되면 PC의 Claude Code 에 "원맥스 진단해줘" 라고 하세요.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">지원 범위</span>
+    <div class="card">
+      <p style="font-size:15px;line-height:1.8">설치는 PC의 Claude Code 가 안내합니다 · 이메일 문의(<a href="mailto:wksun999@hanmail.net" class="cs-link">wksun999@hanmail.net</a>)는 영업일 2일 안에 답합니다 · 원격 설치 대행은 하지 않습니다 · 문제가 생기면 먼저 Claude Code 에 "원맥스 진단해줘".</p>
+    </div>
+    <p class="note" style="margin-top:16px">페어링 코드와 PIN 은 타인과 공유하지 마세요.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><a href="/market/onemacs" class="cs-link">One MACS · 원맥스 상세로</a> · <a href="/market/onemacs/install" class="cs-link">PC에 원맥스 설치하기</a> · <a href="/market" class="cs-link">앱마켓</a> · <a href="/" class="cs-link">WAAT 홈</a></p>
+  </div>
+</footer>
+
+<script src="/js/nav-mobile.js?v=20260920f"></script>
+</body>
+</html>
