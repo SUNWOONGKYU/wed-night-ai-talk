@@ -60,7 +60,7 @@ pip install -r requirements.txt
    `Start-Process -FilePath python -ArgumentList "scanner_web.py" -WorkingDirectory "<PROJECT>"`
    20초 뒤 `Invoke-WebRequest http://127.0.0.1:5050/api/status` 가 200 이면 정상 (브라우저가 자동으로 열린다).
 2. 트레이더를 **60초 제한**으로 시험 실행하고 출력을 본다:
-   `python trader.py` 를 실행해 다음 줄이 나오면 정상이다 — `Trader 자동매매 트레이더 시작 (모의투자)` · `[KIS] Token acquired` · `[FuturesMap] 매핑 로드: N개 (MM월물)`. 월물(MM)이 이번 달보다 이전이면 `python build_futures_map.py` 를 한 번 실행해 갱신한다(네트워크 필요). 장 외 시간이면 `장 외 — N분 후 개장 대기` 가 나오는 것이 정상이다. 확인했으면 프로세스를 종료한다(Ctrl+C 또는 그 실행 창 닫기). `data\.trader.lock` 이 남아 있으면 지운다.
+   `python trader.py` 를 실행해 다음 줄이 나오면 정상이다 — `Trader 자동매매 트레이더 시작 (모의투자)` <!-- copy-ok: 프로그램이 찍는 실제 로그 문구 --> · `[KIS] Token acquired` · `[FuturesMap] 매핑 로드: N개 (MM월물)`. 월물(MM)이 이번 달보다 이전이면 `python build_futures_map.py` 를 한 번 실행해 갱신한다(네트워크 필요). 장 외 시간이면 `장 외 — N분 후 개장 대기` 가 나오는 것이 정상이다. 확인했으면 프로세스를 종료한다(Ctrl+C 또는 그 실행 창 닫기). `data\.trader.lock` 이 남아 있으면 지운다.
    - `.env 에 KIS_APP_KEY ... 없습니다` → 4단계로 돌아간다.
    - `KIS 토큰 발급 실패` → 앱키/시크릿 오타, 또는 실전 키를 모의 모드에 넣은 것. 사용자에게 확인 요청.
    - `TELEGRAM_BOT_TOKEN ... 없습니다` → 4단계로.
