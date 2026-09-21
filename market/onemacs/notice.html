@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>알아 두실 점 — One MACS · 원맥스 | WAAT 앱마켓</title>
+<link rel="canonical" href="https://www.waat.community/market/onemacs/notice">
+<meta name="description" content="원맥스를 사용하기 전에 알아 두실 점: PIN 이 유일한 잠금, AI 사용료·이용약관·출력물은 각자의 계정 기준, 전체 권한 모드와 안전 모드, 로그인 실패 잠금.">
+<link rel="stylesheet" href="/css/site-nav.css?v=20260920f">
+<link rel="stylesheet" href="/css/market.css?v=20260920e">
+<link rel="stylesheet" href="/css/console.css?v=20260921b">
+</head>
+<body class="market console notice">
+<!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
+<nav class="site-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo"><img src="/logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img"></a>
+        <ul class="nav-links nav-links-center">
+            <li><a href="/#event"><span class="nav-en">Event</span><span class="nav-ko">행사</span></a></li>
+            <li><a href="/#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
+            <li><a href="/speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+            <li><a href="/speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">유망 AI Biz 발굴</span></a></li>
+            <li class="on"><a href="/market"><span class="nav-en">App Market</span><span class="nav-ko">앱 마켓</span></a></li>
+        </ul>
+        <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+    </div>
+</nav>
+<!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/notice). 전역 nav 에 노출하지 않고 상세 하단·설치 페이지·FAQ 에서만 진입 — market/README.md -->
+<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">알아 두실 점</span></div>
+
+<section style="padding-top:28px">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><img src="/market/img/onemacs_icon.png" alt="One MACS · 원맥스 로고" width="40" height="40" style="border-radius:12px"><div><b style="font-size:20px;letter-spacing:-.02em;color:var(--fg)">One MACS · 원맥스</b><span style="display:block;font-size:12px;color:var(--fg3)">One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템</span></div></div>
+    <span class="eyebrow">알아 두실 점</span>
+    <h1>사용하기 전에 알아 두실 점 4가지</h1>
+    <p class="lead" style="margin-top:12px">원맥스는 내 PC의 AI 도구를 인터넷 주소로 연결합니다. 그래서 아래 네 가지는 꼭 알고 사용하세요.</p>
+    <div class="bar"></div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap stack">
+    <div class="cs-step">
+      <div class="row"><span class="num">1</span><div>
+        <h3>PIN 이 유일한 잠금입니다</h3>
+        <p>원맥스는 내 PC의 AI 도구를 인터넷 주소로 연결합니다. 그 주소를 아는 사람이 PC 를 열 때 막아 주는 것은 <b>PIN 하나</b>입니다. PIN 과 페어링 코드는 남에게 알려주지 마세요. PIN 은 PC의 <span class="mono">_mobile_remote\console_config.json</span> 에서 바꿀 수 있습니다.</p>
+      </div></div>
+    </div>
+    <div class="cs-step">
+      <div class="row"><span class="num">2</span><div>
+        <h3>AI 사용료 · 이용약관 · 출력물은 각자의 계정 기준입니다</h3>
+        <p>Claude Code·Codex·Antigravity·Grok 은 사용자 본인의 계정으로 로그인해 씁니다. 각 AI 의 사용료와 이용약관, 그리고 AI 가 만들어 낸 출력물에 대한 책임은 그 계정을 가진 사용자 본인에게 있습니다. 원맥스는 AI 사용을 중개하거나 재판매하지 않습니다.</p>
+      </div></div>
+    </div>
+    <div class="cs-step">
+      <div class="row"><span class="num">3</span><div>
+        <h3>전체 권한 모드를 켜면 AI 가 PC 의 파일을 바꿀 수 있습니다</h3>
+        <p>기본은 <b>안전 모드</b>입니다: AI 는 작업 폴더(프로젝트 폴더) 안에서만 읽고 씁니다. 전체 권한 모드를 켜면 AI 가 PC 의 다른 파일도 바꿀 수 있으니, 무엇을 시키는지 알고 있을 때만 켜고 끝나면 다시 끄세요.</p>
+      </div></div>
+    </div>
+    <div class="cs-step">
+      <div class="row"><span class="num">4</span><div>
+        <h3>로그인 5회 실패 시 1분, 20회 실패 시 1시간 잠깁니다</h3>
+        <p>PIN 을 5번 틀리면 1분 동안, 20번 틀리면 1시간 동안 그 PC 에 로그인할 수 없습니다. 잠긴 동안은 기다리면 풀립니다. PIN 을 잊었다면 <a href="/market/onemacs/faq#q2" class="cs-link">자주 묻는 질문 2번</a>을 보세요.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><a href="/market/onemacs" class="cs-link">One MACS · 원맥스 상세로</a> · <a href="/market/onemacs/install" class="cs-link">PC에 원맥스 설치하기</a> · <a href="/market/onemacs/faq" class="cs-link">자주 묻는 질문</a> · <a href="/market" class="cs-link">앱마켓</a> · <a href="/" class="cs-link">WAAT 홈</a></p>
+  </div>
+</footer>
+
+<script src="/js/nav-mobile.js?v=20260920f"></script>
+</body>
+</html>

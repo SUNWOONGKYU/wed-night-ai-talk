@@ -179,3 +179,9 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 
 ### 문제가 생기면
 사용 중 무엇이든 안 되면 PC의 Claude Code 에 **"원맥스 진단해줘"** 라고 하면 된다 — 배포판에 동봉된 `원맥스_진단.md` 를 읽고 순서대로 수행해 원인을 찾아 알려준다. 자주 막히는 경우는 https://www.waat.community/market/onemacs/faq 에 정리되어 있다.
+
+### 알아 두실 점 (사용자에게 마지막에 한 번 보여줄 것 — https://www.waat.community/market/onemacs/notice)
+- 원맥스는 내 PC의 AI 도구를 인터넷 주소로 연결한다. PIN 이 유일한 잠금이니 PIN 과 페어링 코드는 남에게 알려주지 않는다.
+- AI 사용료·이용약관·출력물에 대한 책임은 각자의 계정 기준이다(원맥스는 AI 사용을 중개·재판매하지 않는다).
+- 전체 권한 모드를 켜면 AI 가 PC 의 파일을 바꿀 수 있다. 기본은 안전 모드(작업 폴더 안에서만).
+- 로그인 5회 실패 시 1분, 20회 실패 시 1시간 잠긴다.

@@ -16,6 +16,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 | 배포판 zip | `/market/onemacs/consolesystem_v2.zip` | `console/consolesystem_v2.zip` (rewrite) |
 | 동봉물 설치 지시문·zip | `/market/onemacs/trading-bot.md` · `/market/onemacs/trading-bot_v1.zip` | `console/trading-bot.md` · `console/trading-bot_v1.zip` (rewrite) |
 | 자주 묻는 질문 | `/market/onemacs/faq` | `market/onemacs/faq.html` |
+| 알아 두실 점(보안·권한·잠금) | `/market/onemacs/notice` | `market/onemacs/notice.html` |
 | CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 앱을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
@@ -50,11 +51,14 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 `PRODUCT_MODE` 환경변수(Vercel): `reserve`(기본 — 출시 알림 예약만 받음) | `sale`(결제 UI). 상세·홈 프런트는 `/api/market-config` 의 `mode` 만 본다.
 출시 첫날: `PRODUCT_MODE=sale` 로 바꾸고 `node scripts/notify-reservations.js`(PO 지시 때만; `--dry-run` 으로 먼저 확인).
 
-## 5. 지원 부담 축소 — FAQ · compat.json · "원맥스 진단해줘"
+## 5. 지원 창구 — FAQ · compat.json · "원맥스 진단해줘" · 알아 두실 점
 
-- 상세 페이지 결제/예약 블록 아래 "지원 범위" 한 단락: 설치는 PC의 Claude Code 가 안내 · 이메일 문의는 영업일 2일 안에 답 · 원격 설치 대행 없음 · 문제가 생기면 먼저 Claude Code 에 "원맥스 진단해줘".
-- `/market/onemacs/faq`: 자주 오는 문제 10개. 각 답 끝에 "그래도 안 되면 PC의 Claude Code 에 '원맥스 진단해줘'". 진단 지시문(`원맥스_진단.md`)은 배포판에 동봉(배포판 담당).
-- `install.md` 끝에도 같은 안내 한 단락.
+지원 창구는 **세 가지뿐**(PO 2026-09-21): ① PC의 Claude Code 에 "원맥스 진단해줘" ② `/market/onemacs/faq` ③ 앱의 문제 신고 메일.
+판매 페이지에는 지원 안내·지원 채널 문구를 넣지 않는다. 별도 채팅방 안내나 "N일 안에 답합니다" 같은 응답 기한 약속 문구는 어디에도 쓰지 않는다.
+
+- `/market/onemacs/faq`: 자주 오는 문제 10개. 각 답 끝에 "그래도 안 되면 PC의 Claude Code 에 '원맥스 진단해줘'". 끝에 지원 창구 3가지. 진단 지시문(`원맥스_진단.md`)은 배포판에 동봉(배포판 담당).
+- `/market/onemacs/notice` "알아 두실 점"(사람 말, 투자 면책 없음): PIN 이 유일한 잠금 / AI 사용료·약관·출력물은 각자의 계정 기준 / 전체 권한 모드(기본 안전 모드) / 로그인 5회 실패 1분·20회 1시간 잠금. 상세 하단·설치 페이지·FAQ 에서 링크.
+- `install.md` 끝에 "문제가 생기면"(진단) + "알아 두실 점" 4줄.
 
 ### compat.json 갱신 절차
 `market/onemacs/compat.json` 은 앱이 CLI(Claude Code·Codex·Antigravity·Grok) 버전 호환 안내를 읽는 정적 파일이다. 스키마:

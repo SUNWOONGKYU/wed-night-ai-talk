@@ -203,6 +203,10 @@
     {
       "source": "/market/onemacs/faq",
       "destination": "/market/onemacs/faq.html"
+    },
+    {
+      "source": "/market/onemacs/notice",
+      "destination": "/market/onemacs/notice.html"
     }
   ],
   "functions": {
