@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>사용법 — One MACS · 원맥스 | WAAT 앱마켓</title>
+<title>One MACS · 원맥스 사용법 | WAAT 앱마켓</title>
 <link rel="canonical" href="https://www.waat.community/market/onemacs/guide">
 <meta name="description" content="원맥스 사용법: 연결(페어링 코드·PIN), 화면 읽는 법, 일 시키는 법과 좋은 지시 예시 10개, AI 4종의 협업, 작업 감시와 알림, PC 여러 대, 권한 모드, 문제 해결, 동봉물.">
 <link rel="stylesheet" href="/css/theme.css?v=20260921a">
@@ -30,15 +30,16 @@
     </div>
 </nav>
 <!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/guide). 전역 nav 미노출 — 상세 탭·설치·FAQ·콘솔 "?" 에서 진입. 같은 본문의 오프라인 파일: 배포판 사용법.html (빌드: 세션 스크래치 gd_build.py) — market/README.md -->
-<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">사용법</span></div>
+<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">One MACS · 원맥스 사용법</span></div>
 <div class="tabs"><a href="/market/onemacs">상세 보기</a><a href="/market/onemacs/reviews">리뷰<small id="rv-tab-count"></small></a><a href="/market/onemacs/guide" class="on" aria-current="page">사용법</a></div>
 
 <section style="padding-top:20px;padding-bottom:12px">
   <div class="wrap">
     <div class="brand"><img src="/market/img/onemacs_icon.png" alt="One MACS · 원맥스 로고" width="40" height="40"><div><b>One MACS · 원맥스</b><span>One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템</span></div></div>
     <span class="eyebrow">사용법</span>
-    <h1>핸드폰에서 PC의 AI 4종에게 일을 시키는 법</h1>
-    <p class="lead">설치는 끝났고 코드 8자리를 받았다는 전제입니다. 아직이라면 <a href="/market/onemacs/install">PC에 원맥스 설치하기</a>를 먼저 보세요.</p>
+    <h1>One MACS · 원맥스 사용법</h1>
+    <p class="lead" style="margin-top:6px">핸드폰에서 PC의 AI 4종에게 일을 시키는 법.</p>
+    <p class="lead" style="margin-top:4px;font-size:15px;color:var(--fg2)">설치는 끝났고 코드 8자리를 받았다는 전제입니다. 아직이라면 <a href="/market/onemacs/install">PC에 원맥스 설치하기</a>를 먼저 보세요.</p>
     <nav class="toc" aria-label="목차"><b>목차</b><ol><li><a href="#connect">1. 연결하기 — 페어링 코드와 PIN</a></li><li><a href="#screen">2. 화면 읽는 법</a></li><li><a href="#ask">3. 일 시키는 법 — 좋은 지시 예시 10개</a></li><li><a href="#four">4. AI 4종의 역할과 협업</a></li><li><a href="#watch">5. 작업 감시와 알림</a></li><li><a href="#multi">6. PC 여러 대 · 프로젝트 추가</a></li><li><a href="#theme">7. 밝은 화면 · 어두운 화면</a></li><li><a href="#perm">8. 권한 모드 · 다른 기기 로그아웃</a></li><li><a href="#trouble">9. 문제가 생기면</a></li><li><a href="#bundle">10. 동봉물 — 트레이딩 시그널 · 매매 자동화 봇</a></li></ol></nav>
   </div>
 </section>
@@ -59,15 +60,16 @@
 <section id="screen" class="alt">
   <div class="wrap">
     <h2>2. 화면 읽는 법</h2>
-    <div class="figs"><figure><img src="/market/img/guide/console.jpg" alt="콘솔 화면 — 위부터 PC 탭·설정, AI 탭 4개, 상태줄, 대화, 칩, 입력창" loading="lazy"><figcaption>콘솔 화면 — 위부터 PC 탭·설정, AI 탭 4개, 상태줄, 대화, 칩, 입력창</figcaption></figure></div>
+    <div class="figs"><figure><img src="/market/img/guide/console.jpg" alt="콘솔 화면 — 맨 윗줄 "?"·이름·⚙, AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창" loading="lazy"><figcaption>콘솔 화면 — 맨 윗줄 "?"·이름·⚙, AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창</figcaption></figure></div>
     <dl class="kv">
-      <dt>PC 탭 · ⚙</dt><dd>맨 위. PC 가 여러 대면 탭이 여러 개입니다. ⚙ 는 설정(8·9절).</dd>
-      <dt>AI 탭 4개</dt><dd>Claude Code · Codex · Antigravity · Grok. 탭마다 지금 쓰는 모델 이름이 작게 적혀 있습니다. 계정이 없는 AI 는 탭이 비어 있습니다. 탭 줄 오른쪽 끝 🌙/☀ 는 화면 밝기(7절).</dd>
+      <dt>맨 윗줄</dt><dd>왼쪽 <b>?</b> 는 이 사용법, 가운데는 이름(One-stop Multi AI Console System), 오른쪽 <b>⚙</b> 는 설정(8절). 버튼은 이 줄에만 있습니다.</dd>
+      <dt>PC 탭 줄</dt><dd>PC 가 여러 대면 그 아래에 PC 탭이 나란히 나옵니다. 탭을 눌러 PC 를 오갑니다.</dd>
+      <dt>AI 탭 4개</dt><dd>Claude Code · Codex · Antigravity · Grok. 탭의 작은 글씨는 <b>지금 쓰는 모델</b>입니다(바꾸는 곳은 ⚙ 설정 › 모델 선택). 계정이 없는 AI 는 탭이 비어 있고, 잠시 쓸 수 없는 AI 는 소제목에 "점검 중"이라고 나옵니다.</dd>
       <dt>상태줄</dt><dd>탭 바로 아래 한 줄. <b>대기 / 작업 중</b>, <b>남은 한도</b>(그 AI 구독의 5시간·7일 한도), <b>메시지 수</b>, 그리고 <b>요약 ▾</b> — 답을 "요약 · 상세 · 전체" 중 어떻게 보여줄지 고르는 곳입니다. 처음엔 요약이 편합니다.</dd>
-      <dt>대화</dt><dd>내 지시는 오른쪽 파란 채팅창, AI 의 답은 왼쪽 상자입니다.</dd>
+      <dt>대화</dt><dd>내 지시는 오른쪽 파란 칸, AI 의 답은 왼쪽 상자입니다.</dd>
       <dt>칩 (입력창 위)</dt><dd><b>🛑 긴급 정지</b> — AI 가 하던 일을 바로 멈춥니다(작업 중일 때만 보임). <b>한 줄 결론 · 3줄 핵심 요약 · 계속 진행</b> — 자주 쓰는 말을 한 번에 보냅니다.</dd>
       <dt>📎 · 입력창 · ↑</dt><dd>📎 로 사진이나 파일을 올리고, 입력창에 지시를 적고, ↑ 로 보냅니다.</dd>
-      <dt>프로젝트 선택</dt><dd>PC 탭 아래 <b>[프로젝트 ▾]</b>. 어느 폴더에서 일할지 고릅니다. 기본은 "트레이딩 시그널"(6절).</dd>
+      <dt>프로젝트 선택</dt><dd>PC 탭 아래 <b>[프로젝트 ▾]</b>. 어느 폴더에서 일할지 고릅니다. 프로젝트가 하나뿐이면 보이지 않습니다. 기본은 "트레이딩 시그널"(6절).</dd>
     </dl>
   </div>
 </section>
@@ -76,7 +78,7 @@
   <div class="wrap">
     <h2>3. 일 시키는 법 — 좋은 지시 예시 10개</h2>
     <p>말로 시키면 됩니다. 잘 되는 지시에는 세 가지가 들어 있습니다: <b>무엇을</b>, <b>어디에(어느 파일·폴더)</b>, <b>결과를 어떻게 줄지</b>.</p>
-    <div class="figs"><figure><img src="/market/img/guide/answer.jpg" alt="지시를 보낸 직후 — 내 지시가 오른쪽 파란 칸에" loading="lazy"><figcaption>지시를 보낸 직후 — 내 지시가 오른쪽 파란 칸에</figcaption></figure></div>
+    <div class="figs"><figure><img src="/market/img/guide/typing.jpg" alt="입력창에 지시를 적은 모습 — ↑ 로 보냅니다" loading="lazy"><figcaption>입력창에 지시를 적은 모습 — ↑ 로 보냅니다</figcaption></figure></div>
     <ol class="examples">
       <li>이 폴더의 엑셀 파일을 전부 합쳐서 월별 합계 시트가 있는 <span class="mono">합계.xlsx</span> 로 만들어줘.</li>
       <li>회의록.txt 를 읽고 할 일만 뽑아 <span class="mono">오늘할일.md</span> 에 담당자·기한과 함께 정리해줘.</li>
@@ -113,7 +115,7 @@
       <dt>Antigravity</dt><dd>Google 계정으로 로그인해 씁니다(무료 플랜부터). 초안·자료 정리 같은 빠른 일에 편합니다.</dd>
       <dt>Grok</dt><dd>최근 소식이나 다른 관점이 필요할 때.</dd>
     </dl>
-    <p><b>동시에 시키기</b> — 탭은 서로 독립이라 Claude Code 탭에 긴 작업을 걸어 두고, Codex 탭으로 넘어가 다른 일을 시켜도 됩니다. 각 탭의 상태줄이 따로 "작업 중"을 보여줍니다. 같은 파일을 두 AI 에게 동시에 고치게 하는 것만 피하세요.</p>
+    <p><b>동시에 시키기</b> — 지시 끝에 <b>"동시에 시켜"</b>라고 붙이면 같은 지시를 여러 AI 에게 한꺼번에 보냅니다. 누구에게 보낼지는 ⚙ 설정 › <b>동시에 시키기 기본 대상</b>(Codex+Antigravity / 셋 다)에서 정합니다. 탭은 서로 독립이라 Claude Code 탭에 긴 작업을 걸어 두고 Codex 탭으로 넘어가 다른 일을 시켜도 됩니다 — 각 탭의 상태줄이 따로 "작업 중"을 보여줍니다. 같은 파일을 두 AI 에게 동시에 고치게 하는 것만 피하세요.</p>
     <p class="note">Codex·Antigravity·Grok 은 계정이 있으면 탭이 살아나고, 없으면 그 탭만 비어 있습니다. 한도·요금은 각 AI 의 본인 구독 기준입니다.</p>
   </div>
 </section>
@@ -121,11 +123,11 @@
 <section id="watch">
   <div class="wrap">
     <h2>5. 작업 감시와 알림</h2>
-    <div class="figs"><figure><img src="/market/img/guide/hub.jpg" alt="작업 중인 콘솔 — 상태줄에 남은 한도와 메시지 수, 답은 요약본으로" loading="lazy"><figcaption>작업 중인 콘솔 — 상태줄에 남은 한도와 메시지 수, 답은 요약본으로</figcaption></figure></div>
     <ul class="plain">
       <li><b>상태줄</b>이 "작업 중"이면 AI 가 일하는 중입니다. 앱을 닫아도 PC 에서는 계속 일합니다.</li>
-      <li><b>남은 한도</b>는 그 AI 구독의 5시간·7일 한도입니다. 한도가 차면 다른 탭으로 이어서 하거나 풀릴 때까지 기다립니다.</li>
-      <li><b>알림</b> — 처음 연결할 때 알림을 허용해 두면 AI 작업이 끝났을 때 핸드폰에 알려 줍니다. 앱이 화면에 있을 때는 20초, 뒤에 있을 때는 60초마다 확인합니다.</li>
+      <li><b>남은 한도</b> — ⚙ 설정 › <b>남은 한도 표시</b>를 켜면 상태줄에 그 AI 구독의 5시간·7일 남은 비율이 나옵니다. 한도가 차면 다른 탭으로 이어서 하거나 풀릴 때까지 기다립니다.</li>
+      <li><b>알림</b> — ⚙ 설정 › <b>작업 끝나면 알림</b>이 켜져 있고 처음 연결할 때 알림을 허용했다면, 앱이 뒤에 있을 때 작업이 끝나면 핸드폰에 알려 줍니다. 앱이 화면에 있을 때는 20초, 뒤에 있을 때는 60초마다 확인합니다.</li>
+      <li><b>작업 제한 시간 · 실패 시 자동 재시도</b> — ⚙ 설정에서 AI 마다 제한 시간을 기본값보다 늘릴 수 있고, 실패하면 한 번 더 시도한 뒤 결과를 알려 주게 할 수 있습니다.</li>
       <li>급하게 멈추려면 <b>🛑 긴급 정지</b> 칩.</li>
     </ul>
   </div>
@@ -134,7 +136,6 @@
 <section id="multi" class="alt">
   <div class="wrap">
     <h2>6. PC 여러 대 · 프로젝트 추가</h2>
-    <div class="figs"><figure><img src="/market/img/guide/project.jpg" alt="프로젝트 선택 — 기본 "트레이딩 시그널", 아래 "프로젝트 추가"" loading="lazy"><figcaption>프로젝트 선택 — 기본 "트레이딩 시그널", 아래 "프로젝트 추가"</figcaption></figure></div>
     <ul class="plain">
       <li><b>PC 를 더 붙이려면</b> 그 PC 에서도 설치 안내를 한 번 하고, 새 코드 8자리를 앱에 넣습니다. PC 탭이 하나 더 생기고 탭을 눌러 오갑니다. PC 이름표는 그 PC 의 Claude Code 에 "PC 이름표 바꿔줘".</li>
       <li><b>프로젝트(폴더)를 더 만들려면</b> [프로젝트 ▾] → <b>프로젝트 추가</b> 에서 폴더 이름을 넣습니다. PC 의 원맥스 폴더 아래에 그 이름의 폴더가 생기고, 그 안에서 AI 가 일합니다.</li>
@@ -147,16 +148,18 @@
   <div class="wrap">
     <h2>7. 밝은 화면 · 어두운 화면</h2>
     <div class="figs two"><figure><img src="/market/img/guide/light.jpg" alt="밝은 화면" loading="lazy"><figcaption>밝은 화면</figcaption></figure><figure><img src="/market/img/guide/dark.jpg" alt="어두운 화면" loading="lazy"><figcaption>어두운 화면</figcaption></figure></div>
-    <p>콘솔의 AI 탭 줄 오른쪽 끝 <b>🌙 / ☀</b> 버튼을 누르면 바뀝니다. 선택은 그 PC 콘솔에 저장되어 다음에 열 때도 유지됩니다.</p>
+    <p>⚙ 설정 › <b>화면 테마</b>에서 <b>라이트 · 다크 · 기기 설정</b> 중 고릅니다. "기기 설정"은 핸드폰의 밝기 설정을 그대로 따릅니다. 선택은 그 PC 콘솔에 저장되어 다음에 열 때도 유지됩니다.</p>
   </div>
 </section>
 
 <section id="perm" class="alt">
   <div class="wrap">
     <h2>8. 권한 모드 · 다른 기기 로그아웃</h2>
-    <div class="figs three"><figure><img src="/market/img/guide/settings.jpg" alt="설정 메뉴(⚙)" loading="lazy"><figcaption>설정 메뉴(⚙)</figcaption></figure><figure><img src="/market/img/guide/perm.jpg" alt="권한 모드 안내 창" loading="lazy"><figcaption>권한 모드 안내 창</figcaption></figure><figure><img src="/market/img/guide/logout.jpg" alt="다른 기기 로그아웃" loading="lazy"><figcaption>다른 기기 로그아웃</figcaption></figure></div>
+    <div class="figs two"><figure><img src="/market/img/guide/settings.jpg" alt="⚙ 설정 — 모델 선택 · 답 표시 방식 기본값 · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간" loading="lazy"><figcaption>⚙ 설정 — 모델 선택 · 답 표시 방식 기본값 · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간</figcaption></figure><figure><img src="/market/img/guide/settings2.jpg" alt="⚙ 설정(아래쪽) — 실패 시 자동 재시도 · 남은 한도 표시 · 권한 모드 · 화면 테마" loading="lazy"><figcaption>⚙ 설정(아래쪽) — 실패 시 자동 재시도 · 남은 한도 표시 · 권한 모드 · 화면 테마</figcaption></figure></div>
+    <p>맨 윗줄 오른쪽 <b>⚙</b> 를 누르면 설정이 한 화면에 모여 있습니다. 바꾼 값은 이 PC 의 콘솔에 저장되고 다음 지시부터 적용됩니다.</p>
     <dl class="kv">
-      <dt>권한 모드</dt><dd>설정(⚙) › 권한 모드 에서 지금 모드를 확인합니다. <b>안전 모드</b>(기본)에서는 AI 가 작업 폴더 안에서만 읽고 씁니다. <b>전체 권한 모드</b>에서는 AI 가 PC 의 다른 파일도 바꿀 수 있습니다. 바꾸는 것은 PC 에서만 됩니다 — PC 의 Claude Code 에 "원맥스 안전 모드로" / "원맥스 전체 권한 모드로".</dd>
+      <dt>설정 항목</dt><dd>사용법 보기 · 모델 선택(AI 별) · 답 표시 방식 기본값(요약·상세·전체) · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간 · 실패 시 자동 재시도 · 남은 한도 표시 · 화면 테마 · 코드 바꾸기 · PIN 다시 입력 · 허브 주소 · 다시 연결 · 개인정보처리방침 · 문제 신고 · 권한 모드 · 다른 기기 로그아웃</dd>
+      <dt>권한 모드</dt><dd>설정에 지금 모드가 표시됩니다. <b>안전 모드</b>(기본)에서는 AI 가 작업 폴더 안에서만 읽고 씁니다. <b>전체 권한 모드</b>에서는 AI 가 PC 의 다른 파일도 바꿀 수 있습니다. 권한 모드와 PIN 은 PC 에서만 바꿀 수 있습니다 — PC 의 Claude Code 에 "원맥스 전체 권한 켜줘" 또는 "원맥스 안전 모드로".</dd>
       <dt>다른 기기 로그아웃</dt><dd>설정 › 다른 기기 로그아웃. 이 핸드폰을 제외한 다른 기기의 접속을 모두 끊습니다. 핸드폰을 바꿨거나 남에게 코드가 알려졌을 때 쓰세요. 그다음 PIN 을 바꾸면(설정 › PIN 다시 입력 또는 PC 에서) 더 안전합니다.</dd>
     </dl>
     <p class="note">PIN 이 유일한 잠금입니다. 페어링 코드와 PIN 은 남에게 알려주지 마세요. 자세한 내용은 <a href="/market/onemacs/notice">알아 두실 점</a>.</p>
@@ -166,11 +169,10 @@
 <section id="trouble">
   <div class="wrap">
     <h2>9. 문제가 생기면</h2>
-    <div class="figs"><figure><img src="/market/img/guide/noresp.jpg" alt="PC가 응답하지 않을 때 나오는 화면" loading="lazy"><figcaption>PC가 응답하지 않을 때 나오는 화면</figcaption></figure></div>
     <ol class="steps">
       <li>PC 의 Claude Code 에 <b>"원맥스 진단해줘"</b> 라고 하세요. 동봉된 <span class="mono">원맥스_진단.md</span> 를 읽고 원인을 찾아 알려 줍니다.</li>
       <li>자주 막히는 10가지는 <a href="/market/onemacs/faq">자주 묻는 질문</a>에 있습니다 — PIN 을 잊었을 때, 코드가 안 뜰 때, 연결이 끊길 때, 한도 초과, 실행 창을 닫았을 때 등.</li>
-      <li>그래도 안 되면 앱의 설정(⚙) › <b>문제 신고 (메일)</b>. 핸드폰 안에 남은 오류 기록(시각·종류, PIN 은 제외)이 메일에 담겨 열립니다.</li>
+      <li>그래도 안 되면 ⚙ 설정 › <b>문제 신고</b>. 핸드폰 안에 남은 오류 기록(시각·종류, PIN 은 제외)이 메일에 담겨 열립니다.</li>
     </ol>
     <p class="note">"PC 콘솔이 응답하지 않습니다"가 뜨면 PC 가 켜져 있고 검은 실행 창(1클릭_실행.bat)이 열려 있는지 먼저 보세요. 인터넷이 다시 붙으면 앱이 자동으로 다시 연결합니다.</p>
   </div>
@@ -179,7 +181,6 @@
 <section id="bundle" class="alt">
   <div class="wrap">
     <h2>10. 동봉물 — 트레이딩 시그널 · 매매 자동화 봇</h2>
-    <div class="figs"><figure><img src="/market/img/guide/scanner.jpg" alt="동봉된 트레이딩 시그널 — 스캐너와 전략 카드" loading="lazy"><figcaption>동봉된 트레이딩 시그널 — 스캐너와 전략 카드</figcaption></figure></div>
     <p>원맥스에는 기본 프로젝트 "트레이딩 시그널"이 따라옵니다. 국내 주식 262종목 스캐너와 전략 카드, 말로 전략 만들기가 들어 있고, 앱 헤더의 <b>스캐너</b> 버튼으로 엽니다. 매매 자동화 봇은 세 가지로 구성됩니다 — <b>신호 전략</b>(언제 살지), <b>운영 전략</b>(얼마나·언제 팔지), <b>봇</b>(실제로 주문을 내는 프로그램).</p>
     <ul class="plain">
       <li>설치·실행 준비 안내: <a href="/market/onemacs/install#bot">트레이딩 시그널 설치 안내</a></li>
