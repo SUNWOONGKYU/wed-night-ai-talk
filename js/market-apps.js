@@ -24,7 +24,31 @@ window.MARKET_APPS = [
     price: 9900, tags: ['Android', 'Claude Code 필요'],
     bundle: ['트레이딩 시그널(국내 주식 262종목 스캐너 + 말로 전략 만들기)', '보고서 작성 AI 에이전트(곧 추가)'],
     icon: '', img: '/market/img/onemacs_icon.png',
-    color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs' }
+    color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
+    // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
+    // 버전·업데이트 날짜·다운로드 크기·다운로드 수·예약 수·평점은 여기 두지 않고 API 에서 온다(단일 소스):
+    //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
+    age: '전체',
+    android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
+    delivery: { type: 'APK 직접 설치 (플레이스토어 아님)', note: '설치할 때 "출처를 알 수 없는 앱" 허용이 필요합니다' },
+    needs: ['Windows PC에 원맥스를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
+    permissions: [
+      { name: '인터넷',        why: 'PC 와 연결합니다' },
+      { name: '네트워크 상태', why: '인터넷이 다시 연결되면 자동으로 다시 접속합니다' },
+      { name: '카메라',        why: 'QR 코드를 읽고, 사진을 찍어 AI 에게 보냅니다' },
+      { name: '알림',          why: 'AI 작업이 끝나면 알려 줍니다' } ],
+    dataSafety: {
+      collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)', '리뷰 이메일(확인용 — 해시만 보관)'],
+      onDevice: ['PIN(암호화)', '오류 기록(핸드폰 안에만 — 문제 신고 때 본인이 보냄)'],
+      share: '없음', deleteEmail: 'wksun999@hanmail.net', policy: '/privacy.html' },
+    changelog: [   // 사용자 관점 문장 · 버전별 3줄 이내 (근거: 평가_APK완성도_R1~R5.md). 1.4.6 이하는 근거 문서가 없어 비워 둔다(추정 금지)
+      { ver: '1.4.9', date: '2026-09-21', notes: ['인터넷이 다시 연결되면 자동으로 다시 접속합니다', '핸드폰의 글꼴 크기 설정을 그대로 따릅니다', '화면 읽기 도구에서 버튼 이름을 읽어 줍니다'] },
+      { ver: '1.4.8', date: '2026-09-21', notes: ['설정에 "문제 신고"(오류 기록을 메일로 보내기)를 넣었습니다', '설치 안내 문장을 더 쉽게 고쳤습니다', '대화창의 긴급 정지 단추를 맨 앞으로, 탭 단추를 더 크게'] },
+      { ver: '1.4.7', date: '2026-09-21', notes: ['PIN 이 틀리면 바로 알려 주고 다시 입력할 수 있습니다', 'PC 가 응답하지 않으면 20초 뒤 안내와 [다시 연결] 단추가 나옵니다', 'PIN 을 암호화해 저장하고, 뒤로가기로 이전 단계로 갈 수 있습니다'] } ],
+    lang: '한국어', iap: false,
+    released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
+    seller: { name: '파인더월드', link: '#seller' },   // 전자상거래 표시 항목은 상세 하단 판매자 블록(#seller) 한 곳에만 — 단일 소스
+    reportEmail: 'wksun999@hanmail.net' }
 ];
 
 // 카테고리 칩 순서. '전체' 는 필터 전용(상품 cat 값이 아님).

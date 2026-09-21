@@ -1,0 +1,82 @@
+/* ========== 앱마켓 리뷰·댓글 (market/<앱id>/reviews.html) — 색은 css/theme.css 토큰만 (다크/라이트) ========== */
+:root{--star:#f5b301;--star-off:var(--line2)}
+:root[data-theme="light"]{--star:#d97706}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--star:#d97706}}
+body.reviews{padding-bottom:40px}
+body.reviews [hidden]{display:none!important}   /* .sum(grid)·.modal(flex) 등 display 지정 요소도 hidden 이 우선 */
+/* 상단 메뉴(.tabs)는 css/market.css 에 (상세·리뷰 공통) */
+/* 평점 요약 */
+.sum{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.sum .big{font-size:44px;font-weight:900;line-height:1;letter-spacing:-.03em;color:var(--fg)}
+.sum .big small{display:block;font-size:12px;color:var(--fg3);font-weight:600;margin-top:6px;letter-spacing:0}
+.stars{color:var(--star);letter-spacing:1px;font-size:15px;white-space:nowrap}
+.stars .off{color:var(--star-off)}
+.dist{font-size:12px;color:var(--fg3)}
+.dist div{display:grid;grid-template-columns:22px 1fr 22px;gap:6px;align-items:center;margin:2px 0}
+.dist i{display:block;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.dist i b{display:block;height:100%;background:var(--star)}
+.sort{display:flex;gap:8px;margin:14px 0 10px}
+.sort button{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--fg2);font-family:inherit;cursor:pointer}
+.sort button.on{background:var(--accent);border-color:var(--accent);color:var(--btn-fg)}
+/* 리뷰 카드 */
+.rv{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:10px}
+.rv.hl{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring)}
+.rv .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.rv .nick{font-weight:800;color:var(--fg);font-size:15px}
+.rv .meta{font-size:12px;color:var(--fg3);margin-top:2px}
+.badge-buy{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--ok-line);color:var(--ok);margin-left:6px;vertical-align:middle}
+.badge-seller{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--btn-fg);margin-left:6px;vertical-align:middle}
+.badge-state{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--warn-line);color:var(--warn);margin-left:6px;vertical-align:middle}
+.rv .body{font-size:15px;color:var(--fg2);line-height:1.65;margin-top:10px;white-space:pre-wrap;word-break:break-word}
+.rv .ft{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;gap:10px;flex-wrap:wrap}
+.rv .ft button,.rv .ft a{background:none;border:0;color:var(--link);font-weight:700;font-family:inherit;font-size:13px;padding:0;cursor:pointer;text-decoration:none}
+.rv .ft .rep{color:var(--fg3);font-weight:600}
+.rv .ft .adm{display:flex;gap:10px}
+.rv .ft .adm button{color:var(--warn)}
+/* 댓글 */
+.cm{margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+.cm .c{padding:10px 12px;background:var(--bg2);border-radius:12px;margin-top:8px}
+.cm .c.reply{margin-left:22px;border-left:3px solid var(--line2)}
+.cm .c.hl{outline:2px solid var(--accent)}
+.cm .c .nick{font-weight:800;color:var(--fg);font-size:14px}
+.cm .c .meta{font-size:12px;color:var(--fg3);margin-left:6px}
+.cm .c p{font-size:14px;color:var(--fg2);margin-top:4px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.cm .c .act{font-size:12px;margin-top:6px;display:flex;gap:10px}
+.cm .c .act button{background:none;border:0;color:var(--link);font-weight:700;font-family:inherit;font-size:12px;padding:0;cursor:pointer}
+.cm .c .act button.adm{color:var(--warn)}
+.cm .loading{font-size:13px;color:var(--fg3);margin-top:8px}
+/* 댓글 쓰기 */
+.cwrite{margin-top:10px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.cwrite .to{font-size:12px;color:var(--fg3);margin-bottom:6px}
+.cwrite textarea,.cwrite input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px;font-family:inherit;margin-top:6px;outline:none}
+.cwrite textarea:focus,.cwrite input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-ring)}
+.cwrite textarea{min-height:64px;resize:vertical}
+.cwrite .row{display:flex;gap:8px;margin-top:8px}
+.cwrite .row button{flex:1;padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:var(--btn-fg);font-weight:800;font-family:inherit;font-size:14px;cursor:pointer}
+.cwrite .row button.ghost{background:transparent;border:1px solid var(--line);color:var(--fg2);font-weight:600}
+.cwrite .msg{font-size:13px;margin-top:6px;color:var(--err-fg)}
+.cwrite .msg.ok{color:var(--okmsg-fg)}
+/* 작성 폼 */
+.pick{display:flex;gap:6px;margin:4px 0 2px}
+.pick button{background:none;border:0;font-size:32px;line-height:1;color:var(--star-off);cursor:pointer;padding:2px;font-family:inherit}
+.pick button.on{color:var(--star)}
+.cnt{font-size:12px;color:var(--fg3);text-align:right;margin-top:4px}
+textarea.pay-input{min-height:120px;resize:vertical;line-height:1.55}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#write .btn,#manage .btn{width:100%;border:0;cursor:pointer;font-family:inherit;line-height:1.35;display:block}
+#write .btn-outline,#manage .btn-outline{border:1px solid var(--line)!important}
+.empty{background:var(--card);border:1px dashed var(--line2);border-radius:16px;padding:28px 16px;text-align:center;color:var(--fg3);font-size:14px;margin-top:10px}
+#rv-more{width:100%;border:1px solid var(--line)!important;cursor:pointer;font-family:inherit}
+/* 신고 모달 */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:30;padding:16px}
+.modal[hidden]{display:none}
+.modal-box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;width:100%;max-width:440px}
+.reasons{display:grid;gap:6px;margin-bottom:10px}
+.reasons label{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;color:var(--fg2);cursor:pointer;background:var(--bg2)}
+.reasons input{width:18px;height:18px;accent-color:var(--accent)}
+.modal .btn{width:100%;border:0;cursor:pointer;font-family:inherit;font-size:15px;padding:12px}
+.modal .btn-outline{border:1px solid var(--line)!important}
+/* 관리 모드 */
+body.admin .rv .adm,body.admin .cm .adm{display:inline-flex}
+.rv .adm,.cm .adm{display:none}
+.admin-bar{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:700;margin-top:10px}

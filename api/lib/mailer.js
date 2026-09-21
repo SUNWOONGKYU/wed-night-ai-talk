@@ -1,5 +1,5 @@
 /**
- * Gmail SMTP 발송 — 구매 완료(다운로드 링크 + 라이선스 키) 메일 · 출시 알림 예약 완료 메일
+ * Gmail SMTP 발송 — 구매 완료(다운로드 링크 + 라이선스 키) 메일 · 출시 알림 예약 완료 메일 · 리뷰/댓글 확인 메일 · 신고 알림
  * 출처: 기존 판매 시스템 confirm-payment.js / send-download.js 의 메일 부분을 One MACS · 원맥스 문안으로 교체
  *
  * 환경변수: GMAIL_USER, GMAIL_APP_PASSWORD (Google 계정 > 보안 > 앱 비밀번호 16자리)
@@ -155,4 +155,62 @@ async function sendReservationEmail(p) {
     });
 }
 
-module.exports = { sendPurchaseEmail, purchaseEmailHtml, sendReservationEmail, reservationEmailHtml };
+/**
+ * 리뷰·댓글 확인 메일 (api/reviews.js · api/review-comments.js)
+ * @param {{email, nick, appName, kind:'review'|'review_edit'|'review_delete'|'comment'|'review_manage', link, preview}} p
+ */
+const VERIFY_COPY = {
+    review:        { subject: '리뷰 확인 — 누르면 게시됩니다',        title: '리뷰를 게시하려면 아래 버튼을 눌러 주세요',      btn: '리뷰 게시하기' },
+    review_edit:   { subject: '리뷰 수정 확인 — 누르면 바뀝니다',      title: '고친 리뷰로 바꾸려면 아래 버튼을 눌러 주세요',   btn: '고친 리뷰로 바꾸기' },
+    review_delete: { subject: '리뷰 삭제 확인 — 누르면 지워집니다',    title: '리뷰를 지우려면 아래 버튼을 눌러 주세요',        btn: '리뷰 지우기' },
+    comment:       { subject: '댓글 확인 — 누르면 게시됩니다',        title: '댓글을 게시하려면 아래 버튼을 눌러 주세요',      btn: '댓글 게시하기' },
+    review_manage: { subject: '내 리뷰 고치기·지우기',               title: '내 리뷰를 고치거나 지우려면 아래 버튼을 눌러 주세요', btn: '내 리뷰 열기' }
+};
+function reviewVerifyHtml(p) {
+    const c = VERIFY_COPY[p.kind] || VERIFY_COPY.review;
+    const name = safeName(p.nick);
+    return `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
+  <div style="text-align:center;margin-bottom:24px;">
+    <p style="color:#8A8F9E;font-size:13px;margin:0 0 6px;">WAAT 앱마켓 · ${esc(p.appName)}</p>
+    <h1 style="font-size:20px;margin:0;">${name}님, ${esc(c.title)}</h1>
+  </div>
+  <div style="text-align:center;margin:22px 0;">
+    <a href="${esc(p.link)}" style="display:inline-block;background:#2563eb;color:#fff;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:17px;">${esc(c.btn)}</a>
+    <div style="margin-top:12px;font-size:13px;color:#8A8F9E;">이 링크는 24시간 동안 한 번만 쓸 수 있습니다.</div>
+  </div>
+  ${p.preview ? `<div style="background:#F6F4EF;padding:16px 18px;border-radius:12px;font-size:14px;color:#4A5670;line-height:1.7;white-space:pre-wrap;">${esc(p.preview)}</div>` : ''}
+  <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;margin-top:22px;">
+    본인이 쓴 것이 아니라면 이 메일을 무시하세요 — 아무것도 게시되지 않습니다. 이메일 주소는 확인 용도로만 쓰고 저장하지 않습니다. 문의: ${esc(supportEmail())}
+  </div>
+</div>`;
+}
+async function sendReviewVerifyEmail(p) {
+    const c = VERIFY_COPY[p.kind] || VERIFY_COPY.review;
+    const t = transporter();
+    await t.sendMail({
+        from: `"WAAT 앱마켓" <${process.env.GMAIL_USER}>`,
+        to: p.email,
+        subject: `[WAAT 앱마켓] ${c.subject} — ${p.appName}`,
+        html: reviewVerifyHtml(p)
+    });
+}
+
+/** 신고 3건 자동 숨김 → 판매자 알림 (api/review-report.js) */
+async function sendReportAlertEmail(p) {
+    const t = transporter();
+    await t.sendMail({
+        from: `"WAAT 앱마켓" <${process.env.GMAIL_USER}>`,
+        to: p.to,
+        subject: `[WAAT 앱마켓] ${p.kind === 'comment' ? '댓글' : '리뷰'}이 신고 3건으로 자동 숨김 처리되었습니다 — ${p.appName}`,
+        html: `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:30px 20px;color:#1a2238;font-size:14px;line-height:1.7;">
+  <p><b>${esc(p.appName)}</b>의 ${p.kind === 'comment' ? '댓글' : '리뷰'}이 신고 3건이 쌓여 자동으로 숨겨졌습니다.</p>
+  <p style="color:#4A5670;">작성자: ${esc(p.nick)}<br>신고 사유: ${esc(p.reasons)}</p>
+  <div style="background:#F6F4EF;padding:14px 16px;border-radius:10px;white-space:pre-wrap;">${esc(p.body)}</div>
+  <p style="margin-top:16px;">문제가 없다면 관리 모드에서 복구할 수 있습니다: <a href="${esc(p.adminLink)}">${esc(p.adminLink)}</a></p>
+</div>`
+    });
+}
+
+module.exports = { sendPurchaseEmail, purchaseEmailHtml, sendReservationEmail, reservationEmailHtml, sendReviewVerifyEmail, reviewVerifyHtml, sendReportAlertEmail };

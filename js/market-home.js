@@ -16,7 +16,7 @@
     var CATS = window.MARKET_CATS || ['전체'];
     var cat = '전체', q = '';
     // 출시 모드 — GET /api/market-config 의 mode ('reserve' | 'sale'). 기본·fetch 실패 = reserve. launch:'config' 인 앱에만 적용.
-    var mode = 'reserve', reserveCount = 0;
+    var mode = 'reserve', reserveCount = 0, stats = {};   // stats[app.id] = MarketAppInfo.loadStats 결과(요약 줄)
     var $ = function (id) { return document.getElementById(id); };
 
     function esc(s) {
@@ -61,7 +61,7 @@
             '<p class="topic">' + esc(f.desc) + '</p>' + (f.sub ? '<p class="sub">' + esc(f.sub) + '</p>' : '') +
             (f.bundle && f.bundle.length ? '<p class="bundle">포함 구성: ' + esc(f.bundle.join(' · ')) + '</p>' : '') +
             (f.maker ? '<p class="maker-line">만든 곳: ' + esc(f.maker) + '</p>' : '') +
-            '</div>' + price + '</div>' + cta + '<div class="bar"></div></div>';
+            '</div>' + price + '</div>' + (stats[f.id] && window.MarketAppInfo ? window.MarketAppInfo.summaryHtml(f.id, stats[f.id], { age: f.age, url: f.url }) : '') + cta + '<div class="bar"></div></div>';
     }
 
     function renderList() {
@@ -92,6 +92,12 @@
                 });
             }
         }).catch(function (e) { console.warn('market-config 실패 (정적 미리보기?) — reserve 로 표시:', e); });
+        // 요약 줄(★평점·다운로드/예약·연령·용량) — 실제 값만. js/market-appinfo.js
+        if (window.MarketAppInfo) {
+            APPS.filter(function (a) { return a.launch === 'config'; }).forEach(function (a) {
+                window.MarketAppInfo.loadStats(a.id).then(function (st) { stats[a.id] = st; renderList(); }).catch(function () { /* 없으면 요약 줄 생략 */ });
+            });
+        }
     }
 
     function init() {

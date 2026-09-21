@@ -146,6 +146,25 @@ async function getOrdersByEmail(email) {
     }
 }
 
+/** 리뷰 "구매 확인" 배지용 — 주문 이메일 해시와 일치하는 유효 주문이 있는지 (이메일 원문은 리뷰 쪽에 없다) */
+async function getOrdersByEmailHash(hash, hashFn) {
+    const sheets = await getSheetsClient();
+    try {
+        const response = await sheets.spreadsheets.values.get({ spreadsheetId: spreadsheetId(), range: ORDERS_RANGE });
+        const rows = response.data.values;
+        if (!rows || rows.length <= 1) return false;
+        for (let i = 1; i < rows.length; i++) {
+            const o = rowToOrder(rows[i], i + 1);
+            if (!o.customerEmail || o.status === 'REFUNDED' || o.status === 'CANCELLED') continue;
+            if (hashFn(o.customerEmail) === hash) return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('주문 대조 실패:', error);
+        return false;
+    }
+}
+
 /** 주문 갱신 (부분) */
 async function updateOrder(orderId, updates) {
     const sheets = await getSheetsClient();
@@ -386,6 +405,7 @@ module.exports = {
     saveOrder,
     getOrder,
     getOrdersByEmail,
+    getOrdersByEmailHash,
     updateOrder,
     logDownload,
     getDownloadCount,

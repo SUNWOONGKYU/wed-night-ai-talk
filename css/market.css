@@ -98,3 +98,10 @@ body{padding-bottom:84px}
 .done-box{text-align:center;padding:10px 0 18px}
 .done-icon{width:56px;height:56px;border-radius:50%;background:var(--ok-soft);color:var(--ok);font-size:30px;font-weight:900;line-height:56px;margin:0 auto 10px}
 #renew summary{font-size:15px}
+
+/* 판매 페이지 상단 메뉴 (상세·리뷰 공통) */
+.tabs{display:flex;max-width:560px;margin:8px auto 0;padding:0 16px;border-bottom:1px solid var(--line)}
+.tabs a{flex:1;text-align:center;padding:12px 0;font-weight:800;font-size:15px;color:var(--fg3);text-decoration:none;border-bottom:2px solid transparent}
+.tabs a.on{color:var(--fg);border-bottom-color:var(--accent)}
+.tabs a small{font-weight:600;color:var(--fg3);margin-left:4px}
+@media (min-width:600px){.tabs{max-width:640px}}

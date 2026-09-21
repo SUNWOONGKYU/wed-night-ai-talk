@@ -17,6 +17,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 | 동봉물 설치 지시문·zip | `/market/onemacs/trading-bot.md` · `/market/onemacs/trading-bot_v1.zip` | `console/trading-bot.md` · `console/trading-bot_v1.zip` (rewrite) |
 | 자주 묻는 질문 | `/market/onemacs/faq` | `market/onemacs/faq.html` |
 | 알아 두실 점(보안·권한·잠금) | `/market/onemacs/notice` | `market/onemacs/notice.html` |
+| 리뷰·댓글 | `/market/onemacs/reviews` | `market/onemacs/reviews.html` (앱 공통: `body[data-app]` 만 다름) |
 | CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 앱을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
@@ -79,7 +80,24 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 - 다크 캡처 이미지(폰 목업·스크린샷)는 라이트에서도 그대로 두고 테두리·그림자로만 구분한다.
 - **WAAT 로고는 변경 금지(라이트 모드 포함)** — PO 결정 2026-09-21. 라이트용 별도 로고를 만들지 않고, 색·배경·크기·형태 어떤 변경도 하지 않는다. 다크/라이트 모두 현행 `logo-waat.png` 그대로.
 
-## 7. 문안 규칙 요약 (PO 반복 지적)
+## 7. 리뷰·댓글 (앱 공통 · 2026-09-21)
+
+- 페이지 `/market/<앱id>/reviews`(`market/<앱id>/reviews.html`, `body[data-app]`·`data-app-name`), `css/reviews.css`, `js/reviews.js`. 판매 페이지 상단 메뉴 "상세 보기 · 리뷰(N)"(`.tabs`, market.css).
+- 저장: Supabase WAAT 프로젝트 `market_reviews` / `market_comments` / `market_verify_tokens` / `market_reports` / `market_rate_hits` + view `market_review_summary` (`supabase/migrations/20260921010000_market_reviews.sql`). RLS 켜고 정책 없음 → Vercel 함수가 `SUPABASE_SERVICE_KEY` 로만 접근(`api/lib/supabase.js`). 구글시트 사용 안 함.
+- API: `api/reviews.js`(목록·요약·생성·확인·내 리뷰 고치기/지우기) · `api/review-comments.js`(댓글·답글 1단계) · `api/review-report.js`(신고 3건 자동 숨김 + 판매자 메일) · `api/review-admin.js`(`X-Admin-Key` = `REVIEW_ADMIN_KEY`: 숨김/복구/지우기/판매자 답글). 공통 `api/lib/reviews.js`(검증·마스킹·이메일 해시·레이트리밋 DB 정본·토큰).
+- 규칙: 이메일 확인 링크(24시간 1회) 클릭 시 게시 · 이메일 원문 저장 안 함(`REVIEW_HASH_SALT` 해시) · 같은 이메일은 앱당 리뷰 1개 · 수정은 `pending_*` 에 두었다가 확인 시 교체(게시본 유지) · 삭제 = `deleted` + 댓글 숨김 · 판매자 답글 닉네임 "파인더월드" + 판매자 배지 · 링크/이메일/전화 마스킹 · 같은 IP 1분 3건 · honeypot · 관리 키는 sessionStorage 만.
+- **가짜 리뷰 금지**: 시드·테스트 리뷰를 운영 앱(app_code `onemacs`)에 넣지 않는다. 테스트는 app_code `test` 로만 하고 끝나면 지운다. 캡처도 빈 상태·실제 데이터만.
+- env: `SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `REVIEW_HASH_SALT` · `REVIEW_ADMIN_KEY` · `SELLER_NOTIFY_EMAIL`(없으면 SUPPORT_EMAIL). 개인정보처리방침(privacy.html 1절)에 리뷰 항목 명시.
+
+## 8. 앱 정보 블록 (앱 공통 · 2026-09-21)
+
+- 상단 요약 줄(카드·상세 공통): ★평점(리뷰 N) · 다운로드 N회(예약 모드는 예약 N명) · 연령 · 용량. 상세 "앱 정보" 표 15항목(접기 없이, 390px 미만 1열). 렌더 `js/market-appinfo.js`, 스타일 `css/market-appinfo.css`.
+- **실제 값만**: `js/market-apps.js` 항목 필드(age·android·delivery·needs·permissions·dataSafety·changelog·lang·iap·released·seller·reportEmail)에 없는 값은 항목이 자동으로 숨는다(호환/태블릿은 실기기 확인 전이라 필드 없음). 추정·꾸밈 금지.
+- 단일 소스: 버전·업데이트 날짜 = `/api/market-config`(`PRODUCT_VERSION`·`PRODUCT_UPDATED` — APK 교체 시 둘 다 갱신) · 다운로드 수·다운로드 크기 = `/api/market-stats`(Orders+DownloadLogs 합산, APK HEAD, 1시간 캐시) · 예약 수 = `/api/reserve-count` · 평점 = `/api/reviews?summary=1`.
+- 판매자 행은 상호 + "판매자 정보 보기"(→ 상세 하단 `#seller` 블록) 링크만. 전자상거래 표시 항목(파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고: 준비 중 · 문의 wksun999@hanmail.net · 상표출원 40-2026-0198709)은 그 블록 한 곳에만 쓴다. "통신판매업 신고: 준비 중" 고정 문구(번호 자리·사유·예정일 금지).
+- 변경 내역(changelog)은 사용자 관점 문장, 버전별 3줄 이내, 최신 3개 + "이전 버전 보기". 근거 없는 버전은 비워 둔다.
+
+## 9. 문안 규칙 요약 (PO 반복 지적)
 
 - 브랜드 제목 2행: `One MACS · 원맥스` / `One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템` (가운뎃점, 영어 먼저). 본문에서는 "원맥스".
 - AI 4종(Claude Code·Codex·Antigravity·Grok)은 **협업** — "팀장/부하/부린다" 금지. 제목에 "API 요금" 넣지 않음.

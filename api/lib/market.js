@@ -12,6 +12,7 @@
  *   BASE_URL                https://www.waat.community
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
+ *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (APK 교체 시 함께 갱신)
  */
 
 const crypto = require('crypto');
@@ -24,7 +25,9 @@ const PRODUCT = {
     /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로, 없으면 '콘솔시스템 v1.0' */
     get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
     get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
-    get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.4'; }
+    get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.9'; },
+    /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, APK 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
+    get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; }
 };
 
 /** 출시 모드 — 'reserve'(기본) | 'sale'. 프런트(js/onemacs.js·js/market-home.js)가 /api/market-config 의 mode 로 화면을 전환한다 */
@@ -32,6 +35,8 @@ function launchMode() {
     const v = clean(process.env.PRODUCT_MODE).toLowerCase();
     return v === 'sale' ? 'sale' : 'reserve';
 }
+
+const DEPLOY_DATE = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
 
 const DEFAULTS = {
     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
@@ -102,7 +107,7 @@ function supportEmail() {
 function publicConfig() {
     return {
         mode: launchMode(),
-        product: { code: PRODUCT.code, name: PRODUCT.name, price: PRODUCT.price, version: PRODUCT.version },
+        product: { code: PRODUCT.code, name: PRODUCT.name, price: PRODUCT.price, version: PRODUCT.version, updated: PRODUCT.updated },
         // 기본값 = PO 확인 완료(2026-09-20): 기존 판매 시스템의 카카오페이 영구 링크·계좌 그대로 재사용.
         // env 가 있으면 env 우선. (링크·QR 은 9,990원용으로 만든 것 — 화면에서 9,900원 입력 안내)
         kakaopayLink: process.env.KAKAOPAY_LINK || DEFAULTS.kakaopayLink,

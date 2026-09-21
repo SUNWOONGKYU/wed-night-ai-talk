@@ -1,0 +1,29 @@
+/* ========== 앱 공통 "앱 정보" 블록 (요약 줄 · 표) — 색은 css/theme.css 토큰만 (다크/라이트) ========== */
+:root{--star:#f5b301}
+:root[data-theme="light"]{--star:#d97706}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--star:#d97706}}
+/* 상단 요약 줄 — ★평점(리뷰 N) · 다운로드/예약 · 연령 · 용량 */
+.sumline{display:grid;gap:0;margin:12px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.sumline>*{text-align:center;padding:10px 4px;border-right:1px solid var(--line);text-decoration:none;color:inherit;min-width:0}
+.sumline>*:last-child{border-right:0}
+.sumline b{display:block;font-size:15px;color:var(--fg);font-weight:900;letter-spacing:-.01em;white-space:nowrap}
+.sumline small{display:block;font-size:11px;color:var(--fg3);margin-top:2px;font-weight:600;white-space:nowrap}
+.sumline .star{color:var(--star)}
+.feat .sumline{margin:10px 18px 0;border-radius:12px}
+.feat .sumline b{font-size:14px}
+/* 앱 정보 표 — 2열, 390px 미만 1열, 접기 없음 */
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.info .it{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.info .it.wide{grid-column:1/-1}
+.info .k{font-size:12px;color:var(--fg3);font-weight:700;margin-bottom:4px}
+.info .v{font-size:14px;color:var(--fg);font-weight:600;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.info .v small{display:block;font-size:12px;color:var(--fg2);font-weight:500;margin-top:4px}
+.info .v a{color:var(--link)}
+.info ul{margin:2px 0 0;padding-left:16px;font-size:13px;color:var(--fg2);line-height:1.6;font-weight:500}
+.info ul b{color:var(--fg)}
+.info .chg .ver{font-size:13px;color:var(--fg);font-weight:800;margin-top:8px}
+.info .chg .ver:first-child{margin-top:0}
+.info .chg .ver small{display:inline;color:var(--fg3);font-weight:600;margin-left:6px;font-size:12px}
+.info .chg details{background:transparent;border:0;padding:0;margin-top:6px}
+.info .chg summary{padding:6px 0;font-size:13px;color:var(--link);font-weight:700}
+@media (max-width:399px){.info{grid-template-columns:1fr}}

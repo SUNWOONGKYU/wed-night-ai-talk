@@ -207,6 +207,10 @@
     {
       "source": "/market/onemacs/notice",
       "destination": "/market/onemacs/notice.html"
+    },
+    {
+      "source": "/market/onemacs/reviews",
+      "destination": "/market/onemacs/reviews.html"
     }
   ],
   "functions": {
@@ -230,6 +234,21 @@
     },
     "api/reserve-count.js": {
       "maxDuration": 10
+    },
+    "api/reviews.js": {
+      "maxDuration": 15
+    },
+    "api/review-comments.js": {
+      "maxDuration": 15
+    },
+    "api/review-report.js": {
+      "maxDuration": 15
+    },
+    "api/review-admin.js": {
+      "maxDuration": 15
+    },
+    "api/market-stats.js": {
+      "maxDuration": 15
     }
   },
   "redirects": [
