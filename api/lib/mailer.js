@@ -213,4 +213,63 @@ async function sendReportAlertEmail(p) {
     });
 }
 
-module.exports = { sendPurchaseEmail, purchaseEmailHtml, sendReservationEmail, reservationEmailHtml, sendReviewVerifyEmail, reviewVerifyHtml, sendReportAlertEmail };
+
+/**
+ * 출시 통지 — 결제 안내 메일 (scripts/notify-reservers-payment.js, PO 결정 2026-09-22 B)
+ * 다운로드 링크는 넣지 않는다. 결제 후 판매 페이지에서 이메일을 입력하면 기존 흐름(confirm-payment)이 링크를 보낸다.
+ * @param {{name, email, reserveId, salesLink, installLink, pay:{price, kakaopayLink, bank:{name,account,holder}, expiryHours, maxDownloads}}} p
+ */
+function launchPaymentEmailHtml(p) {
+    const name = safeName(p.name);
+    const price = Number(p.pay.price || 9900).toLocaleString('ko-KR');
+    const b = p.pay.bank || {};
+    return `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
+  <div style="text-align:center;margin-bottom:28px;">
+    <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
+    <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 예약하신 원맥스가 출시되었습니다</h1>
+    <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">One MACS · 원맥스</p>
+    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템</p>
+  </div>
+
+  <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">출시 알림을 예약해 주셔서 감사합니다. 예약번호 <b style="font-family:Consolas,monospace;">${esc(p.reserveId)}</b>로 남겨 주신 분께 먼저 알려드립니다.</p>
+
+  <div style="background:#1A2238;color:#fff;padding:22px 24px;border-radius:16px;margin-bottom:22px;font-size:15px;line-height:1.8;">
+    가격은 <b style="color:#C9A961;">${price}원</b>입니다. 한 번만 내고, 달마다 내는 요금은 없습니다. (VAT 포함)
+  </div>
+
+  <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:14px;">
+    <h3 style="font-size:15px;margin:0 0 10px;">결제 방법 (둘 중 하나)</h3>
+    <p style="margin:0 0 10px;font-size:14px;line-height:1.8;"><b>1. 카카오페이 송금</b> — 아래 버튼을 누르고 ${price}원을 보내 주세요. 받는 사람: 선웅규<br>
+    <a href="${esc(p.pay.kakaopayLink)}" style="display:inline-block;margin-top:6px;background:#FEE500;color:#1A2238;padding:10px 20px;text-decoration:none;border-radius:10px;font-weight:800;font-size:14px;">카카오페이로 ${price}원 보내기</a></p>
+    <p style="margin:0;font-size:14px;line-height:1.8;"><b>2. 무통장 입금</b> — ${esc(b.name)} <b style="font-family:Consolas,monospace;">${esc(b.account)}</b> · 예금주 ${esc(b.holder)}<br>
+    <span style="color:#4A5670;">입금자명에 본인 이름을 적어 주세요. 다음 단계에서 같은 이름을 입력합니다.</span></p>
+  </div>
+
+  <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:14px;">
+    <h3 style="font-size:15px;margin:0 0 8px;">결제한 뒤에 할 일</h3>
+    <p style="margin:0;color:#1a2238;font-size:14px;line-height:1.8;">판매 페이지에서 <b>"입금 완료 → 이메일 입력"</b>을 누르고 이메일을 넣으면, 그 주소로 앱 다운로드 링크와 라이선스 키를 바로 보내드립니다. 링크는 ${esc(p.pay.expiryHours || 24)}시간 동안 ${esc(p.pay.maxDownloads || 5)}번까지 받을 수 있고, 지나면 같은 페이지에서 다시 받을 수 있습니다.</p>
+    <a href="${esc(p.salesLink)}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">판매 페이지 열기</a>
+  </div>
+
+  <div style="background:#F6F4EF;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;line-height:1.8;color:#1a2238;">
+    설치는 PC의 Claude Code가 안내합니다. 앱을 받은 뒤 PC의 Claude Code에 설치 안내 주소를 붙여 넣으면 나머지를 대신 해 줍니다. <a href="${esc(p.installLink)}" style="color:#1A2238;font-weight:700;">설치 안내 미리 보기</a>
+  </div>
+
+  <p style="color:#8A8F9E;font-size:12px;line-height:1.7;margin:0;text-align:center;">
+    문의: ${esc(supportEmail())} · 이 메일은 출시 알림 예약에 따라 한 번만 보내는 안내 메일입니다.
+  </p>
+</div>`;
+}
+
+async function sendLaunchPaymentEmail(p) {
+    const t = transporter();
+    await t.sendMail({
+        from: `"One MACS · 원맥스 (WAAT)" <${process.env.GMAIL_USER}>`,
+        to: p.email,
+        subject: 'One MACS · 원맥스 출시 — 예약하신 분께 결제 안내',
+        html: launchPaymentEmailHtml(p)
+    });
+}
+
+module.exports = { sendPurchaseEmail, purchaseEmailHtml, sendReservationEmail, reservationEmailHtml, sendReviewVerifyEmail, reviewVerifyHtml, sendReportAlertEmail, sendLaunchPaymentEmail, launchPaymentEmailHtml };
