@@ -18,7 +18,7 @@ window.MARKET_APPS = [
   { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
-    cat: 'AI 도구', featured: true, maker: '파인더월드',
+    cat: 'AI 협업 시스템', featured: true, maker: '파인더월드',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
     bundle: ['트레이딩 시그널(국내 주식 262종목 스캐너 + 말로 전략 만들기)', '보고서 작성 AI 에이전트(곧 추가)'],
     icon: '', img: '/market/img/onemacs_icon.png',
@@ -26,4 +26,4 @@ window.MARKET_APPS = [
 ];
 
 // 카테고리 칩 순서. '전체' 는 필터 전용(상품 cat 값이 아님).
-window.MARKET_CATS = ['전체', 'AI 도구', '트레이딩', '문서·보고서'];  // '무료' 필터 메뉴는 PO 지시로 제거(2026-09-21)
+window.MARKET_CATS = ['전체', 'AI 협업 시스템', 'AI 에이전트', '트레이딩'];  // PO 확정 카테고리 3개(2026-09-21): AI 관련만 — 원맥스는 'AI 협업 시스템'
