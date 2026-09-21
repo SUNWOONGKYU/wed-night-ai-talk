@@ -253,11 +253,11 @@ function launchPaymentEmailHtml(p) {
   </div>
 
   <div style="background:#F6F4EF;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;line-height:1.8;color:#1a2238;">
-    설치는 PC의 Claude Code가 안내합니다. 앱을 받은 뒤 PC의 Claude Code에 설치 안내 주소를 붙여 넣으면 나머지를 대신 해 줍니다. <a href="${esc(p.installLink)}" style="color:#1A2238;font-weight:700;">설치 안내 미리 보기</a>
+    설치는 PC의 Claude Code가 안내합니다. 앱을 받은 뒤 PC의 Claude Code에 설치 안내 주소를 붙여 넣으면, Claude Code가 필요한 것을 물어보면서 설치를 진행합니다. <a href="${esc(p.installLink)}" style="color:#1A2238;font-weight:700;">설치 안내 미리 보기</a>
   </div>
 
   <p style="color:#8A8F9E;font-size:12px;line-height:1.7;margin:0;text-align:center;">
-    문의: ${esc(supportEmail())} · 이 메일은 출시 알림 예약에 따라 한 번만 보내는 안내 메일입니다.
+    문의: ${esc(supportEmail() || 'wksun999@hanmail.net')} · 이 메일은 출시 알림 예약에 따라 한 번만 보내는 안내 메일입니다.
   </p>
 </div>`;
 }
