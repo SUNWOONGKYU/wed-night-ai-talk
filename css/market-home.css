@@ -22,9 +22,16 @@ a{color:inherit;text-decoration:none}
 .cat{flex:none;font-size:13px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--fg2);cursor:pointer;white-space:nowrap;font-family:inherit}
 .cat.on{background:var(--accent);border-color:var(--accent);color:#fff}
 /* 추천 배너 */
-.feat{margin-top:12px;border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:linear-gradient(135deg,#131b31,#0f1626);position:relative}
+.feat{margin-top:12px;}
+#list .feat+.feat{margin-top:14px}
+.feat{border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:linear-gradient(135deg,#131b31,#0f1626);position:relative}
 .feat:empty{display:none}
-.feat .in{padding:20px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.feat .in{padding:20px 18px;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center}
+.feat .logo{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;object-fit:cover;background:#131826;align-self:start}
+.feat .bundle{color:var(--fg2);font-size:12px;margin-top:6px;line-height:1.4}
+.feat .maker-line{color:var(--fg3);font-size:11px;margin-top:6px}
+.feat.soon{opacity:.72;border-style:dashed}
+@media (max-width:399px){.feat .in{grid-template-columns:52px 1fr;}.feat .logo{width:52px;height:52px}.feat .price{grid-column:1/-1;text-align:left}}
 .feat .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px}
 .feat h2{font-size:21px;line-height:1.25;font-weight:900;letter-spacing:-.02em}
 .feat h2 small{display:block;font-size:12px;color:var(--fg3);font-weight:600;letter-spacing:0;margin-top:2px}

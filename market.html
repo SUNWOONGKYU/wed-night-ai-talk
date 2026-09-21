@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <!-- 원칙(PO 2026-09-21): 마켓 홈에는 특정 앱의 기능·고지·제작자·상표·면책을 쓰지 않는다 — 앱에 관한 것은 카드 필드(js/market-apps.js)와 그 앱의 상세 페이지에만.
-     홈에 두는 것: 헤더(검색·카테고리) · 판매 중인 앱 카드 · 마켓 안내 · 마켓 운영자 · 내 앱 올리기 · 정책 링크. -->
+     홈에 두는 것: 헤더(검색·카테고리) · 앱 목록 하나(앱마다 배너형 카드, 로고 포함) · 푸터는 "내 앱을 이 마켓에 올리고 싶다면 → 문의" 한 줄뿐.
+     푸터에 마켓 안내·결제 방법·운영자 정보·사업자 표기·정책 링크·©를 넣지 않는다 (PO 2026-09-21): 결제는 각 등록자가 알아서 할 일이고,
+     WAAT는 선웅규 개인이 운영하는 커뮤니티 사이트라 파인더월드와 무관하다(파인더월드는 원맥스 앱의 판매자일 뿐 → 그 상세 페이지에만). -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +15,7 @@
 <meta property="og:image" content="https://www.waat.community/market/img/hero_hub.png">
 <link rel="canonical" href="https://www.waat.community/market">
 <link rel="stylesheet" href="/css/site-nav.css?v=20260920f">
-<link rel="stylesheet" href="/css/market-home.css?v=20260921c">
+<link rel="stylesheet" href="/css/market-home.css?v=20260921d">
 </head>
 <body class="market-home">
 <!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
@@ -40,25 +42,16 @@
   <!-- 카테고리 칩 (js/market-home.js 가 채움) -->
   <div class="cats" id="cats"></div>
 
-  <!-- 추천 배너 (js/market-apps.js 에서 featured:true 인 상품 1개) -->
-  <div class="feat" id="feat"></div>
-
-  <div class="sec"><h3>판매 중인 앱 <small id="cnt"></small></h3><div class="grid" id="grid"></div></div>
+  <!-- 앱 목록은 하나뿐 (PO 2026-09-21): 앱마다 배너형(로고+이름+주제+부제+가격+버튼)으로 줄줄이. "판매 중인 앱" 같은 별도 목록·제목 없음 -->
+  <div id="list"></div>
 
   <div class="foot">
-    <p><b style="color:var(--fg2)">마켓 안내</b></p>
-    <p>결제: 카카오페이 송금 · 무통장 입금. 다운로드 링크는 이메일로 발송하며 유효기간 24시간 · 5회입니다. 각 앱의 실행 방식·요금은 상품 상세 페이지를 따릅니다.</p>
-    <p>문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
-    <p style="margin-top:12px"><b style="color:var(--fg2)">마켓 운영자</b></p>
-    <p>WAAT 앱마켓 운영 — 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고 준비 중 · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
-    <p style="margin-top:12px">내 앱을 이 마켓에 올리고 싶다면 → 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
-    <p style="margin-top:12px"><a href="/">WAAT 홈</a> · <a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
-    <p>© 2026 파인더월드 · WAAT 앱마켓</p>
+    <p>내 앱을 이 마켓에 올리고 싶다면 → 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
   </div>
 </div>
 
 <script src="/js/nav-mobile.js?v=20260920f"></script>
-<script src="/js/market-apps.js?v=20260921e"></script>
+<script src="/js/market-apps.js?v=20260921d"></script>
 <script src="/js/market-home.js?v=20260921d"></script>
 </body>
 </html>

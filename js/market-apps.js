@@ -12,7 +12,7 @@
 //   icon/color : 아이콘 글자 / 배경
 //   maker    : 만든 곳(카드에 '만든 곳: …' 로 표시). 다른 제작자의 앱도 올라오므로 앱마다 적는다
 //   url      : 카드 링크. null 이면 링크 없음(출시 예정 등)
-//   featured : true 인 상품 1개가 추천 배너
+//   featured : (미사용 — 목록은 하나이고 모든 앱이 배너형으로 나열됨)
 //   soon     : true 면 "출시 예정" 표시 (soonText 로 문구 지정)
 window.MARKET_APPS = [
   { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템',
