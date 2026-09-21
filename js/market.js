@@ -160,7 +160,7 @@
             cfg = await r.json();
         } catch (e) {
             console.warn('market-config 실패 (정적 미리보기?):', e);
-            cfg = { product: { price: 9900, version: 'v1.0', name: 'One MACS / 원맥스' },
+            cfg = { product: { price: 9900, version: 'v1.0', name: 'One MACS · 원맥스' },
                     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
                     bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' } };
         }

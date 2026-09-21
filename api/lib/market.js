@@ -19,7 +19,7 @@ const crypto = require('crypto');
 const clean = (v) => (v == null ? '' : String(v).replace(/^﻿/, '').trim());
 const PRODUCT = {
     code: 'console_system',
-    name: 'One MACS / 원맥스',
+    name: 'One MACS · 원맥스',
     /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로, 없으면 '콘솔시스템 v1.0' */
     get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
     get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },

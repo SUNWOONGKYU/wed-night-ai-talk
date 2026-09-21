@@ -1,4 +1,4 @@
-# Claude Code 설치 마법사 지시문 — One MACS / 원맥스 (배포판 v3.1 · 문답으로 내 시스템 만들기)
+# Claude Code 설치 마법사 지시문 — One MACS · 원맥스 (배포판 v3.1 · 문답으로 내 시스템 만들기)
 
 > **사용자는 이것만 하면 된다**: PC에 `C:\원맥스` 폴더를 만들고 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
@@ -148,7 +148,7 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 
 ### 8. 완료 보고 (이 형식 그대로)
 ```
-설치 완료 — One MACS / 원맥스
+설치 완료 — One MACS · 원맥스
 - ★ 검은 창(1클릭_실행.bat)은 최소화만 하세요. 닫으면 폰 연결이 끊깁니다.
 - 자동 시작: 켬/끔 (켬이면 "PC를 다시 켜도 원맥스가 자동으로 뜹니다")
 - 콘솔 폴더: <ROOT>\_mobile_remote

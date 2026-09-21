@@ -1,7 +1,7 @@
 // ========== WAAT 앱마켓 — 상품 목록 ==========
 // 여기에 한 줄(객체 하나) 추가하면 /market 홈에 카드가 생긴다. 렌더는 js/market-home.js.
 //   id       : 고유 키 (URL 슬러그와 맞춘다)
-//   name     : 이름(브랜드 표기 규칙: 'One MACS / 원맥스' 슬래시)
+//   name     : 이름(브랜드 표기 규칙: 'One MACS · 원맥스' 슬래시)
 //   fullname : 풀네임 2행째(제목 영역 고정 표기: 이름 아래 작게. 카드·추천 배너 모두)
 //   desc     : 주제 문장(카드에서 이름 다음 굵은 첫 줄)
 //   sub      : 부제(주제 아래 작은 글씨)
@@ -15,7 +15,7 @@
 //   featured : true 인 상품 1개가 추천 배너
 //   soon     : true 면 "출시 예정" 표시 (soonText 로 문구 지정)
 window.MARKET_APPS = [
-  { id: 'onemacs', name: 'One MACS / 원맥스', fullname: 'One-stop Multi AI Console System / 원스톱 멀티 AI 콘솔 시스템',
+  { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 도구', featured: true, maker: '파인더월드',
