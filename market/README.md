@@ -18,7 +18,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 | 자주 묻는 질문 | `/market/onemacs/faq` | `market/onemacs/faq.html` |
 | 알아 두실 점(보안·권한·잠금) | `/market/onemacs/notice` | `market/onemacs/notice.html` |
 | 리뷰·댓글 | `/market/onemacs/reviews` | `market/onemacs/reviews.html` (앱 공통: `body[data-app]` 만 다름) |
-| 사용법 매뉴얼 (이미지 `market/img/guide/*.jpg` — .gitignore 의 `*.jpg` 때문에 `git add -f` 필요) | `/market/onemacs/guide` | `market/onemacs/guide.html` (+ 같은 본문의 오프라인 단일 파일 `C:	rader-bot\_dist\배포판_문서원본\사용법.html` — 배포판 zip 동봉, 콘솔 서버 /guide · 앱 "?" 버튼) |
+| 사용법 매뉴얼 — **마켓 링크 없음**(허브·앱 ⓘ · 설치 완료 안내 · 배포판 동봉에서만 진입; 이미지 `market/img/guide/*.jpg` 는 .gitignore `*.jpg` 때문에 `git add -f`) | `/market/onemacs/guide` | `market/onemacs/guide.html` (+ 같은 본문의 오프라인 단일 파일 `C:	rader-bot\_dist\배포판_문서원본\사용법.html` — 배포판 zip 동봉, 콘솔 서버 /guide · 앱 "?" 버튼) |
 | CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 앱을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
@@ -80,6 +80,13 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 - 새 페이지·새 색을 추가할 때: 토큰이 없으면 `theme.css` 다크·라이트 두 곳에 같이 추가한다. 라이트 대비 기준 본문 4.5:1 · 보조 3:1(Playwright 실측 스크립트: 세션 스크래치 rs_theme_test.py 방식 — 반투명 배경은 합성해서 계산).
 - 다크 캡처 이미지(폰 목업·스크린샷)는 라이트에서도 그대로 두고 테두리·그림자로만 구분한다.
 - **WAAT 로고는 변경 금지(라이트 모드 포함)** — PO 결정 2026-09-21. 라이트용 별도 로고를 만들지 않고, 색·배경·크기·형태 어떤 변경도 하지 않는다. 다크/라이트 모두 현행 `logo-waat.png` 그대로.
+
+## 5-1. 카탈로그·상세(사기 전) ↔ 사용법(받은 후) 내용 구분 원칙 (PO 2026-09-21)
+
+- **카탈로그·상세 페이지(사기 전)**: 무엇인지·왜 좋은지·가격·동봉물·판매자 — 마켓 꾸밈(헤더·nav·경로 줄·탭)을 쓴다.
+- **사용법(받은 후, `/market/onemacs/guide` + 배포판 `사용법.html`)**: 조작법만. 소개·장점·카탈로그성 문구·구매 유도·동봉물 홍보를 넣지 않는다(동봉물은 사용 안내 링크만). 틀은 앱 문서 틀 — 가벼운 헤더 1줄(제목 + 화면 밝기 버튼)·목차·맨 위로 버튼·다크/라이트 토큰·responsive, WAAT 헤더·nav·경로 줄·탭 없음.
+- 사용법 진입은 ① 허브·앱의 ⓘ ② 설치 완료 안내(설치 페이지 7단계 끝 · install.md 끝) ③ 배포판 동봉 파일에서만. 마켓 홈·상세·리뷰·FAQ·notice 에는 사용법 링크를 두지 않는다(상세·리뷰 탭은 "상세 보기 · 리뷰" 둘). sitemap 에는 남긴다.
+- 웹·오프라인은 한 벌(빌드 스크립트 gd_build.py — 세션 스크래치; 본문 1벌로 두 파일 생성).
 
 ## 6-1. 모바일 최소폭 반응형 (2026-09-21, PO 지적)
 

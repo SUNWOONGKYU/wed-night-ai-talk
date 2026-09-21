@@ -185,3 +185,6 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 - AI 사용료·이용약관·출력물에 대한 책임은 각자의 계정 기준이다(원맥스는 AI 사용을 중개·재판매하지 않는다).
 - 전체 권한 모드를 켜면 AI 가 PC 의 파일을 바꿀 수 있다. 기본은 안전 모드(작업 폴더 안에서만).
 - 로그인 5회 실패 시 1분, 20회 실패 시 1시간 잠긴다.
+
+### 설치가 끝나면 (사용자에게 마지막에 한 줄 보여줄 것)
+- 사용법: https://www.waat.community/market/onemacs/guide — 허브·앱의 ⓘ 버튼으로도 열린다. 배포판에 동봉된 `사용법.html` 은 같은 내용의 오프라인 판.

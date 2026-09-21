@@ -1,16 +1,27 @@
-/* 사용법 페이지 전용 (색은 theme.css 토큰) */
-.brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}.brand img{border-radius:12px}.brand b{font-size:20px;letter-spacing:-.02em;color:var(--fg)}.brand span{display:block;font-size:12px;color:var(--fg3)}
-.guide h2{font-size:20px;margin-bottom:12px;color:var(--fg)}
-.guide section{padding:32px 0}.guide section.alt{background:var(--bg2)}
+/* 사용법 — 받은 사람용 단독 문서 틀 (색은 theme.css 토큰) */
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.6;font-size:15px;word-break:keep-all}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}@media (min-width:600px){.wrap{max-width:640px}}
+.doc-hdr{position:sticky;top:0;z-index:10;background:var(--bar-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.doc-hdr .wrap{display:flex;align-items:center;justify-content:space-between;height:48px;gap:10px}
+.doc-title{font-weight:800;font-size:15px;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.theme-btn{background:none;border:1px solid var(--line);color:var(--fg2);border-radius:999px;min-width:40px;min-height:34px;padding:0 10px;font-size:15px;cursor:pointer;font-family:inherit;flex:none}
+.guide section{padding:28px 0}.guide section.alt{background:var(--bg2)}.guide section.head{padding:24px 0 8px}
+h1{font-size:clamp(20px,5.6vw,26px);line-height:1.3;font-weight:800;letter-spacing:-.02em;color:var(--fg)}
+.guide h2{font-size:clamp(17px,4.8vw,20px);font-weight:800;margin-bottom:12px;color:var(--fg)}
+.guide p{color:var(--fg2);font-size:15px;line-height:1.7}.guide p+p{margin-top:8px}.guide a{color:var(--link)}
+.guide p.lead{color:var(--fg2);font-size:15px;margin-top:10px}
 .toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:16px}.toc b{font-size:13px;color:var(--fg3);letter-spacing:.06em}.toc ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:4px}.toc a{color:var(--link);text-decoration:none;font-size:14px;font-weight:700}
 .figs{display:grid;gap:10px;margin:14px 0}.figs.two{grid-template-columns:1fr 1fr}.figs.three{grid-template-columns:1fr 1fr 1fr}
-.figs figure{margin:0;min-width:0}.figs:not(.two):not(.three) figure{max-width:280px;margin:0 auto}.figs img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);background:var(--shot-bg);display:block}.figs figcaption{font-size:12px;color:var(--fg3);margin-top:6px;line-height:1.45}
+.figs figure{margin:0;min-width:0}.figs:not(.two):not(.three) figure{max-width:280px;margin:0 auto}
+.figs img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);background:var(--shot-bg);display:block}.figs figcaption{font-size:12px;color:var(--fg3);margin-top:6px;line-height:1.45}
 .guide .steps,.guide .examples{padding-left:22px;color:var(--fg2);font-size:15px;line-height:1.7}.guide .steps li+li,.guide .examples li+li{margin-top:8px}
 .guide .examples li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--fg);list-style-position:inside;margin-top:8px}
 .guide ul.plain{padding-left:18px;color:var(--fg2);font-size:15px;line-height:1.7}.guide ul.plain li+li{margin-top:6px}
 .guide dl.kv{margin:0;display:grid;gap:8px}.guide dl.kv dt{font-weight:800;color:var(--fg);font-size:15px}.guide dl.kv dd{margin:0 0 6px;color:var(--fg2);font-size:15px;line-height:1.65}
 .tips{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-top:14px}.tips p{color:var(--fg);font-size:14px}.tips ul{padding-left:18px;margin-top:6px;color:var(--fg2);font-size:14px;line-height:1.65}
 .guide .note{font-size:13px;color:var(--fg3);line-height:1.6;margin-top:12px}.guide .mono{font-family:Consolas,"JetBrains Mono",monospace;color:var(--fg);font-size:.92em}
-.guide p{color:var(--fg2);font-size:15px;line-height:1.7}.guide p+p{margin-top:8px}.guide a{color:var(--link)}
-.guide p.lead{color:var(--fg);font-size:16px;margin-top:10px}
+.doc-foot{padding:20px 0 60px;border-top:1px solid var(--line);font-size:13px;color:var(--fg3)}.doc-foot a{color:var(--link)}
+.totop{position:fixed;right:14px;bottom:18px;width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--line2);color:var(--fg);display:flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;box-shadow:0 6px 20px var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s}
+.totop.on{opacity:1;pointer-events:auto}
 @media (max-width:399px){.figs.three{grid-template-columns:1fr 1fr}}
