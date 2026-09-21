@@ -131,6 +131,12 @@
     },
     "api/download/[token].js": {
       "maxDuration": 10
+    },
+    "api/reserve.js": {
+      "maxDuration": 15
+    },
+    "api/reserve-count.js": {
+      "maxDuration": 10
     }
   }
 }

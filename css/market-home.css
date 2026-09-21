@@ -39,6 +39,8 @@ a{color:inherit;text-decoration:none}
 .feat .sub{color:var(--fg3);font-size:13px;margin-top:4px}
 .feat .price{font-size:22px;font-weight:900;text-align:right;white-space:nowrap}
 .feat .price small{display:block;font-size:11px;color:var(--fg3);font-weight:600}
+.feat .price .pill{display:inline-block;margin-top:6px;font-size:11px}
+.feat .rs-count{display:block;font-size:11px;color:var(--fg2);font-weight:600;margin-top:4px}
 .feat .bar{height:3px;background:linear-gradient(90deg,var(--claude),var(--codex),var(--gemini),var(--grok))}
 .feat .cta{display:flex;gap:8px;padding:0 18px 18px;flex-wrap:wrap}
 .btn{display:inline-block;text-align:center;font-weight:800;font-size:14px;padding:11px 16px;border-radius:12px;background:var(--accent);color:#fff}

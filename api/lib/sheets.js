@@ -10,6 +10,7 @@
  *   Orders       : 주문 정보 (A~P)
  *   DownloadLogs : 다운로드 기록
  *   EmailLogs    : 이메일 발송 기록
+ *   Reservations : 출시 알림 예약 (A~G: reserveId, email, name, phone, createdAt, status, notifiedAt) — api/reserve.js
  *
  * 환경변수: GOOGLE_SERVICE_ACCOUNT (서비스 계정 JSON 전체를 한 줄로), SPREADSHEET_ID
  */
@@ -23,6 +24,9 @@ const ORDER_HEADERS = [
     'downloadToken', 'alimtalkSent', 'alimtalkMessageId',
     'paymentMethod', 'licenseKey', 'product'
 ];
+
+const RESERVATIONS_RANGE = 'Reservations!A:G';
+const RESERVATION_HEADERS = ['reserveId', 'email', 'name', 'phone', 'createdAt', 'status', 'notifiedAt'];
 
 function getGoogleAuth() {
     const raw = process.env.GOOGLE_SERVICE_ACCOUNT;
@@ -224,16 +228,134 @@ async function saveEmailLog(emailData) {
     }
 }
 
+// ---------- 출시 알림 예약 (Reservations) ----------
+
+function rowToReservation(row, rowIndex) {
+    return {
+        rowIndex: rowIndex,
+        reserveId: row[0] || '',
+        email: row[1] || '',
+        name: row[2] || '',
+        phone: row[3] || '',
+        createdAt: row[4] || '',
+        status: row[5] || '',
+        notifiedAt: row[6] || ''
+    };
+}
+
+function reservationToRow(r) {
+    return [
+        r.reserveId,
+        r.email,
+        r.name || '',
+        r.phone || '',
+        r.createdAt || new Date().toISOString(),
+        r.status || 'RESERVED',
+        r.notifiedAt || ''
+    ];
+}
+
+let reservationsSheetReady = null;   // 웜 인스턴스 안에서는 시트 존재 확인을 1번만
+
+/** Reservations 시트가 없으면 만들고 헤더를 쓴다 (있으면 아무것도 안 함) */
+async function ensureReservationsSheet() {
+    if (reservationsSheetReady) return reservationsSheetReady;
+    reservationsSheetReady = (async function () {
+        const sheets = await getSheetsClient();
+        const id = spreadsheetId();
+        const meta = await sheets.spreadsheets.get({ spreadsheetId: id });
+        const existing = (meta.data.sheets || []).map(s => s.properties.title);
+        if (existing.indexOf('Reservations') !== -1) return false;
+        await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: id,
+            resource: { requests: [{ addSheet: { properties: { title: 'Reservations' } } }] }
+        });
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: id, range: 'Reservations!A1:G1', valueInputOption: 'USER_ENTERED',
+            resource: { values: [RESERVATION_HEADERS] }
+        });
+        return true;
+    })().catch(function (e) { reservationsSheetReady = null; throw e; });
+    return reservationsSheetReady;
+}
+
+/** 예약 전체 목록 (헤더 제외) */
+async function getReservations() {
+    await ensureReservationsSheet();
+    const sheets = await getSheetsClient();
+    try {
+        const response = await sheets.spreadsheets.values.get({ spreadsheetId: spreadsheetId(), range: RESERVATIONS_RANGE });
+        const rows = response.data.values;
+        if (!rows || rows.length <= 1) return [];
+        const out = [];
+        for (let i = 1; i < rows.length; i++) if (rows[i][0]) out.push(rowToReservation(rows[i], i + 1));
+        return out;
+    } catch (error) {
+        console.error('예약 조회 실패:', error);
+        throw new Error('예약 정보를 조회하는데 실패했습니다.');
+    }
+}
+
+/** 이메일로 예약 1건 조회 (대소문자 무시) — 없으면 null */
+async function getReservationByEmail(email) {
+    const key = String(email || '').trim().toLowerCase();
+    const all = await getReservations();
+    for (let i = 0; i < all.length; i++) if (all[i].email.trim().toLowerCase() === key) return all[i];
+    return null;
+}
+
+/** 예약 저장 (append) */
+async function saveReservation(r) {
+    await ensureReservationsSheet();
+    const sheets = await getSheetsClient();
+    try {
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: spreadsheetId(),
+            range: RESERVATIONS_RANGE,
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: [reservationToRow(Object.assign({ createdAt: new Date().toISOString() }, r))] }
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('예약 저장 실패:', error);
+        throw new Error('예약 정보를 저장하는데 실패했습니다.');
+    }
+}
+
+/** 예약 갱신 (부분 — rowIndex 를 아는 객체를 넘긴다: getReservations() 결과) */
+async function updateReservation(reservation, updates) {
+    const sheets = await getSheetsClient();
+    const merged = Object.assign({}, reservation, updates, { reserveId: reservation.reserveId, createdAt: reservation.createdAt });
+    try {
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: spreadsheetId(),
+            range: `Reservations!A${reservation.rowIndex}:G${reservation.rowIndex}`,
+            valueInputOption: 'USER_ENTERED',
+            resource: { values: [reservationToRow(merged)] }
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('예약 업데이트 실패:', error);
+        throw new Error('예약 정보를 업데이트하는데 실패했습니다.');
+    }
+}
+
+/** 예약 수 (status RESERVED + NOTIFIED) */
+async function countReservations() {
+    const all = await getReservations();
+    return all.filter(r => r.status === 'RESERVED' || r.status === 'NOTIFIED').length;
+}
+
 /**
  * 스프레드시트 초기화 (최초 1회, scripts/init-sheets.js)
- * 시트(Orders / DownloadLogs / EmailLogs)가 없으면 만들고 헤더를 쓴다.
+ * 시트(Orders / DownloadLogs / EmailLogs / Reservations)가 없으면 만들고 헤더를 쓴다.
  */
 async function initializeSpreadsheet() {
     const sheets = await getSheetsClient();
     const id = spreadsheetId();
     const meta = await sheets.spreadsheets.get({ spreadsheetId: id });
     const existing = (meta.data.sheets || []).map(s => s.properties.title);
-    const need = ['Orders', 'DownloadLogs', 'EmailLogs'].filter(t => existing.indexOf(t) === -1);
+    const need = ['Orders', 'DownloadLogs', 'EmailLogs', 'Reservations'].filter(t => existing.indexOf(t) === -1);
     if (need.length) {
         await sheets.spreadsheets.batchUpdate({
             spreadsheetId: id,
@@ -252,6 +374,10 @@ async function initializeSpreadsheet() {
         spreadsheetId: id, range: 'EmailLogs!A1:F1', valueInputOption: 'USER_ENTERED',
         resource: { values: [['paymentMethod', 'email', 'name', 'sentAt', 'success', 'errorMessage']] }
     });
+    await sheets.spreadsheets.values.update({
+        spreadsheetId: id, range: 'Reservations!A1:G1', valueInputOption: 'USER_ENTERED',
+        resource: { values: [RESERVATION_HEADERS] }
+    });
     return { success: true, created: need };
 }
 
@@ -264,5 +390,12 @@ module.exports = {
     logDownload,
     getDownloadCount,
     saveEmailLog,
+    RESERVATION_HEADERS,
+    ensureReservationsSheet,
+    getReservations,
+    getReservationByEmail,
+    saveReservation,
+    updateReservation,
+    countReservations,
     initializeSpreadsheet
 };

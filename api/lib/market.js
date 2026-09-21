@@ -11,6 +11,7 @@
  *   APK_FILE_ID             또는 Google Drive 파일 ID (기존 시스템의 PDF_FILE_ID 와 같은 방식)
  *   BASE_URL                https://www.waat.community
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
+ *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
  */
 
 const crypto = require('crypto');
@@ -25,6 +26,12 @@ const PRODUCT = {
     get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
     get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.4'; }
 };
+
+/** 출시 모드 — 'reserve'(기본) | 'sale'. 프런트(js/onemacs.js·js/market-home.js)가 /api/market-config 의 mode 로 화면을 전환한다 */
+function launchMode() {
+    const v = clean(process.env.PRODUCT_MODE).toLowerCase();
+    return v === 'sale' ? 'sale' : 'reserve';
+}
 
 const DEFAULTS = {
     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
@@ -45,6 +52,13 @@ function generateOrderId() {
     const kst = new Date(Date.now() + 9 * 3600 * 1000);
     const ymd = kst.toISOString().slice(0, 10).replace(/-/g, '');
     return `CS-${ymd}-${randomCode(4)}`;
+}
+
+/** RS-YYYYMMDD-XXXX (KST 날짜) — 출시 알림 예약번호 */
+function generateReserveId() {
+    const kst = new Date(Date.now() + 9 * 3600 * 1000);
+    const ymd = kst.toISOString().slice(0, 10).replace(/-/g, '');
+    return `RS-${ymd}-${randomCode(4)}`;
 }
 
 /** XXXX-XXXX-XXXX-XXXX */
@@ -87,6 +101,7 @@ function supportEmail() {
 /** 브라우저에 내려줘도 되는 설정 (비밀값 없음) */
 function publicConfig() {
     return {
+        mode: launchMode(),
         product: { code: PRODUCT.code, name: PRODUCT.name, price: PRODUCT.price, version: PRODUCT.version },
         // 기본값 = PO 확인 완료(2026-09-20): 기존 판매 시스템의 카카오페이 영구 링크·계좌 그대로 재사용.
         // env 가 있으면 env 우선. (링크·QR 은 9,990원용으로 만든 것 — 화면에서 9,900원 입력 안내)
@@ -104,7 +119,7 @@ function publicConfig() {
 }
 
 module.exports = {
-    PRODUCT, PAYMENT_METHODS, DEFAULTS,
-    generateOrderId, generateLicenseKey, randomCode,
+    PRODUCT, PAYMENT_METHODS, DEFAULTS, clean, launchMode,
+    generateOrderId, generateReserveId, generateLicenseKey, randomCode,
     baseUrl, apkDownloadUrl, isValidEmail, paymentMethodLabel, supportEmail, publicConfig
 };

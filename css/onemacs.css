@@ -146,3 +146,15 @@ details .body p+p{margin-top:8px}
 .btn-outline{background:transparent;color:var(--fg2);box-shadow:none;border:1px solid var(--line)!important;font-size:15px;font-weight:600}
 .btn-go{background:var(--ok);color:#052e16;box-shadow:0 10px 30px rgba(34,197,94,.25)}
 .btn[disabled]{opacity:.55;cursor:wait}
+
+/* ========== 출시 알림 예약 (reserve 모드 · PRODUCT_MODE) — 2026-09-21 ========== */
+[data-mode][hidden]{display:none!important}   /* 모드 전환으로 숨긴 요소는 display 지정 클래스보다 우선 */
+.pill-soon{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;border:1px solid rgba(245,158,11,.45);color:var(--warn);background:rgba(245,158,11,.08);margin:0 0 10px 8px;vertical-align:top;letter-spacing:0}
+.launch-price{font-size:13px;font-weight:700;color:var(--warn);margin-top:6px;letter-spacing:.04em}
+#reserve-cta{margin:6px 0 4px}
+#reserve .btn{width:100%;border:0;cursor:pointer;font-family:inherit;line-height:1.35;display:block}
+.rs-step{display:none;text-align:left}
+.rs-step.active{display:block}
+.rs-agree{display:flex;align-items:flex-start;gap:10px;margin:16px 0 12px;font-size:14px;color:var(--fg2);cursor:pointer;line-height:1.5}
+.rs-agree input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--accent)}
+#rs-error{margin-top:0}

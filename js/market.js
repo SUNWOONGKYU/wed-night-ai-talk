@@ -5,7 +5,8 @@
 //   → 단계 3 이메일·이름 입력 → POST /api/send-download → 단계 4 완료
 //   (입금 확인 없이 자기 신고로 즉시 발송 — Sheets 에 SELF_REPORTED 로 남겨 나중에 대조)
 //
-// 설정(가격·카카오페이 링크·계좌)은 GET /api/market-config 에서 받는다 (Vercel 환경변수, 없으면 기존 계좌·링크 기본값).
+// 설정(가격·카카오페이 링크·계좌·출시 모드)은 GET /api/market-config 에서 받는다 (Vercel 환경변수, 없으면 기존 계좌·링크 기본값).
+// 출시 전(mode 'reserve')에는 이 결제 UI(#pay-ui)가 숨겨지고 예약 폼(#reserve, js/onemacs.js)이 대신 보인다 — 코드는 그대로 두고 표시만 전환.
 // 결제 수단은 카카오페이 송금·무통장 입금 2개뿐 (PG 미도입 — PO 결정). PC 의 카카오페이 QR 은 market/img/kakaopay-qr.jpg.
 // 인라인 스크립트는 CSP 가 막으므로 전부 이 파일에 둔다.
 
@@ -166,6 +167,9 @@
         }
         var price = (cfg.product && cfg.product.price) || 9900;
         Array.prototype.forEach.call(document.querySelectorAll('[data-price]'), function (n) { n.textContent = fmt(price); });
+        // 출시 모드(mode: 'reserve' | 'sale') 는 js/onemacs.js 가 받아 화면을 전환한다. fetch 실패 시 mode 없음 → reserve.
+        window.MARKET_CONFIG = cfg;
+        try { document.dispatchEvent(new CustomEvent('market-config', { detail: cfg })); } catch (e) { /* 구형 브라우저 */ }
     }
 
     // ---------- 시작 ----------

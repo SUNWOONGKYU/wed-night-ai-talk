@@ -1,5 +1,5 @@
 /**
- * Google Sheets 초기화 (최초 1회) — Orders / DownloadLogs / EmailLogs 시트와 헤더 생성
+ * Google Sheets 초기화 (최초 1회) — Orders / DownloadLogs / EmailLogs / Reservations 시트와 헤더 생성
  *
  * 사용법 (저장소 루트에서, .env 에 GOOGLE_SERVICE_ACCOUNT·SPREADSHEET_ID 를 넣은 뒤):
  *   node scripts/init-sheets.js

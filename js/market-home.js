@@ -15,6 +15,8 @@
     var APPS = window.MARKET_APPS || [];
     var CATS = window.MARKET_CATS || ['전체'];
     var cat = '전체', q = '';
+    // 출시 모드 — GET /api/market-config 의 mode ('reserve' | 'sale'). 기본·fetch 실패 = reserve. launch:'config' 인 앱에만 적용.
+    var mode = 'reserve', reserveCount = 0;
     var $ = function (id) { return document.getElementById(id); };
 
     function esc(s) {
@@ -40,11 +42,17 @@
         var logo = f.img
             ? '<img class="logo" src="' + esc(f.img) + '" alt="" width="64" height="64">'
             : '<div class="logo" style="background:' + esc(f.color) + '">' + esc(f.icon) + '</div>';
+        var reserve = f.launch === 'config' && mode === 'reserve' && !f.soon;   // 출시 전: 예약 카드
         var price = f.soon
             ? '<div class="price"><span class="pill soon">' + esc(f.soonText || '출시 예정') + '</span></div>'
+            : reserve
+            ? '<div class="price">' + esc(won(f.price)) + '<small>출시 가격 · VAT 포함</small><span class="pill soon">출시 예정 · 예약 받는 중</span>' +
+              (reserveCount > 0 ? '<span class="rs-count">지금까지 ' + esc(reserveCount.toLocaleString('ko-KR')) + '명 예약</span>' : '') + '</div>'
             : '<div class="price">' + esc(won(f.price)) + '<small>' + (f.price ? 'VAT 포함 · 1회' : '누구나') + '</small></div>';
         var cta = link
-            ? '<div class="cta">' + (f.soon ? '' : '<a class="btn" href="' + link + '#buy">' + esc(won(f.price)) + '에 받기</a>') +
+            ? '<div class="cta">' + (f.soon ? '' : reserve
+                  ? '<a class="btn" href="' + link + '#reserve">예약하기</a>'
+                  : '<a class="btn" href="' + link + '#buy">' + esc(won(f.price)) + '에 받기</a>') +
               '<a class="btn ghost" href="' + link + '">상세 보기</a></div>'
             : '';
         return '<div class="feat' + (f.soon ? ' soon' : '') + '"><div class="in">' + logo + '<div>' +
@@ -71,6 +79,21 @@
 
     function render() { renderCats(); renderList(); }
 
+    // 출시 모드·예약 수 — 받는 대로 다시 그린다 (첫 렌더는 기본 reserve 로 즉시)
+    function loadLaunch() {
+        if (!APPS.some(function (a) { return a.launch === 'config'; })) return;
+        fetch('/api/market-config', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (c) {
+            var m = c && c.mode === 'sale' ? 'sale' : 'reserve';
+            if (m !== mode) { mode = m; renderList(); }
+            if (mode === 'reserve') {
+                return fetch('/api/reserve-count').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+                    var n = d && parseInt(d.count, 10) || 0;
+                    if (n !== reserveCount) { reserveCount = n; renderList(); }
+                });
+            }
+        }).catch(function (e) { console.warn('market-config 실패 (정적 미리보기?) — reserve 로 표시:', e); });
+    }
+
     function init() {
         $('cats').addEventListener('click', function (e) {
             var el = e.target.closest('[data-cat]');
@@ -79,6 +102,7 @@
         });
         $('q').addEventListener('input', function (e) { q = e.target.value.trim().toLowerCase(); renderList(); });
         render();
+        loadLaunch();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
