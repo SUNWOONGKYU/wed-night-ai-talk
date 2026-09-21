@@ -62,7 +62,11 @@
             var hay = (a.name + ' ' + (a.fullname || '') + ' ' + a.sub + ' ' + a.desc + ' ' + (a.tags || []).join(' ') + ' ' + (a.bundle || []).join(' ')).toLowerCase();
             return okCat && (!q || hay.indexOf(q) !== -1);
         });
-        $('list').innerHTML = list.length ? list.map(feat).join('') : '<p class="empty">검색 결과가 없습니다.</p>';
+        // 캐시된 옛 market.html(#feat/#grid 구조)에서도 목록이 비지 않도록 #list 없으면 #feat 에 그린다
+        var host = $('list') || $('feat');
+        if (!host) return;
+        var g = $('grid'); if (g) g.innerHTML = ''; var c = $('cnt'); if (c) c.textContent = '';
+        host.innerHTML = list.length ? list.map(feat).join('') : '<p class="empty">검색 결과가 없습니다.</p>';
     }
 
     function render() { renderCats(); renderList(); }
