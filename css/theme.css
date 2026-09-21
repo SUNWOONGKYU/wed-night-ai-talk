@@ -1,0 +1,73 @@
+/* ========== 앱마켓 공통 색 토큰 · 다크/라이트 (2026-09-21) ==========
+   마켓 페이지(market.html · market/onemacs.html · market/onemacs/*)는 이 파일을 가장 먼저 로드한다.
+   색은 여기의 토큰으로만 쓴다 — 각 css(market·onemacs·console·market-home·site-nav)에는 하드코딩 색이 없다.
+   기본 = 시스템 설정(prefers-color-scheme). 수동 전환은 html[data-theme=light|dark] (js/theme.js 가 localStorage 값을 head 에서 먼저 적용). */
+:root{
+  color-scheme:dark;
+  --bg:#0b0f1a; --bg2:#111827; --card:#141c2e; --card2:#182238; --line:#243049; --line2:#2f3d5c;
+  --fg:#eef2fa; --fg2:#aab5cd; --fg3:#7d89a6;
+  --accent:#3b82f6; --accent2:#60a5fa; --ok:#22c55e; --warn:#f59e0b;
+  --claude:#d97757; --codex:#1fb98a; --gemini:#5b8cff; --grok:#d9dde5;
+  --link:#93c5fd;
+  --btn-fg:#fff; --on-ok:#052e16;
+  --bar-bg:rgba(11,15,26,.92);                    /* 스티키 CTA · 홈 헤더 */
+  --feat-bg:linear-gradient(135deg,#131b31,#0f1626); --logo-bg:#131826;
+  --code-bg:#0e1424; --code-fg:#e8edf7; --code-key-bg:#0f1a33; --code-key-fg:#fff;
+  --chat-bg:#0e1424; --me-bg:#2b63ff; --me-fg:#fff; --ai-bg:#1a2338;
+  --shot-bg:#000; --phone-bg:#05070d; --phone-line:#2a3452; --phone-ring:#0d1220;
+  --err-fg:#fca5a5; --err-bg:rgba(239,68,68,.12); --err-line:rgba(239,68,68,.35);
+  --okmsg-fg:#86efac; --okmsg-bg:rgba(34,197,94,.12); --okmsg-line:rgba(34,197,94,.35);
+  --ok-soft:rgba(34,197,94,.15); --ok-ring:rgba(34,197,94,.12); --ok-line:rgba(34,197,94,.4);
+  --warn-soft:rgba(245,158,11,.06); --warn-line:rgba(245,158,11,.4);
+  --accent-soft:rgba(59,130,246,.08); --accent-ring:rgba(59,130,246,.2); --accent-shadow:rgba(59,130,246,.35);
+  --shadow:rgba(0,0,0,.5);
+}
+/* 라이트 값 — 본문 대비 4.5:1 이상 · 보조 3:1 이상 (Playwright 실측, market/README.md) */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --bg:#f5f7fb; --bg2:#eaeef6; --card:#ffffff; --card2:#f3f5fa; --line:#d6dce8; --line2:#bfc8d9;
+    --fg:#111827; --fg2:#3b4560; --fg3:#5f6b85;
+    --accent:#2563eb; --accent2:#1d4ed8; --ok:#15803d; --warn:#b45309;
+    --claude:#c2410c; --codex:#0f766e; --gemini:#2563eb; --grok:#334155;
+    --link:#1d4ed8;
+    --btn-fg:#fff; --on-ok:#fff;
+    --bar-bg:rgba(245,247,251,.94);
+    --feat-bg:linear-gradient(135deg,#ffffff,#f1f4fa); --logo-bg:#eaeef6;
+    --code-bg:#eef2f9; --code-fg:#111827; --code-key-bg:#e4ecff; --code-key-fg:#0b2a6f;
+    --chat-bg:#eaeef6; --me-bg:#2563eb; --me-fg:#fff; --ai-bg:#ffffff;
+    --shot-bg:#0b0f1a; --phone-bg:#0b0f1a; --phone-line:#c5cddd; --phone-ring:#e3e8f2;
+    --err-fg:#b91c1c; --err-bg:rgba(239,68,68,.08); --err-line:rgba(239,68,68,.35);
+    --okmsg-fg:#15803d; --okmsg-bg:rgba(21,128,61,.08); --okmsg-line:rgba(21,128,61,.35);
+    --ok-soft:rgba(21,128,61,.12); --ok-ring:rgba(21,128,61,.15); --ok-line:rgba(21,128,61,.4);
+    --warn-soft:rgba(180,83,9,.06); --warn-line:rgba(180,83,9,.4);
+    --accent-soft:rgba(37,99,235,.08); --accent-ring:rgba(37,99,235,.2); --accent-shadow:rgba(37,99,235,.25);
+    --shadow:rgba(15,23,42,.18);
+  }
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f5f7fb; --bg2:#eaeef6; --card:#ffffff; --card2:#f3f5fa; --line:#d6dce8; --line2:#bfc8d9;
+  --fg:#111827; --fg2:#3b4560; --fg3:#5f6b85;
+  --accent:#2563eb; --accent2:#1d4ed8; --ok:#15803d; --warn:#b45309;
+  --claude:#c2410c; --codex:#0f766e; --gemini:#2563eb; --grok:#334155;
+  --link:#1d4ed8;
+  --btn-fg:#fff; --on-ok:#fff;
+  --bar-bg:rgba(245,247,251,.94);
+  --feat-bg:linear-gradient(135deg,#ffffff,#f1f4fa); --logo-bg:#eaeef6;
+  --code-bg:#eef2f9; --code-fg:#111827; --code-key-bg:#e4ecff; --code-key-fg:#0b2a6f;
+  --chat-bg:#eaeef6; --me-bg:#2563eb; --me-fg:#fff; --ai-bg:#ffffff;
+  --shot-bg:#0b0f1a; --phone-bg:#0b0f1a; --phone-line:#c5cddd; --phone-ring:#e3e8f2;
+  --err-fg:#b91c1c; --err-bg:rgba(239,68,68,.08); --err-line:rgba(239,68,68,.35);
+  --okmsg-fg:#15803d; --okmsg-bg:rgba(21,128,61,.08); --okmsg-line:rgba(21,128,61,.35);
+  --ok-soft:rgba(21,128,61,.12); --ok-ring:rgba(21,128,61,.15); --ok-line:rgba(21,128,61,.4);
+  --warn-soft:rgba(180,83,9,.06); --warn-line:rgba(180,83,9,.4);
+  --accent-soft:rgba(37,99,235,.08); --accent-ring:rgba(37,99,235,.2); --accent-shadow:rgba(37,99,235,.25);
+  --shadow:rgba(15,23,42,.18);
+}
+/* 다크 화면 캡처 이미지(폰 목업·스크린샷)는 라이트에서도 그대로 — 테두리로만 구분 */
+:root[data-theme="light"] .phone, :root[data-theme="light"] .shot{box-shadow:0 12px 30px var(--shadow)}
+/* 헤더 전환 버튼 (js/theme.js 가 nav 에 넣는다) */
+.theme-btn{background:none;border:1px solid var(--line);color:var(--fg2);border-radius:999px;min-width:40px;min-height:36px;padding:0 10px;font-size:16px;line-height:1;cursor:pointer;font-family:inherit;margin-left:8px}
+.theme-btn:hover{color:var(--fg);border-color:var(--line2)}
+@media (max-width:768px){.theme-btn{margin-left:auto;margin-right:4px}}   /* 폰: ☰ 바로 왼쪽 */

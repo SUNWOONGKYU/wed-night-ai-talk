@@ -71,7 +71,14 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 - 갱신은 **담당 세션이 파일을 수정해 커밋·push** 한다(Vercel 자동 배포, 캐시 5분). 확인된 뒤에는 항목을 지우고 `updated` 를 갱신. 지금은 `notices: []`.
 - Content-Type `application/json` 과 CORS `*` 는 `vercel.json` headers 에 선언되어 있다.
 
-## 6. 문안 규칙 요약 (PO 반복 지적)
+## 6. 다크/라이트 모드 (2026-09-21)
+
+- 색 토큰은 `css/theme.css` 한 곳: `:root` = 다크, `@media (prefers-color-scheme: light)` + `html[data-theme=light]` = 라이트. 다른 css(market·onemacs·console·market-home·site-nav)에는 하드코딩 색을 두지 않는다(브랜드 버튼 카카오·은행 색, 그라데이션 위 흰 글자만 예외).
+- 마켓 페이지 head 순서: `theme.css` → `js/theme.js`(동기, 저장값 `localStorage.waat-theme` 를 첫 그리기 전에 `html[data-theme]` 에 적용 — CSP 가 인라인 스크립트를 막아 외부 파일) → 나머지 css. `theme.js` 가 헤더에 ☀/🌙 버튼을 넣는다.
+- 새 페이지·새 색을 추가할 때: 토큰이 없으면 `theme.css` 다크·라이트 두 곳에 같이 추가한다. 라이트 대비 기준 본문 4.5:1 · 보조 3:1(Playwright 실측 스크립트: 세션 스크래치 rs_theme_test.py 방식 — 반투명 배경은 합성해서 계산).
+- 다크 캡처 이미지(폰 목업·스크린샷)는 라이트에서도 그대로 두고 테두리·그림자로만 구분한다.
+
+## 7. 문안 규칙 요약 (PO 반복 지적)
 
 - 브랜드 제목 2행: `One MACS · 원맥스` / `One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템` (가운뎃점, 영어 먼저). 본문에서는 "원맥스".
 - AI 4종(Claude Code·Codex·Antigravity·Grok)은 **협업** — "팀장/부하/부린다" 금지. 제목에 "API 요금" 넣지 않음.

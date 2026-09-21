@@ -1,14 +1,14 @@
 /* ========== WAAT 앱마켓 홈 (market.html) ==========
    시안: 모바일콘솔/3_안드로이드앱/카탈로그/마켓홈_v1.html (PC2, 2026-09-20). CSP 가 인라인 <style> 을 막아 파일로 둔다.
    상품 데이터는 js/market-apps.js, 렌더는 js/market-home.js. */
-:root{--bg:#0b0f1a;--bg2:#111827;--card:#141c2e;--line:#243049;--line2:#2f3d5c;--fg:#eef2fa;--fg2:#aab5cd;--fg3:#7d89a6;--accent:#3b82f6;--accent2:#60a5fa;--ok:#22c55e;--warn:#f59e0b;--claude:#d97757;--codex:#1fb98a;--gemini:#5b8cff;--grok:#d9dde5}
+/* 색 토큰은 css/theme.css (다크/라이트) */
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.55;font-size:15px;word-break:keep-all;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px}
 @media (min-width:600px){.wrap{max-width:900px}}
 /* 헤더 */
-.hdr{position:sticky;top:0;z-index:10;background:rgba(11,15,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hdr{position:sticky;top:0;z-index:10;background:var(--bar-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hdr .wrap{display:flex;align-items:center;gap:12px;height:54px}
 .logo{display:flex;align-items:center;gap:8px;font-weight:900;letter-spacing:-.02em;font-size:17px;white-space:nowrap}
 .logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--claude),var(--accent));display:inline-block}
@@ -20,14 +20,14 @@ a{color:inherit;text-decoration:none}
 .cats{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
 .cats::-webkit-scrollbar{display:none}
 .cat{flex:none;font-size:13px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--fg2);cursor:pointer;white-space:nowrap;font-family:inherit}
-.cat.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat.on{background:var(--accent);border-color:var(--accent);color:var(--btn-fg)}
 /* 추천 배너 */
 .feat{margin-top:12px;}
 #list .feat+.feat{margin-top:14px}
-.feat{border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:linear-gradient(135deg,#131b31,#0f1626);position:relative}
+.feat{border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:var(--feat-bg);position:relative}
 .feat:empty{display:none}
 .feat .in{padding:20px 18px;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center}
-.feat .logo{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;object-fit:cover;background:#131826;align-self:start}
+.feat .logo{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--btn-fg);object-fit:cover;background:var(--logo-bg);align-self:start}
 .feat .bundle{color:var(--fg2);font-size:12px;margin-top:6px;line-height:1.4}
 .feat .maker-line{color:var(--fg3);font-size:11px;margin-top:6px}
 .feat.soon{opacity:.72;border-style:dashed}
@@ -43,7 +43,7 @@ a{color:inherit;text-decoration:none}
 .feat .rs-count{display:block;font-size:11px;color:var(--fg2);font-weight:600;margin-top:4px}
 .feat .bar{height:3px;background:linear-gradient(90deg,var(--claude),var(--codex),var(--gemini),var(--grok))}
 .feat .cta{display:flex;gap:8px;padding:0 18px 18px;flex-wrap:wrap}
-.btn{display:inline-block;text-align:center;font-weight:800;font-size:14px;padding:11px 16px;border-radius:12px;background:var(--accent);color:#fff}
+.btn{display:inline-block;text-align:center;font-weight:800;font-size:14px;padding:11px 16px;border-radius:12px;background:var(--accent);color:var(--btn-fg)}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--fg)}
 /* 섹션 */
 .sec{margin-top:28px}
@@ -65,8 +65,8 @@ a.app:active,a.app:hover{border-color:var(--accent)}
 .app .bundle{margin-top:6px;font-size:12px;color:var(--fg2);line-height:1.4}
 .app .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--fg3);background:var(--bg2);white-space:nowrap}
-.pill.free{color:var(--ok);border-color:rgba(34,197,94,.4)}
-.pill.soon{color:var(--warn);border-color:rgba(245,158,11,.4)}
+.pill.free{color:var(--ok);border-color:var(--ok-line)}
+.pill.soon{color:var(--warn);border-color:var(--warn-line)}
 .app .pr{text-align:right;white-space:nowrap;max-width:110px}
 .app .pr b{font-size:15px}
 .app .pr small{display:block;font-size:11px;color:var(--fg3);font-weight:600}
@@ -79,7 +79,7 @@ a.app:active,a.app:hover{border-color:var(--accent)}
 .maker{margin-top:14px;display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .maker .av{flex:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--claude),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff}
 .maker b{display:block;font-size:13px}.maker p{font-size:12px;color:var(--fg2)}
-.maker a,.foot a{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}
+.maker a,.foot a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
 .foot{margin-top:36px;padding:24px 0 48px;border-top:1px solid var(--line);font-size:12px;color:var(--fg3);line-height:1.6}
 .foot p+p{margin-top:6px}
 
