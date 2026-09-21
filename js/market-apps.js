@@ -14,18 +14,8 @@
 window.MARKET_APPS = [
   { id: 'onemacs', name: '원맥스 One MACS', sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.', cat: 'AI 도구', featured: true, maker: '파인더월드',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
-    price: 9900, tags: ['Android', 'Claude Code 필요'], icon: '', img: '/market/img/onemacs_icon.png',
+    price: 9900, tags: ['Android', 'Claude Code 필요', '무료 동봉: 트레이딩 시그널 스캐너 · 트레이딩 봇 · 보고서 작성 AI 에이전트(출시 예정)'], icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs' },
-
-  { id: 'trading-signal', name: '트레이딩 시그널', sub: '262종목 스캐너 + 실행기', cat: '트레이딩', maker: '파인더월드',
-    desc: '국내 주식 262종목을 훑어 신호를 띄우고, 말로 만든 전략을 같은 스캐너에서 돌립니다. 실행기는 본인 증권사 키로, 주문 전 승인 필수.',
-    price: 0, tags: ['무료', '원맥스 One MACS 동봉', '한국투자증권 키 선택'], icon: '262',
-    color: 'linear-gradient(135deg,#1fb98a,#0f766e)', url: '/console#bot' },
-
-  { id: 'report-agent', name: '보고서 작성 AI 에이전트', sub: '7대 요소', cat: '문서·보고서', maker: '파인더월드',
-    desc: '페르소나·목표·지식베이스·도구·안전장치·자율루프까지 7대 요소를 갖춘 보고서 에이전트. 자료 폴더를 주면 초안부터 최종본까지.',
-    price: 0, tags: ['무료', '원맥스 One MACS 동봉', 'Claude Code 필요'], icon: '報',
-    color: 'linear-gradient(135deg,#5b8cff,#312e81)', url: null, soon: true, soonText: '출시 예정' },
 
   { id: 'next-1', name: '다음 앱', sub: '준비 중', cat: 'AI 도구',
     desc: '새 앱을 순서대로 올립니다.',
@@ -33,4 +23,4 @@ window.MARKET_APPS = [
 ];
 
 // 카테고리 칩 순서. '전체' 는 필터 전용(상품 cat 값이 아님).
-window.MARKET_CATS = ['전체', 'AI 도구', '트레이딩', '문서·보고서'];  // '무료' 필터 메뉴는 PO 지시로 제거(2026-09-21)
+window.MARKET_CATS = ['전체', 'AI 도구'];  // 트레이딩·문서 카테고리는 해당 앱이 올라올 때 다시 추가  // '무료' 필터 메뉴는 PO 지시로 제거(2026-09-21)
