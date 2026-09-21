@@ -29,7 +29,7 @@ a{color:inherit;text-decoration:none}
 .feat .in{padding:20px 18px;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center}
 .feat .logo{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:var(--btn-fg);object-fit:cover;background:var(--logo-bg);align-self:start}
 .feat .bundle{color:var(--fg2);font-size:12px;margin-top:6px;line-height:1.4}
-.feat .maker-line{color:var(--fg3);font-size:11px;margin-top:6px}
+.feat .seller-line{color:var(--fg3);font-size:11px;margin-top:6px}
 .feat.soon{opacity:.72;border-style:dashed}
 @media (max-width:399px){.feat .in{grid-template-columns:52px 1fr;}.feat .logo{width:52px;height:52px}.feat .price{grid-column:1/-1;text-align:left}}
 .feat .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px}
@@ -83,4 +83,4 @@ a.app:active,a.app:hover{border-color:var(--accent)}
 .foot{margin-top:36px;padding:24px 0 48px;border-top:1px solid var(--line);font-size:12px;color:var(--fg3);line-height:1.6}
 .foot p+p{margin-top:6px}
 
-.app .maker-line{margin-top:6px;font-size:11px;color:var(--fg3)}
+.app .seller-line{margin-top:6px;font-size:11px;color:var(--fg3)}

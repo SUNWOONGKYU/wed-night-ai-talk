@@ -10,7 +10,7 @@
 //   tags     : 카드 아래 작은 배지
 //   bundle   : 포함 구성(배열). 렌더에서 '포함 구성: A · B' 한 줄
 //   icon/color : 아이콘 글자 / 배경
-//   maker    : 만든 곳(카드에 '만든 곳: …' 로 표시). 다른 제작자의 앱도 올라오므로 앱마다 적는다
+//   seller   : { name, link } — 카드에 '판매자: name' 로 표시, 상세에서는 link(#seller 법정 표기 블록)로 연결. 열린 장터라 앱마다 적는다
 //   url      : 카드 링크. null 이면 링크 없음(출시 예정 등)
 //   featured : (미사용 — 목록은 하나이고 모든 앱이 배너형으로 나열됨)
 //   soon     : true 면 "출시 예정" 표시 (soonText 로 문구 지정)
@@ -20,7 +20,7 @@ window.MARKET_APPS = [
   { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
-    cat: 'AI 협업 시스템', featured: true, maker: '파인더월드', launch: 'config',
+    cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
     bundle: ['트레이딩 시그널(국내 주식 262종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', '보고서 작성 AI 에이전트(곧 추가)'],
     icon: '', img: '/market/img/onemacs_icon.png',
