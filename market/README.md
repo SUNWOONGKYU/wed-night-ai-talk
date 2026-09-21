@@ -18,7 +18,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 | 자주 묻는 질문 | `/market/onemacs/faq` | `market/onemacs/faq.html` |
 | 알아 두실 점(보안·권한·잠금) | `/market/onemacs/notice` | `market/onemacs/notice.html` |
 | 리뷰·댓글 | `/market/onemacs/reviews` | `market/onemacs/reviews.html` (앱 공통: `body[data-app]` 만 다름) |
-| 사용법 매뉴얼 | `/market/onemacs/guide` | `market/onemacs/guide.html` (+ 같은 본문의 오프라인 단일 파일 `C:	rader-bot\_dist\배포판_문서원본\사용법.html` — 배포판 zip 동봉, 콘솔 서버 /guide · 앱 "?" 버튼) |
+| 사용법 매뉴얼 (이미지 `market/img/guide/*.jpg` — .gitignore 의 `*.jpg` 때문에 `git add -f` 필요) | `/market/onemacs/guide` | `market/onemacs/guide.html` (+ 같은 본문의 오프라인 단일 파일 `C:	rader-bot\_dist\배포판_문서원본\사용법.html` — 배포판 zip 동봉, 콘솔 서버 /guide · 앱 "?" 버튼) |
 | CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 앱을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
