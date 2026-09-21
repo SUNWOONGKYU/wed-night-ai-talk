@@ -48,7 +48,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(-
 .stat.k b{color:var(--accent2)}
 
 /* 만든 사람 */
-.maker{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:14px}
+.maker{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:14px}
 .maker .av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--claude),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff}
 .maker b{display:block;font-size:14px}
 .maker p{font-size:13px;line-height:1.5}
