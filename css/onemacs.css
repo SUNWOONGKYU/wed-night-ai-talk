@@ -1,4 +1,4 @@
-/* ========== 원맥스 One MACS 상품 상세 (market/onemacs.html) — 카탈로그 v3 원본 스타일 ==========
+/* ========== 원맥스 / One MACS 상품 상세 (market/onemacs.html) — 카탈로그 v3 원본 스타일 ==========
    원본: 모바일콘솔/3_안드로이드앱/카탈로그/index.html(v3) <style>. CSP 가 인라인 <style> 을 막아 파일로 옮겼다.
    css/market.css(결제 블록·상단 바) 다음에 로드하여 카탈로그 스타일이 우선한다. 카탈로그를 갱신하면 이 블록을 다시 복사한다. */
 :root{
@@ -19,6 +19,7 @@ h2{font-size:22px;line-height:1.3;font-weight:800;letter-spacing:-.01em;margin-b
 h3{font-size:16px;font-weight:800;letter-spacing:-.01em}
 p{color:var(--fg2)}
 .lead{color:var(--fg);font-size:17px}
+.subline{color:var(--fg2);font-size:15px;font-weight:600;line-height:1.5;margin-top:10px}
 .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--accent2);text-transform:uppercase;margin-bottom:10px}
 .sub{color:var(--fg3);font-size:14px;margin-bottom:20px}
 .hl{color:var(--fg);font-weight:700}

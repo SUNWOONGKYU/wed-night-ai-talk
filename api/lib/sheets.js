@@ -1,10 +1,10 @@
 /**
- * Google Sheets 데이터베이스 헬퍼 — 앱 마켓(원맥스 One MACS) 주문
+ * Google Sheets 데이터베이스 헬퍼 — 앱 마켓(원맥스 / One MACS) 주문
  *
  * 출처: PO 의 기존 판매 시스템 (Claude설치가이드/v2.0/sales-system/api/lib/sheets.js, 2025-10)
  * 변경: ESM → CommonJS (WAAT api/ 는 module.exports 규약), Orders 시트에 N·O·P 열 추가
  *       (paymentMethod, licenseKey, product). A~M 은 원본과 같은 순서라 기존 스프레드시트를 그대로 써도 되고,
- *       P 열 product 로 옛 가이드 판매 행(빈 값)과 원맥스 One MACS 행을 필터로 구분한다.
+ *       P 열 product 로 옛 가이드 판매 행(빈 값)과 원맥스 행을 필터로 구분한다.
  *
  * 스프레드시트 구조:
  *   Orders       : 주문 정보 (A~P)

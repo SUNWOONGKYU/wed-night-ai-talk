@@ -1,6 +1,6 @@
 // ========== 앱 마켓 (market.html) — 결제 흐름 ==========
 //
-// 출처: PO 의 기존 판매 시스템 index.html 결제 UI (2025-10) 를 원맥스 One MACS용으로 이식.
+// 출처: PO 의 기존 판매 시스템 index.html 결제 UI (2025-10) 를 원맥스용으로 이식.
 //   단계 1 결제 방법 선택 → 단계 2 카카오페이(모바일: 링크 / PC: QR 이미지) 또는 무통장 입금(복사)
 //   → 단계 3 이메일·이름 입력 → POST /api/send-download → 단계 4 완료
 //   (입금 확인 없이 자기 신고로 즉시 발송 — Sheets 에 SELF_REPORTED 로 남겨 나중에 대조)
@@ -161,7 +161,7 @@
             cfg = await r.json();
         } catch (e) {
             console.warn('market-config 실패 (정적 미리보기?):', e);
-            cfg = { product: { price: 9900, version: 'v1.0', name: '원맥스 One MACS' },
+            cfg = { product: { price: 9900, version: 'v1.0', name: '원맥스 / One MACS' },
                     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
                     bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' } };
         }

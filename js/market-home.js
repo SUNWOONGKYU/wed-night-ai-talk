@@ -41,7 +41,8 @@
         var link = f.url ? esc(f.url) : '#';
         $('feat').innerHTML =
             '<div class="in"><div><span class="tag">추천 · ' + esc(f.cat) + '</span>' +
-            '<h2>' + esc(f.name) + '<span>' + esc(f.sub) + '</span></h2><p>' + esc(f.desc) + '</p></div>' +
+            '<h2>' + esc(f.name) + (f.full ? '<small>' + esc(f.full) + '</small>' : '') + '</h2>' +
+            '<p class="topic">' + esc(f.desc) + '</p>' + (f.sub ? '<p class="sub">' + esc(f.sub) + '</p>' : '') + '</div>' +
             '<div class="price">' + esc(won(f.price)) + '<small>VAT 포함 · 1회</small></div></div>' +
             '<div class="cta"><a class="btn" href="' + link + '#buy">9,900원에 받기</a>' +
             '<a class="btn ghost" href="' + link + '">자세히 보기</a></div><div class="bar"></div>';
@@ -50,8 +51,10 @@
     function card(a) {
         var body =
             (a.img ? '<div class="ic" style="background:#131826;padding:0;overflow:hidden"><img src="' + esc(a.img) + '" alt="" width="56" height="56" style="width:100%;height:100%;display:block"></div>' : '<div class="ic" style="background:' + esc(a.color) + '">' + esc(a.icon) + '</div>') +
-            '<div class="body"><b>' + esc(a.name) + '<small>' + esc(a.sub) + '</small></b><p>' + esc(a.desc) + '</p>' +
-            '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div>' + (a.maker ? '<div class="maker-line">만든 곳: ' + esc(a.maker) + '</div>' : '') + '</div>' +
+            '<div class="body"><b>' + esc(a.name) + '</b><p class="topic">' + esc(a.desc) + '</p>' + (a.sub ? '<small class="sub">' + esc(a.sub) + '</small>' : '') +
+            '<div class="meta">' + (a.tags || []).map(pill).join('') + '</div>' +
+            (a.bundle && a.bundle.length ? '<div class="bundle">포함 구성: ' + esc(a.bundle.join(' · ')) + '</div>' : '') +
+            (a.maker ? '<div class="maker-line">만든 곳: ' + esc(a.maker) + '</div>' : '') + '</div>' +
             '<div class="pr">' + (a.soon
                 ? '<span class="pill soon">' + esc(a.soonText || '출시 예정') + '</span>'
                 : '<b>' + esc(won(a.price)) + '</b><small>' + (a.price ? 'VAT 포함' : '누구나') + '</small>') + '</div>';
@@ -64,7 +67,7 @@
     function renderGrid() {
         var list = APPS.filter(function (a) {
             var okCat = cat === '전체' || a.cat === cat;
-            var hay = (a.name + ' ' + a.sub + ' ' + a.desc + ' ' + (a.tags || []).join(' ')).toLowerCase();
+            var hay = (a.name + ' ' + a.sub + ' ' + a.desc + ' ' + (a.tags || []).join(' ') + ' ' + (a.bundle || []).join(' ')).toLowerCase();
             return okCat && (!q || hay.indexOf(q) !== -1);
         });
         $('cnt').textContent = list.length + '개';
