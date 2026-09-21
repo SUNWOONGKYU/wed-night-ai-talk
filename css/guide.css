@@ -1,0 +1,16 @@
+/* 사용법 페이지 전용 (색은 theme.css 토큰) */
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}.brand img{border-radius:12px}.brand b{font-size:20px;letter-spacing:-.02em;color:var(--fg)}.brand span{display:block;font-size:12px;color:var(--fg3)}
+.guide h2{font-size:20px;margin-bottom:12px;color:var(--fg)}
+.guide section{padding:32px 0}.guide section.alt{background:var(--bg2)}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:16px}.toc b{font-size:13px;color:var(--fg3);letter-spacing:.06em}.toc ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;gap:4px}.toc a{color:var(--link);text-decoration:none;font-size:14px;font-weight:700}
+.figs{display:grid;gap:10px;margin:14px 0}.figs.two{grid-template-columns:1fr 1fr}.figs.three{grid-template-columns:1fr 1fr 1fr}
+.figs figure{margin:0;min-width:0}.figs:not(.two):not(.three) figure{max-width:280px;margin:0 auto}.figs img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);background:var(--shot-bg);display:block}.figs figcaption{font-size:12px;color:var(--fg3);margin-top:6px;line-height:1.45}
+.guide .steps,.guide .examples{padding-left:22px;color:var(--fg2);font-size:15px;line-height:1.7}.guide .steps li+li,.guide .examples li+li{margin-top:8px}
+.guide .examples li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--fg);list-style-position:inside;margin-top:8px}
+.guide ul.plain{padding-left:18px;color:var(--fg2);font-size:15px;line-height:1.7}.guide ul.plain li+li{margin-top:6px}
+.guide dl.kv{margin:0;display:grid;gap:8px}.guide dl.kv dt{font-weight:800;color:var(--fg);font-size:15px}.guide dl.kv dd{margin:0 0 6px;color:var(--fg2);font-size:15px;line-height:1.65}
+.tips{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-top:14px}.tips p{color:var(--fg);font-size:14px}.tips ul{padding-left:18px;margin-top:6px;color:var(--fg2);font-size:14px;line-height:1.65}
+.guide .note{font-size:13px;color:var(--fg3);line-height:1.6;margin-top:12px}.guide .mono{font-family:Consolas,"JetBrains Mono",monospace;color:var(--fg);font-size:.92em}
+.guide p{color:var(--fg2);font-size:15px;line-height:1.7}.guide p+p{margin-top:8px}.guide a{color:var(--link)}
+.guide p.lead{color:var(--fg);font-size:16px;margin-top:10px}
+@media (max-width:399px){.figs.three{grid-template-columns:1fr 1fr}}

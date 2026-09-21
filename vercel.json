@@ -211,6 +211,10 @@
     {
       "source": "/market/onemacs/reviews",
       "destination": "/market/onemacs/reviews.html"
+    },
+    {
+      "source": "/market/onemacs/guide",
+      "destination": "/market/onemacs/guide.html"
     }
   ],
   "functions": {
