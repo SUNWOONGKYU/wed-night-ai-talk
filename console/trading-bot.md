@@ -53,7 +53,7 @@ pip install -r requirements.txt
 4. `.env` 가 UTF-8 이고 각 줄이 `KEY=값` 형식인지 확인한다 (값 앞뒤 따옴표·공백 없이).
 
 ### 5. 데이터 파일 확인
-`futures_code_map.json` · `data\stock_names.json` · `config_data\holidays.json` · `strategies\5대장2쫄병.json` 이 있는지 확인. `python strategy_engine.py` 를 실행해 전략 목록에 `OK` 가 나오는지 본다. `holidays.json` 에 올해 항목이 없으면 "KRX 휴장일 갱신 필요"라고 알린다(중단 아님).
+`futures_code_map.json` · `data\stock_names.json` · `config_data\holidays.json` · `strategies\5대장2졸병.json` 이 있는지 확인. `python strategy_engine.py` 를 실행해 전략 목록에 `OK` 가 나오는지 본다. `holidays.json` 에 올해 항목이 없으면 "KRX 휴장일 갱신 필요"라고 알린다(중단 아님).
 
 ### 6. 시험 기동
 1. 스캐너를 새 창으로 띄운다:

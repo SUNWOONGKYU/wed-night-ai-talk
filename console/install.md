@@ -98,7 +98,7 @@ Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/trading-bot_v1
 Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
    풀린 폴더 안에서 `scanner_web.py` 가 있는 폴더의 내용을 `PROJECT\`(= `ROOT\트레이딩 시그널\`) 로 복사.
-2. `PROJECT\scanner_web.py`, `PROJECT\strategies\5대장2쫄병.json`, `PROJECT\strategy_engine.py` 존재 확인. 이것이 폰의 **스캐너 버튼 · 전략 카드**의 재료다.
+2. `PROJECT\scanner_web.py`, `PROJECT\strategies\5대장2졸병.json`, `PROJECT\strategy_engine.py` 존재 확인. 이것이 폰의 **스캐너 버튼 · 전략 카드**의 재료다.
 3. 전략 빌더 스킬 설치: `PROJECT\skills\전략만들기\` 가 있으면 `%USERPROFILE%\.claude\skills\전략만들기\` 로 복사(없으면 건너뜀). 이후 사용자는 폰에서 "RSI 35 이하 + 거래량 1.5배 전략 만들어줘" 처럼 말로 전략을 만든다.
 4. 스캐너·봇의 **실행 준비**(Python 3.11+ · 라이브러리 · 증권사 키 · 텔레그램)는 Q5-2 답에 따라 8단계 뒤에 `PROJECT\CLAUDE_CODE_봇설치지시문.md`(= https://www.waat.community/market/onemacs/trading-bot.md) 로 이어서 한다. 키 없이도 콘솔·전략 카드·전략 만들기는 동작한다.
 
@@ -172,7 +172,7 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 
 ### 9. 이후 사용법 (한 번 알려줄 것)
 - 앱: 페어링 코드 입력 → PC 탭 → PIN 한 번 → 켜 둔 AI 탭. Claude Code 탭 입력은 이 창에 그대로 타이핑된다. 📎 = 사진·파일, 🛑 = 긴급 정지, 헤더 `[프로젝트 ▾]` 로 폴더 전환·추가.
-- 기본 프로젝트 '트레이딩 시그널': 헤더 오른쪽 **스캐너** 버튼 → 전략 카드(5대장2쫄병 샘플 · 내가 만든 전략 A/B/C 켜기·끄기). 동봉된 스캐너·매매 자동화 봇은 원맥스에 자동으로 따라오며, 실행 준비는 Q5-2 에서 정한 대로(나중이면 "매매 자동화 봇 설정해줘").
+- 기본 프로젝트 '트레이딩 시그널': 헤더 오른쪽 **스캐너** 버튼 → 전략 카드(5대장2졸병 샘플 · 내가 만든 전략 A/B/C 켜기·끄기). 동봉된 스캐너·매매 자동화 봇은 원맥스에 자동으로 따라오며, 실행 준비는 Q5-2 에서 정한 대로(나중이면 "매매 자동화 봇 설정해줘").
 - 무료 에이전트(보고서 작성 등)는 zip 을 `<ROOT>` 아래 폴더로 풀고 폰의 `[프로젝트 ▾] → 프로젝트 추가` 에서 그 폴더 이름을 넣으면 프로젝트로 붙는다.
 
 ---
