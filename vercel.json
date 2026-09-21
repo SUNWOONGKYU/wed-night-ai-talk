@@ -211,12 +211,12 @@
     {
       "source": "/console",
       "destination": "/market/onemacs/install",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/console.html",
       "destination": "/market/onemacs/install",
-      "permanent": true
+      "statusCode": 301
     }
   ]
 }
