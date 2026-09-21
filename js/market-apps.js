@@ -12,9 +12,9 @@
 //   featured : true 인 상품 1개가 추천 배너
 //   soon     : true 면 "출시 예정" 표시 (soonText 로 문구 지정)
 window.MARKET_APPS = [
-  { id: 'onemacs', name: '원맥스 One MACS', sub: 'One-stop Multi AI Console System', cat: 'AI 도구', featured: true, maker: '파인더월드',
-    desc: '당신의 Claude Code에 AI 3개(Codex·Antigravity·Grok)를 더 붙이고, 여러 PC의 프로젝트를 폰 한 화면에서 부립니다.',
-    price: 9900, tags: ['Android', 'Claude Code 필요', 'API 요금 0원'], icon: '', img: '/market/img/onemacs_icon.png',
+  { id: 'onemacs', name: '원맥스 One MACS', sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.', cat: 'AI 도구', featured: true, maker: '파인더월드',
+    desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
+    price: 9900, tags: ['Android', 'Claude Code 필요'], icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs' },
 
   { id: 'trading-signal', name: '트레이딩 시그널', sub: '262종목 스캐너 + 실행기', cat: '트레이딩', maker: '파인더월드',

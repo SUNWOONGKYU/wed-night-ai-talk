@@ -42,7 +42,7 @@
 
     <div class="card" style="margin-top:18px">
       <b style="color:var(--fg)">이미 Claude Code가 있으면</b>
-      <p style="margin-top:6px;font-size:15px">⑤ 작업 폴더에서 <span class="mono">claude</span> 실행 → ⑥ 한 줄 붙여넣기. 두 단계만 하면 됩니다.</p>
+      <p style="margin-top:6px;font-size:15px">⑤ C:\원맥스 폴더에서 <span class="mono">claude</span> 실행 → ⑥ 설치 지시문 붙여넣기 → Claude Code의 질문에 답하기.</p>
     </div>
   </div>
 </section>
@@ -62,8 +62,8 @@
       <div class="row"><span class="num">2</span><div>
         <h3>터미널 열기</h3>
         <p>Windows 시작 버튼 → "<b>터미널</b>" 입력 → 실행 (없으면 "<b>PowerShell</b>").</p>
-        <p>검은(또는 파란) 창에 커서가 깜빡이면 준비된 것입니다.</p>
-        <p class="note">이 창은 설치가 끝날 때까지 닫지 마세요.</p>
+        <p>검은(또는 파란) 실행 창에 커서가 깜빡이면 준비된 것입니다.</p>
+        <p class="note">이 실행 창은 설치가 끝날 때까지 닫지 마세요.</p>
       </div></div>
     </div>
 
@@ -87,10 +87,10 @@
 
     <div class="cs-step">
       <div class="row"><span class="num">5</span><div>
-        <h3>작업 폴더 만들고 그 안에서 Claude Code 실행</h3>
-        <p>원맥스 One MACS가 설치될 폴더입니다. 예시 그대로 써도 됩니다.</p>
-        <div class="cs-cmd"><code>mkdir C:\내콘솔; cd C:\내콘솔; claude</code><button type="button" class="cs-copy" data-copy="mkdir C:\내콘솔; cd C:\내콘솔; claude">복사</button></div>
-        <p class="note">이미 있는 폴더라면 <span class="mono">cd 폴더경로; claude</span> 만.</p>
+        <h3>C:\원맥스 폴더를 만들고 그 안에서 Claude Code 실행</h3>
+        <p>원맥스 One MACS가 설치될 폴더입니다. PowerShell(또는 터미널)에 아래를 붙여넣으면 폴더가 만들어지고 그 안에서 Claude Code가 켜집니다.</p>
+        <div class="cs-cmd"><code>mkdir C:\원맥스; cd C:\원맥스; claude</code><button type="button" class="cs-copy" data-copy="mkdir C:\원맥스; cd C:\원맥스; claude">복사</button></div>
+        <p class="note">다른 폴더를 쓰고 싶으면 <span class="mono">cd 그폴더; claude</span>. 설치가 끝나면 이 폴더 안에 _mobile_remote(콘솔)와 "트레이딩 시그널"(기본 프로젝트) 폴더가 생깁니다.</p>
       </div></div>
     </div>
 
@@ -107,7 +107,7 @@
     <div class="cs-step">
       <div class="row"><span class="num">7</span><div>
         <h3>폰: 앱 열고 페어링 코드 입력 → 끝</h3>
-        <p><a href="/market/onemacs#buy" class="cs-link">앱(/market/onemacs)</a>을 설치한 폰에서 원맥스 One MACS를 열고, PC가 알려준 페어링 코드 8자리를 입력하면 연결됩니다. 이후 PC가 켜져 있으면 어디서든 폰으로 지휘할 수 있습니다.</p>
+        <p><a href="/market/onemacs#buy" class="cs-link">앱(/market/onemacs)</a>을 설치한 폰에서 원맥스 One MACS를 열고, PC가 알려준 페어링 코드 8자리를 입력하면 연결됩니다. 이후 PC가 켜져 있으면 어디서든 핸드폰에서 작업을 시킬 수 있습니다.</p>
       </div></div>
     </div>
 
@@ -144,8 +144,8 @@
   <div class="wrap">
     <span class="eyebrow">자주 막히는 3가지</span>
     <details open><summary>'npm'은(는) 인식되지 않습니다</summary><p>Node.js 설치 직후에 흔합니다. 터미널을 닫고 <b>PC를 재부팅</b>한 뒤 다시 하세요. 그래도 안 되면 Node.js 를 다시 설치(Repair)하세요.</p></details>
-    <details><summary>로그인 창(브라우저)이 안 뜹니다</summary><p>터미널에 표시된 <b>https://… 로 시작하는 주소를 복사</b>해 브라우저 주소창에 직접 붙여넣으세요. 로그인 후 나오는 코드를 터미널에 붙여넣으면 됩니다.</p></details>
-    <details><summary>검은 창을 닫았더니 폰에서 연결이 끊깁니다</summary><p>그 창이 PC 쪽 서버입니다. <b>닫지 말고 최소화</b>하세요. 닫았다면 작업 폴더에서 다시 <span class="mono">claude</span> 를 켜고 "원맥스 One MACS 다시 실행해줘"라고 하면 됩니다. PC가 꺼져 있으면 아무것도 안 됩니다(PC가 서버).</p></details>
+    <details><summary>로그인 화면(브라우저)이 안 뜹니다</summary><p>터미널에 표시된 <b>https://… 로 시작하는 주소를 복사</b>해 브라우저 주소창에 직접 붙여넣으세요. 로그인 후 나오는 코드를 터미널에 붙여넣으면 됩니다.</p></details>
+    <details><summary>검은 실행 창을 닫았더니 폰에서 연결이 끊깁니다</summary><p>그 실행 창이 PC 쪽 서버입니다. <b>닫지 말고 최소화</b>하세요. 닫았다면 작업 폴더에서 다시 <span class="mono">claude</span> 를 켜고 "원맥스 One MACS 다시 실행해줘"라고 하면 됩니다. PC가 꺼져 있으면 아무것도 안 됩니다(PC가 서버).</p></details>
     <p class="note" style="margin-top:16px">이 앱은 투자 자문·일임이 아니며 샘플 전략은 교육용입니다. 페어링 코드와 PIN은 타인과 공유하지 마세요.</p>
   </div>
 </section>

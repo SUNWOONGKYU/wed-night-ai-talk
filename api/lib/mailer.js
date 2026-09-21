@@ -34,7 +34,7 @@ function purchaseEmailHtml(p) {
   <div style="text-align:center;margin-bottom:28px;">
     <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="원맥스 One MACS" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 원맥스 One MACS ${p.renewal ? '다운로드 링크를 다시 보내드립니다' : '구매해 주셔서 감사합니다'}</h1>
-    <p style="color:#4A5670;font-size:15px;margin:0;">${esc(PRODUCT.name)} ${esc(PRODUCT.version)} · 내 PC의 AI 4종 원격 지휘 앱 (Android)</p>
+    <p style="color:#4A5670;font-size:15px;margin:0;">${esc(PRODUCT.name)} ${esc(PRODUCT.version)} · 내 PC의 AI 4종 CLI에게 핸드폰에서 작업을 시키는 앱 (Android)</p>
   </div>
 
   <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
