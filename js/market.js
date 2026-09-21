@@ -45,7 +45,7 @@
         selectedMethod = 'kakaopay';
         var link = (cfg && cfg.kakaopayLink) || '';
         var has = /^https:\/\//i.test(link);
-        $('pay-kakao-holder').textContent = (cfg && cfg.bank && cfg.bank.holder) || '판매자';
+        $('pay-kakao-holder').textContent = (cfg && cfg.kakaoHolder) || '선웅규';  // 카카오페이 받는 사람은 개인 계정명(무통장 예금주 표기와 다름)
         show($('pay-kakao-missing'), !has);
         if (has) {
             if (isMobile()) {
@@ -163,7 +163,7 @@
             console.warn('market-config 실패 (정적 미리보기?):', e);
             cfg = { product: { price: 9900, version: 'v1.0', name: 'One MACS · 원맥스' },
                     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
-                    bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' } };
+                    bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규(파인더월드)' } };
         }
         var price = (cfg.product && cfg.product.price) || 9900;
         Array.prototype.forEach.call(document.querySelectorAll('[data-price]'), function (n) { n.textContent = fmt(price); });

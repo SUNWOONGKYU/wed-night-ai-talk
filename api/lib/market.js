@@ -40,7 +40,7 @@ const DEPLOY_DATE = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0
 
 const DEFAULTS = {
     kakaopayLink: 'https://qr.kakaopay.com/Ej8qUBxLx135601791',
-    bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규' }
+    bank: { name: '하나은행', account: '287-910921-40507', holder: '선웅규(파인더월드)' }
 };
 
 const ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   // 0/O · 1/I/L 제외
