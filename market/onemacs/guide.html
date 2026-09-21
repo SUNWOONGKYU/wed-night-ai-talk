@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="/css/onemacs.css?v=20260921a2">
 <link rel="stylesheet" href="/css/console.css?v=20260921a2">
 <link rel="stylesheet" href="/css/guide.css?v=20260921a">
+<link rel="stylesheet" href="/css/responsive.css?v=20260921a">
 </head>
 <body class="market console guide" data-app="onemacs">
 <!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
@@ -29,7 +30,7 @@
         <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
     </div>
 </nav>
-<!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/guide). 전역 nav 미노출 — 상세 탭·설치·FAQ·콘솔 "?" 에서 진입. 같은 본문의 오프라인 파일: 배포판 사용법.html (빌드: 세션 스크래치 gd_build.py) — market/README.md -->
+<!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/guide). 전역 nav 미노출 — 상세 탭·설치·FAQ·허브 배너 줄 ⓘ(사용법 보기)에서 진입. 같은 본문의 오프라인 파일: 배포판 사용법.html (빌드: 세션 스크래치 gd_build.py) — market/README.md -->
 <div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">One MACS · 원맥스 사용법</span></div>
 <div class="tabs"><a href="/market/onemacs">상세 보기</a><a href="/market/onemacs/reviews">리뷰<small id="rv-tab-count"></small></a><a href="/market/onemacs/guide" class="on" aria-current="page">사용법</a></div>
 
@@ -60,10 +61,10 @@
 <section id="screen" class="alt">
   <div class="wrap">
     <h2>2. 화면 읽는 법</h2>
-    <div class="figs"><figure><img src="/market/img/guide/console.jpg" alt="콘솔 화면 — 맨 윗줄 "?"·이름·⚙, AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창" loading="lazy"><figcaption>콘솔 화면 — 맨 윗줄 "?"·이름·⚙, AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창</figcaption></figure></div>
+    <div class="figs"><figure><img src="/market/img/guide/console.jpg" alt="콘솔 화면 — AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창 (허브·콘솔·앱 최종 화면으로 교체 예정)" loading="lazy"><figcaption>콘솔 화면 — AI 탭 4개(소제목은 지금 모델), 상태줄, 대화, 칩, 입력창 (허브·콘솔·앱 최종 화면으로 교체 예정)</figcaption></figure></div>
     <dl class="kv">
-      <dt>맨 윗줄</dt><dd>왼쪽 <b>?</b> 는 이 사용법, 가운데는 이름(One-stop Multi AI Console System), 오른쪽 <b>⚙</b> 는 설정(8절). 버튼은 이 줄에만 있습니다.</dd>
-      <dt>PC 탭 줄</dt><dd>PC 가 여러 대면 그 아래에 PC 탭이 나란히 나옵니다. 탭을 눌러 PC 를 오갑니다.</dd>
+      <dt>허브 배너 줄</dt><dd>허브 페이지 맨 위 한 줄. 왼쪽 <b>ⓘ</b>(정보 아이콘)는 "사용법 보기", 가운데는 이름(One-stop Multi AI Console System), 오른쪽 <b>⚙</b> 는 설정(8절). 버튼은 이 줄에만 있고, 콘솔 화면 안에는 맨 윗줄이 없습니다.</dd>
+      <dt>PC 탭 줄</dt><dd>PC 가 여러 대면 PC 탭이 나란히 나옵니다. 탭을 눌러 PC 를 오갑니다. 이 줄에도 버튼은 없습니다.</dd>
       <dt>AI 탭 4개</dt><dd>Claude Code · Codex · Antigravity · Grok. 탭의 작은 글씨는 <b>지금 쓰는 모델</b>입니다(바꾸는 곳은 ⚙ 설정 › 모델 선택). 계정이 없는 AI 는 탭이 비어 있고, 잠시 쓸 수 없는 AI 는 소제목에 "점검 중"이라고 나옵니다.</dd>
       <dt>상태줄</dt><dd>탭 바로 아래 한 줄. <b>대기 / 작업 중</b>, <b>남은 한도</b>(그 AI 구독의 5시간·7일 한도), <b>메시지 수</b>, 그리고 <b>요약 ▾</b> — 답을 "요약 · 상세 · 전체" 중 어떻게 보여줄지 고르는 곳입니다. 처음엔 요약이 편합니다.</dd>
       <dt>대화</dt><dd>내 지시는 오른쪽 파란 칸, AI 의 답은 왼쪽 상자입니다.</dd>
@@ -156,7 +157,7 @@
   <div class="wrap">
     <h2>8. 권한 모드 · 다른 기기 로그아웃</h2>
     <div class="figs two"><figure><img src="/market/img/guide/settings.jpg" alt="⚙ 설정 — 모델 선택 · 답 표시 방식 기본값 · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간" loading="lazy"><figcaption>⚙ 설정 — 모델 선택 · 답 표시 방식 기본값 · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간</figcaption></figure><figure><img src="/market/img/guide/settings2.jpg" alt="⚙ 설정(아래쪽) — 실패 시 자동 재시도 · 남은 한도 표시 · 권한 모드 · 화면 테마" loading="lazy"><figcaption>⚙ 설정(아래쪽) — 실패 시 자동 재시도 · 남은 한도 표시 · 권한 모드 · 화면 테마</figcaption></figure></div>
-    <p>맨 윗줄 오른쪽 <b>⚙</b> 를 누르면 설정이 한 화면에 모여 있습니다. 바꾼 값은 이 PC 의 콘솔에 저장되고 다음 지시부터 적용됩니다.</p>
+    <p>허브 배너 줄 오른쪽 <b>⚙</b> 를 누르면 설정이 한 화면에 모여 있습니다. 바꾼 값은 이 PC 의 콘솔에 저장되고 다음 지시부터 적용됩니다.</p>
     <dl class="kv">
       <dt>설정 항목</dt><dd>사용법 보기 · 모델 선택(AI 별) · 답 표시 방식 기본값(요약·상세·전체) · 작업 끝나면 알림 · 동시에 시키기 기본 대상 · 작업 제한 시간 · 실패 시 자동 재시도 · 남은 한도 표시 · 화면 테마 · 코드 바꾸기 · PIN 다시 입력 · 허브 주소 · 다시 연결 · 개인정보처리방침 · 문제 신고 · 권한 모드 · 다른 기기 로그아웃</dd>
       <dt>권한 모드</dt><dd>설정에 지금 모드가 표시됩니다. <b>안전 모드</b>(기본)에서는 AI 가 작업 폴더 안에서만 읽고 씁니다. <b>전체 권한 모드</b>에서는 AI 가 PC 의 다른 파일도 바꿀 수 있습니다. 권한 모드와 PIN 은 PC 에서만 바꿀 수 있습니다 — PC 의 Claude Code 에 "원맥스 전체 권한 켜줘" 또는 "원맥스 안전 모드로".</dd>

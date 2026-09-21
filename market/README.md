@@ -81,6 +81,13 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 - 다크 캡처 이미지(폰 목업·스크린샷)는 라이트에서도 그대로 두고 테두리·그림자로만 구분한다.
 - **WAAT 로고는 변경 금지(라이트 모드 포함)** — PO 결정 2026-09-21. 라이트용 별도 로고를 만들지 않고, 색·배경·크기·형태 어떤 변경도 하지 않는다. 다크/라이트 모두 현행 `logo-waat.png` 그대로.
 
+## 6-1. 모바일 최소폭 반응형 (2026-09-21, PO 지적)
+
+- `css/responsive.css` 를 마켓 전 페이지에서 **마지막**에 로드한다(theme.css 최상단에도 `text-size-adjust:100%`). 카탈로그 원본 `모바일콘솔/3_안드로이드앱/카탈로그/index.html` 의 `<style>` 끝에도 같은 규칙.
+- 브레이크포인트: ≤360 소형 폰 · ≤430 폰 · ≤768 태블릿/가로 · 그 위 데스크톱. 글자: h1 clamp(22px,6.5vw,30px) · 리드 clamp(15px,4.2vw,17px) · 본문 15px(≤360 14px) · 카드 제목 clamp(16px,4.5vw,18px) · 여백 16px(≤360 14px).
+- 원칙: `body{overflow-x:hidden}` 으로 덮지 않고 원인을 없앤다 — `body{overflow-wrap:anywhere}`(긴 경로·URL), 이미지 max-width, 요약 줄 ≤360 2×2, 경로 표시 줄바꿈, 표 ≤399 1열, 비교표는 가로 스크롤 상자 안에서만, `.cmpbox::after` 여백 보정.
+- 검증 방법: Playwright 320·360·375·390·412·430 × (기본·페북 인앱 FBAN/FBAV·카카오톡 인앱 KAKAOTALK UA) 에서 `scrollWidth == innerWidth` 와 h1/리드/본문 px 실측(세션 스크래치 rw_test.py 방식).
+
 ## 7. 리뷰·댓글 (앱 공통 · 2026-09-21)
 
 - 페이지 `/market/<앱id>/reviews`(`market/<앱id>/reviews.html`, `body[data-app]`·`data-app-name`), `css/reviews.css`, `js/reviews.js`. 판매 페이지 상단 메뉴 "상세 보기 · 리뷰(N)"(`.tabs`, market.css).

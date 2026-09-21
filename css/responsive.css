@@ -1,0 +1,67 @@
+/* ========== 앱마켓 공통 반응형 (2026-09-21, PO 지적: 모바일 최소폭·인앱 브라우저 글자 확대) ==========
+   마켓 전 페이지에서 다른 css 뒤에 마지막으로 로드한다. 원칙: body{overflow-x:hidden} 으로 덮지 않고 넘치는 원인을 없앤다.
+   브레이크포인트: ≤360 소형 폰 · ≤430 폰(기본) · ≤768 태블릿/폰 가로 · 그 위 데스크톱(각 css 의 min-width:600px 규칙)
+   글자: h1 clamp(22px,6.5vw,30px) · 리드 clamp(15px,4.2vw,17px) · 본문 15px(≤360 은 14px) · 카드 제목 clamp(16px,4.5vw,18px) · 좌우 여백 16px(≤360 은 14px) */
+
+/* 인앱 브라우저(페이스북·카카오톡 WebView)의 글자 자동 확대(font boosting) 차단 — theme.css 에도 같은 선언(최상단) */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* 긴 경로·URL·영문 토큰이 칸을 밀어내지 않게: keep-all 은 유지하고 마지막 수단으로만 끊는다 */
+body{overflow-wrap:anywhere}
+img,svg,video,canvas{max-width:100%;height:auto}
+pre,code,.cs-cmd code,.mono{overflow-wrap:anywhere;word-break:break-word}
+table{max-width:100%}
+
+/* 유동 글자 */
+h1{font-size:clamp(22px,6.5vw,30px)!important}
+.lead,p.lead{font-size:clamp(15px,4.2vw,17px)!important}
+h2{font-size:clamp(18px,5.4vw,22px)}
+.card h3,.cs-step h3,.feat h2,.guide h2{font-size:clamp(16px,4.5vw,18px)}
+.feat h2{font-size:clamp(17px,5.2vw,21px)}
+
+/* 줄바꿈이 필요한 가로 묶음 */
+.topbar,.topbar.crumb{flex-wrap:wrap;row-gap:4px;min-width:0}
+.topbar>*{min-width:0;overflow-wrap:anywhere}
+.topbar.crumb .cur{white-space:normal}
+.tabs a{min-width:0;padding-left:4px;padding-right:4px}
+.sumline>*{padding-left:2px;padding-right:2px}
+.sumline b,.sumline small{white-space:normal}
+.stats{gap:6px}
+.stat b{font-size:clamp(20px,6vw,26px)}
+.kv.row,.kv-box .kv{flex-wrap:wrap}
+.chip{max-width:100%}
+
+/* ≤430 폰 기본 */
+@media (max-width:430px){
+  body{font-size:15px}
+  .sumline b{font-size:14px}.sumline small{font-size:11px}
+  .figs.three{grid-template-columns:1fr 1fr}
+}
+/* ≤360 소형 폰 */
+@media (max-width:360px){
+  body{font-size:14px}
+  .wrap{padding-left:14px;padding-right:14px}
+  .cmpwrap{margin:0 -14px;padding:0 14px}.cmpbox::after{right:-14px}
+  .topbar,.topbar.crumb{padding-left:14px;padding-right:14px;font-size:12px}
+  .tabs{padding-left:14px;padding-right:14px}.tabs a{font-size:14px;padding-top:10px;padding-bottom:10px}
+  .sumline{grid-template-columns:repeat(2,1fr)!important}
+  .sumline>*:nth-child(2){border-right:0}.sumline>*:nth-child(n+3){border-top:1px solid var(--line)}
+  .feat .sumline{margin-left:14px;margin-right:14px}
+  .feat .in{padding:16px 14px;gap:10px}
+  .feat .cta{padding:0 14px 14px}
+  .stats{grid-template-columns:1fr 1fr 1fr;gap:4px}.stat{padding:10px 4px}.stat small{font-size:11px}
+  .g6{grid-template-columns:1fr}
+  .figs.two,.figs.three{grid-template-columns:1fr 1fr;gap:8px}
+  .info{grid-template-columns:1fr}
+  .btn{font-size:16px;padding:14px 16px}
+  .price{font-size:38px}
+  .sort button,.cat{font-size:12px;padding:6px 10px}
+  .dist div{grid-template-columns:22px 1fr 18px}
+  .cs-cmd{flex-direction:column}.cs-copy{min-height:40px}
+  .hdr .wrap{gap:8px}.logo{font-size:15px}
+}
+/* ≤320 최소 폭 */
+@media (max-width:320px){
+  .sumline b{font-size:13px}
+  .feat .in{grid-template-columns:48px 1fr}.feat .logo{width:48px;height:48px}.feat .price{grid-column:1/-1;text-align:left}
+  .pick button{font-size:28px}
+}

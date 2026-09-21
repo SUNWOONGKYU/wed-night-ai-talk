@@ -2,6 +2,7 @@
    마켓 페이지(market.html · market/onemacs.html · market/onemacs/*)는 이 파일을 가장 먼저 로드한다.
    색은 여기의 토큰으로만 쓴다 — 각 css(market·onemacs·console·market-home·site-nav)에는 하드코딩 색이 없다.
    기본 = 시스템 설정(prefers-color-scheme). 수동 전환은 html[data-theme=light|dark] (js/theme.js 가 localStorage 값을 head 에서 먼저 적용). */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}   /* 인앱 브라우저 글자 자동 확대 차단 (반응형 규칙은 css/responsive.css) */
 :root{
   color-scheme:dark;
   --bg:#0b0f1a; --bg2:#111827; --card:#141c2e; --card2:#182238; --line:#243049; --line2:#2f3d5c;
