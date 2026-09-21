@@ -22,7 +22,7 @@ window.MARKET_APPS = [
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, maker: '파인더월드', launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
-    bundle: ['트레이딩 시그널(국내 주식 262종목 스캐너 + 말로 전략 만들기)', '보고서 작성 AI 에이전트(곧 추가)'],
+    bundle: ['트레이딩 시그널(국내 주식 262종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇', '보고서 작성 AI 에이전트(곧 추가)'],
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
     // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----

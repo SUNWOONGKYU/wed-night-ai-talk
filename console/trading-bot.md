@@ -1,9 +1,9 @@
-# Claude Code 자동 설치 지시문 — 트레이딩봇 (무료 배포판 v1)
+# Claude Code 자동 설치 지시문 — 매매 자동화 봇 (무료 배포판 v1.1)
 
 > **사용자는 이것만 하면 된다**: 봇을 둘 프로젝트 폴더에서 Claude Code 를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
-> https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩봇을 설치·시험 기동해줘.
+> https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 매매 자동화 봇을 설치·시험 기동해줘.
 > ```
 > (zip 을 이미 받아 풀었다면: `<푼 폴더>\CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘`)
 >
@@ -19,7 +19,7 @@
 - 증권사 로그인, API 키 발급, 텔레그램 봇 생성은 **절대 대신 하지 않는다**. 방법만 알려주고 사용자가 값을 주면 이어간다.
 - 사용자가 준 앱키·시크릿·계좌번호·토큰은 `.env` 에만 쓰고 **화면에 다시 출력하지 않는다**. 어디에도 전송하지 않는다.
 - `KIS_PAPER_MODE` 는 **`true`(모의투자)로 쓴다.** 사용자가 "실계좌로" 라고 해도 이 절차에서는 바꾸지 않는다 — `README_트레이딩봇.md` 7절(실계좌 전환 절차)을 읽어 보라고 안내만 한다.
-- `config.py` 의 `APPROVAL_REQUIRED` · `PUT_ENABLED` · `STRATEGY_LIVE_ENABLED` · `AUTO_BUY_VETTED` 는 건드리지 않는다.
+- `config.py` 의 `APPROVAL_REQUIRED` · `EXIT_APPROVAL_REQUIRED` · `DAY_START_APPROVAL_REQUIRED` · `PUT_ENABLED` · `STRATEGY_LIVE_ENABLED` · `AUTO_BUY_VETTED` 는 건드리지 않는다.
 - `PROJECT` 밖은 건드리지 않는다. Windows 전용, PowerShell 명령을 쓴다.
 
 ### 1. 환경 점검
@@ -60,7 +60,7 @@ pip install -r requirements.txt
    `Start-Process -FilePath python -ArgumentList "scanner_web.py" -WorkingDirectory "<PROJECT>"`
    20초 뒤 `Invoke-WebRequest http://127.0.0.1:5050/api/status` 가 200 이면 정상 (브라우저가 자동으로 열린다).
 2. 트레이더를 **60초 제한**으로 시험 실행하고 출력을 본다:
-   `python trader.py` 를 실행해 다음 줄이 나오면 정상이다 — `Trader 자동매매 트레이더 시작 (모의투자)` · `[KIS] Token acquired` · `[FuturesMap] 매핑 로드`. 장 외 시간이면 `장 외 — N분 후 개장 대기` 가 나오는 것이 정상이다. 확인했으면 프로세스를 종료한다(Ctrl+C 또는 그 창 닫기). `data\.trader.lock` 이 남아 있으면 지운다.
+   `python trader.py` 를 실행해 다음 줄이 나오면 정상이다 — `Trader 자동매매 트레이더 시작 (모의투자)` · `[KIS] Token acquired` · `[FuturesMap] 매핑 로드: N개 (MM월물)`. 월물(MM)이 이번 달보다 이전이면 `python build_futures_map.py` 를 한 번 실행해 갱신한다(네트워크 필요). 장 외 시간이면 `장 외 — N분 후 개장 대기` 가 나오는 것이 정상이다. 확인했으면 프로세스를 종료한다(Ctrl+C 또는 그 실행 창 닫기). `data\.trader.lock` 이 남아 있으면 지운다.
    - `.env 에 KIS_APP_KEY ... 없습니다` → 4단계로 돌아간다.
    - `KIS 토큰 발급 실패` → 앱키/시크릿 오타, 또는 실전 키를 모의 모드에 넣은 것. 사용자에게 확인 요청.
    - `TELEGRAM_BOT_TOKEN ... 없습니다` → 4단계로.
@@ -72,23 +72,23 @@ pip install -r requirements.txt
 $proj = "<PROJECT>"
 $act = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$proj\restart_trader.ps1`"" -WorkingDirectory $proj
 $trg = New-ScheduledTaskTrigger -Daily -At 08:45
-Register-ScheduledTask -TaskName "TradingBot-Trader" -Action $act -Trigger $trg -Description "트레이딩봇 매일 08:45 재시작"
+Register-ScheduledTask -TaskName "TradingBot-Trader" -Action $act -Trigger $trg -Description "매매 자동화 봇 매일 08:45 재시작"
 $act2 = New-ScheduledTaskAction -Execute "python" -Argument "scanner_web.py" -WorkingDirectory $proj
 $trg2 = New-ScheduledTaskTrigger -Daily -At 08:40
-Register-ScheduledTask -TaskName "TradingBot-Scanner" -Action $act2 -Trigger $trg2 -Description "트레이딩봇 스캐너 08:40 기동"
+Register-ScheduledTask -TaskName "TradingBot-Scanner" -Action $act2 -Trigger $trg2 -Description "매매 자동화 봇 스캐너 08:40 기동"
 ```
 권한 오류면 "관리자 PowerShell 에서 위 명령을 직접 실행하세요"라고 명령을 보여주고 넘어간다. `Get-ScheduledTask -TaskName "TradingBot-*"` 로 등록 확인.
 
 ### 8. 완료 보고 (이 형식 그대로)
 ```
-설치 완료 — 트레이딩봇 (모의투자 모드)
+설치 완료 — 매매 자동화 봇 (모의투자 모드)
 - 봇 폴더: <PROJECT>
 - Python: <버전> · 라이브러리: OK (선택 미설치: <목록 또는 없음>)
 - .env: KIS 키 OK · 텔레그램 OK · KIS_PAPER_MODE=true
 - 시험 기동: 스캐너 OK(5050) · 트레이더 토큰 OK · 선물맵 <N>개 · 텔레그램 응답 OK/미확인
 - 자동 기동: 등록됨(08:40 스캐너 / 08:45 트레이더) / 미등록
 - 다음 할 일:
-  1) 장중(09:00~15:30)에 텔레그램으로 승인 요청이 오면 "승인/거절" 버튼으로 답한다 (180초 안에).
+  1) 장 시작 전 "오늘 매매 시작" 승인 → 장중(09:00~15:30) 매수 요청은 "승인/거절"(180초 안에), 청산 요청은 "청산 승인/보류"(120초 안에, 손절은 무응답 시 자동 청산).
   2) 전략을 만들려면 이 폴더에서 claude 를 켜고 "/전략만들기 <조건 설명>".
   3) 실계좌 전환은 README_트레이딩봇.md 7절을 먼저 읽는다. 모의투자로 최소 2~4주 먼저.
 - 고지: 투자자문·일임 아님. 모든 매매 판단·결과는 사용자 책임. 샘플 전략은 교육용, 수익 보장 없음.
@@ -97,5 +97,5 @@ Register-ScheduledTask -TaskName "TradingBot-Scanner" -Action $act2 -Trigger $tr
 ### 9. 이후 사용법 (한 번 알려줄 것)
 - 매일: 08:45 자동 기동(등록했다면). 아니면 창 두 개 — `python scanner_web.py` → `python trader.py`.
 - 텔레그램 명령: `정지` `재개` `상태` `잔고` `포지션` `스캔` `min_score 70` `초기화`.
-- 멈추기: 텔레그램 `정지` 또는 trader.py 창 닫기. 보유 포지션은 자동으로 정리되지 않으니 HTS/MTS 에서 직접 확인.
+- 멈추기: 텔레그램 `정지` 또는 trader.py 실행 창 닫기. 보유 포지션은 자동으로 정리되지 않으니 HTS/MTS 에서 직접 확인.
 - 전략 파일: `strategies\*.json` (규격은 `strategies\README.md`). 실매매에 쓰려면 파일의 `live:true` + `config.py` `STRATEGY_LIVE_ENABLED=True` 를 사용자가 직접 켠다.
