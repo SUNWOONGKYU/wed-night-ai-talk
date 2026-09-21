@@ -15,3 +15,8 @@ body.console{padding-bottom:40px}
 .warnbox .cs-copy{margin-top:10px;width:100%;min-height:40px}
 .cs-link{color:#93c5fd;text-decoration:underline;text-underline-offset:2px}
 @media (max-width:480px){ .cs-cmd{flex-direction:column} .cs-copy{min-height:40px} }
+
+/* 경로 표시(앱마켓 › 원맥스 › 설치하기) — 부속 페이지 공통 */
+.topbar.crumb{justify-content:flex-start;flex-wrap:wrap;gap:6px}
+.topbar.crumb .sep{color:var(--fg3)}
+.topbar.crumb .cur{color:var(--fg);font-weight:700}

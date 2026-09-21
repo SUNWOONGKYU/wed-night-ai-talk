@@ -3,7 +3,7 @@
 > **사용자는 이것만 하면 된다**: 봇을 둘 프로젝트 폴더에서 Claude Code 를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
-> https://www.waat.community/console/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩봇을 설치·시험 기동해줘.
+> https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩봇을 설치·시험 기동해줘.
 > ```
 > (zip 을 이미 받아 풀었다면: `<푼 폴더>\CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘`)
 >
@@ -31,7 +31,7 @@
 이미 `PROJECT` 에 `trader.py` 와 `scanner_web.py` 가 있으면 그것을 쓴다. 없으면 내려받아 푼다:
 ```powershell
 $zip = "$env:TEMP\trading-bot_v1.zip"
-Invoke-WebRequest -Uri "https://www.waat.community/console/trading-bot_v1.zip" -OutFile $zip
+Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/trading-bot_v1.zip" -OutFile $zip
 Expand-Archive -Path $zip -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
 풀린 폴더 안에서 `trader.py` 가 있는 폴더의 **모든 파일·하위 폴더**(`.claude`, `.env.example`, `.gitignore` 같은 점 파일 포함)를 `PROJECT` 로 복사한다. 이미 있는 `.env` 와 `strategies\*.json` 은 덮어쓰지 않는다. 다운로드가 실패하면 URL 과 오류를 보여주고 중단.

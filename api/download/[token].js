@@ -102,7 +102,7 @@ module.exports = async function handler(req, res) {
   1. 내려받은 APK를 눌러 앱을 설치합니다. ("출처를 알 수 없는 앱" 경고가 뜨면 이 출처 허용)<br>
   2. 앱을 열면 첫 화면에 "PC에 설치하는 방법"이 나옵니다. 그대로 따라 PC에 원맥스를 설치하면 코드 8자리가 나옵니다.<br>
   3. 그 코드를 앱에 넣으면 핸드폰과 PC가 연결됩니다.<br>
-  (PC 설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/console">waat.community/console</a> 을 열어도 볼 수 있습니다)
+  (PC 설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/market/onemacs/install">waat.community/market/onemacs/install</a> 을 열어도 볼 수 있습니다)
 </div>`, `<meta http-equiv="refresh" content="2;url=${esc(fileUrl)}">`));
     } catch (error) {
         console.error('download 오류:', error && error.message);

@@ -100,6 +100,58 @@
           "value": "public, max-age=3600"
         }
       ]
+    },
+    {
+      "source": "/market/onemacs/consolesystem_v2.zip",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"consolesystem_v2.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/market/onemacs/install.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
+    },
+    {
+      "source": "/market/onemacs/trading-bot_v1.zip",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"trading-bot_v1.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/market/onemacs/trading-bot.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -108,12 +160,28 @@
       "destination": "/api/share?event=:id"
     },
     {
-      "source": "/console",
-      "destination": "/console.html"
-    },
-    {
       "source": "/market/onemacs",
       "destination": "/market/onemacs.html"
+    },
+    {
+      "source": "/market/onemacs/install",
+      "destination": "/market/onemacs/install.html"
+    },
+    {
+      "source": "/market/onemacs/install.md",
+      "destination": "/console/install.md"
+    },
+    {
+      "source": "/market/onemacs/trading-bot.md",
+      "destination": "/console/trading-bot.md"
+    },
+    {
+      "source": "/market/onemacs/consolesystem_v2.zip",
+      "destination": "/console/consolesystem_v2.zip"
+    },
+    {
+      "source": "/market/onemacs/trading-bot_v1.zip",
+      "destination": "/console/trading-bot_v1.zip"
     }
   ],
   "functions": {
@@ -138,5 +206,17 @@
     "api/reserve-count.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/console",
+      "destination": "/market/onemacs/install",
+      "permanent": true
+    },
+    {
+      "source": "/console.html",
+      "destination": "/market/onemacs/install",
+      "permanent": true
+    }
+  ]
 }

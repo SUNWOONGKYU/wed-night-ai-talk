@@ -3,7 +3,7 @@
 > **사용자는 이것만 하면 된다**: PC에 `C:\원맥스` 폴더를 만들고 그 폴더에서 Claude Code를 켜고(`claude`), 아래 한 줄을 붙여넣는다.
 >
 > ```
-> https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.
+> https://www.waat.community/market/onemacs/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.
 > ```
 > (zip을 이미 받아 풀었다면: `<푼 폴더>\CLAUDE_CODE_설치지시문.md 파일을 읽고 그대로 수행해줘`)
 >
@@ -79,7 +79,7 @@ ROOT\
 이미 `DIST`(이 지시문이 들어 있는 폴더, `server.js`·`cloudflared.exe` 존재)가 있으면 그것을 쓴다. 없으면 내려받는다:
 ```powershell
 $zip = "$env:TEMP\consolesystem_v2.zip"
-Invoke-WebRequest -Uri "https://www.waat.community/console/consolesystem_v2.zip" -OutFile $zip
+Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/consolesystem_v2.zip" -OutFile $zip
 Expand-Archive -Path $zip -DestinationPath "$env:TEMP\consolesystem_v2" -Force
 ```
 `DIST` = 풀린 폴더 안에서 `server.js` 가 있는 폴더. 없거나 다운로드가 실패하면 그 URL과 오류를 사용자에게 보여주고 중단.
@@ -94,13 +94,13 @@ Expand-Archive -Path $zip -DestinationPath "$env:TEMP\consolesystem_v2" -Force
 1. `ROOT\트레이딩 시그널\` 폴더를 만들고, 내려받아 그 안에 푼다(기존 파일은 덮어쓰지 않는다):
 ```powershell
 $bz = "$env:TEMP\trading-bot_v1.zip"
-Invoke-WebRequest -Uri "https://www.waat.community/console/trading-bot_v1.zip" -OutFile $bz
+Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/trading-bot_v1.zip" -OutFile $bz
 Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
    풀린 폴더 안에서 `scanner_web.py` 가 있는 폴더의 내용을 `PROJECT\`(= `ROOT\트레이딩 시그널\`) 로 복사.
 2. `PROJECT\scanner_web.py`, `PROJECT\strategies\5대장2쫄병.json`, `PROJECT\strategy_engine.py` 존재 확인. 이것이 폰의 **스캐너 버튼 · 전략 카드**의 재료다.
 3. 전략 빌더 스킬 설치: `PROJECT\skills\전략만들기\` 가 있으면 `%USERPROFILE%\.claude\skills\전략만들기\` 로 복사(없으면 건너뜀). 이후 사용자는 폰에서 "RSI 35 이하 + 거래량 1.5배 전략 만들어줘" 처럼 말로 전략을 만든다.
-4. 스캐너·봇의 **실행 준비**(Python 3.11+ · 라이브러리 · 증권사 키 · 텔레그램)는 Q5-2 답에 따라 8단계 뒤에 `PROJECT\CLAUDE_CODE_봇설치지시문.md`(= https://www.waat.community/console/trading-bot.md) 로 이어서 한다. 키 없이도 콘솔·전략 카드·전략 만들기는 동작한다.
+4. 스캐너·봇의 **실행 준비**(Python 3.11+ · 라이브러리 · 증권사 키 · 텔레그램)는 Q5-2 답에 따라 8단계 뒤에 `PROJECT\CLAUDE_CODE_봇설치지시문.md`(= https://www.waat.community/market/onemacs/trading-bot.md) 로 이어서 한다. 키 없이도 콘솔·전략 카드·전략 만들기는 동작한다.
 
 ### 4. 설정 (console_config.json, UTF-8·BOM 없이) — 마법사 답(`WIZ`)을 그대로 적는다
 0. `pc_label`: `WIZ.pc_label` (예: `"PC DESKTOP-ABC"`)

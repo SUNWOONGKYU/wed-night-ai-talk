@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>One MACS · 원맥스 — PC에 원맥스 설치하기</title>
-<link rel="canonical" href="https://www.waat.community/console">
+<title>PC에 원맥스 설치하기 — One MACS · 원맥스 | WAAT 앱마켓</title>
+<link rel="canonical" href="https://www.waat.community/market/onemacs/install">
 <meta name="description" content="PC에 원맥스를 설치하는 순서: Node.js 설치 → Claude Code 설치·로그인 → Claude Code에게 설치 지시. Claude Code를 한 번도 안 깔아 본 분을 위한 안내.">
 <link rel="stylesheet" href="/css/site-nav.css?v=20260920f">
-<link rel="stylesheet" href="css/market.css?v=20260920b">
-<link rel="stylesheet" href="css/console.css?v=20260920a">
+<link rel="stylesheet" href="/css/market.css?v=20260920e">
+<link rel="stylesheet" href="/css/console.css?v=20260921a">
 </head>
 <body class="market console">
 <!-- 사이트 전역 nav (index.html 의 nav 재사용 — 로그인 영역 제외) -->
@@ -25,11 +25,13 @@
         <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
     </div>
 </nav>
-<div class="topbar"><a href="index.html">← WAAT</a><span>PC에 원맥스 설치하기</span><a href="/market/onemacs#buy">앱 받기</a></div>
+<!-- 원맥스 상품의 부속 페이지 (정식 URL /market/onemacs/install · 짧은 별칭 /console 은 301). 전역 nav 에 노출하지 않고 상세·완료 화면·메일에서만 진입 — market/README.md -->
+<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><a href="/market/onemacs">One MACS · 원맥스</a><span class="sep">›</span><span class="cur">PC에 원맥스 설치하기</span></div>
 
 <section style="padding-top:28px">
   <div class="wrap">
-    <span class="eyebrow">One MACS · 원맥스 · PC에 설치하기</span>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><img src="/market/img/onemacs_icon.png" alt="One MACS · 원맥스 로고" width="40" height="40" style="border-radius:12px"><div><b style="font-size:20px;letter-spacing:-.02em;color:var(--fg)">One MACS · 원맥스</b><span style="display:block;font-size:12px;color:var(--fg3)">One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템</span></div></div>
+    <span class="eyebrow">PC에 원맥스 설치하기</span>
     <p class="eyebrow" style="color:#4F7FFF;font-weight:700;margin-bottom:8px">폰 앱에서 오셨나요? 여기서 3단계만 하면 폰에 넣을 코드 8자리가 나옵니다.</p>
     <h1>PC에 원맥스를 설치하는 일은<br>Claude Code가 대신 합니다.</h1>
     <p class="lead" style="margin-top:12px">사람이 할 일은 <b>Node.js 설치 → Claude Code 설치·로그인 → Claude Code에게 설치 지시</b>입니다. 지시하면 Claude Code가 필요한 것(어떤 AI를 함께 쓸지, 모델, 프로젝트)을 물어보면서 설치를 진행합니다.</p>
@@ -37,7 +39,7 @@
 
     <div class="warnbox" id="cs-phone-notice" hidden style="margin-top:16px">
       지금 <b>폰</b>으로 보고 계시네요. 아래 단계는 <b>Windows PC</b>에서 해야 합니다. PC 브라우저에서 <span class="mono">waat.community/console</span> 을 열면 각 단계에 [복사] 버튼이 나옵니다.
-      <button type="button" class="cs-copy" data-copy="https://www.waat.community/console">이 페이지 주소 복사</button>
+      <button type="button" class="cs-copy" data-copy="https://www.waat.community/market/onemacs/install">이 페이지 주소 복사</button>
     </div>
 
     <div class="card" style="margin-top:18px">
@@ -98,16 +100,16 @@
       <div class="row"><span class="num">6</span><div>
         <h3>Claude Code에게 설치를 지시하기</h3>
         <p>Claude Code 입력창에 아래 지시문을 붙여넣고 Enter. 이후 Claude Code가 물어보는 것에 답하면 됩니다.</p>
-        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/console/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.">복사</button></div>
+        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/market/onemacs/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/market/onemacs/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.">복사</button></div>
         <p style="color:var(--fg)">이후는 Claude Code가 알아서 합니다: 파일 다운로드 · 설치 · 설정 · 실행 · 페어링 코드 발급. 중간에 로그인이나 확인을 물으면 답해 주세요. 끝나면 <b>페어링 코드 8자리</b>를 알려줍니다.</p>
-        <p class="note">Claude Code가 URL을 못 읽는다고 하면 <a href="console/consolesystem_v2.zip" class="cs-link">consolesystem_v2.zip</a>(18MB)을 받아 작업 폴더에 풀고, "<span class="mono">CLAUDE_CODE_설치지시문.md 파일을 읽고 그대로 수행해줘</span>"라고 하세요. 지시문 원문: <a href="console/install.md" class="cs-link" target="_blank" rel="noopener">install.md</a></p>
+        <p class="note">Claude Code가 URL을 못 읽는다고 하면 <a href="/market/onemacs/consolesystem_v2.zip" class="cs-link">consolesystem_v2.zip</a>(18MB)을 받아 작업 폴더에 풀고, "<span class="mono">CLAUDE_CODE_설치지시문.md 파일을 읽고 그대로 수행해줘</span>"라고 하세요. 지시문 원문: <a href="/market/onemacs/install.md" class="cs-link" target="_blank" rel="noopener">install.md</a></p>
       </div></div>
     </div>
 
     <div class="cs-step">
       <div class="row"><span class="num">7</span><div>
         <h3>폰: 앱 열고 페어링 코드 입력 → 끝</h3>
-        <p><a href="/market/onemacs#buy" class="cs-link">앱(/market/onemacs)</a>을 설치한 폰에서 원맥스를 열고, PC가 알려준 페어링 코드 8자리를 입력하면 연결됩니다. 이후 PC가 켜져 있으면 어디서든 핸드폰에서 작업을 시킬 수 있습니다.</p>
+        <p><a href="/market/onemacs" class="cs-link">앱(/market/onemacs)</a>을 설치한 폰에서 원맥스를 열고, PC가 알려준 페어링 코드 8자리를 입력하면 연결됩니다. 이후 PC가 켜져 있으면 어디서든 핸드폰에서 작업을 시킬 수 있습니다.</p>
       </div></div>
     </div>
 
@@ -131,9 +133,9 @@
       <div class="row"><span class="num">B</span><div>
         <h3>봇을 둘 폴더에서 Claude Code 를 켜고 한 줄 붙여넣기</h3>
         <div class="cs-cmd"><code>mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude</code><button type="button" class="cs-copy" data-copy="mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude">복사</button></div>
-        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/console/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/console/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘">복사</button></div>
+        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 트레이딩 봇을 설치·실행해줘">복사</button></div>
         <p style="color:var(--fg)">Claude Code 가 배포판을 내려받아 라이브러리 설치 → <span class="mono">.env</span> 에 키 입력(사용자가 값을 줄 때만) → 시험 기동까지 합니다. 증권사 로그인·키 발급·텔레그램 봇 생성은 대신 하지 않습니다.</p>
-        <p class="note">URL 을 못 읽으면 <a href="console/trading-bot_v1.zip" class="cs-link">trading-bot_v1.zip</a>(148KB)을 받아 폴더에 풀고 "<span class="mono">CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘</span>". 지시문 원문: <a href="console/trading-bot.md" class="cs-link" target="_blank" rel="noopener">trading-bot.md</a></p>
+        <p class="note">URL 을 못 읽으면 <a href="/market/onemacs/trading-bot_v1.zip" class="cs-link">trading-bot_v1.zip</a>(148KB)을 받아 폴더에 풀고 "<span class="mono">CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘</span>". 지시문 원문: <a href="/market/onemacs/trading-bot.md" class="cs-link" target="_blank" rel="noopener">trading-bot.md</a></p>
         <p class="note">승인 없이는 주문하지 않으며, 실계좌 전환은 README 의 절차를 읽고 본인이 결정합니다.</p>
       </div></div>
     </div>
@@ -152,11 +154,11 @@
 
 <footer class="foot">
   <div class="wrap">
-    <p><a href="/market" class="cs-link">앱마켓으로</a> · <a href="index.html" class="cs-link">WAAT 홈</a></p>
+    <p><a href="/market/onemacs" class="cs-link">One MACS · 원맥스 상세로</a> · <a href="/market" class="cs-link">앱마켓</a> · <a href="/" class="cs-link">WAAT 홈</a></p>
   </div>
 </footer>
 
 <script src="/js/nav-mobile.js?v=20260920f"></script>
-<script src="js/console.js?v=20260920a"></script>
+<script src="/js/console.js?v=20260921a"></script>
 </body>
 </html>

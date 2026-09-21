@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
             name: order.customerName, email: order.customerEmail, orderId,
             amount: order.amount, paymentMethod: order.paymentMethod, licenseKey: order.licenseKey,
             downloadLink: `${base}/api/download/${downloadToken}`,
-            consoleGuideLink: `${base}/console`,
+            consoleGuideLink: `${base}/market/onemacs/install`,
             renewLink: `${base}/market/onemacs#renew`,
             expiryHours: expiryHours(),
             maxDownloads

@@ -72,7 +72,7 @@ module.exports = async function handler(req, res) {
         await sendPurchaseEmail({
             name, email, orderId, amount, paymentMethod: 'card', licenseKey,
             downloadLink: `${base}/api/download/${downloadToken}`,
-            consoleGuideLink: `${base}/console`,
+            consoleGuideLink: `${base}/market/onemacs/install`,
             renewLink: `${base}/market/onemacs#renew`,
             expiryHours: expiryHours(),
             maxDownloads: parseInt(process.env.MAX_DOWNLOAD_COUNT, 10) || 5

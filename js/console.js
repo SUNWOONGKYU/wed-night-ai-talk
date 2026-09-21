@@ -1,4 +1,4 @@
-// ========== /console — 복사 버튼 · 폰 안내 ==========
+// ========== /market/onemacs/install (구 /console) — 복사 버튼 · 폰 안내 ==========
 (function () {
     'use strict';
 

@@ -105,7 +105,7 @@ details .body p+p{margin-top:8px}
 
 /* 채팅 예시 */
 .chat{background:#0e1424;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px}
-.chat .me{background:#2b63ff;color:#fff;border-radius:16px 16px 4px 16px;padding:9px 13px;margin-left:24px}
+.chat .me{background:#2b63ff;color:#fff;border-radius:16px 16px 4px 16px;padding:9px 13px;margin-left:24px;overflow-wrap:anywhere}   /* 긴 URL(설치 지시문 주소)이 390px 에서 넘치지 않게 */
 .chat .ai{background:#1a2338;border-left:3px solid var(--claude);border-radius:4px 14px 14px 14px;padding:9px 13px;margin-right:24px;margin-top:8px;color:var(--fg)}
 
 /* 구조 다이어그램 */
