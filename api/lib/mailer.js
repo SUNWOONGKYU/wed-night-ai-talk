@@ -177,11 +177,11 @@ function reviewVerifyHtml(p) {
   </div>
   <div style="text-align:center;margin:22px 0;">
     <a href="${esc(p.link)}" style="display:inline-block;background:#2563eb;color:#fff;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:17px;">${esc(c.btn)}</a>
-    <div style="margin-top:12px;font-size:13px;color:#8A8F9E;">이 링크는 24시간 동안 한 번만 쓸 수 있습니다.</div>
+    <div style="margin-top:12px;font-size:13px;color:#8A8F9E;">이 링크는 24시간 동안 한 번만 사용할 수 있습니다.</div>
   </div>
   ${p.preview ? `<div style="background:#F6F4EF;padding:16px 18px;border-radius:12px;font-size:14px;color:#4A5670;line-height:1.7;white-space:pre-wrap;">${esc(p.preview)}</div>` : ''}
   <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;margin-top:22px;">
-    본인이 쓴 것이 아니라면 이 메일을 무시하세요 — 아무것도 게시되지 않습니다. 이메일 주소는 확인 용도로만 쓰고 저장하지 않습니다. 문의: ${esc(supportEmail())}
+    본인이 작성한 것이 아니라면 이 메일을 무시하세요 — 아무것도 게시되지 않습니다. 이메일 주소는 확인 용도로만 사용하고 저장하지 않습니다. 문의: ${esc(supportEmail())}
   </div>
 </div>`;
 }

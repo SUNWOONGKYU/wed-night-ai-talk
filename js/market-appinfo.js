@@ -1,7 +1,7 @@
 // ========== 앱 공통 "앱 정보" 블록 — 상단 요약 줄(카드·상세) + 상세 "앱 정보" 표 ==========
 // 데이터: js/market-apps.js 의 APPS 항목 필드(실제 값만 — 없는 필드는 항목 숨김) + API(단일 소스):
 //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
-// 상세: <div data-appinfo-summary> (요약 줄) · <div id="appinfo"> (표). 홈: market-home.js 가 summaryHtml() 을 쓴다.
+// 상세: <div data-appinfo-summary> (요약 줄) · <div id="appinfo"> (표). 홈: market-home.js 가 summaryHtml() 을 사용한다.
 // 설계: 브릿지 2026_09_21__PC2안_마켓리뷰댓글_시안.md 부록(PC3 검토 통과 · 수정 4건 반영)
 (function () {
     'use strict';

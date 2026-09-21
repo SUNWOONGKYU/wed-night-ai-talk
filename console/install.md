@@ -20,21 +20,21 @@ ROOT\
   트레이딩 시그널\         ← 기본 프로젝트(자동 생성: 주식 스캐너·샘플 전략·전략 빌더)
   (이후 추가되는 프로젝트 폴더들 — 폰의 [프로젝트 ▾] → 프로젝트 추가, 또는 무료 에이전트 zip을 여기에 풀면 됨)
 ```
-폰의 프로젝트 선택기에는 처음에 **'트레이딩 시그널' 하나**가 보인다. 아래에서 `PROJECT` 라고 쓰면 `ROOT\트레이딩 시그널` 을 뜻한다. 아래 단계를 **순서대로** 수행하고, 각 단계 결과를 한 줄씩 보고하라. 실패한 단계는 원인과 사용자가 직접 할 일을 정확히 알려주고 멈춰라. 추측으로 넘어가지 마라.
+폰의 프로젝트 선택기에는 처음에 **'트레이딩 시그널' 하나**가 보인다. 아래에서 `PROJECT` 라고 적으면 `ROOT\트레이딩 시그널` 을 뜻한다. 아래 단계를 **순서대로** 수행하고, 각 단계 결과를 한 줄씩 보고하라. 실패한 단계는 원인과 사용자가 직접 할 일을 정확히 알려주고 멈춰라. 추측으로 넘어가지 마라.
 
 ### 0. 원칙
 - 로그인(claude / codex / agy / grok)은 **절대 대신 하지 않는다**. 명령만 알려주고 사용자가 끝냈다고 하면 이어간다.
 - `ROOT` 밖은 건드리지 않는다. 예외 두 곳뿐: `%USERPROFILE%\.claude\skills\전략만들기\`(복사) 와, **사용자가 Q2에서 Antigravity를 켠 경우에만** `%USERPROFILE%\.gemini\antigravity-cli\settings.json` 의 model 값. 토큰·비밀번호·페어링 코드 외 비밀값은 출력하지 않는다.
 - 고객이 보는 화면이다. **기다림은 `sleep` 이 아니라 폴링**(아래 6단계)으로, 실패한 명령은 조용히 다른 방법으로 다시 하고 최종 결과만 말한다. 기술 용어(JSON·프로세스·포트 등)는 꼭 필요할 때만.
-- Windows 전용. PowerShell 명령을 쓴다. `NoDefaultCurrentDirectoryInExePath` 환경변수가 있으면 배치 실행 시 `.\` 접두를 쓴다.
+- Windows 전용. PowerShell 명령을 사용한다. `NoDefaultCurrentDirectoryInExePath` 환경변수가 있으면 배치 실행 시 `.\` 접두를 사용한다.
 
 ### 1. 환경 점검 → 사용자에게 보고
 `node -v`, `claude --version`, `codex --version`, `agy --version`, `grok --version`, `python --version` 각각 실행(없으면 오류가 정상). 결과를 **반드시 아래 모양의 일반 텍스트(코드블록)로 화면에 출력**한다 — 생각 속에만 적고 넘어가면 고객은 아무것도 못 본다. 예:
 ```
 점검 결과
 - Node.js: 있음 (v22)
-- Claude Code: 설치되어 있군요 (v2.x) — 메인 AI로 씁니다
-- Codex(ChatGPT): 없음 — 쓰시려면 설치가 필요합니다
+- Claude Code: 설치되어 있군요 (v2.x) — 메인 AI로 사용합니다
+- Codex(ChatGPT): 없음 — 사용하시려면 설치가 필요합니다
 - Antigravity(Google): 없음
 - Grok(xAI): 없음
 - Python: 있음/없음 (주식 스캐너 실행에 필요, 나중에 해도 됨)
@@ -43,12 +43,12 @@ ROOT\
 - 컴퓨터 이름은 `hostname` 으로 읽어 둔다(`HOST`).
 
 ### 1-1. 설치 마법사 — 문답으로 이 사람의 시스템을 정한다 (AskUserQuestion 사용, 한 번에 하나씩)
-샘플을 깔아 놓고 고치라고 하지 않는다. **처음부터 사용자가 정한 대로** 만든다. 답은 아래 `WIZ` 에 모아 4단계 설정에 쓴다.
+샘플을 깔아 놓고 고치라고 하지 않는다. **처음부터 사용자가 정한 대로** 만든다. 답은 아래 `WIZ` 에 모아 4단계 설정에 사용한다.
 
 **Q1. 이 PC 이름표** — "폰 앱에 이 PC를 어떤 이름으로 표시할까요?" 선택지는 **반드시 2개 이상**: ① `PC <HOST>` (기본, 컴퓨터 이름 그대로) ② `다른 이름으로` (고르면 이어서 이름을 물어봄). → `WIZ.pc_label` (기본이면 `"PC " + HOST`).
    (AskUserQuestion 은 선택지가 1개면 거부된다. 모든 질문에 선택지 2개 이상.)
 
-**Q2. 함께 쓸 AI** — "Claude Code 외에 어떤 AI를 같이 쓰시겠어요? 각각 본인 구독이 필요합니다." 복수 선택: `Codex (ChatGPT 구독)` / `Antigravity (Google)` / `Grok (xAI)` / `Claude Code만 쓰겠다`. 고르지 않은 AI는 **탭 자체가 안 보이게** 끈다 → `WIZ.workers.<codex|agy|grok>.enabled`.
+**Q2. 함께 사용할 AI** — "Claude Code 외에 어떤 AI를 같이 사용하시겠어요? 각각 본인 구독이 필요합니다." 복수 선택: `Codex (ChatGPT 구독)` / `Antigravity (Google)` / `Grok (xAI)` / `Claude Code만 사용하겠다`. 고르지 않은 AI는 **탭 자체가 안 보이게** 끈다 → `WIZ.workers.<codex|agy|grok>.enabled`.
 
 **Q3. 고른 AI 중 미설치인 것** — 하나씩: "Codex가 아직 없습니다. 지금 설치할까요?" 선택지: `설치 명령 알려주세요` / `나중에(탭 끔)`.
 - 설치는 사용자가 한다. 명령만 보여준다:
@@ -58,7 +58,7 @@ ROOT\
 - "끝났다"는 답을 받으면 `--version` 으로 다시 확인. 실패하면 이유를 말하고 `나중에(탭 끔)` 로 처리.
 
 **Q4. 모델** — 켜진 AI의 모델을 묻는다(기본값을 첫 선택지로, 한 위젯에 여러 문항을 묶어도 됨):
-- Claude Code: "Claude Code 탭 아래에 적을 모델 이름을 고르세요" `Opus 5` / `Sonnet 5` / 직접 입력 (설명은 이 한 줄만: "이름표입니다. 실제 모델은 Claude Code 에서 쓰시는 그대로입니다.") → `WIZ.workers.claude.model`
+- Claude Code: "Claude Code 탭 아래에 적을 모델 이름을 고르세요" `Opus 5` / `Sonnet 5` / 직접 입력 (설명은 이 한 줄만: "이름표입니다. 실제 모델은 Claude Code 에서 사용하시는 그대로입니다.") → `WIZ.workers.claude.model`
 - Codex: `gpt-5.6-terra` / `gpt-5.6-astra` / 직접 입력 → `WIZ.workers.codex.model`
 - Antigravity: `gemini-3.8-flash-high` / `gemini-3.8-pro-high` / 직접 입력 → `WIZ.workers.agy.model`
 - Grok: `grok-4.6` / 직접 입력 → `WIZ.workers.grok.model`
@@ -73,10 +73,10 @@ ROOT\
    - `스캐너 + 매매 자동화 봇`: 같은 지시문을 끝까지(증권사 키·텔레그램은 사용자가 값을 줄 때만, 모의투자 모드 기본) 이어서 수행한다.
    - `나중에`: 완료 보고에 "나중에 '매매 자동화 봇 설정해줘' 라고 하면 이어서 합니다" 한 줄.
 
-**Q6. 확인** — 먼저 정한 내용을 **일반 텍스트 표로 화면에 출력**(PC 이름표 / 함께 쓰는 AI / 모델 / 프로젝트 / 폴더 위치), 그 다음에 AskUserQuestion 으로 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감). 표 없이 묻지 않는다.
+**Q6. 확인** — 먼저 정한 내용을 **일반 텍스트 표로 화면에 출력**(PC 이름표 / 함께 사용하는 AI / 모델 / 프로젝트 / 폴더 위치), 그 다음에 AskUserQuestion 으로 "이대로 만들까요?" `네` / `다시 고를게요`(해당 질문으로 돌아감). 표 없이 묻지 않는다.
 
 ### 2. 배포판 확보
-이미 `DIST`(이 지시문이 들어 있는 폴더, `server.js`·`cloudflared.exe` 존재)가 있으면 그것을 쓴다. 없으면 내려받는다:
+이미 `DIST`(이 지시문이 들어 있는 폴더, `server.js`·`cloudflared.exe` 존재)가 있으면 그것을 사용한다. 없으면 내려받는다:
 ```powershell
 $zip = "$env:TEMP\consolesystem_v2.zip"
 Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/consolesystem_v2.zip" -OutFile $zip
@@ -115,7 +115,7 @@ Expand-Archive -Path $bz -DestinationPath "$env:TEMP\trading-bot_v1" -Force
 ```
    (`enabled: false` 인 AI는 폰에 탭이 안 보인다. `agy_model` 도 `workers.agy.model` 과 같게 맞춘다.)
 1. `pin`: 6자리 숫자를 **새로 생성**(1234 금지). 사용자에게 한 번 알려준다.
-2. `port`: 7890 부터 시작해 **비어 있는 포트**를 쓴다(`netstat -ano | findstr :7890` 이 비면 7890, 아니면 7900, 7910 … 순서로 10씩 올려 확인). 콘솔은 그 포트 다음 번호들(+1, +2 …)을 프로젝트마다 쓰므로 10 단위로 띄운다.
+2. `port`: 7890 부터 시작해 **비어 있는 포트**를 사용한다(`netstat -ano | findstr :7890` 이 비면 7890, 아니면 7900, 7910 … 순서로 10씩 올려 확인). 콘솔은 그 포트 다음 번호들(+1, +2 …)을 프로젝트마다 사용하므로 10 단위로 띄운다.
 3. `agy_model`: `gemini-3.8-flash-high`.
 4. `projects`: `[ { "name": "트레이딩 시그널", "dir": "<ROOT>\\트레이딩 시그널" }, ...WIZ.projects ]` — 경로의 `\` 는 JSON 에서 `\\`.
 4-0. `projects_root`: `"<ROOT>"` — 폰에서 '프로젝트 추가' 를 누르면 이 폴더 아래에 새 프로젝트 폴더가 생긴다.
@@ -131,7 +131,7 @@ node -e "const fs=require('fs');const p=process.argv[1];const j=JSON.parse(fs.re
 ### 6. 점검 → 기동
 1. `PROJECT\_mobile_remote` 에서 `node check_setup.js` 결과를 그대로 보여준다. Node·Claude Code·cloudflared 가 OK 가 아니면 중단.
 2. 새 창으로 기동: `Start-Process -FilePath cmd -ArgumentList "/k",".\1클릭_실행.bat" -WorkingDirectory "<PROJECT>\_mobile_remote"` (검은 창은 최소화만, 닫으면 폰 연결 끊김).
-3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 쓰지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
+3. `http://127.0.0.1:<port>/api/login` 에 `{"pin":"<pin>"}` POST 를 **2초 간격으로 최대 45회 폴링**(`sleep 45` 같은 긴 대기 명령은 사용하지 않는다 — 차단된다) → `success:true` 면 서버 정상. 45회 안에 안 되면 검은 창(1클릭_실행.bat)에 찍힌 첫 오류 줄을 읽어 고객에게 그대로 보여주고, `ROOT\_mobile_remote\start_all.log` 마지막 10줄도 확인한다.
 4. `ROOT\_mobile_remote\페어링코드.txt` 는 인터넷 터널이 연결된 뒤(보통 서버 기동 후 5~30초) 생긴다 → **3초 간격으로 최대 40회 폴링**해 파일이 생기면 읽는다. 첫 줄 = **페어링 코드 8자리**, 둘째 줄 = 브라우저용 허브 주소. 2분이 지나도 없으면 `start_all.log` 마지막 10줄을 보고 원인(인터넷·cloudflared)을 사용자에게 알린다.
 
 ### 6-1. 로그온 시 자동 실행 등록 (`WIZ.autostart` 가 예일 때)
@@ -158,7 +158,7 @@ schtasks /Create /F /SC ONLOGON /TN "OneMACS Console" /TR "cmd /c start \"OneMAC
 - PIN: <pin>  (앱/브라우저에서 PC 처음 열 때 한 번)
 - 이 PC 이름표: <pc_label>
 - 메인 AI: Claude Code (<model 표시명>) · 프로젝트 창 미러링: OK/미연결
-- 함께 쓰는 AI: Codex(<model>) 켬/끔 · Antigravity(<model>) 켬/끔 · Grok(<model>) 켬/끔
+- 함께 사용하는 AI: Codex(<model>) 켬/끔 · Antigravity(<model>) 켬/끔 · Grok(<model>) 켬/끔
 - 프로젝트: 트레이딩 시그널 (+ 추가한 것들)
 - 바꾸고 싶으면: 이 창에서 "AI 구성 바꿔줘 / 모델 바꿔줘 / 프로젝트 추가해줘" 라고 말하면 console_config.json 을 고치고 콘솔을 재시작한다.
 - 주의: 검은 창을 닫으면 폰 연결이 끊김. 다음에 켤 때는 <ROOT>\_mobile_remote\1클릭_실행.bat 하나면 된다(프로젝트 창은 자동으로 뜸).

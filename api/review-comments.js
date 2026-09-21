@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
                 const t = await R.consumeToken(String(q.verify), ['comment']);
                 const c = t && (await db.select('market_comments', `select=*&id=eq.${t.target_id}&limit=1`)).data[0];
                 if (!c || c.status === 'deleted') {
-                    return res.status(400).send('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이 링크는 쓸 수 없습니다</title></head><body style="font-family:sans-serif;padding:32px;text-align:center"><h1 style="font-size:20px">이 링크는 쓸 수 없습니다</h1><p>만료되었거나 이미 사용한 링크입니다. 리뷰 페이지에서 다시 시도해 주세요.</p></body></html>');
+                    return res.status(400).send('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이 링크는 사용할 수 없습니다</title></head><body style="font-family:sans-serif;padding:32px;text-align:center"><h1 style="font-size:20px">이 링크는 사용할 수 없습니다</h1><p>만료되었거나 이미 사용한 링크입니다. 리뷰 페이지에서 다시 시도해 주세요.</p></body></html>');
                 }
                 if (c.status === 'pending') await db.update('market_comments', `id=eq.${c.id}`, { status: 'published', published_at: new Date().toISOString() });
                 const rv = (await db.select('market_reviews', `select=app_code&id=eq.${c.review_id}&limit=1`)).data[0];

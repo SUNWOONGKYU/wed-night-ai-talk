@@ -120,3 +120,16 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 앱에 공통으로 적용�
 - "PC 준비" 금지 → "PC에 원맥스 설치하기".
 - 투자·매매 면책 문구 금지. 사람 말로, 축약하지 않는다.
 - 결과·알림 텍스트는 순수 텍스트 위주(마크다운 지양).
+
+## 10. 근거 — "핸드폰에서 조작할 수 없던 AI 3종" 블록 (확인일 2026-09-21)
+
+상세·카탈로그 장점 1번 블록의 사실 확인 기록. 다시 확인할 때는 아래 URL 을 열어 확인일을 갱신한다.
+
+| AI | 핸드폰에서 PC 세션 조작(공식) | 근거 |
+|---|---|---|
+| Claude Code | **있음** — Remote Control: "Continue a local Claude Code session from your phone, tablet, or any browser… Works with claude.ai/code and the Claude mobile app." | https://code.claude.com/docs/en/remote-control |
+| Codex | **CLI 에는 없음** — ChatGPT 데스크톱 앱(macOS·Windows)을 거치는 Remote 만 있음: "Mobile setup starts from the app; you can't set it up from the Codex CLI or IDE extension." | https://learn.chatgpt.com/docs/remote-connections (developers.openai.com/codex/remote-connections 에서 이동) |
+| Antigravity(Gemini CLI) | **없음** — 공식 문서에 원격/모바일 조작 기능 없음. 요청 이슈 "Remote control access to terminal based sessions via mobile app"(2026-05-19 개설)는 "Closed as not planned" | https://geminicli.com/docs/ · https://github.com/google-gemini/gemini-cli/issues/27289 |
+| Grok CLI(Grok Build) | **없음** — 공식 시작 문서에 원격/모바일 조작 언급 없음 | https://docs.x.ai/build/overview |
+
+문안 규칙: "만들게 된 큰 계기 중 하나"까지만(단정 금지). Codex 는 CLI 자체에 없다는 점을 괄호로 명시. 확인이 안 되는 항목은 "공식 원격 조작 기능이 확인되지 않습니다"로 낮춘다.

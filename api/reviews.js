@@ -77,7 +77,7 @@ async function handleGet(req, res) {
 async function handleVerify(req, res, token) {
     let t;
     try { t = await R.consumeToken(token, ['review', 'review_edit', 'review_delete', 'review_manage']); } catch (e) { t = null; }
-    if (!t) return html(res, 400, '이 링크는 쓸 수 없습니다', '만료되었거나 이미 사용한 링크입니다. 리뷰 페이지에서 다시 시도해 주세요.', `${m.baseUrl(req)}/market`);
+    if (!t) return html(res, 400, '이 링크는 사용할 수 없습니다', '만료되었거나 이미 사용한 링크입니다. 리뷰 페이지에서 다시 시도해 주세요.', `${m.baseUrl(req)}/market`);
     const r = await db.select('market_reviews', `select=*&id=eq.${t.target_id}&limit=1`);
     const rv = r.data && r.data[0];
     if (!rv || rv.status === 'deleted') return html(res, 404, '리뷰를 찾을 수 없습니다', '이미 지워진 리뷰입니다.', `${m.baseUrl(req)}/market`);
@@ -128,7 +128,7 @@ async function handlePost(req, res) {
     const existing = (await db.select('market_reviews', `select=*&app_code=eq.${app}&email_hash=eq.${eh}&limit=1`)).data[0];
 
     if (action === 'manage') {
-        if (!existing || existing.status === 'deleted') return res.status(404).json({ success: false, error: '이 이메일로 쓴 리뷰가 없습니다.' });
+        if (!existing || existing.status === 'deleted') return res.status(404).json({ success: false, error: '이 이메일로 남긴 리뷰가 없습니다.' });
         if (await R.rateLimited(ip, 'review')) return res.status(429).json({ success: false, error: '요청이 너무 많습니다. 1분 뒤에 다시 시도해 주세요.' });
         const token = await R.createToken('review_manage', existing.id);
         await sendReviewVerifyEmail({ email, nick: existing.nick, appName: appName(app), kind: 'review_manage', link: `${m.baseUrl(req)}/api/reviews?verify=${token}` });
@@ -143,12 +143,12 @@ async function handlePost(req, res) {
     if (stars != null && !(stars >= 1 && stars <= 5)) return res.status(400).json({ success: false, error: '별점은 1~5 사이입니다.' });
     if (R.len(body) < 10) return res.status(400).json({ success: false, error: '내용을 10자 이상 적어 주세요.' });
     if (existing && existing.status !== 'deleted') {
-        return res.status(409).json({ success: false, duplicate: true, error: '이 이메일로 이미 쓴 리뷰가 있습니다. "내 리뷰 고치기"에서 고치거나 지울 수 있습니다.' });
+        return res.status(409).json({ success: false, duplicate: true, error: '이 이메일로 이미 남긴 리뷰가 있습니다. "내 리뷰 고치기"에서 고치거나 지울 수 있습니다.' });
     }
     // 레이트리밋은 입력 검증을 통과한 실제 저장 요청에만(오타 재시도로 막히지 않게)
     if (await R.rateLimited(ip, 'review')) return res.status(429).json({ success: false, error: '요청이 너무 많습니다. 1분 뒤에 다시 시도해 주세요.' });
     let row;
-    if (existing) {   // 지운 리뷰가 있던 이메일 → 같은 행을 다시 씀
+    if (existing) {   // 지운 리뷰가 있던 이메일 → 같은 행을 다시 사용
         row = (await db.update('market_reviews', `id=eq.${existing.id}`, { nick, stars, body, status: 'pending', pending_body: null, pending_stars: null, pending_nick: null,
               report_count: 0, published_at: null, ip_hash: R.ipHash(ip), updated_at: new Date().toISOString() }))[0];
     } else {
@@ -162,11 +162,11 @@ async function handlePost(req, res) {
 async function handleManage(req, res, b, ip, action) {
     const manage = String(b.manage || '');
     const t = await R.consumeToken(manage, ['review_manage']);
-    if (!t) return res.status(400).json({ success: false, error: '이 링크는 쓸 수 없습니다. "내 리뷰 고치기"에서 다시 요청해 주세요.' });
+    if (!t) return res.status(400).json({ success: false, error: '이 링크는 사용할 수 없습니다. "내 리뷰 고치기"에서 다시 요청해 주세요.' });
     const rv = (await db.select('market_reviews', `select=*&id=eq.${t.target_id}&limit=1`)).data[0];
     if (!rv || rv.status === 'deleted') return res.status(404).json({ success: false, error: '이미 지워진 리뷰입니다.' });
     const email = String(b.email || '').trim();
-    if (!R.isValidEmail(email) || R.emailHash(email) !== rv.email_hash) return res.status(400).json({ success: false, error: '리뷰를 쓸 때 사용한 이메일 주소를 적어 주세요.' });
+    if (!R.isValidEmail(email) || R.emailHash(email) !== rv.email_hash) return res.status(400).json({ success: false, error: '리뷰를 남길 때 사용한 이메일 주소를 적어 주세요.' });
     if (await R.rateLimited(ip, 'review')) return res.status(429).json({ success: false, error: '요청이 너무 많습니다. 1분 뒤에 다시 시도해 주세요.' });
     const app = rv.app_code;
     if (action === 'delete') {

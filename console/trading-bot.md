@@ -17,10 +17,10 @@
 
 ### 0. 원칙 (어기지 말 것)
 - 증권사 로그인, API 키 발급, 텔레그램 봇 생성은 **절대 대신 하지 않는다**. 방법만 알려주고 사용자가 값을 주면 이어간다.
-- 사용자가 준 앱키·시크릿·계좌번호·토큰은 `.env` 에만 쓰고 **화면에 다시 출력하지 않는다**. 어디에도 전송하지 않는다.
-- `KIS_PAPER_MODE` 는 **`true`(모의투자)로 쓴다.** 사용자가 "실계좌로" 라고 해도 이 절차에서는 바꾸지 않는다 — `README_트레이딩봇.md` 7절(실계좌 전환 절차)을 읽어 보라고 안내만 한다.
+- 사용자가 준 앱키·시크릿·계좌번호·토큰은 `.env` 에만 기록하고 **화면에 다시 출력하지 않는다**. 어디에도 전송하지 않는다.
+- `KIS_PAPER_MODE` 는 **`true`(모의투자)로 사용한다.** 사용자가 "실계좌로" 라고 해도 이 절차에서는 바꾸지 않는다 — `README_트레이딩봇.md` 7절(실계좌 전환 절차)을 읽어 보라고 안내만 한다.
 - `config.py` 의 `APPROVAL_REQUIRED` · `EXIT_APPROVAL_REQUIRED` · `DAY_START_APPROVAL_REQUIRED` · `PUT_ENABLED` · `STRATEGY_LIVE_ENABLED` · `AUTO_BUY_VETTED` 는 건드리지 않는다.
-- `PROJECT` 밖은 건드리지 않는다. Windows 전용, PowerShell 명령을 쓴다.
+- `PROJECT` 밖은 건드리지 않는다. Windows 전용, PowerShell 명령을 사용한다.
 
 ### 1. 환경 점검
 `python --version` 실행.
@@ -28,7 +28,7 @@
 - `pip --version` 도 확인.
 
 ### 2. 배포판 확보
-이미 `PROJECT` 에 `trader.py` 와 `scanner_web.py` 가 있으면 그것을 쓴다. 없으면 내려받아 푼다:
+이미 `PROJECT` 에 `trader.py` 와 `scanner_web.py` 가 있으면 그것을 사용한다. 없으면 내려받아 푼다:
 ```powershell
 $zip = "$env:TEMP\trading-bot_v1.zip"
 Invoke-WebRequest -Uri "https://www.waat.community/market/onemacs/trading-bot_v1.zip" -OutFile $zip
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 
 ### 4. `.env` 작성 (사용자와 함께)
 1. `.env` 가 없으면 `.env.example` 을 `.env` 로 복사한다.
-2. 사용자에게 아래를 **하나씩** 묻고, 받은 값을 `.env` 의 해당 줄에 쓴다 (값은 다시 출력하지 않는다):
+2. 사용자에게 아래를 **하나씩** 묻고, 받은 값을 `.env` 의 해당 줄에 기록한다 (값은 다시 출력하지 않는다):
    - `KIS_APP_KEY`, `KIS_APP_SECRET` — 없다고 하면: "https://apiportal.koreainvestment.com 에 로그인 → API 신청 → 모의투자용 앱을 만들어 앱키/앱시크릿을 복사하세요" 안내 후 대기.
    - `KIS_ACCOUNT` — 계좌번호 앞 8자리 (모의투자 계좌).
    - `TELEGRAM_BOT_TOKEN` — 없다고 하면: "텔레그램에서 @BotFather 를 열고 /newbot → 이름·아이디 입력 → 나오는 토큰을 복사하세요".
@@ -98,4 +98,4 @@ Register-ScheduledTask -TaskName "TradingBot-Scanner" -Action $act2 -Trigger $tr
 - 매일: 08:45 자동 기동(등록했다면). 아니면 창 두 개 — `python scanner_web.py` → `python trader.py`.
 - 텔레그램 명령: `정지` `재개` `상태` `잔고` `포지션` `스캔` `min_score 70` `초기화`.
 - 멈추기: 텔레그램 `정지` 또는 trader.py 실행 창 닫기. 보유 포지션은 자동으로 정리되지 않으니 HTS/MTS 에서 직접 확인.
-- 전략 파일: `strategies\*.json` (규격은 `strategies\README.md`). 실매매에 쓰려면 파일의 `live:true` + `config.py` `STRATEGY_LIVE_ENABLED=True` 를 사용자가 직접 켠다.
+- 전략 파일: `strategies\*.json` (규격은 `strategies\README.md`). 실매매에 사용하려면 파일의 `live:true` + `config.py` `STRATEGY_LIVE_ENABLED=True` 를 사용자가 직접 켠다.

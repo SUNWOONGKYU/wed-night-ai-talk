@@ -84,7 +84,7 @@
             var list = admin ? (window.__adminComments || []).filter(function (c) { return c.reviewId === reviewId; }) : (await api('/api/review-comments?review=' + encodeURIComponent(reviewId))).items;
             var parents = list.filter(function (c) { return !c.parentId; }), html = '';
             parents.forEach(function (p) { html += cHtml(p, reviewId); list.filter(function (c) { return c.parentId === p.id; }).forEach(function (c) { html += cHtml(c, reviewId); }); });
-            box.innerHTML = (html || '<div class="loading">아직 댓글이 없습니다.</div>') + '<div class="cwrite" id="cw-' + esc(reviewId) + '"><button type="button" class="c-reply" data-review="' + esc(reviewId) + '" style="background:none;border:0;color:var(--link);font-weight:700;font-family:inherit;font-size:13px;padding:0;cursor:pointer">댓글 쓰기</button></div>';
+            box.innerHTML = (html || '<div class="loading">아직 댓글이 없습니다.</div>') + '<div class="cwrite" id="cw-' + esc(reviewId) + '"><button type="button" class="c-reply" data-review="' + esc(reviewId) + '" style="background:none;border:0;color:var(--link);font-weight:700;font-family:inherit;font-size:13px;padding:0;cursor:pointer">댓글 남기기</button></div>';
             if (btn) btn.textContent = '댓글 ' + list.length + ' ▲';
             if (location.hash.indexOf('#c-') === 0) { var t = document.querySelector(location.hash); if (t) { t.classList.add('hl'); t.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }
         } catch (e) { box.innerHTML = '<div class="loading">' + esc(e.message) + '</div>'; }
@@ -106,12 +106,12 @@
         });
     }
 
-    // ---------- 리뷰 쓰기 / 고치기 / 지우기 ----------
+    // ---------- 리뷰 남기기 / 고치기 / 지우기 ----------
     function paintStars() { Array.prototype.forEach.call($('rv-pick').querySelectorAll('button'), function (b) { b.classList.toggle('on', parseInt(b.getAttribute('data-star'), 10) <= stars); b.setAttribute('aria-pressed', parseInt(b.getAttribute('data-star'), 10) === stars ? 'true' : 'false'); }); }
     function enterEditMode() {
         $('rv-form-title').textContent = '내 리뷰 고치기';
         $('rv-submit').textContent = '고친 내용으로 바꾸기';
-        $('rv-form-note').textContent = '리뷰를 쓸 때 사용한 이메일을 적고 바꿀 내용만 채우세요. 확인 메일의 버튼을 누르면 게시된 리뷰가 고친 내용으로 바뀝니다(그 전까지는 지금 리뷰가 그대로 보입니다).';
+        $('rv-form-note').textContent = '리뷰를 남길 때 사용한 이메일을 적고 바꿀 내용만 채우세요. 확인 메일의 버튼을 누르면 게시된 리뷰가 고친 내용으로 바뀝니다(그 전까지는 지금 리뷰가 그대로 보입니다).';
         $('rv-body').placeholder = '바꿀 내용 (비워 두면 지금 내용 그대로)';
         $('rv-nick').placeholder = '바꿀 닉네임 (비워 두면 그대로)';
         show($('rv-delete'), true);
@@ -143,7 +143,7 @@
     async function deleteReview() {
         var err = $('rv-error'); setMsg(err, '');
         var email = $('rv-email').value.trim();
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '리뷰를 쓸 때 사용한 이메일을 적어 주세요.'); $('rv-email').focus(); return; }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '리뷰를 남길 때 사용한 이메일을 적어 주세요.'); $('rv-email').focus(); return; }
         if (!window.confirm('리뷰를 지우면 댓글도 함께 보이지 않습니다. 확인 메일을 보낼까요?')) return;
         var b = $('rv-delete'); b.disabled = true;
         try {
