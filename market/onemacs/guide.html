@@ -120,6 +120,13 @@
       <li><b>프로젝트(폴더)를 더 만들려면</b> [프로젝트 ▾] → <b>프로젝트 추가</b> 에서 폴더 이름을 넣습니다. PC 의 원맥스 폴더 아래에 그 이름의 폴더가 생기고, 그 안에서 AI 가 일합니다.</li>
       <li>이미 있는 폴더를 붙이려면 PC 의 Claude Code 에 "프로젝트 추가해줘"라고 하고 폴더를 알려 주면 됩니다.</li>
     </ul>
+    <h3 style="margin-top:22px">다른 PC 에 지시 보내기</h3>
+    <p>내 PC 끼리는 서로 지시를 넘길 수 있습니다. 어느 PC 의 Claude Code 에서든 아래처럼 보냅니다.</p>
+    <pre class="cmd">node console\daemon_ask.js --pc &lt;PC이름&gt; "&lt;프로젝트명&gt;" "&lt;한 줄 지시&gt;"</pre>
+    <p>여러 줄짜리 긴 지시는 파일에 적어 <b>--file</b> 로 보냅니다. 명령줄에 길게 적으면 따옴표가 든 문장에서 잘려 뒷부분이 전달되지 않습니다.</p>
+    <pre class="cmd">node console\daemon_ask.js --pc &lt;PC이름&gt; "&lt;프로젝트명&gt;" --file &lt;지시문.txt&gt;</pre>
+    <p>PC 이름은 <span class="mono">node console\daemon_ask.js --list</span> 로 볼 수 있는 이름이나 컴퓨터 이름을 넣습니다. 특정 AI 에게 바로 시키려면 뒤에 <span class="mono">--worker codex</span>(또는 agy · grok)를 붙입니다.</p>
+    <p class="quiet">콘솔 v1.8.3 이상 · 여러 PC 지시는 v1.8.6 이상.</p>
   </div>
 </section>
 
