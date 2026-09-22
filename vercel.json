@@ -205,6 +205,10 @@
       "destination": "/market/onemacs/faq.html"
     },
     {
+      "source": "/market/onemacs/license",
+      "destination": "/market/onemacs/license.html"
+    },
+    {
       "source": "/market/onemacs/notice",
       "destination": "/market/onemacs/notice.html"
     },
