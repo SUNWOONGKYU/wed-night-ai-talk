@@ -17,10 +17,15 @@ function expiryHours() {
     return parseInt(process.env.DOWNLOAD_TOKEN_EXPIRY_HOURS, 10) || 24;
 }
 
-/** @param {{orderId:string, customerEmail:string}} payload */
+/**
+ * @param {{orderId:string, customerEmail:string, product?:string}} payload
+ * product — 어느 상품의 파일을 받는 링크인지(2026-09-23 상품이 둘 이상이 되면서 추가).
+ *           한 주문이 상품을 둘 받으면 링크도 둘이고, 토큰이 서로 다른 상품을 가리킨다.
+ */
 function generateDownloadToken(payload) {
     return jwt.sign(
         { orderId: payload.orderId, customerEmail: payload.customerEmail, type: 'download',
+          product: payload.product || 'onemacs',
           n: require('crypto').randomBytes(6).toString('hex') },   // 같은 초에 재발급해도 토큰이 달라지게
         secret(),
         { expiresIn: `${expiryHours()}h` }
@@ -32,6 +37,8 @@ function verifyDownloadToken(token) {
     try {
         const decoded = jwt.verify(String(token || ''), secret());
         if (decoded.type !== 'download') throw new Error('유효하지 않은 토큰 타입입니다.');
+        // 상품이 하나뿐이던 때 만든 옛 토큰에는 product 가 없다 — 원맥스로 본다
+        if (!decoded.product) decoded.product = 'onemacs';
         return decoded;
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

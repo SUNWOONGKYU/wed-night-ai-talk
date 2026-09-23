@@ -10,7 +10,8 @@
  *   Orders       : 주문 정보 (A~P)
  *   DownloadLogs : 다운로드 기록
  *   EmailLogs    : 이메일 발송 기록
- *   Reservations : 출시 알림 예약 (A~G: reserveId, email, name, phone, createdAt, status, notifiedAt) — api/reserve.js
+ *   Reservations : 출시 알림 예약 (A~H: reserveId, email, name, phone, createdAt, status, notifiedAt, product) — api/reserve.js
+ *                  product 는 2026-09-23 상품이 둘 이상이 되면서 늘린 칸이다. 비어 있는 옛 줄은 원맥스로 본다.
  *
  * 환경변수: GOOGLE_SERVICE_ACCOUNT (서비스 계정 JSON 전체를 한 줄로), SPREADSHEET_ID
  */
@@ -25,7 +26,7 @@ const ORDER_HEADERS = [
     'paymentMethod', 'licenseKey', 'product'
 ];
 
-const RESERVATIONS_RANGE = 'Reservations!A:G';
+const RESERVATIONS_RANGE = 'Reservations!A:H';
 const RESERVATION_HEADERS = ['reserveId', 'email', 'name', 'phone', 'createdAt', 'status', 'notifiedAt'];
 
 function getGoogleAuth() {
@@ -258,7 +259,8 @@ function rowToReservation(row, rowIndex) {
         phone: row[3] || '',
         createdAt: row[4] || '',
         status: row[5] || '',
-        notifiedAt: row[6] || ''
+        notifiedAt: row[6] || '',
+        product: row[7] || 'onemacs'
     };
 }
 
@@ -270,7 +272,8 @@ function reservationToRow(r) {
         r.phone || '',
         r.createdAt || new Date().toISOString(),
         r.status || 'RESERVED',
-        r.notifiedAt || ''
+        r.notifiedAt || '',
+        r.product || 'onemacs'
     ];
 }
 
@@ -290,7 +293,7 @@ async function ensureReservationsSheet() {
             resource: { requests: [{ addSheet: { properties: { title: 'Reservations' } } }] }
         });
         await sheets.spreadsheets.values.update({
-            spreadsheetId: id, range: 'Reservations!A1:G1', valueInputOption: 'USER_ENTERED',
+            spreadsheetId: id, range: 'Reservations!A1:H1', valueInputOption: 'USER_ENTERED',
             resource: { values: [RESERVATION_HEADERS] }
         });
         return true;
@@ -316,10 +319,18 @@ async function getReservations() {
 }
 
 /** 이메일로 예약 1건 조회 (대소문자 무시) — 없으면 null */
-async function getReservationByEmail(email) {
+/**
+ * 같은 사람이 원맥스와 보고서 작성 AI 에이전트를 따로 예약할 수 있으므로
+ * 중복은 **이메일 + 상품**으로 본다(2026-09-23). product 를 안 넘기면 이메일만 본다(옛 동작).
+ */
+async function getReservationByEmail(email, product) {
     const key = String(email || '').trim().toLowerCase();
+    const want = product == null ? null : String(product);
     const all = await getReservations();
-    for (let i = 0; i < all.length; i++) if (all[i].email.trim().toLowerCase() === key) return all[i];
+    for (let i = 0; i < all.length; i++) {
+        if (all[i].email.trim().toLowerCase() !== key) continue;
+        if (want === null || String(all[i].product || 'onemacs') === want) return all[i];
+    }
     return null;
 }
 

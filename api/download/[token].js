@@ -1,6 +1,9 @@
 /**
  * GET /api/download/[token]
- * JWT 검증 → 주문 확인(환불 제외) → 다운로드 횟수 확인(최대 5회) → 로그 기록 → APK 로 리다이렉트 페이지
+ * JWT 검증 → 주문 확인(환불 제외) → 다운로드 횟수 확인(최대 5회) → 로그 기록 → 파일로 보내는 페이지
+ *
+ * 2026-09-23: 토큰에 상품이 들어간다. 한 주문으로 상품을 둘 받으면 링크도 둘이고,
+ * 각 링크가 자기 상품의 파일을 준다(별도 상품이라 파일이 따로다).
  *
  * 출처: 기존 판매 시스템 api/download/[token].js (Google Drive PDF → APK, 문의처를 이메일로)
  */
@@ -62,6 +65,10 @@ module.exports = async function handler(req, res) {
             return errorPage(res, 401, '다운로드 링크를 쓸 수 없습니다', error.message, true);
         }
         const { orderId } = decoded;
+        const product = m.getProduct(decoded.product);
+        if (!product) {
+            return errorPage(res, 404, '알 수 없는 상품입니다', '이 링크가 가리키는 상품을 찾을 수 없습니다. 주문번호와 함께 문의해 주세요.', false);
+        }
 
         const order = await getOrder(orderId);
         if (!order) {
@@ -77,7 +84,7 @@ module.exports = async function handler(req, res) {
             return errorPage(res, 429, '다운로드 횟수 초과', `최대 다운로드 횟수(${maxDownloads}회)를 초과했습니다. 추가 다운로드가 필요하면 재발급을 요청해 주세요.`, true);
         }
 
-        const fileUrl = m.apkDownloadUrl();
+        const fileUrl = m.productDownloadUrl(product.id, m.baseUrl(req));
         if (!fileUrl) {
             return errorPage(res, 503, '파일이 준비되지 않았습니다', '다운로드 파일이 아직 등록되지 않았습니다. 판매자에게 문의해 주세요.', false);
         }
@@ -89,20 +96,27 @@ module.exports = async function handler(req, res) {
         });
 
         res.setHeader('Cache-Control', 'no-store');
+        const steps = product.id === 'report-agent' ? `
+  <b>다음 순서</b><br>
+  1. 내려받은 파일을 아무 폴더에나 풉니다. <b>원맥스 폴더 안이 아니라 자기 폴더</b>에 풉니다 — 따로 도는 프로그램입니다.<br>
+  2. 푼 폴더의 안내문을 열어 그대로 따라 합니다.<br>
+  3. 라이선스 키를 넣으면 핸드폰에서 열 수 있는 주소가 나옵니다.` : `
+  <b>다음 순서</b><br>
+  1. 내려받은 파일을 PC에서 아무 폴더에나 풉니다. (약 20MB · 핸드폰 앱과 설치 지시문이 함께 들어 있습니다)<br>
+  2. 푼 폴더에서 Claude Code를 켜고 설치 지시문을 읽히면 <b>코드 8자리</b>가 나옵니다.<br>
+  3. 핸드폰 브라우저로 주소를 열고 그 코드를 넣으면 연결됩니다.<br>
+  (설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/market/onemacs/install">waat.community/market/onemacs/install</a> 을 열어도 볼 수 있습니다)`;
         return res.status(200).send(page('다운로드 시작', `
 <h1>다운로드를 시작합니다</h1>
 <div class="spin"></div>
-<p>잠시 후 원맥스 APK 다운로드가 자동으로 시작됩니다.<br>시작되지 않으면 아래 버튼을 누르세요.</p>
-<a class="btn" href="${esc(fileUrl)}">APK 직접 내려받기</a>
+<p>잠시 후 <b>${esc(product.name)}</b> 내려받기가 저절로 시작됩니다.<br>시작되지 않으면 아래 버튼을 누르세요.</p>
+<a class="btn" href="${esc(fileUrl)}">직접 내려받기</a>
 <div class="info">
+  상품: ${esc(product.name)} ${esc(product.version)}<br>
   주문번호: ${esc(orderId)}<br>
   남은 다운로드 횟수: <b>${maxDownloads - count - 1}</b>회<br>
   라이선스 키는 구매 완료 메일에 있습니다.<br><br>
-  <b>다음 순서</b><br>
-  1. 내려받은 APK를 눌러 앱을 설치합니다. ("출처를 알 수 없는 앱" 경고가 뜨면 이 출처 허용)<br>
-  2. 앱을 열면 첫 화면에 "PC에 설치하는 방법"이 나옵니다. 그대로 따라 PC에 원맥스를 설치하면 코드 8자리가 나옵니다.<br>
-  3. 그 코드를 앱에 넣으면 핸드폰과 PC가 연결됩니다.<br>
-  (PC 설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/market/onemacs/install">waat.community/market/onemacs/install</a> 을 열어도 볼 수 있습니다)
+  ${steps}
 </div>`, `<meta http-equiv="refresh" content="2;url=${esc(fileUrl)}">`));
     } catch (error) {
         console.error('download 오류:', error && error.message);

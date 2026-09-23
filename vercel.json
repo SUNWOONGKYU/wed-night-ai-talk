@@ -41,6 +41,19 @@
       ]
     },
     {
+      "source": "/console/report-agent_v1.0.zip",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"report-agent_v1.0.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/console/consolesystem_v2.zip",
       "headers": [
         {
@@ -175,6 +188,10 @@
     {
       "source": "/e/:id(\\d+)",
       "destination": "/api/share?event=:id"
+    },
+    {
+      "source": "/market/report-agent",
+      "destination": "/market/report-agent.html"
     },
     {
       "source": "/market/onemacs",

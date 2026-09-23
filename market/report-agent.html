@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>보고서 작성 AI 에이전트 | WAAT 앱마켓</title>
+<link rel="canonical" href="https://www.waat.community/market/report-agent">
+<meta name="description" content="보고서 작성 AI 에이전트: 자료를 주면 근거를 붙여 기획·검토 보고서 초안을 작성합니다. 출처를 실제로 접속해 대조하고, 확인되지 않은 문장이 남으면 문서를 만들지 않습니다. 5,500원 1회. 원맥스 구매자는 추가 결제 없이 받습니다.">
+<link rel="stylesheet" href="/css/theme.css?v=20260921a">
+<script src="/js/theme.js?v=20260921a"></script>
+<link rel="stylesheet" href="/css/site-nav.css?v=20260921a">
+<link rel="stylesheet" href="/css/market.css?v=20260921a">
+<link rel="stylesheet" href="/css/console.css?v=20260921a2">
+<link rel="stylesheet" href="/css/responsive.css?v=20260921a">
+</head>
+<body class="market console">
+<!-- 사이트 전역 nav (원맥스 상세와 동일 — 로그인 영역 제외) -->
+<nav class="site-nav">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo"><img src="/logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img"></a>
+        <ul class="nav-links nav-links-center">
+            <li><a href="/#event"><span class="nav-en">Event</span><span class="nav-ko">행사</span></a></li>
+            <li><a href="/#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
+            <li><a href="/speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
+            <li><a href="/speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">유망 AI Biz 발굴</span></a></li>
+            <li class="on"><a href="/market"><span class="nav-en">App Market</span><span class="nav-ko">앱 마켓</span></a></li>
+        </ul>
+        <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
+    </div>
+</nav>
+<div class="topbar crumb"><a href="/market">앱마켓</a><span class="sep">›</span><span class="cur">보고서 작성 AI 에이전트</span></div>
+
+<!-- ===================== 첫 화면 ===================== -->
+<section style="padding-top:28px">
+  <div class="wrap">
+    <span class="eyebrow">AI 에이전트</span>
+    <span class="pill-soon">출시 예정 · 예약 받는 중</span>
+    <h1 style="margin-top:12px">보고서 작성 AI 에이전트</h1>
+    <p class="lead" style="margin-top:12px">자료를 주면 <b>근거를 붙여</b> 기획·검토 보고서 초안을 작성합니다. 기업과 공공기관 실무자가 결재에 올리는 문서를 염두에 두고 만들었습니다.</p>
+    <p class="lead" style="margin-top:8px">다른 AI 글쓰기 도구와 다른 점은 하나입니다 — <b>지어낸 근거로 결재 문서가 나가지 않게 코드가 막습니다.</b></p>
+    <a class="btn" href="#reserve" style="margin-top:18px">출시 알림 예약하기<small>출시 가격 5,500원 · VAT 포함 · 1회 결제 · 월 구독 없음</small></a>
+    <div class="bar"></div>
+  </div>
+</section>
+
+<!-- ===================== 무엇이 다른가 ===================== -->
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">무엇이 다른가</span>
+    <h2>확인되지 않은 문장은 내보내지 않습니다.</h2>
+    <div class="stack" style="margin-top:18px">
+      <div class="cs-step"><div class="row"><span class="num">1</span><div>
+        <h3>출처를 실제로 열어 대조합니다</h3>
+        <p>링크가 살아 있는지만 보지 않습니다. 그 페이지를 열어 본문에 그 내용이 실제로 있는지 대조하고, 없으면 <b>[미검증]</b>으로 표시합니다.</p>
+      </div></div></div>
+      <div class="cs-step"><div class="row"><span class="num">2</span><div>
+        <h3>공공 통계는 원부에서 다시 확인합니다</h3>
+        <p>국가통계포털(KOSIS)과 한국은행 경제통계시스템(ECOS)에 직접 조회합니다. 값이 다르면 <b>원부의 값으로 바꿔 넣습니다.</b></p>
+      </div></div></div>
+      <div class="cs-step"><div class="row"><span class="num">3</span><div>
+        <h3>숫자는 AI가 아니라 코드가 계산합니다</h3>
+        <p>본문의 모든 숫자를 프로그램이 계산합니다. AI가 머릿속으로 셈하지 않습니다. 수치표에 없는 숫자는 <b>[확인 필요]</b>로 표시됩니다. 대안을 비교하는 점수도 마찬가지입니다 — 기준과 가중치는 사람이 정하고, 계산은 코드가 합니다.</p>
+      </div></div></div>
+      <div class="cs-step"><div class="row"><span class="num">4</span><div>
+        <h3>확인 안 된 것이 하나라도 남으면 문서를 만들지 않습니다</h3>
+        <p>경고를 띄우고 넘어가는 것이 아니라 <b>멈춥니다.</b> 그 부분을 교체하거나 삭제하거나, 사람이 확인했다는 증빙을 넣어야 다음으로 넘어갑니다.</p>
+      </div></div></div>
+      <div class="cs-step"><div class="row"><span class="num">5</span><div>
+        <h3>검증을 다른 회사 AI가 맡습니다</h3>
+        <p>초안을 작성한 AI가 자기 글을 채점하면 후하게 봅니다. 그래서 2차 검증은 <b>Codex</b>가 맡아 절과 절 사이가 맞는지, 출처가 맞는지, 1차 점수가 옳았는지를 다시 봅니다.</p>
+      </div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 어떻게 돌아가나 ===================== -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">작성 순서</span>
+    <h2>여섯 단계, 두 곳에서 사람이 확인합니다.</h2>
+    <div class="stack" style="margin-top:18px">
+      <div class="kv row"><b>① 접수</b><span>조직 유형(기업·공공) · 주제 한 줄 · 받는 사람 · 자료 파일</span></div>
+      <div class="kv row"><b>② 목차</b><span>8절 목차와 검토 논점, 평가 기준, 대안을 제안합니다 — <b>여기서 사람이 승인</b>합니다</span></div>
+      <div class="kv row"><b>③ 절별 작성</b><span>초고 → 채점 → 수정 → 다시 채점. 절마다 반복하고 기준 점수를 넘어야 넘어갑니다</span></div>
+      <div class="kv row"><b>④ 2차 검증</b><span>절 사이의 앞뒤가 맞는지, 출처가 맞는지 — Codex가 다시 봅니다</span></div>
+      <div class="kv row"><b>⑤ 출처 검증</b><span>원부 조회와 실제 접속·본문 대조 — <b>확인 안 된 것이 남으면 여기서 멈춥니다</b></span></div>
+      <div class="kv row"><b>⑥ 문서 생성</b><span>요약을 붙이고 Word 문서(DOCX)로 만듭니다</span></div>
+    </div>
+    <p class="quiet" style="margin-top:14px">보고서는 8개 절로 구성됩니다. 맨 앞의 요약은 기업이면 Executive Summary, 공공기관이면 보고요지로 나갑니다.</p>
+  </div>
+</section>
+
+<!-- ===================== 어디서 도는가 ===================== -->
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">어디서 도는가</span>
+    <h2>내 PC 안에서 돕니다.</h2>
+    <p class="lead" style="margin-top:12px">자료도 보고서도 내 PC를 떠나지 않습니다. 인터넷에 올라가지 않고 <b>내 컴퓨터 안에서만</b> 열립니다. 핸드폰에서 열고 싶으면 라이선스 키로 <b>나만의 고정 주소</b>를 받아 연결합니다.</p>
+    <div class="stack" style="margin-top:16px">
+      <div class="kv row"><b>원맥스와의 관계</b><span><b>따로 도는 프로그램</b>입니다. 원맥스 폴더 안이 아니라 자기 폴더에 설치하고, 원맥스 없이 이것만 사용해도 됩니다</span></div>
+      <div class="kv row"><b>준비물</b><span>Windows PC(켜 두어야 합니다) · Python 3.10 이상 · Claude Code 계정(본인 구독) · 2차 검증에 Codex 계정</span></div>
+      <div class="kv row"><b>AI 요금</b><span>사용자 본인의 구독으로 처리됩니다. 파인더월드는 AI 사용을 중개하거나 재판매하지 않습니다</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 값 ===================== -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">비용</span>
+    <h2>한 번 내면 끝입니다.</h2>
+    <div class="card" style="text-align:center;margin-top:18px">
+      <p class="launch-price">출시 가격</p>
+      <div class="price">5,500<small>원 · VAT 포함</small></div>
+      <p style="margin-top:8px;font-weight:700;color:var(--fg)">1회 결제 · 월 구독 없음 · 고정 주소 첫 3개월 포함</p>
+      <p style="margin-top:12px;color:var(--fg2);font-size:15px;line-height:1.8"><b>원맥스(9,900원)를 사시면 이 상품을 추가 결제 없이 받습니다.</b><br>원맥스 없이 이것만 사셔도 됩니다.</p>
+      <a class="btn btn-go" href="#reserve" style="margin-top:16px">출시 알림 예약하기</a>
+      <p class="note" style="margin-top:14px">출시 후 결제 수단: 카카오페이 송금 · 무통장 입금.</p>
+    </div>
+    <p class="quiet" style="margin-top:14px">고정 주소는 핸드폰에서 열 때 사용하는, 변하지 않는 접속 주소입니다. 첫 3개월이 포함되고 그 뒤에도 계속 사용하시려면 1년 9,900원입니다 — 직접 만들어 사용하면 무료입니다. 자세한 것은 <a href="/market/onemacs/license" class="cs-link">고정 주소 및 허브 이용권 안내</a>를 보세요.</p>
+  </div>
+</section>
+
+<!-- ===================== 출시 알림 예약 ===================== -->
+<section id="reserve" style="background:var(--bg2)">
+  <div class="wrap">
+    <span class="eyebrow">출시 알림 예약</span>
+    <div class="card">
+      <div class="rs-step active" id="rs-step-form">
+        <p class="pay-title">출시 알림 예약하기</p>
+        <p class="sub" style="margin-bottom:6px">정식 출시 전입니다. 예약하시면 출시 첫날 다운로드 링크와 라이선스 키를 이메일로 보내드립니다.</p>
+        <form id="rs-form" novalidate>
+          <label class="pay-label" for="rs-email">이메일 주소 (필수)</label>
+          <input class="pay-input" type="email" id="rs-email" placeholder="이메일 주소" autocomplete="email" required>
+          <label class="pay-label" for="rs-name">이름 (선택)</label>
+          <input class="pay-input" type="text" id="rs-name" placeholder="홍길동" autocomplete="name" maxlength="50">
+          <label class="pay-label" for="rs-phone">휴대폰 (선택)</label>
+          <input class="pay-input" type="tel" id="rs-phone" placeholder="010-0000-0000" autocomplete="tel" maxlength="30">
+          <label class="rs-agree" for="rs-agree"><input type="checkbox" id="rs-agree" required> <span>출시 안내 메일 수신에 동의합니다 (필수)</span></label>
+          <p class="pay-error" id="rs-error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-go" id="rs-btn">예약하기</button>
+        </form>
+        <p class="quiet" style="text-align:center">예약은 무료이며 결제가 아닙니다. 출시 첫날 메일 한 통을 보내드립니다.</p>
+      </div>
+      <div class="rs-step" id="rs-step-done">
+        <div class="done-box">
+          <div class="done-icon">✓</div>
+          <p class="pay-title" style="color:var(--ok)" id="rs-done-title">예약 완료</p>
+          <p style="color:var(--fg)">예약번호 <b class="mono" id="rs-done-id"></b></p>
+          <p style="color:var(--fg);margin-top:6px">출시 첫날 <b id="rs-done-email"></b>로 알려드립니다.</p>
+          <p class="note" style="margin-top:10px" id="rs-done-note">예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.</p>
+        </div>
+        <p style="color:var(--fg2);font-size:14px;text-align:center;margin-bottom:10px">원맥스를 함께 보시면 이 에이전트를 핸드폰에서 여는 방법도 같이 준비하실 수 있습니다.</p>
+        <a class="btn btn-go" href="/market/onemacs">One MACS · 원맥스 보기</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot" id="seller">
+  <div class="wrap">
+    <p><b style="color:var(--fg2)">고지</b></p>
+    <p>Claude Code·Codex는 각 회사의 상표이며, 이 상품은 각 서비스와 제휴 관계가 없습니다. 각 AI의 이용 요금은 사용자 본인의 구독으로 처리되며, 파인더월드는 AI 사용을 중개·재판매하지 않습니다.</p>
+    <p>이 에이전트가 만드는 것은 <b>보고서 초안</b>입니다. 최종 책임은 문서를 결재에 올리는 사람에게 있습니다. 검증을 통과한 문장도 사람이 한 번 더 읽어 보시기 바랍니다.</p>
+    <p style="margin-top:16px">판매자: 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고: 준비 중<br>소개 <a href="https://saa.house/about" target="_blank" rel="noopener">https://saa.house/about</a> · Facebook <a href="https://www.facebook.com/tlc500" target="_blank" rel="noopener">https://www.facebook.com/tlc500</a> · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p><a href="/market">앱마켓 홈</a> · <a href="/market/onemacs">One MACS · 원맥스</a> · <a href="/market/onemacs/license">고정 주소 및 허브 이용권</a> · <a href="/">WAAT 홈</a> · <a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+  </div>
+</footer>
+
+<script src="/js/nav-mobile.js?v=20260920f"></script>
+<script>
+// 출시 알림 예약 — 이 페이지는 상품이 report-agent 다. 원맥스 페이지와 같은 화면이지만
+// /api/reserve 에 product 를 함께 보내야 상품별로 예약이 쌓인다(같은 사람이 둘 다 예약할 수 있다).
+(function () {
+    'use strict';
+    var PRODUCT = 'report-agent';
+    function $(id) { return document.getElementById(id); }
+    function setMsg(el, msg) { if (!el) return; el.textContent = msg || ''; el.hidden = !msg; }
+    function rsStep(id) {
+        ['rs-step-form', 'rs-step-done'].forEach(function (s) {
+            var el = $(s); if (el) el.classList.toggle('active', s === id);
+        });
+    }
+    var form = $('rs-form');
+    if (!form) return;
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = ($('rs-email').value || '').trim();
+        var name = ($('rs-name').value || '').trim();
+        var phone = ($('rs-phone').value || '').trim();
+        var agree = $('rs-agree').checked;
+        var err = $('rs-error');
+        setMsg(err, '');
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '올바른 이메일 주소를 입력해 주세요.'); $('rs-email').focus(); return; }
+        if (!agree) { setMsg(err, '출시 안내 메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
+        var btn = $('rs-btn');
+        var orig = btn.textContent;
+        btn.disabled = true; btn.textContent = '예약 중...';
+        try {
+            var r = await fetch('/api/reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, name: name, phone: phone, agree: true, product: PRODUCT })
+            });
+            var data = null;
+            try { data = await r.json(); } catch (e2) { data = null; }
+            if (!r.ok || !data || !data.success) throw new Error((data && data.error) || '예약에 실패했습니다.');
+            $('rs-done-id').textContent = data.reserveId || '';
+            $('rs-done-email').textContent = data.email || email;
+            if (data.duplicate) {
+                $('rs-done-title').textContent = '이미 예약된 이메일입니다';
+                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
+            } else {
+                $('rs-done-title').textContent = '예약 완료';
+                $('rs-done-note').textContent = '예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.';
+            }
+            rsStep('rs-step-done');
+            var sec = $('reserve');
+            if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + window.pageYOffset - 8, behavior: 'smooth' });
+        } catch (ex) {
+            setMsg(err, ex.message || '예약 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        } finally {
+            btn.disabled = false; btn.textContent = orig;
+        }
+    });
+})();
+</script>
+</body>
+</html>

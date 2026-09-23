@@ -12,28 +12,106 @@
  *   BASE_URL                https://www.waat.community
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
- *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (APK 교체 시 함께 갱신)
+ *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
+ *   REPORT_AGENT_PRICE      보고서 작성 AI 에이전트 판매가 (원, 기본 5500)
+ *   REPORT_AGENT_VERSION / REPORT_AGENT_UPDATED / REPORT_AGENT_NAME
+ *   REPORT_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
+ *   REPORT_AGENT_MODE       보고서 에이전트만 따로 'sale'/'reserve' (없으면 PRODUCT_MODE 를 따름)
+ *   MARKET_KEY              주소 분양 서버에 주문을 알릴 때 쓰는 비밀값 (send-download.js)
  */
 
 const crypto = require('crypto');
 
 // 환경변수는 BOM·개행이 섞여 들어올 수 있어(Windows 파이프) 항상 정리해서 쓴다
 const clean = (v) => (v == null ? '' : String(v).replace(/^﻿/, '').trim());
-const PRODUCT = {
-    code: 'console_system',
-    name: 'One MACS · 원맥스',
-    /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로, 없으면 '콘솔시스템 v1.0' */
-    get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
-    get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
-    get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.9'; },
-    /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, APK 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
-    get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; }
+/**
+ * 상품 표 — 2026-09-23 두 번째 상품(보고서 작성 AI 에이전트) 추가.
+ * 그전까지 이 파일은 상품 하나만 다뤘고 주문·토큰·다운로드가 전부 그 하나를 보고 있었다.
+ * 상품이 둘 이상이 되었으므로 여기가 정본이다. PRODUCT 는 원맥스를 가리키는 옛 이름으로 남겨 둔다.
+ *
+ * downloadUrl 이 '/' 로 시작하면 우리 사이트의 파일이다(productDownloadUrl 이 사이트 주소를 붙인다).
+ */
+const PRODUCTS = {
+    onemacs: {
+        id: 'onemacs',
+        code: 'console_system',
+        name: 'One MACS · 원맥스',
+        category: '콘솔',
+        fileLabel: '원맥스 배포판 (PC 설치본)',
+        guidePath: '/market/onemacs/install',
+        /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로 */
+        get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
+        get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
+        get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.9'; },
+        /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, 파일 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
+        get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; },
+        get downloadUrl() { return apkDownloadUrl() || '/console/onemacs_v3.0.3.zip'; },
+        /** 원맥스를 사면 보고서 에이전트도 추가 결제 없이 받는다(PO 2026-09-23).
+         *  별도 상품이므로 원맥스 폴더가 아니라 자기 폴더에 따로 설치한다 — 파일도 따로 내려받는다. */
+        includes: ['report-agent']
+    },
+    'report-agent': {
+        id: 'report-agent',
+        code: 'report_agent',
+        name: '보고서 작성 AI 에이전트',
+        category: 'AI 에이전트',
+        fileLabel: '보고서 작성 AI 에이전트',
+        guidePath: '/market/onemacs/install',
+        get label() { return clean(process.env.REPORT_AGENT_NAME) || `${this.name} ${this.version}`; },
+        get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5500; },
+        get version() { return clean(process.env.REPORT_AGENT_VERSION) || 'v1.0'; },
+        get updated() { return clean(process.env.REPORT_AGENT_UPDATED) || DEPLOY_DATE; },
+        get downloadUrl() { return clean(process.env.REPORT_AGENT_DOWNLOAD_URL) || '/console/report-agent_v1.0.zip'; },
+        includes: []
+    }
 };
+
+const DEFAULT_PRODUCT_ID = 'onemacs';
+
+/** 상품 하나를 꺼낸다. 모르는 이름이면 null */
+function getProduct(id) {
+    return PRODUCTS[String(id || DEFAULT_PRODUCT_ID)] || null;
+}
+
+/** 이 상품을 사면 받게 되는 상품 전부 — 자기 자신 + 끼워 주는 것 */
+function entitlements(id) {
+    const p = getProduct(id);
+    if (!p) return [];
+    return [p.id].concat(p.includes.filter((x) => PRODUCTS[x]));
+}
+
+/** 상품의 실제 파일 주소. 우리 사이트 파일이면 사이트 주소를 앞에 붙인다 */
+function productDownloadUrl(id, base) {
+    const p = getProduct(id);
+    if (!p || !p.downloadUrl) return null;
+    const u = p.downloadUrl;
+    return /^https?:\/\//i.test(u) ? u : `${String(base || '').replace(/\/$/, '')}${u}`;
+}
+
+/** 옛 이름 — 원맥스를 가리킨다. 기존 코드(confirm-payment 등)가 이것을 그대로 쓴다 */
+const PRODUCT = PRODUCTS.onemacs;
 
 /** 출시 모드 — 'reserve'(기본) | 'sale'. 프런트(js/onemacs.js·js/market-home.js)가 /api/market-config 의 mode 로 화면을 전환한다 */
 function launchMode() {
     const v = clean(process.env.PRODUCT_MODE).toLowerCase();
     return v === 'sale' ? 'sale' : 'reserve';
+}
+
+/**
+ * 상품 하나의 출시 모드(2026-09-23). 상품마다 따로 열 수 있어야 한다 —
+ * 보고서 작성 AI 에이전트는 원맥스와 별개로, 시험을 통과한 뒤에 연다.
+ * 상품별 환경변수가 없으면 전체 모드(PRODUCT_MODE)를 따른다.
+ *   원맥스        : PRODUCT_MODE
+ *   보고서 에이전트 : REPORT_AGENT_MODE (없으면 PRODUCT_MODE)
+ */
+function modeFor(id) {
+    const p = getProduct(id);
+    if (!p) return launchMode();
+    if (p.id === 'report-agent') {
+        const v = clean(process.env.REPORT_AGENT_MODE).toLowerCase();
+        if (v === 'sale' || v === 'reserve') return v;
+    }
+    return launchMode();
 }
 
 const DEPLOY_DATE = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
@@ -108,6 +186,11 @@ function publicConfig() {
     return {
         mode: launchMode(),
         product: { code: PRODUCT.code, name: PRODUCT.name, price: PRODUCT.price, version: PRODUCT.version, updated: PRODUCT.updated },
+        // 상품이 둘 이상이 되었으므로 목록도 함께 내려준다(화면이 상품별 값을 그리는 데 쓴다)
+        products: Object.keys(PRODUCTS).map((k) => {
+            const p = PRODUCTS[k];
+            return { id: p.id, name: p.name, category: p.category, price: p.price, version: p.version, updated: p.updated, includes: p.includes, mode: modeFor(p.id) };
+        }),
         // 기본값 = PO 확인 완료(2026-09-20): 기존 판매 시스템의 카카오페이 영구 링크·계좌 그대로 재사용.
         // env 가 있으면 env 우선. (링크·QR 은 9,990원용으로 만든 것 — 화면에서 9,900원 입력 안내)
         kakaopayLink: process.env.KAKAOPAY_LINK || DEFAULTS.kakaopayLink,
@@ -124,7 +207,8 @@ function publicConfig() {
 }
 
 module.exports = {
-    PRODUCT, PAYMENT_METHODS, DEFAULTS, clean, launchMode,
+    PRODUCT, PRODUCTS, DEFAULT_PRODUCT_ID, getProduct, entitlements, productDownloadUrl,
+    PAYMENT_METHODS, DEFAULTS, clean, launchMode, modeFor,
     generateOrderId, generateReserveId, generateLicenseKey, randomCode,
     baseUrl, apkDownloadUrl, isValidEmail, paymentMethodLabel, supportEmail, publicConfig
 };

@@ -29,11 +29,17 @@ function safeName(v) {
 
 /**
  * 구매 완료 메일 HTML
- * @param {{name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, consoleGuideLink, expiryHours, maxDownloads, renewal, launch}} p
+ * @param {{name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, downloads, productName, consoleGuideLink, expiryHours, maxDownloads, renewal, launch}} p
+ *   downloads: [{label, name, link}] — 한 주문으로 받는 파일이 여럿일 때(원맥스를 사면 보고서
+ *              작성 AI 에이전트도 함께 받는다). 없으면 downloadLink 하나로 본다(옛 호출 호환).
  *   launch: true 면 출시 알림 예약자에게 보내는 출시 첫날 메일 (scripts/notify-reservations.js) — 제목·내역 블록이 바뀐다
  */
 function purchaseEmailHtml(p) {
     const name = safeName(p.name);
+    // 받는 파일 목록. 옛 호출(downloadLink 하나)도 그대로 동작한다.
+    const files = (Array.isArray(p.downloads) && p.downloads.length)
+        ? p.downloads
+        : [{ label: '원맥스 배포판 (PC 설치본)', name: '원맥스 배포판', link: p.downloadLink }];
     const heading = p.launch ? '예약하신 원맥스가 출시되었습니다'
         : p.renewal ? '원맥스 다운로드 링크를 다시 보내드립니다'
         : '원맥스를 구매해 주셔서 감사합니다';
@@ -57,8 +63,9 @@ function purchaseEmailHtml(p) {
 
   <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
     <div style="font-size:14px;opacity:.85;margin-bottom:10px;">먼저 PC에서 <a href="https://www.waat.community/market/onemacs/install" style="color:#C9A961;font-weight:700;">waat.community/market/onemacs/install</a> 을 여세요 — 핸드폰 앱을 사용하려면 PC에 원맥스를 먼저 설치해야 합니다.</div>
-    <div style="font-size:14px;opacity:.85;margin-bottom:12px;">보안 다운로드 링크</div>
-    <a href="${esc(p.downloadLink)}" style="display:inline-block;background:#C9A961;color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:17px;">원맥스 배포판 (PC 설치본) 내려받기</a>
+    <div style="font-size:14px;opacity:.85;margin-bottom:12px;">보안 다운로드 링크${files.length > 1 ? ` — 파일 ${files.length}개` : ''}</div>
+    ${files.map((f, i) => `<a href="${esc(f.link)}" style="display:${files.length > 1 ? 'block' : 'inline-block'};background:${i === 0 ? '#C9A961' : '#EFE3C2'};color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:${i === 0 ? 17 : 15}px;${files.length > 1 ? 'margin:0 0 10px;' : ''}">${esc(f.label || f.name)} 내려받기</a>`).join('')}
+    ${files.length > 1 ? `<div style="margin-top:6px;font-size:13px;opacity:.85;line-height:1.7;">두 개는 <b>따로 도는 프로그램</b>입니다. 각각 자기 폴더에 푸세요.</div>` : ''}
     <div style="margin-top:14px;font-size:13px;opacity:.85;">링크 유효 ${p.expiryHours}시간 · 최대 ${p.maxDownloads}회</div>
   </div>
 
