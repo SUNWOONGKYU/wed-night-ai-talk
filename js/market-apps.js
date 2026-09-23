@@ -22,7 +22,7 @@ window.MARKET_APPS = [
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
-    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', '보고서 작성 AI 에이전트(정가 5,500원) — 별도 상품이며 원맥스 구매자는 추가 결제 없이 받습니다(곧 추가)'],
+    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', 'ARWA · 아르와 — 보고서 작성 에이전트(정가 5,500원). 별도 상품이며 원맥스 구매자는 추가 결제 없이 받습니다(곧 추가)'],
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
     // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
@@ -49,12 +49,12 @@ window.MARKET_APPS = [
     released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
     seller: { name: '파인더월드', link: '#seller' },   // 전자상거래 표시 항목은 상세 하단 판매자 블록(#seller) 한 곳에만 — 단일 소스
     reportEmail: 'wksun999@hanmail.net' },
-  { id: 'report-agent', name: '보고서 작성 AI 에이전트', fullname: 'Report Writing AI Agent · 보고서 작성 에이전트',
+  { id: 'report-agent', name: 'ARWA · 아르와', fullname: 'Automated Report Writing Agent · 자동 보고서 작성 에이전트',
     desc: '자료를 주면 근거를 붙여 보고서를 작성합니다. 출처가 확인되지 않은 문장은 내보내지 않습니다.',
     sub: '원맥스와 따로 도는 프로그램입니다. 원맥스 없이 그것만 사용해도 되고, 원맥스 구매자는 추가 결제 없이 받습니다.',
     cat: 'AI 에이전트', launch: 'config',
     price: 5500, tags: ['Windows PC', 'Claude Code 필요'],
-    icon: '보', color: 'linear-gradient(135deg,#2E3A5F,#C9A961)',
+    icon: '', img: '/market/img/arwa_icon.png', color: 'linear-gradient(135deg,#2E3A5F,#C9A961)',
     url: '/market/report-agent',
     age: '전체',
     delivery: { type: '내려받는 파일(PC 설치본)', note: '받은 파일을 자기 폴더에 풉니다. 원맥스 폴더 안이 아닙니다 — 따로 도는 프로그램입니다' },

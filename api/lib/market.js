@@ -53,9 +53,10 @@ const PRODUCTS = {
     'report-agent': {
         id: 'report-agent',
         code: 'report_agent',
-        name: '보고서 작성 AI 에이전트',
+        name: 'ARWA · 아르와',
+        fullname: 'Automated Report Writing Agent · 자동 보고서 작성 에이전트',
         category: 'AI 에이전트',
-        fileLabel: '보고서 작성 AI 에이전트',
+        fileLabel: 'ARWA · 아르와 (보고서 작성 에이전트)',
         guidePath: '/market/onemacs/install',
         get label() { return clean(process.env.REPORT_AGENT_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5500; },
