@@ -46,9 +46,9 @@ const PRODUCTS = {
         /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, 파일 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
         get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; },
         get downloadUrl() { return apkDownloadUrl() || '/console/onemacs_v3.0.3.zip'; },
-        /** 원맥스를 사면 보고서 에이전트도 추가 결제 없이 받는다(PO 2026-09-23).
-         *  별도 상품이므로 원맥스 폴더가 아니라 자기 폴더에 따로 설치한다 — 파일도 따로 내려받는다. */
-        includes: ['report-agent']
+        /** 끼워 주는 상품 없음. ARWA(보고서 작성 에이전트)는 **따로 파는 상품**이다(PO 2026-09-23 정정).
+         *  구조는 남겨 둔다 — 나중에 묶음 상품을 낼 때 여기에 id 를 넣으면 그대로 동작한다. */
+        includes: []
     },
     'report-agent': {
         id: 'report-agent',
@@ -74,7 +74,7 @@ function getProduct(id) {
     return PRODUCTS[String(id || DEFAULT_PRODUCT_ID)] || null;
 }
 
-/** 이 상품을 사면 받게 되는 상품 전부 — 자기 자신 + 끼워 주는 것 */
+/** 이 상품을 사면 받게 되는 상품 전부 — 자기 자신 + 끼워 주는 것(지금은 끼워 주는 것이 없다) */
 function entitlements(id) {
     const p = getProduct(id);
     if (!p) return [];

@@ -9,8 +9,8 @@
  *
  * body: { email, name, phone?, paymentMethod: 'kakaopay' | 'bank', product?: 'onemacs' | 'report-agent' }
  *
- * 2026-09-23 상품이 둘 이상이 되었다. 원맥스를 사면 보고서 작성 AI 에이전트도 추가 결제 없이 받으므로
- * 한 주문에 다운로드 링크가 둘 나갈 수 있다(상품마다 토큰이 따로다 — 별도 상품이라 파일도 따로다).
+ * 2026-09-23 상품이 둘 이상이 되었다. 상품마다 파일과 토큰이 따로이고, 한 주문이 산 상품만 받는다.
+ * (묶음 상품을 낼 때를 대비해 한 주문에 링크가 여럿 나가는 구조는 남겨 두었다 — market.js 의 includes)
  */
 
 const { saveOrder, saveEmailLog } = require('./lib/sheets.js');
