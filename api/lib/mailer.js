@@ -76,19 +76,19 @@ function purchaseEmailHtml(p) {
   </div>
 
   <div style="background:#F6F4EF;border:1px dashed #C9A961;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;color:#4A5670;line-height:1.8;">
-    <b style="color:#1A2238;">나중에 하나 더 보내드립니다 — 보고서 작성 AI 에이전트 (ARWA · 아르와)</b><br>
-    자료를 주면 근거를 붙여 보고서 초안을 작성하는 에이전트입니다. 단독으로는 5,000원이지만
-    <b>One MACS 를 사신 분께는 값을 더 받지 않습니다.</b><br>
-    지금은 마지막 시험 중이라 아직 못 드립니다. <b>준비되는 대로 이 주소(${esc(p.email)})로 따로 보내드립니다.</b>
-    다시 결제하실 일도, 따로 신청하실 일도 없습니다.<br>
-    <span style="font-size:13px;opacity:.85;">받으시면 아무 폴더에나 풀고 <b>Claude Code 에게 "ARWA 를 One MACS 에 연결해줘"</b> 라고 하시면 됩니다 — 그러면 핸드폰 앱 안에서 바로 열립니다.</span>
+    <b style="color:#1A2238;">출시 기념 — 두 가지를 더 보내드립니다</b><br>
+    <b>보고서 작성 에이전트 (ARWA)</b> · 자료를 주면 근거를 붙여 보고서 초안을 작성합니다.<br>
+    <b>주식 매매 자동화 시스템 (STAS)</b> · 신호가 나면 텔레그램으로 물어보고, 승인하신 주문만 대신 넣습니다.<br>
+    둘 다 One MACS 와 따로 파는 별도 상품(각 5,500원)이지만, <b>출시일로부터 한 달 동안 One MACS 를 사신 분께는 값을 더 받지 않습니다.</b>
+    준비되는 대로 이 주소(${esc(p.email)})로 <b>하나씩 따로 보내드립니다.</b> 다시 결제하실 일도, 따로 신청하실 일도 없습니다.<br>
+    <span style="font-size:13px;opacity:.85;">받으시면 <b>각각 독립된 폴더</b>에 푸십시오(프로젝트가 서로 다릅니다). 그 폴더에서 Claude Code 에게 <b>"이 폴더의 CLAUDE_CODE_지시문.md 를 읽고 그대로 수행해줘"</b>, 끝나면 <b>"One MACS 에 연결해줘"</b> 라고 하시면 핸드폰 앱 안에서 바로 열립니다.</span>
   </div>
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
     <h3 style="font-size:15px;margin:0 0 10px;">설치 순서</h3>
     <ol style="margin:0;padding-left:20px;color:#4A5670;font-size:14px;line-height:1.8;">
       <li>PC에서 위 버튼으로 배포판을 받아 아무 폴더에나 풉니다. (Windows 10/11 · 약 20MB · <b>핸드폰 앱과 설치 지시문이 함께 들어 있습니다</b>)</li>
-      <li>푼 폴더에서 Claude Code를 켜고 설치 지시문을 읽히면 설치가 진행되고 <b>코드 8자리</b>가 나옵니다. 자세한 것은 푼 폴더의 <b>"One MACS 사용설명서.html"</b> 한 장에 다 있습니다. (PC 브라우저에서 <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">waat.community/market/onemacs/install</a> 을 열어도 같은 안내를 볼 수 있습니다)</li>
+      <li>푼 폴더에서 Claude Code 를 켜고 아래 한 줄을 붙여넣으시면 설치가 진행되고 <b>코드 8자리</b>가 나옵니다.<br><span style="display:inline-block;margin:6px 0;padding:8px 12px;background:#F6F4EF;border-radius:8px;font-size:13px;color:#1A2238;">One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.</span><br> 자세한 것은 푼 폴더의 <b>"One MACS 사용설명서.html"</b> 한 장에 다 있습니다. (PC 브라우저에서 <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">waat.community/market/onemacs/install</a> 을 열어도 같은 안내를 볼 수 있습니다)</li>
       <li>그 코드를 앱에 넣으면 핸드폰과 PC가 연결됩니다.</li>
     </ol>
   </div>
