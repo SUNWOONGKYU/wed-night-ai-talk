@@ -75,6 +75,15 @@ function purchaseEmailHtml(p) {
     <div style="font-size:13px;color:#4A5670;margin-top:6px;">앱의 설정 &gt; 라이선스에 입력해 두세요. 이 메일과 함께 보관하세요.</div>
   </div>
 
+  <div style="background:#F6F4EF;border:1px dashed #C9A961;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;color:#4A5670;line-height:1.8;">
+    <b style="color:#1A2238;">나중에 하나 더 보내드립니다 — 보고서 작성 AI 에이전트 (ARWA · 아르와)</b><br>
+    자료를 주면 근거를 붙여 보고서 초안을 작성하는 에이전트입니다. 단독으로는 5,000원이지만
+    <b>One MACS 를 사신 분께는 값을 더 받지 않습니다.</b><br>
+    지금은 마지막 시험 중이라 아직 못 드립니다. <b>준비되는 대로 이 주소(${esc(p.email)})로 따로 보내드립니다.</b>
+    다시 결제하실 일도, 따로 신청하실 일도 없습니다.<br>
+    <span style="font-size:13px;opacity:.85;">받으시면 아무 폴더에나 풀고 <b>Claude Code 에게 "ARWA 를 One MACS 에 연결해줘"</b> 라고 하시면 됩니다 — 그러면 핸드폰 앱 안에서 바로 열립니다.</span>
+  </div>
+
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
     <h3 style="font-size:15px;margin:0 0 10px;">설치 순서</h3>
     <ol style="margin:0;padding-left:20px;color:#4A5670;font-size:14px;line-height:1.8;">
