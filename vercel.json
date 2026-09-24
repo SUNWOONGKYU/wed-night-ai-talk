@@ -67,6 +67,19 @@
       ]
     },
     {
+      "source": "/console/onemacs_v3.3.14.zip",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"onemacs_v3.3.14.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    },
+    {
       "source": "/console/consolesystem_v2.zip",
       "headers": [
         {
