@@ -22,7 +22,7 @@ window.MARKET_APPS = [
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
-    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', 'ARWA · 아르와 — 보고서 작성 에이전트(단독 5,000원). One MACS에는 곧 업데이트로 들어갑니다'],
+    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', '보고서 작성 에이전트 (ARWA)(단독 5,000원). One MACS에는 곧 업데이트로 들어갑니다'],
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
     // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
@@ -49,7 +49,7 @@ window.MARKET_APPS = [
     released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
     seller: { name: '파인더월드', link: '#seller' },   // 전자상거래 표시 항목은 상세 하단 판매자 블록(#seller) 한 곳에만 — 단일 소스
     reportEmail: 'wksun999@hanmail.net' },
-  { id: 'report-agent', name: 'ARWA · 아르와', fullname: 'Automated Report Writing Agent',
+  { id: 'report-agent', name: '보고서 작성 에이전트 (ARWA)', fullname: 'Automated Report Writing Agent',
     desc: '자료를 주면 근거를 붙여 보고서를 작성합니다. 출처가 확인되지 않은 문장은 내보내지 않습니다.',
     sub: '혼자 사시면 5,000원입니다. One MACS(9,900원)에는 곧 업데이트로 들어갑니다.',
     cat: 'AI 에이전트', launch: 'config',
@@ -62,6 +62,24 @@ window.MARKET_APPS = [
     dataSafety: {
       collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],
       onDevice: ['작성 중인 보고서와 자료(내 PC 안에만)'],
+      share: '없음', deleteEmail: 'wksun999@hanmail.net', policy: '/privacy.html' },
+    lang: '한국어', iap: false,
+    released: null,
+    seller: { name: '파인더월드', link: '#seller' },
+    reportEmail: 'wksun999@hanmail.net' },
+  { id: 'stock-bot', name: '주식 매매 자동화 시스템 (STAS)', fullname: 'Stock Trading Auto System',
+    desc: '국내 주식선물 290종목을 매일 아침 훑어 오늘 살펴볼 후보를 고르고, 진입할 자리가 오면 텔레그램으로 물어봅니다.',
+    sub: '스스로 사고팔지 않습니다. 사람이 승인한 주문만 대신 냅니다. 규칙은 전부 꺼진 채로 나가고, 자기 규칙을 넣어 사용합니다.',
+    cat: '트레이딩', launch: 'config',
+    price: 5000, tags: ['Windows PC', '증권사 계좌 필요'],
+    icon: '선', color: 'linear-gradient(135deg,#1FB98A,#2E3A5F)',
+    url: '/market/stock-bot',
+    age: '전체',
+    delivery: { type: '내려받는 파일(PC 설치본)', note: '메일로 따로 보내드립니다. 자기 폴더에 풀고 One MACS에 연결하면 앱에서 열립니다' },
+    needs: ['Windows PC (켜 두어야 합니다)', 'Python', '증권사 계좌와 API 신청 — 선물옵션 거래 자격이 필요합니다', '텔레그램 (승인을 주고받습니다)'],
+    dataSafety: {
+      collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],
+      onDevice: ['증권사 열쇠와 계좌 번호(내 PC 안에만)', '신호와 거래 기록'],
       share: '없음', deleteEmail: 'wksun999@hanmail.net', policy: '/privacy.html' },
     lang: '한국어', iap: false,
     released: null,

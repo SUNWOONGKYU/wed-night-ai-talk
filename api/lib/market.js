@@ -13,7 +13,7 @@
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
  *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
- *   REPORT_AGENT_PRICE      ARWA 단독 판매가 (원, 기본 5000)
+ *   REPORT_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5000)
  *   REPORT_AGENT_VERSION / REPORT_AGENT_UPDATED / REPORT_AGENT_NAME
  *   REPORT_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
  *   REPORT_AGENT_MODE       보고서 에이전트만 따로 'sale'/'reserve' (없으면 PRODUCT_MODE 를 따름)
@@ -46,17 +46,32 @@ const PRODUCTS = {
         /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, 파일 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
         get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; },
         get downloadUrl() { return apkDownloadUrl() || '/console/onemacs_v3.0.3.zip'; },
-        /** 끼워 주는 상품 없음. ARWA(보고서 작성 에이전트)는 **따로 파는 상품**이다(PO 2026-09-23 정정).
+        /** 끼워 주는 상품 없음. 보고서 작성 에이전트(보고서 작성 에이전트)는 **따로 파는 상품**이다(PO 2026-09-23 정정).
          *  구조는 남겨 둔다 — 나중에 묶음 상품을 낼 때 여기에 id 를 넣으면 그대로 동작한다. */
+        includes: []
+    },
+    'stock-bot': {
+        id: 'stock-bot',
+        code: 'stock_bot',
+        name: '주식 매매 자동화 시스템 (STAS)',
+        fullname: 'Stock Trading Auto System',
+        category: '트레이딩',
+        fileLabel: '주식 매매 자동화 시스템',
+        guidePath: '/market/onemacs/install',
+        get label() { return clean(process.env.STOCK_BOT_NAME) || `${this.name} ${this.version}`; },
+        get price() { return parseInt(process.env.STOCK_BOT_PRICE, 10) || 5000; },
+        get version() { return clean(process.env.STOCK_BOT_VERSION) || 'v1.3'; },
+        get updated() { return clean(process.env.STOCK_BOT_UPDATED) || DEPLOY_DATE; },
+        get downloadUrl() { return clean(process.env.STOCK_BOT_DOWNLOAD_URL) || '/console/stock-bot_v1.3.zip'; },
         includes: []
     },
     'report-agent': {
         id: 'report-agent',
         code: 'report_agent',
-        name: 'ARWA · 아르와',
+        name: '보고서 작성 에이전트 (ARWA)',
         fullname: 'Automated Report Writing Agent',
         category: 'AI 에이전트',
-        fileLabel: 'ARWA · 아르와 (보고서 작성 에이전트)',
+        fileLabel: '보고서 작성 에이전트 (ARWA) (보고서 작성 에이전트)',
         guidePath: '/market/onemacs/install',
         get label() { return clean(process.env.REPORT_AGENT_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5000; },
