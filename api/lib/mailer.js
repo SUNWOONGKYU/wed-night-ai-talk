@@ -86,7 +86,7 @@ function purchaseEmailHtml(p) {
 
   <div style="background:#FFF8E6;border:1px solid #F1E2B3;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:13px;color:#7A5A12;line-height:1.7;">
     · 다운로드 링크는 ${p.expiryHours}시간 동안, 최대 ${p.maxDownloads}회 유효합니다. 만료되면 ${esc(p.renewLink)} 에서 주문번호와 이메일로 재발급받을 수 있습니다.<br>
-    · 링크와 라이선스 키, 페어링 코드는 타인과 공유하지 마세요.
+    · 링크와 라이선스 키, 연결 코드는 타인과 공유하지 마세요.
   </div>
 
   <div style="background:#F6F4EF;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;color:#4A5670;line-height:1.8;">
