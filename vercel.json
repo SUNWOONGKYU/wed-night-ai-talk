@@ -203,6 +203,10 @@
       "destination": "/api/share?event=:id"
     },
     {
+      "source": "/market/stock-bot",
+      "destination": "/market/stock-bot.html"
+    },
+    {
       "source": "/market/report-agent",
       "destination": "/market/report-agent.html"
     },

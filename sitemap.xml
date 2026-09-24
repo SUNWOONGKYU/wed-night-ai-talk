@@ -16,6 +16,11 @@
         <priority>0.7</priority>
     </url>
     <url>
+        <loc>https://waat.community/market/stock-bot</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://waat.community/market/report-agent</loc>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>

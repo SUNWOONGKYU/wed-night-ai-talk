@@ -13,7 +13,7 @@
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
  *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
- *   REPORT_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5000)
+ *   REPORT_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5500)
  *   REPORT_AGENT_VERSION / REPORT_AGENT_UPDATED / REPORT_AGENT_NAME
  *   REPORT_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
  *   REPORT_AGENT_MODE       보고서 에이전트만 따로 'sale'/'reserve' (없으면 PRODUCT_MODE 를 따름)
@@ -59,7 +59,7 @@ const PRODUCTS = {
         fileLabel: '주식 매매 자동화 시스템',
         guidePath: '/market/onemacs/install',
         get label() { return clean(process.env.STOCK_BOT_NAME) || `${this.name} ${this.version}`; },
-        get price() { return parseInt(process.env.STOCK_BOT_PRICE, 10) || 5000; },
+        get price() { return parseInt(process.env.STOCK_BOT_PRICE, 10) || 5500; },
         get version() { return clean(process.env.STOCK_BOT_VERSION) || 'v1.3'; },
         get updated() { return clean(process.env.STOCK_BOT_UPDATED) || DEPLOY_DATE; },
         get downloadUrl() { return clean(process.env.STOCK_BOT_DOWNLOAD_URL) || '/console/stock-bot_v1.3.zip'; },
@@ -74,7 +74,7 @@ const PRODUCTS = {
         fileLabel: '보고서 작성 에이전트 (ARWA) (보고서 작성 에이전트)',
         guidePath: '/market/onemacs/install',
         get label() { return clean(process.env.REPORT_AGENT_NAME) || `${this.name} ${this.version}`; },
-        get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5000; },
+        get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5500; },
         get version() { return clean(process.env.REPORT_AGENT_VERSION) || 'v1.0'; },
         get updated() { return clean(process.env.REPORT_AGENT_UPDATED) || DEPLOY_DATE; },
         get downloadUrl() { return clean(process.env.REPORT_AGENT_DOWNLOAD_URL) || '/console/report-agent_v1.0.zip'; },
