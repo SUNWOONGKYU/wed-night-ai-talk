@@ -54,11 +54,11 @@
       ]
     },
     {
-      "source": "/console/stock-bot_v1.3.zip",
+      "source": "/console/StockTradeAutoSystem_v1.3.zip",
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"stock-bot_v1.3.zip\""
+          "value": "attachment; filename=\"StockTradeAutoSystem_v1.3.zip\""
         },
         {
           "key": "Cache-Control",
@@ -216,8 +216,8 @@
       "destination": "/api/share?event=:id"
     },
     {
-      "source": "/market/stock-bot",
-      "destination": "/market/stock-bot.html"
+      "source": "/market/StockTradeAutoSystem",
+      "destination": "/market/StockTradeAutoSystem.html"
     },
     {
       "source": "/market/report-agent",
