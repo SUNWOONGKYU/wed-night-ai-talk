@@ -58,7 +58,7 @@ function purchaseEmailHtml(p) {
     <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, ${heading}</h1>
     <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">${esc(PRODUCT.name)} <span style="font-weight:600;color:#8A8F9E;">${esc(PRODUCT.version)}</span></p>
-    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI Console System</p>
+    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI CLI Console System</p>
   </div>
 
   <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
@@ -126,7 +126,7 @@ function reservationEmailHtml(p) {
     <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 출시 알림 예약이 완료되었습니다</h1>
     <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">One MACS · 원맥스</p>
-    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI Console System</p>
+    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI CLI Console System</p>
   </div>
 
   <div style="background:#F6F4EF;padding:18px 20px;border-radius:12px;margin-bottom:18px;text-align:center;">
@@ -236,7 +236,7 @@ function launchPaymentEmailHtml(p) {
     <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 예약하신 One MACS가 출시되었습니다</h1>
     <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">One MACS · 원맥스</p>
-    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI Console System</p>
+    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI CLI Console System</p>
   </div>
 
   <p style="font-size:15px;line-height:1.8;margin:0 0 18px;">출시 알림을 예약해 주셔서 감사합니다. 예약번호 <b style="font-family:Consolas,monospace;">${esc(p.reserveId)}</b>로 남겨 주신 분께 먼저 알려드립니다.</p>
