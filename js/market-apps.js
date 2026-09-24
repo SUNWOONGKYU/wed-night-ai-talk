@@ -17,7 +17,7 @@
 //   launch   : 'config' 면 출시 모드를 GET /api/market-config 의 mode 로 따른다 (reserve = 출시 알림 예약 카드 / sale = 결제 카드).
 //              데이터는 모드와 무관하게 두고, 렌더(market-home.js)가 mode 에 따라 배지·버튼만 바꾼다
 window.MARKET_APPS = [
-  { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI CLI Console System',
+  { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI-CLI Console System',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
