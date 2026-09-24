@@ -102,10 +102,10 @@
     <div class="cs-step cs-step-key">
       <div class="row"><span class="num">6</span><div>
         <h3>Claude Code에게 설치를 지시하기</h3>
-        <p>Claude Code 입력창에 아래 지시문을 붙여넣고 Enter. 이후 Claude Code가 물어보는 것에 답하면 됩니다.</p>
-        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/market/onemacs/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/market/onemacs/install.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 원맥스를 설치·실행해줘.">복사</button></div>
-        <p style="color:var(--fg)">이후는 Claude Code가 알아서 합니다: 파일 다운로드 · 설치 · 설정 · 실행 · 연결 코드 발급. 중간에 로그인이나 확인을 물으면 답해 주세요. 끝나면 <b>연결 코드 8자리</b>를 알려줍니다.</p>
-        <p class="note">Claude Code가 URL을 못 읽는다고 하면 <a href="/market/onemacs/consolesystem_v2.zip" class="cs-link">consolesystem_v2.zip</a>(18MB)을 받아 작업 폴더에 풀고, "<span class="mono">One MACS 폴더의 docs\CLAUDE_CODE_설치지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.</span>"라고 하세요. 지시문 원문: <a href="/market/onemacs/install.md" class="cs-link" target="_blank" rel="noopener">install.md</a></p>
+        <p>받으신 파일을 푼 폴더에서 Claude Code를 켜고, 아래 한 줄을 붙여넣고 Enter. 이후 Claude Code가 물어보는 것에 답하면 됩니다.</p>
+        <div class="cs-cmd cs-cmd-key"><code>One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.</code><button type="button" class="cs-copy" data-copy="One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.">복사</button></div>
+        <p style="color:var(--fg)">이후는 Claude Code가 알아서 합니다: 설치 · 설정 · 실행 · 연결 코드 발급. 중간에 로그인이나 확인을 물으면 답해 주세요. 끝나면 <b>연결 코드 8자리</b>와 <b>이 PC의 고정 주소</b>를 알려줍니다.</p>
+        <p class="note">나중에 새 판이 나오면 같은 자리에서 "<span class="mono">One MACS 폴더의 CLAUDE_CODE_지시문.md 의 「2부 업데이트」대로 One MACS 업데이트해줘.</span>"라고 하시면 됩니다. 자세한 것은 함께 들어 있는 <b>One MACS 사용설명서</b>에 있습니다.</p>
       </div></div>
     </div>
 
@@ -122,25 +122,16 @@
 
 <section id="bot" style="background:var(--bg2)">
   <div class="wrap">
-    <span class="eyebrow">매매 자동화 봇 · 원맥스에 포함</span>
-    <h2>매매 자동화 봇 (Trading Automation Bot) 설치 (선택)</h2>
-    <p class="sub">원맥스의 "트레이딩 시그널" 프로젝트에 딸린 PC 프로그램입니다. 신호가 나면 텔레그램으로 승인을 받아 주문·청산을 대신 실행해 주는 프로그램입니다. 매수(CALL)·매도(PUT) 신호 모두 승인을 묻고, 승인 없이는 주문하지 않습니다. 원맥스에 포함 · 구매자에게 제공. 위 ①~④(Node.js·Claude Code·로그인)가 끝난 상태에서 진행하세요.</p>
-    <div class="cs-step" style="margin-bottom:12px">
-      <b style="color:var(--fg)">준비물</b>
-      <ul style="padding-left:18px;margin-top:6px;font-size:15px;color:var(--fg2);line-height:1.7">
-        <li><b>Python 3.11 이상</b> — <a href="https://www.python.org/downloads/" target="_blank" rel="noopener" class="cs-link">python.org</a> ("Add python.exe to PATH" 체크)</li>
-        <li><b>한국투자증권 Open API 모의투자 키</b> — <a href="https://apiportal.koreainvestment.com" target="_blank" rel="noopener" class="cs-link">apiportal.koreainvestment.com</a> 에서 발급(앱키·시크릿·계좌번호). 기본은 모의투자 모드.</li>
-        <li><b>텔레그램 봇</b> — 텔레그램에서 @BotFather 로 봇 토큰 발급, 본인 채팅 ID. (당일 시작·매수·청산 승인 알림에 사용합니다)</li>
-      </ul>
-    </div>
+    <span class="eyebrow">함께 보내 드리는 프로그램</span>
+    <h2>주식 매매 자동화 시스템은 메일로 따로 보내 드립니다.</h2>
+    <p class="sub">One MACS와 <b>따로 파는 별도 상품</b>입니다(5,500원). 출시 기념으로 한 달 동안은 One MACS를 구매하신 분께 <b>보고서 작성 에이전트</b>와 함께 메일로 보내 드립니다. 다시 결제하실 일도, 따로 신청하실 일도 없습니다.</p>
     <div class="cs-step cs-step-key">
       <div class="row"><span class="num">B</span><div>
-        <h3>봇을 둘 폴더에서 Claude Code 를 켜고 한 줄 붙여넣기</h3>
-        <div class="cs-cmd"><code>mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude</code><button type="button" class="cs-copy" data-copy="mkdir C:\트레이딩봇; cd C:\트레이딩봇; claude">복사</button></div>
-        <div class="cs-cmd cs-cmd-key"><code>https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 매매 자동화 봇을 설치·실행해줘</code><button type="button" class="cs-copy" data-copy="https://www.waat.community/market/onemacs/trading-bot.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 매매 자동화 봇을 설치·실행해줘">복사</button></div>
-        <p style="color:var(--fg)">Claude Code 가 배포판을 내려받아 라이브러리 설치 → <span class="mono">.env</span> 에 키 입력(사용자가 값을 줄 때만) → 시험 기동까지 합니다. 증권사 로그인·키 발급·텔레그램 봇 생성은 대신 하지 않습니다.</p>
-        <p class="note">URL 을 못 읽으면 <a href="/market/onemacs/trading-bot_v1.zip" class="cs-link">trading-bot_v1.zip</a>(337KB)을 받아 폴더에 풀고 "<span class="mono">CLAUDE_CODE_봇설치지시문.md 파일을 읽고 그대로 수행해줘</span>". 지시문 원문: <a href="/market/onemacs/trading-bot.md" class="cs-link" target="_blank" rel="noopener">trading-bot.md</a></p>
-        <p class="note">승인 없이는 주문하지 않으며, 실계좌 전환은 README 의 절차를 읽고 본인이 결정합니다.</p>
+        <h3>받으시면 — 폴더에 풀고 한 줄</h3>
+        <p>받으신 파일을 <b>독립된 폴더</b>에 푸시면 그 안에 설명서 한 장과 Claude Code용 지시문 한 장이 함께 있습니다. 그 폴더에서 Claude Code를 켜고 아래 한 줄을 붙여넣으십시오.</p>
+        <div class="cs-cmd cs-cmd-key"><code>이 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해줘.</code><button type="button" class="cs-copy" data-copy="이 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해줘.">복사</button></div>
+        <p style="color:var(--fg)">설치가 끝난 뒤 <b>「주식 매매 자동화 시스템을 One MACS에 연결해줘」</b>라고 하시면 앱 안에서 그대로 열립니다.</p>
+        <p class="note">증권사 키 발급·텔레그램 봇 만들기는 본인이 하십니다. 준비물과 한계는 <a href="/market/stock-bot" class="cs-link">주식 매매 자동화 시스템 판매면</a>에 정리해 두었습니다. 승인 없이는 주문하지 않습니다.</p>
       </div></div>
     </div>
   </div>

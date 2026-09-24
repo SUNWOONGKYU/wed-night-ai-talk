@@ -4,6 +4,9 @@
  *
  *   node scripts/release-zip.js onemacs_v3.3.5.zip 7a3c990d2da74fd3 --prev onemacs_v3.3.4.zip
  *   node scripts/release-zip.js onemacs_v3.3.5.zip 7a3c990d2da74fd3 --check   (확인만, 바꾸지 않음)
+ *   node scripts/release-zip.js stock-bot_v1.3.zip 89e484e322bb95b9 --product stock-bot
+ *
+ * --product 는 onemacs(기본) · stock-bot · report-agent. 상품마다 바꿀 환경변수가 다르다.
  *
  * 왜 만들었나 (PO 2026-09-24 「수정 사항 배포본에도 빨리빨리 반영해, 시스템화해」)
  *   2026-09-24 새벽에만 판이 여섯 번 바뀌었고(3.3.0~3.3.5) 그때마다 사람이 같은 일곱 단계를
@@ -15,7 +18,7 @@
  * 하는 일 (하나라도 실패하면 그 자리에서 멈춘다)
  *   1. 폴더의 zip 을 sha256 으로 대조     — 다르면 즉시 중단
  *   2. vercel.json 에 내려받기 헤더 추가   — 이미 있으면 건너뜀
- *   3. APK_DOWNLOAD_URL · PRODUCT_VERSION 을 새 판으로 교체
+ *   3. 그 상품의 내려받기 주소·버전 환경변수를 새 판으로 교체
  *   4. 커밋 · push (배포가 돈다)
  *   5. 사이트에서 다시 받아 sha256 대조   — 최대 5분 기다린다
  *   6. --prev 를 주면, 5 가 끝난 뒤에만 옛 판을 내린다(커밋·push)
@@ -36,10 +39,23 @@ const argv = process.argv.slice(2);
 const CHECK_ONLY = argv.includes('--check');
 const prevIdx = argv.indexOf('--prev');
 const PREV = prevIdx >= 0 ? argv[prevIdx + 1] : null;
-const [NAME, WANT] = argv.filter(a => !a.startsWith('--') && a !== PREV);
+const prodIdx = argv.indexOf('--product');
+const PRODUCT = prodIdx >= 0 ? argv[prodIdx + 1] : 'onemacs';
+const [NAME, WANT] = argv.filter(a => !a.startsWith('--') && a !== PREV && a !== PRODUCT);
+
+/** 상품별로 갈아 끼울 환경변수 — api/lib/market.js 의 이름과 같아야 한다 */
+const ENV_KEYS = {
+    'onemacs':      ['APK_DOWNLOAD_URL', 'PRODUCT_VERSION'],
+    'stock-bot':    ['STOCK_BOT_DOWNLOAD_URL', 'STOCK_BOT_VERSION'],
+    'report-agent': ['REPORT_AGENT_DOWNLOAD_URL', 'REPORT_AGENT_VERSION']
+};
+if (!ENV_KEYS[PRODUCT]) {
+  console.error('모르는 상품입니다: ' + PRODUCT + ' (onemacs · stock-bot · report-agent 중 하나)');
+  process.exit(2);
+}
 
 if (!NAME || !WANT) {
-  console.error('사용법: node scripts/release-zip.js <파일이름.zip> <sha256 앞자리> [--prev <옛파일.zip>] [--check]');
+  console.error('사용법: node scripts/release-zip.js <파일이름.zip> <sha256 앞자리> [--product <상품>] [--prev <옛파일.zip>] [--check]');
   process.exit(2);
 }
 
@@ -90,7 +106,8 @@ if (vj.includes('/console/' + NAME)) {
 // ── 3. 환경변수 ───────────────────────────────────────────────
 const ver = (NAME.match(/_v([\d.]+)\.zip$/) || [])[1];
 if (!ver) die('파일 이름에서 버전을 읽지 못했습니다(예: onemacs_v3.3.5.zip).');
-for (const [key, value] of [['APK_DOWNLOAD_URL', url], ['PRODUCT_VERSION', 'v' + ver]]) {
+const [URL_KEY, VER_KEY] = ENV_KEYS[PRODUCT];
+for (const [key, value] of [[URL_KEY, url], [VER_KEY, 'v' + ver]]) {
   run('npx', ['vercel', 'env', 'remove', key, 'production', '--yes', '--scope', SCOPE]);
   const r = run('npx', ['vercel', 'env', 'add', key, 'production', '--scope', SCOPE], { input: value });
   if (!/Added Environment Variable/i.test((r.stdout || '') + (r.stderr || ''))) die(key + ' 설정 실패:\n' + r.stdout + r.stderr);
@@ -101,7 +118,7 @@ for (const [key, value] of [['APK_DOWNLOAD_URL', url], ['PRODUCT_VERSION', 'v' +
 run('git', ['add', 'console/' + NAME, 'vercel.json']);
 const msg = '배포판 ' + NAME.replace(/\.zip$/, '') + ' 게시\n\n' +
   'sha256 ' + localSha.slice(0, 16) + '… 대조 확인 · ' + size.toLocaleString() + '바이트\n' +
-  'APK_DOWNLOAD_URL · PRODUCT_VERSION 을 v' + ver + ' 로.\n' +
+  URL_KEY + ' · ' + VER_KEY + ' 를 v' + ver + ' 로.\n' +
   (PREV ? '옛 판(' + PREV + ')은 새 판이 사이트에서 확인된 뒤에 내린다.\n' : '') +
   '\nscripts/release-zip.js 로 처리.';
 const msgFile = path.join(require('os').tmpdir(), 'relmsg_' + Date.now() + '.txt');
