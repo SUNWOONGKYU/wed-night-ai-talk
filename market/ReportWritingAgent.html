@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>보고서 작성 에이전트 (ARWA) | WAAT 앱마켓</title>
-<link rel="canonical" href="https://www.waat.community/market/report-agent">
+<link rel="canonical" href="https://www.waat.community/market/ReportWritingAgent">
 <meta name="description" content="보고서 작성 에이전트 (ARWA) (Automated Report Writing Agent): 자료를 주면 근거를 붙여 기획·검토 보고서 초안을 작성합니다. 출처를 실제로 접속해 대조하고, 확인되지 않은 출처가 남으면 문서를 만들지 않습니다. 5,500원 1회. One MACS에 곧 들어갑니다.">
 <link rel="stylesheet" href="/css/theme.css?v=20260921a">
 <script src="/js/theme.js?v=20260921a"></script>
@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/css/console.css?v=20260921a2">
 <link rel="stylesheet" href="/css/responsive.css?v=20260921a">
 </head>
-<body class="market console" data-app="report-agent">
+<body class="market console" data-app="ReportWritingAgent">
 <!-- 사이트 전역 nav (One MACS 상세와 동일 — 로그인 영역 제외) -->
 <nav class="site-nav">
     <div class="nav-inner">
@@ -359,11 +359,11 @@
 <script src="/js/market-apps.js?v=20260923a"></script>
 <script src="/js/market-appinfo.js?v=20260921a"></script>
 <script>
-// 출시 알림 예약 — 이 페이지는 상품이 report-agent 다. One MACS 페이지와 같은 화면이지만
+// 출시 알림 예약 — 이 페이지는 상품이 ReportWritingAgent 다. One MACS 페이지와 같은 화면이지만
 // /api/reserve 에 product 를 함께 보내야 상품별로 예약이 쌓인다(같은 사람이 둘 다 예약할 수 있다).
 (function () {
     'use strict';
-    var PRODUCT = 'report-agent';
+    var PRODUCT = 'ReportWritingAgent';
     function $(id) { return document.getElementById(id); }
     function setMsg(el, msg) { if (!el) return; el.textContent = msg || ''; el.hidden = !msg; }
     function rsStep(id) {

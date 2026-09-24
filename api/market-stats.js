@@ -1,5 +1,5 @@
 /**
- * GET /api/market-stats?app=onemacs|report-agent → { downloads, sizeBytes, sizeLabel }
+ * GET /api/market-stats?app=onemacs|ReportWritingAgent|StockTradeAutoSystem → { downloads, sizeBytes, sizeLabel }
  * 앱 정보 블록(요약 줄·다운로드 크기)용 실제 값. 1시간 캐시.
  *   downloads : 그 상품의 다운로드 횟수 = DownloadLogs 행 중 Orders 의 **그 상품** 주문에 속한 것
  *   sizeBytes : 그 상품의 파일에 HEAD → Content-Length (실패하면 null → 화면에서 숨김)

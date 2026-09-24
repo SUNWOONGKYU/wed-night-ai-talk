@@ -49,13 +49,13 @@ window.MARKET_APPS = [
     released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
     seller: { name: '파인더월드', link: '#seller' },   // 전자상거래 표시 항목은 상세 하단 판매자 블록(#seller) 한 곳에만 — 단일 소스
     reportEmail: 'wksun999@hanmail.net' },
-  { id: 'report-agent', name: '보고서 작성 에이전트 (ARWA)', fullname: 'Automated Report Writing Agent',
+  { id: 'ReportWritingAgent', name: '보고서 작성 에이전트 (ARWA)', fullname: 'Automated Report Writing Agent',
     desc: '자료를 주면 근거를 붙여 보고서를 작성합니다. 출처가 확인되지 않은 문장은 내보내지 않습니다.',
     sub: '혼자 사시면 5,500원입니다. One MACS(9,900원)에는 곧 업데이트로 들어갑니다.',
     cat: 'AI 에이전트', launch: 'config',
     price: 5500, tags: ['Windows PC', 'Claude Code 필요'],
     icon: '', img: '/market/img/arwa_icon.png', color: 'linear-gradient(135deg,#2E3A5F,#C9A961)',
-    url: '/market/report-agent',
+    url: '/market/ReportWritingAgent',
     age: '전체',
     delivery: { type: '내려받는 파일(PC 설치본)', note: '받은 파일을 자기 폴더에 풉니다. One MACS 폴더 안이 아닙니다 — 따로 도는 프로그램입니다' },
     needs: ['Windows PC (켜 두어야 합니다)', 'Claude Code 계정 (본인 구독)', '핸드폰에서 열려면 라이선스 키로 주소를 받습니다'],

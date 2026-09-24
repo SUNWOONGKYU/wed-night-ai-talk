@@ -96,7 +96,7 @@ module.exports = async function handler(req, res) {
         });
 
         res.setHeader('Cache-Control', 'no-store');
-        const steps = product.id === 'report-agent' ? `
+        const steps = product.id === 'ReportWritingAgent' ? `
   <b>다음 순서</b><br>
   1. 내려받은 파일을 아무 폴더에나 풉니다. <b>원맥스 폴더 안이 아니라 자기 폴더</b>에 풉니다 — 따로 도는 프로그램입니다.<br>
   2. 푼 폴더의 안내문을 열어 그대로 따라 합니다.<br>

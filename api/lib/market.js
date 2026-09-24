@@ -13,10 +13,10 @@
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
  *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
- *   REPORT_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5500)
- *   REPORT_AGENT_VERSION / REPORT_AGENT_UPDATED / REPORT_AGENT_NAME
- *   REPORT_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
- *   REPORT_AGENT_MODE       보고서 에이전트만 따로 'sale'/'reserve' (없으면 PRODUCT_MODE 를 따름)
+ *   REPORT_WRITING_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5500)
+ *   REPORT_WRITING_AGENT_VERSION / REPORT_WRITING_AGENT_UPDATED / REPORT_WRITING_AGENT_NAME
+ *   REPORT_WRITING_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
+ *   REPORT_WRITING_AGENT_MODE       보고서 에이전트만 따로 'sale'/'reserve' (없으면 PRODUCT_MODE 를 따름)
  *   MARKET_KEY              주소 분양 서버에 주문을 알릴 때 쓰는 비밀값 (send-download.js)
  */
 
@@ -65,19 +65,19 @@ const PRODUCTS = {
         get downloadUrl() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_DOWNLOAD_URL) || '/console/StockTradeAutoSystem_v1.3.zip'; },
         includes: []
     },
-    'report-agent': {
-        id: 'report-agent',
-        code: 'report_agent',
+    'ReportWritingAgent': {
+        id: 'ReportWritingAgent',
+        code: 'report_writing_agent',
         name: '보고서 작성 에이전트 (ARWA)',
         fullname: 'Automated Report Writing Agent',
         category: 'AI 에이전트',
         fileLabel: '보고서 작성 에이전트 (ARWA) (보고서 작성 에이전트)',
         guidePath: '/market/onemacs/install',
-        get label() { return clean(process.env.REPORT_AGENT_NAME) || `${this.name} ${this.version}`; },
-        get price() { return parseInt(process.env.REPORT_AGENT_PRICE, 10) || 5500; },
-        get version() { return clean(process.env.REPORT_AGENT_VERSION) || 'v1.0'; },
-        get updated() { return clean(process.env.REPORT_AGENT_UPDATED) || DEPLOY_DATE; },
-        get downloadUrl() { return clean(process.env.REPORT_AGENT_DOWNLOAD_URL) || '/console/report-agent_v1.0.zip'; },
+        get label() { return clean(process.env.REPORT_WRITING_AGENT_NAME) || `${this.name} ${this.version}`; },
+        get price() { return parseInt(process.env.REPORT_WRITING_AGENT_PRICE, 10) || 5500; },
+        get version() { return clean(process.env.REPORT_WRITING_AGENT_VERSION) || 'v1.0'; },
+        get updated() { return clean(process.env.REPORT_WRITING_AGENT_UPDATED) || DEPLOY_DATE; },
+        get downloadUrl() { return clean(process.env.REPORT_WRITING_AGENT_DOWNLOAD_URL) || '/console/report-agent_v1.0.zip'; },
         includes: []
     }
 };
@@ -118,13 +118,13 @@ function launchMode() {
  * 보고서 작성 AI 에이전트는 One MACS와 별개로, 시험을 통과한 뒤에 연다.
  * 상품별 환경변수가 없으면 전체 모드(PRODUCT_MODE)를 따른다.
  *   One MACS        : PRODUCT_MODE
- *   보고서 에이전트 : REPORT_AGENT_MODE (없으면 PRODUCT_MODE)
+ *   보고서 에이전트 : REPORT_WRITING_AGENT_MODE (없으면 PRODUCT_MODE)
  */
 function modeFor(id) {
     const p = getProduct(id);
     if (!p) return launchMode();
-    if (p.id === 'report-agent') {
-        const v = clean(process.env.REPORT_AGENT_MODE).toLowerCase();
+    if (p.id === 'ReportWritingAgent') {
+        const v = clean(process.env.REPORT_WRITING_AGENT_MODE).toLowerCase();
         if (v === 'sale' || v === 'reserve') return v;
     }
     return launchMode();

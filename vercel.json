@@ -220,8 +220,8 @@
       "destination": "/market/StockTradeAutoSystem.html"
     },
     {
-      "source": "/market/report-agent",
-      "destination": "/market/report-agent.html"
+      "source": "/market/ReportWritingAgent",
+      "destination": "/market/ReportWritingAgent.html"
     },
     {
       "source": "/market/onemacs",
