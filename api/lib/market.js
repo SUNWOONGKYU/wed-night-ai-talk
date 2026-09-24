@@ -50,19 +50,19 @@ const PRODUCTS = {
          *  구조는 남겨 둔다 — 나중에 묶음 상품을 낼 때 여기에 id 를 넣으면 그대로 동작한다. */
         includes: []
     },
-    'stock-bot': {
-        id: 'stock-bot',
-        code: 'stock_bot',
+    'StockTradeAutoSystem': {
+        id: 'StockTradeAutoSystem',
+        code: 'stock_trade_auto_system',
         name: '주식 매매 자동화 시스템 (STAS)',
         fullname: 'Stock Trading Auto System',
         category: '트레이딩',
         fileLabel: '주식 매매 자동화 시스템',
         guidePath: '/market/onemacs/install',
-        get label() { return clean(process.env.STOCK_BOT_NAME) || `${this.name} ${this.version}`; },
-        get price() { return parseInt(process.env.STOCK_BOT_PRICE, 10) || 5500; },
-        get version() { return clean(process.env.STOCK_BOT_VERSION) || 'v1.3'; },
-        get updated() { return clean(process.env.STOCK_BOT_UPDATED) || DEPLOY_DATE; },
-        get downloadUrl() { return clean(process.env.STOCK_BOT_DOWNLOAD_URL) || '/console/stock-bot_v1.3.zip'; },
+        get label() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_NAME) || `${this.name} ${this.version}`; },
+        get price() { return parseInt(process.env.STOCK_TRADE_AUTO_SYSTEM_PRICE, 10) || 5500; },
+        get version() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_VERSION) || 'v1.3'; },
+        get updated() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_UPDATED) || DEPLOY_DATE; },
+        get downloadUrl() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_DOWNLOAD_URL) || '/console/StockTradeAutoSystem_v1.3.zip'; },
         includes: []
     },
     'report-agent': {

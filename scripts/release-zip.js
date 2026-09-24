@@ -4,9 +4,9 @@
  *
  *   node scripts/release-zip.js onemacs_v3.3.5.zip 7a3c990d2da74fd3 --prev onemacs_v3.3.4.zip
  *   node scripts/release-zip.js onemacs_v3.3.5.zip 7a3c990d2da74fd3 --check   (확인만, 바꾸지 않음)
- *   node scripts/release-zip.js stock-bot_v1.3.zip 89e484e322bb95b9 --product stock-bot
+ *   node scripts/release-zip.js StockTradeAutoSystem_v1.3.zip 89e484e322bb95b9 --product StockTradeAutoSystem
  *
- * --product 는 onemacs(기본) · stock-bot · report-agent. 상품마다 바꿀 환경변수가 다르다.
+ * --product 는 onemacs(기본) · StockTradeAutoSystem · report-agent. 상품마다 바꿀 환경변수가 다르다.
  *
  * 왜 만들었나 (PO 2026-09-24 「수정 사항 배포본에도 빨리빨리 반영해, 시스템화해」)
  *   2026-09-24 새벽에만 판이 여섯 번 바뀌었고(3.3.0~3.3.5) 그때마다 사람이 같은 일곱 단계를
@@ -46,11 +46,11 @@ const [NAME, WANT] = argv.filter(a => !a.startsWith('--') && a !== PREV && a !==
 /** 상품별로 갈아 끼울 환경변수 — api/lib/market.js 의 이름과 같아야 한다 */
 const ENV_KEYS = {
     'onemacs':      ['APK_DOWNLOAD_URL', 'PRODUCT_VERSION'],
-    'stock-bot':    ['STOCK_BOT_DOWNLOAD_URL', 'STOCK_BOT_VERSION'],
+    'StockTradeAutoSystem':    ['STOCK_TRADE_AUTO_SYSTEM_DOWNLOAD_URL', 'STOCK_TRADE_AUTO_SYSTEM_VERSION'],
     'report-agent': ['REPORT_AGENT_DOWNLOAD_URL', 'REPORT_AGENT_VERSION']
 };
 if (!ENV_KEYS[PRODUCT]) {
-  console.error('모르는 상품입니다: ' + PRODUCT + ' (onemacs · stock-bot · report-agent 중 하나)');
+  console.error('모르는 상품입니다: ' + PRODUCT + ' (onemacs · StockTradeAutoSystem · report-agent 중 하나)');
   process.exit(2);
 }
 

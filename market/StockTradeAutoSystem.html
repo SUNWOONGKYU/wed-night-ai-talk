@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>주식 매매 자동화 시스템 (STAS) | WAAT 앱마켓</title>
-<link rel="canonical" href="https://www.waat.community/market/stock-bot">
+<link rel="canonical" href="https://www.waat.community/market/StockTradeAutoSystem">
 <meta name="description" content="주식 매매 자동화 시스템 (STAS): 국내 주식선물 290종목을 매일 아침 훑어 오늘 살펴볼 후보를 고르고, 살 시점이 오면 텔레그램으로 물어봅니다. 사람이 승인을 눌러야 주문이 나갑니다. 5,500원 1회. 규칙은 전부 꺼진 채로 나갑니다.">
 <link rel="stylesheet" href="/css/theme.css?v=20260921a">
 <script src="/js/theme.js?v=20260921a"></script>
@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/css/console.css?v=20260921a2">
 <link rel="stylesheet" href="/css/responsive.css?v=20260921a">
 </head>
-<body class="market console" data-app="stock-bot">
+<body class="market console" data-app="StockTradeAutoSystem">
 <nav class="site-nav">
     <div class="nav-inner">
         <a href="/" class="nav-logo"><img src="/logo-waat.png?v=20260510i" alt="WAAT — Wednesday Afternoon AI Talk" class="nav-logo-img"></a>
@@ -162,7 +162,7 @@
       <a class="btn btn-go" href="#reserve" style="margin-top:16px">출시 알림 예약하기</a>
       <p class="note" style="margin-top:14px">출시 후 결제 수단: 카카오페이 송금 · 무통장 입금. 증권사 수수료와 세금은 별도이며 저희와 무관합니다.</p>
     </div>
-    <p class="quiet" style="margin-top:14px">받으시면 메일로 따로 보내드립니다. 아무 폴더에나 풀고 Claude Code에게 「One MACS에 연결해줘」라고 하시면 핸드폰 앱 안에서도 열립니다.</p>
+    <p class="quiet" style="margin-top:14px">받으시면 메일로 따로 보내드립니다. <b>C:\StockTradeAutoSystem</b> 에 푸시는 것을 권합니다 — 폴더 이름에 <b>띄어쓰기가 없어야</b> 아침 자동 기동이 끊기지 않습니다. 그 폴더에서 Claude Code에게 「One MACS에 연결해줘」라고 하시면 핸드폰 앱 안에서도 열립니다.</p>
   </div>
 </section>
 
@@ -224,10 +224,10 @@
 <script src="/js/market-apps.js?v=20260924a"></script>
 <script src="/js/market-appinfo.js?v=20260921a"></script>
 <script>
-// 출시 알림 예약 — 이 페이지의 상품은 stock-bot 이다. 상품별로 예약이 쌓이도록 product 를 함께 보낸다.
+// 출시 알림 예약 — 이 페이지의 상품은 StockTradeAutoSystem 이다. 상품별로 예약이 쌓이도록 product 를 함께 보낸다.
 (function () {
     'use strict';
-    var PRODUCT = 'stock-bot';
+    var PRODUCT = 'StockTradeAutoSystem';
     function $(id) { return document.getElementById(id); }
     function setMsg(el, msg) { if (!el) return; el.textContent = msg || ''; el.hidden = !msg; }
     function rsStep(id) {
