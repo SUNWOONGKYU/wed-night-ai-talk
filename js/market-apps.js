@@ -30,7 +30,7 @@ window.MARKET_APPS = [
     //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
-    delivery: { type: '배포판(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]로 설치합니다. 앱 없이 브라우저로도 전부 사용합니다. 구글 플레이 등록은 준비 중' },
+    delivery: { type: '배포판(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 구글 플레이 등록은 준비 중' },
     needs: ['Windows PC에 원맥스를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
