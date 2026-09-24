@@ -54,19 +54,6 @@
       ]
     },
     {
-      "source": "/console/StockTradeAutoSystem_v1.3.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"StockTradeAutoSystem_v1.3.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
       "source": "/console/OneMACSPackage_v3.3.16.zip",
       "headers": [
         {
