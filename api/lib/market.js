@@ -27,7 +27,7 @@ const clean = (v) => (v == null ? '' : String(v).replace(/^﻿/, '').trim());
 /**
  * 상품 표 — 2026-09-23 두 번째 상품(보고서 작성 AI 에이전트) 추가.
  * 그전까지 이 파일은 상품 하나만 다뤘고 주문·토큰·다운로드가 전부 그 하나를 보고 있었다.
- * 상품이 둘 이상이 되었으므로 여기가 정본이다. PRODUCT 는 원맥스를 가리키는 옛 이름으로 남겨 둔다.
+ * 상품이 둘 이상이 되었으므로 여기가 정본이다. PRODUCT 는 One MACS를 가리키는 옛 이름으로 남겨 둔다.
  *
  * downloadUrl 이 '/' 로 시작하면 우리 사이트의 파일이다(productDownloadUrl 이 사이트 주소를 붙인다).
  */
@@ -37,7 +37,7 @@ const PRODUCTS = {
         code: 'console_system',
         name: 'One MACS · 원맥스',
         category: '콘솔',
-        fileLabel: '원맥스 배포판 (PC 설치본)',
+        fileLabel: 'One MACS 배포판 (PC 설치본)',
         guidePath: '/market/onemacs/install',
         /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로 */
         get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
@@ -54,7 +54,7 @@ const PRODUCTS = {
         id: 'report-agent',
         code: 'report_agent',
         name: 'ARWA · 아르와',
-        fullname: 'Automated Report Writing Agent · 자동 보고서 작성 에이전트',
+        fullname: 'Automated Report Writing Agent',
         category: 'AI 에이전트',
         fileLabel: 'ARWA · 아르와 (보고서 작성 에이전트)',
         guidePath: '/market/onemacs/install',
@@ -89,7 +89,7 @@ function productDownloadUrl(id, base) {
     return /^https?:\/\//i.test(u) ? u : `${String(base || '').replace(/\/$/, '')}${u}`;
 }
 
-/** 옛 이름 — 원맥스를 가리킨다. 기존 코드(confirm-payment 등)가 이것을 그대로 쓴다 */
+/** 옛 이름 — One MACS를 가리킨다. 기존 코드(confirm-payment 등)가 이것을 그대로 쓴다 */
 const PRODUCT = PRODUCTS.onemacs;
 
 /** 출시 모드 — 'reserve'(기본) | 'sale'. 프런트(js/onemacs.js·js/market-home.js)가 /api/market-config 의 mode 로 화면을 전환한다 */
@@ -100,9 +100,9 @@ function launchMode() {
 
 /**
  * 상품 하나의 출시 모드(2026-09-23). 상품마다 따로 열 수 있어야 한다 —
- * 보고서 작성 AI 에이전트는 원맥스와 별개로, 시험을 통과한 뒤에 연다.
+ * 보고서 작성 AI 에이전트는 One MACS와 별개로, 시험을 통과한 뒤에 연다.
  * 상품별 환경변수가 없으면 전체 모드(PRODUCT_MODE)를 따른다.
- *   원맥스        : PRODUCT_MODE
+ *   One MACS        : PRODUCT_MODE
  *   보고서 에이전트 : REPORT_AGENT_MODE (없으면 PRODUCT_MODE)
  */
 function modeFor(id) {

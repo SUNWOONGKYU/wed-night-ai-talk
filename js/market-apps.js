@@ -17,12 +17,12 @@
 //   launch   : 'config' 면 출시 모드를 GET /api/market-config 의 mode 로 따른다 (reserve = 출시 알림 예약 카드 / sale = 결제 카드).
 //              데이터는 모드와 무관하게 두고, 렌더(market-home.js)가 mode 에 따라 배지·버튼만 바꾼다
 window.MARKET_APPS = [
-  { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System · 원스톱 멀티 AI 콘솔 시스템',
+  { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI Console System',
     desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
-    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', 'ARWA · 아르와 — 보고서 작성 에이전트는 따로 파는 상품입니다(5,500원). 원맥스에 들어 있지 않습니다'],
+    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', 'ARWA · 아르와 — 보고서 작성 에이전트는 따로 파는 상품입니다(5,500원). One MACS에 들어 있지 않습니다'],
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
     // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
@@ -31,7 +31,7 @@ window.MARKET_APPS = [
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
     delivery: { type: '배포판(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 구글 플레이 등록은 준비 중' },
-    needs: ['Windows PC에 원맥스를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
+    needs: ['Windows PC에 One MACS를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
       { name: '네트워크 상태', why: '인터넷이 다시 연결되면 자동으로 다시 접속합니다' },
@@ -49,15 +49,15 @@ window.MARKET_APPS = [
     released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
     seller: { name: '파인더월드', link: '#seller' },   // 전자상거래 표시 항목은 상세 하단 판매자 블록(#seller) 한 곳에만 — 단일 소스
     reportEmail: 'wksun999@hanmail.net' },
-  { id: 'report-agent', name: 'ARWA · 아르와', fullname: 'Automated Report Writing Agent · 자동 보고서 작성 에이전트',
+  { id: 'report-agent', name: 'ARWA · 아르와', fullname: 'Automated Report Writing Agent',
     desc: '자료를 주면 근거를 붙여 보고서를 작성합니다. 출처가 확인되지 않은 문장은 내보내지 않습니다.',
-    sub: '따로 파는 상품입니다. 원맥스와 상관없이 이것만 사서 사용하시면 됩니다.',
+    sub: '따로 파는 상품입니다. One MACS와 상관없이 이것만 사서 사용하시면 됩니다.',
     cat: 'AI 에이전트', launch: 'config',
     price: 5500, tags: ['Windows PC', 'Claude Code 필요'],
     icon: '', img: '/market/img/arwa_icon.png', color: 'linear-gradient(135deg,#2E3A5F,#C9A961)',
     url: '/market/report-agent',
     age: '전체',
-    delivery: { type: '내려받는 파일(PC 설치본)', note: '받은 파일을 자기 폴더에 풉니다. 원맥스 폴더 안이 아닙니다 — 따로 도는 프로그램입니다' },
+    delivery: { type: '내려받는 파일(PC 설치본)', note: '받은 파일을 자기 폴더에 풉니다. One MACS 폴더 안이 아닙니다 — 따로 도는 프로그램입니다' },
     needs: ['Windows PC (켜 두어야 합니다)', 'Claude Code 계정 (본인 구독)', '핸드폰에서 열려면 라이선스 키로 주소를 받습니다'],
     dataSafety: {
       collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],
@@ -70,4 +70,4 @@ window.MARKET_APPS = [
 ];
 
 // 카테고리 칩 순서. '전체' 는 필터 전용(상품 cat 값이 아님).
-window.MARKET_CATS = ['전체', 'AI 협업 시스템', 'AI 에이전트', '트레이딩'];  // PO 확정 카테고리 3개(2026-09-21): AI 관련만 — 원맥스는 'AI 협업 시스템'
+window.MARKET_CATS = ['전체', 'AI 협업 시스템', 'AI 에이전트', '트레이딩'];  // PO 확정 카테고리 3개(2026-09-21): AI 관련만 — One MACS는 'AI 협업 시스템'
