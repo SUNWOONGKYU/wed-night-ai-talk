@@ -59,7 +59,7 @@
             '<span class="tag">' + esc(f.cat) + '</span>' +
             '<h2>' + esc(f.name) + (f.fullname ? '<small>' + esc(f.fullname) + '</small>' : '') + '</h2>' +
             '<p class="topic">' + esc(f.desc) + '</p>' + (f.sub ? '<p class="sub">' + esc(f.sub) + '</p>' : '') +
-            (f.bundle && f.bundle.length ? '<p class="bundle">포함 구성: ' + esc(f.bundle.join(' · ')) + '</p>' : '') +
+            (f.bundle && f.bundle.length ? '<p class="bundle">' + esc(f.bundleLabel || '포함 구성: ') + esc(f.bundle.join(' · ')) + '</p>' : '') +
             (f.seller ? '<p class="seller-line">판매자: ' + esc(typeof f.seller === 'string' ? f.seller : (f.seller.name || '')) + '</p>' : '') +
             '</div>' + price + '</div>' + (stats[f.id] && window.MarketAppInfo ? window.MarketAppInfo.summaryHtml(f.id, stats[f.id], { age: f.age, url: f.url }) : '') + cta + '<div class="bar"></div></div>';
     }

@@ -8,7 +8,7 @@
 //   cat      : 카테고리 (MARKET_CATS 에 있는 값)
 //   price    : 원. 0 = 무료, null = 미정
 //   tags     : 카드 아래 작은 배지
-//   bundle   : 포함 구성(배열). 렌더에서 '포함 구성: A · B' 한 줄
+//   bundle   : 포함 구성(배열). 렌더에서 '포함 구성: A · B' 한 줄 (bundleLabel 이 있으면 머리말을 그것으로)
 //   icon/color : 아이콘 글자 / 배경
 //   seller   : { name, link } — 카드에 '판매자: name' 로 표시, 상세에서는 link(#seller 법정 표기 블록)로 연결. 열린 장터라 툴마다 적는다
 //   url      : 카드 링크. null 이면 링크 없음(출시 예정 등)
@@ -22,7 +22,7 @@ window.MARKET_APPS = [
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
-    bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', '보고서 작성 에이전트 (ARWA)(단독 5,500원). One MACS에는 곧 업데이트로 들어갑니다'],
+    bundle: ['주식 매매 자동화 시스템 패키지', '보고서 작성 에이전트 패키지'], bundleLabel: '2026년 10월 25일까지 무료: ',
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
     // ---- 툴 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
