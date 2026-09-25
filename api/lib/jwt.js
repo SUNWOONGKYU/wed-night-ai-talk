@@ -2,7 +2,8 @@
  * JWT 다운로드 토큰 — 보안 다운로드 링크 생성/검증
  * 출처: 기존 판매 시스템 api/lib/jwt.js (ESM → CommonJS 만 변경)
  *
- * 환경변수: JWT_SECRET (32자 이상), DOWNLOAD_TOKEN_EXPIRY_HOURS (기본 24)
+ * 환경변수: JWT_SECRET (32자 이상). 내려받기 토큰에는 기한이 없다(2026-09-25 PO — 5번 제한만).
+ *           DOWNLOAD_TOKEN_EXPIRY_HOURS 는 더 이상 토큰에 쓰지 않는다(expiryHours 는 옛 호출 호환용).
  */
 
 const jwt = require('jsonwebtoken');
@@ -27,8 +28,9 @@ function generateDownloadToken(payload) {
         { orderId: payload.orderId, customerEmail: payload.customerEmail, type: 'download',
           product: payload.product || 'onemacs',
           n: require('crypto').randomBytes(6).toString('hex') },   // 같은 초에 재발급해도 토큰이 달라지게
-        secret(),
-        { expiresIn: `${expiryHours()}h` }
+        secret()
+        // 2026-09-25 PO: 24시간 제한을 뺀다. 내려받기는 5번까지만 센다([token].js 의 MAX_DOWNLOAD_COUNT).
+        // 옛 토큰(exp 있음)은 그대로 만료 검사를 받는다.
     );
 }
 

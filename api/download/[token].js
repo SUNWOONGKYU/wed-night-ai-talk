@@ -11,6 +11,7 @@
 const { verifyDownloadToken } = require('../lib/jwt.js');
 const { getOrder, getDownloadCount, logDownload } = require('../lib/sheets.js');
 const m = require('../lib/market.js');
+const InstallSteps = require('../../js/install-steps.js');
 
 const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -96,16 +97,9 @@ module.exports = async function handler(req, res) {
         });
 
         res.setHeader('Cache-Control', 'no-store');
-        const steps = product.id === 'ReportWritingAgent' ? `
-  <b>다음 순서</b><br>
-  1. 내려받은 파일을 아무 폴더에나 풉니다. <b>원맥스 폴더 안이 아니라 자기 폴더</b>에 풉니다 — 따로 도는 프로그램입니다.<br>
-  2. 푼 폴더의 안내문을 열어 그대로 따라 합니다.<br>
-  3. 라이선스 키를 넣으면 핸드폰에서 열 수 있는 주소가 나옵니다.` : `
-  <b>다음 순서</b><br>
-  1. 내려받은 파일을 PC에서 아무 폴더에나 풉니다. (약 20MB · 모바일 앱과 설치 지시문이 함께 들어 있습니다)<br>
-  2. 푼 폴더에서 Claude Code를 켜고 설치 지시문을 읽히면 <b>코드 8자리</b>가 나옵니다.<br>
-  3. 핸드폰 브라우저로 주소를 열고 그 코드를 넣으면 연결됩니다.<br>
-  (설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/market/onemacs/install">waat.community/market/onemacs/install</a> 을 열어도 볼 수 있습니다)`;
+        // 상품별 「구매 후 설치까지 5단계 안내」 중 2~5단계 (문안 정본 js/install-steps.js — 카탈로그·이메일과 같은 파일)
+        // 예전에는 ReportWritingAgent 가 아니면 전부 One MACS 순서가 나갔다(주식 매매 자동화 시스템도 One MACS 순서).
+        const steps = InstallSteps.downloadHtml(product.id);
         return res.status(200).send(page('다운로드 시작', `
 <h1>다운로드를 시작합니다</h1>
 <div class="spin"></div>

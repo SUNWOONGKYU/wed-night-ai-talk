@@ -5,13 +5,16 @@
  * 환경변수: GMAIL_USER, GMAIL_APP_PASSWORD (Google 계정 > 보안 > 앱 비밀번호 16자리)
  */
 
-const nodemailer = require('nodemailer');
-const { PRODUCT, paymentMethodLabel, supportEmail } = require('./market.js');
+const { PRODUCT, getProduct, paymentMethodLabel, supportEmail } = require('./market.js');
+// 「구매 후 설치까지 5단계 안내」 문안 정본 — 카탈로그·내려받기 페이지와 같은 파일을 읽는다
+const InstallSteps = require('../../js/install-steps.js');
 
 function transporter() {
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
         throw new Error('GMAIL_USER / GMAIL_APP_PASSWORD 환경변수가 설정되지 않았습니다.');
     }
+    // 보낼 때만 불러온다 — HTML 만드는 함수는 nodemailer 없이도 돈다(미리보기·시험)
+    const nodemailer = require('nodemailer');
     return nodemailer.createTransport({
         service: 'gmail',
         auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD }
@@ -30,51 +33,68 @@ function safeName(v) {
 /**
  * 구매 완료 메일 HTML
  * @param {{name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, downloads, productName, consoleGuideLink, expiryHours, maxDownloads, renewal, launch}} p
- *   downloads: [{label, name, link}] — 한 주문으로 받는 파일이 여럿일 때(One MACS를 사면 보고서
- *              작성 AI 에이전트도 함께 받는다). 없으면 downloadLink 하나로 본다(옛 호출 호환).
+ *   downloads: [{id, label, name, link}] — 한 주문으로 받는 상품이 여럿일 때. 상품마다 「패키지 내려받기」 버튼과
+ *              그 상품의 「구매 후 설치까지 5단계 안내」(문안 정본 js/install-steps.js)가 붙는다.
+ *              없으면 downloadLink 하나 = One MACS 로 본다(옛 호출 호환: confirm-payment·renew·notify-reservations).
  *   launch: true 면 출시 알림 예약자에게 보내는 출시 첫날 메일 (scripts/notify-reservations.js) — 제목·내역 블록이 바뀐다
  */
 function purchaseEmailHtml(p) {
     const name = safeName(p.name);
     // 받는 파일 목록. 옛 호출(downloadLink 하나)도 그대로 동작한다.
-    const files = (Array.isArray(p.downloads) && p.downloads.length)
+    const files = ((Array.isArray(p.downloads) && p.downloads.length)
         ? p.downloads
-        : [{ label: 'One MACS 배포판 (PC 설치본)', name: 'One MACS 배포판', link: p.downloadLink }];
-    const heading = p.launch ? '예약하신 One MACS가 출시되었습니다'
-        : p.renewal ? 'One MACS 다운로드 링크를 다시 보내드립니다'
-        : 'One MACS를 구매해 주셔서 감사합니다';
+        : [{ id: 'onemacs', label: 'One MACS 패키지 (PC 설치본)', name: 'One MACS 패키지', link: p.downloadLink }])
+        .map((f) => Object.assign({}, f, { product: getProduct(f.id || 'onemacs') || PRODUCT }));
+    const main = files[0].product;
+    const isOneMacs = main.id === 'onemacs';
+    // One MACS 전용 문구는 One MACS 주문에만 — 다른 상품 이메일에는 One MACS 제목·아이콘·증정 안내를 달지 않는다
+    const heading = isOneMacs
+        ? (p.launch ? '예약하신 One MACS가 출시되었습니다'
+            : p.renewal ? 'One MACS 다운로드 링크를 다시 보내드립니다'
+            : 'One MACS를 구매해 주셔서 감사합니다')
+        : (p.renewal ? '다운로드 링크를 다시 보내드립니다' : '구매해 주셔서 감사합니다');
+    const icon = main.id === 'onemacs' ? { src: 'onemacs_icon.png', alt: 'One MACS · 원맥스' }
+        : main.id === 'ReportWritingAgent' ? { src: 'arwa_icon.png', alt: main.name } : null;
+    const subtitle = isOneMacs ? 'One-stop Multi AI-CLI Console System' : (main.fullname || '');
+    const support = supportEmail() || 'wksun999@hanmail.net';
+    // One MACS 연결 코드는 One MACS 연결(고정 주소)이 필요한 상품에만 넣는다 — 주식 매매 자동화 시스템은 필요 없다(HQ 확인 2026-09-25)
+    const usesLicense = files.some((f) => f.product.id !== 'StockTradeAutoSystem');
+    // 상품마다: 「패키지 내려받기」 버튼 상자 → 바로 아래 그 상품의 5단계
+    const perProduct = files.map((f) => `
+  <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:14px;text-align:center;">
+    ${files.length > 1 ? `<div style="font-size:15px;font-weight:800;margin-bottom:12px;">${esc(f.product.name)}</div>` : ''}
+    <a href="${esc(f.link)}" style="display:inline-block;background:#C9A961;color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:17px;">패키지 내려받기</a>
+    <div style="margin-top:14px;font-size:13px;opacity:.85;">이 버튼으로 ${p.maxDownloads}번까지 내려받으실 수 있습니다.</div>
+  </div>
+  ${InstallSteps.emailHtml(f.product.id, { supportEmail: support, heading: files.length > 1 ? f.product.name : '' })}`).join('');
     const history = p.launch
         ? `<b style="color:#1A2238;">예약 내역</b><br>
     예약번호: ${esc(p.orderId)}<br>
     이메일: ${esc(p.email)}`
         : `<b style="color:#1A2238;">구매 내역</b><br>
     주문번호: ${esc(p.orderId)}<br>
-    결제 방법: ${esc(paymentMethodLabel(p.paymentMethod))} (자기 신고)<br>
+    결제 방법: ${esc(paymentMethodLabel(p.paymentMethod))}<br>
     금액: ₩${Number(p.amount || 0).toLocaleString('ko-KR')} (VAT 포함)<br>
     이메일: ${esc(p.email)}`;
     return `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
   <div style="text-align:center;margin-bottom:28px;">
-    <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
+    ${icon ? `<img src="https://www.waat.community/market/img/${icon.src}" alt="${esc(icon.alt)}" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">` : ''}
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, ${heading}</h1>
-    <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">${esc(PRODUCT.name)} <span style="font-weight:600;color:#8A8F9E;">${esc(PRODUCT.version)}</span></p>
-    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI-CLI Console System</p>
+    <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">${esc(main.name)} <span style="font-weight:600;color:#8A8F9E;">${esc(main.version)}</span></p>
+    ${subtitle ? `<p style="color:#4A5670;font-size:13px;margin:4px 0 0;">${esc(subtitle)}</p>` : ''}
   </div>
 
-  <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
-    <div style="font-size:14px;opacity:.85;margin-bottom:10px;">먼저 PC에서 <a href="https://www.waat.community/market/onemacs/install" style="color:#C9A961;font-weight:700;">waat.community/market/onemacs/install</a> 을 여세요 — 모바일 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다.</div>
-    <div style="font-size:14px;opacity:.85;margin-bottom:12px;">보안 다운로드 링크${files.length > 1 ? ` — 파일 ${files.length}개` : ''}</div>
-    ${files.map((f, i) => `<a href="${esc(f.link)}" style="display:${files.length > 1 ? 'block' : 'inline-block'};background:${i === 0 ? '#C9A961' : '#EFE3C2'};color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:${i === 0 ? 17 : 15}px;${files.length > 1 ? 'margin:0 0 10px;' : ''}">${esc(f.label || f.name)} 내려받기</a>`).join('')}
-    ${files.length > 1 ? `<div style="margin-top:6px;font-size:13px;opacity:.85;line-height:1.7;">두 개는 <b>따로 도는 프로그램</b>입니다. 각각 자기 폴더에 푸세요.</div>` : ''}
-    <div style="margin-top:14px;font-size:13px;opacity:.85;">링크 유효 ${p.expiryHours}시간 · 최대 ${p.maxDownloads}회</div>
-  </div>
+  ${files.length > 1 ? `<div style="margin:0 0 14px;font-size:14px;color:#4A5670;line-height:1.7;">받으실 파일이 ${files.length}개입니다. <b>따로 도는 프로그램</b>이니 상품마다 아래 안내대로 따로 설치하십시오.</div>` : ''}
+  ${perProduct}
 
+${usesLicense ? `
   <div style="background:#F6F4EF;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
-    <div style="font-size:13px;color:#8A8F9E;">라이선스 키</div>
-    <div style="font-family:Consolas,'JetBrains Mono',monospace;font-size:22px;font-weight:800;letter-spacing:2px;color:#1A2238;margin-top:4px;">${esc(p.licenseKey)}</div>
-    <div style="font-size:13px;color:#4A5670;margin-top:6px;">앱의 설정 &gt; 라이선스에 입력해 두세요. 이 메일과 함께 보관하세요.</div>
-  </div>
-
+    <div style="font-size:13px;color:#8A8F9E;">One MACS 연결 코드</div>
+    <div style="font-family:Consolas,'JetBrains Mono',monospace;font-size:24px;font-weight:800;letter-spacing:3px;color:#1A2238;margin-top:4px;word-break:break-all;">${esc(p.licenseKey)}</div>
+    <div style="font-size:13px;color:#4A5670;margin-top:6px;">설치할 때 Claude Code가 물으면 넣으십시오. 본 이메일과 함께 보관하십시오.</div>
+  </div>` : ''}
+${isOneMacs ? `
   <div style="background:#F6F4EF;border:1px dashed #C9A961;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;color:#4A5670;line-height:1.8;">
     <b style="color:#1A2238;">출시 기념 — 두 가지를 더 보내드립니다</b><br>
     <b>보고서 작성 에이전트 (ARWA)</b> · 자료를 주면 근거를 붙여 보고서 초안을 작성합니다.<br>
@@ -83,19 +103,10 @@ function purchaseEmailHtml(p) {
     준비되는 대로 이 주소(${esc(p.email)})로 <b>하나씩 따로 보내드립니다.</b> 다시 결제하실 일도, 따로 신청하실 일도 없습니다.<br>
     <span style="font-size:13px;opacity:.85;">받으시면 <b>각각 독립된 폴더</b>에 푸십시오(프로젝트가 서로 다릅니다). 그 폴더에서 Claude Code 에게 <b>"이 폴더의 CLAUDE_CODE_지시문.md 를 읽고 그대로 수행해줘"</b>, 끝나면 <b>"One MACS 에 연결해줘"</b> 라고 하시면 모바일 앱 안에서 바로 열립니다.</span>
   </div>
-
-  <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
-    <h3 style="font-size:15px;margin:0 0 10px;">설치 순서</h3>
-    <ol style="margin:0;padding-left:20px;color:#4A5670;font-size:14px;line-height:1.8;">
-      <li>PC에서 위 버튼으로 배포판을 받아 아무 폴더에나 풉니다. (Windows 10/11 · 약 20MB · <b>모바일 앱과 설치 지시문이 함께 들어 있습니다</b>)</li>
-      <li>푼 폴더에서 Claude Code 를 켜고 아래 한 줄을 붙여넣으시면 설치가 진행되고 <b>코드 8자리</b>가 나옵니다.<br><span style="display:inline-block;margin:6px 0;padding:8px 12px;background:#F6F4EF;border-radius:8px;font-size:13px;color:#1A2238;">One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.</span><br> 자세한 것은 푼 폴더의 <b>"One MACS 사용설명서.html"</b> 한 장에 다 있습니다. (PC 브라우저에서 <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">waat.community/market/onemacs/install</a> 을 열어도 같은 안내를 볼 수 있습니다)</li>
-      <li>그 코드를 모바일 앱에 넣으면 핸드폰과 PC가 연결됩니다.</li>
-    </ol>
-  </div>
-
+` : ''}
   <div style="background:#FFF8E6;border:1px solid #F1E2B3;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:13px;color:#7A5A12;line-height:1.7;">
-    · 다운로드 링크는 ${p.expiryHours}시간 동안, 최대 ${p.maxDownloads}회 유효합니다. 만료되면 ${esc(p.renewLink)} 에서 주문번호와 이메일로 재발급받을 수 있습니다.<br>
-    · 링크와 라이선스 키, 연결 코드는 타인과 공유하지 마세요.
+    · 「패키지 내려받기」 버튼으로 ${p.maxDownloads}번까지 내려받으실 수 있습니다. 다 쓰셨으면 주문번호와 이름을 적어 ${esc(support)} 로 연락해 주십시오.<br>
+    · 본 이메일의 버튼${usesLicense ? "과 One MACS 연결 코드" : ""}는 다른 사람과 나누지 마십시오.
   </div>
 
   <div style="background:#F6F4EF;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;color:#4A5670;line-height:1.8;">
@@ -103,7 +114,7 @@ function purchaseEmailHtml(p) {
   </div>
 
   <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;">
-    문의: ${esc(supportEmail())} · 이 메일은 ${p.launch ? '출시 알림 예약에 따른 다운로드 링크 제공' : '구매 확인 및 다운로드 링크 제공'}을 위한 자동 발송 메일입니다.
+    문의: ${esc(support)} · 본 이메일은 ${p.launch ? '출시 알림 예약에 따른 패키지 내려받기 안내' : '구매 확인 및 패키지 내려받기 안내'}를 위한 자동 발송 이메일입니다.
   </div>
 </div>`;
 }
@@ -111,14 +122,18 @@ function purchaseEmailHtml(p) {
 /** 구매 완료(또는 재발급) 메일 발송 */
 async function sendPurchaseEmail(p) {
     const t = transporter();
+    // One MACS 가 아닌 상품 이메일에는 One MACS 이름을 달지 않는다
+    const first = (Array.isArray(p.downloads) && p.downloads.length && getProduct(p.downloads[0].id)) || PRODUCT;
+    const tag = first.id === 'onemacs' ? 'One MACS · 원맥스' : first.name;
+    const fromName = first.id === 'onemacs' ? 'One MACS · 원맥스 (WAAT)' : 'WAAT AI 툴 마켓';
     await t.sendMail({
-        from: `"One MACS · 원맥스 (WAAT)" <${process.env.GMAIL_USER}>`,
+        from: `"${fromName}" <${process.env.GMAIL_USER}>`,
         to: p.email,
         subject: p.launch
-            ? `[One MACS · 원맥스] 출시되었습니다 — 다운로드 링크와 라이선스 키 (예약 ${p.orderId})`
+            ? `[${tag}] 출시되었습니다 — 패키지 내려받기 안내 (예약 ${p.orderId})`
             : p.renewal
-            ? `[One MACS · 원맥스] 다운로드 링크 재발급 — 주문 ${p.orderId}`
-            : `[One MACS · 원맥스] 구매 완료 — 다운로드 링크와 라이선스 키 (주문 ${p.orderId})`,
+            ? `[${tag}] 다운로드 링크 재발급 — 주문 ${p.orderId}`
+            : `[${tag}] 구매 완료 — 패키지 내려받기 안내 (주문 ${p.orderId})`,
         html: purchaseEmailHtml(p)
     });
 }
@@ -129,13 +144,15 @@ async function sendPurchaseEmail(p) {
  */
 function reservationEmailHtml(p) {
     const name = safeName(p.name);
+    // reserve.js 가 productName 을 넘긴다. 없거나 One MACS 이면 옛 One MACS 문안 그대로
+    const isOneMacs = !p.productName || p.productName === PRODUCT.name;
     return `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
   <div style="text-align:center;margin-bottom:28px;">
-    <img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">
+    ${isOneMacs ? `<img src="https://www.waat.community/market/img/onemacs_icon.png" alt="One MACS · 원맥스" width="64" height="64" style="display:inline-block;width:64px;height:64px;border-radius:16px;">` : ''}
     <h1 style="font-size:22px;margin:16px 0 6px;">${name}님, 출시 알림 예약이 완료되었습니다</h1>
-    <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">One MACS · 원맥스</p>
-    <p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI-CLI Console System</p>
+    <p style="color:#1a2238;font-size:16px;font-weight:800;margin:0;">${isOneMacs ? 'One MACS · 원맥스' : esc(p.productName)}</p>
+    ${isOneMacs ? `<p style="color:#4A5670;font-size:13px;margin:4px 0 0;">One-stop Multi AI-CLI Console System</p>` : ''}
   </div>
 
   <div style="background:#F6F4EF;padding:18px 20px;border-radius:12px;margin-bottom:18px;text-align:center;">
@@ -144,14 +161,14 @@ function reservationEmailHtml(p) {
   </div>
 
   <div style="background:#1A2238;color:#fff;padding:22px 24px;border-radius:16px;margin-bottom:22px;font-size:15px;line-height:1.8;">
-    One MACS는 정식 출시 전입니다.<br>
-    출시 첫날, 이 주소(<b style="color:#C9A961;">${esc(p.email)}</b>)로 <b>다운로드 링크와 라이선스 키</b>를 보내드립니다.
+    ${isOneMacs ? 'One MACS는 정식 출시 전입니다.' : '정식 출시 전입니다.'}<br>
+    출시 첫날, 이 주소(<b style="color:#C9A961;">${esc(p.email)}</b>)로 <b>패키지를 내려받으실 수 있는 이메일</b>을 보내드립니다.
   </div>
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
     <h3 style="font-size:15px;margin:0 0 8px;">그동안 미리 보실 수 있는 안내</h3>
-    <p style="margin:0;color:#4A5670;font-size:14px;line-height:1.8;">모바일 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다. 설치 안내는 지금 보실 수 있습니다.</p>
-    <a href="${esc(p.consoleGuideLink || 'https://www.waat.community/market/onemacs/install')}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">PC에 One MACS 설치하기 안내 보기</a>
+    <p style="margin:0;color:#4A5670;font-size:14px;line-height:1.8;">${isOneMacs ? '모바일 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다. ' : ''}설치 안내는 지금 보실 수 있습니다.</p>
+    <a href="${esc(p.consoleGuideLink || 'https://www.waat.community/market/onemacs/install')}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">설치 안내 보기</a>
   </div>
 
   <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;">
@@ -264,7 +281,7 @@ function launchPaymentEmailHtml(p) {
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:14px;">
     <h3 style="font-size:15px;margin:0 0 8px;">결제한 뒤에 할 일</h3>
-    <p style="margin:0;color:#1a2238;font-size:14px;line-height:1.8;">판매 페이지에서 <b>"입금 완료 → 이메일 입력"</b>을 누르고 이메일을 넣으면, 그 주소로 툴 다운로드 링크와 라이선스 키를 바로 보내드립니다. 링크는 ${esc(p.pay.expiryHours || 24)}시간 동안 ${esc(p.pay.maxDownloads || 5)}번까지 받을 수 있고, 지나면 같은 페이지에서 다시 받을 수 있습니다.</p>
+    <p style="margin:0;color:#1a2238;font-size:14px;line-height:1.8;">판매 페이지에서 <b>"입금 완료 → 이메일 입력"</b>을 누르고 이메일을 넣으면, 그 주소로 구매 확인 이메일을 바로 보내드립니다. 이메일의 「패키지 내려받기」 버튼으로 ${esc(p.pay.maxDownloads || 5)}번까지 내려받으실 수 있습니다.</p>
     <a href="${esc(p.salesLink)}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">판매 페이지 열기</a>
   </div>
 

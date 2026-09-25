@@ -37,8 +37,8 @@ const PRODUCTS = {
         code: 'console_system',
         name: 'One MACS · 원맥스',
         category: 'AI 협업 시스템',
-        fileLabel: 'One MACS 배포판 (PC 설치본)',
-        guidePath: '/market/onemacs/install',
+        fileLabel: 'One MACS 패키지 (PC 설치본)',
+        guidePath: '/market/onemacs#install',
         /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로 */
         get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
@@ -57,7 +57,7 @@ const PRODUCTS = {
         fullname: 'Stock Trading Auto System',
         category: '트레이딩',
         fileLabel: '주식 매매 자동화 시스템',
-        guidePath: '/market/onemacs/install',
+        guidePath: '/market/StockTradeAutoSystem#install',
         get label() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.STOCK_TRADE_AUTO_SYSTEM_PRICE, 10) || 5500; },
         get version() { return clean(process.env.STOCK_TRADE_AUTO_SYSTEM_VERSION) || 'v1.3'; },
@@ -72,7 +72,7 @@ const PRODUCTS = {
         fullname: 'Automated Report Writing Agent',
         category: 'AI 에이전트',
         fileLabel: '보고서 작성 에이전트 (ARWA) (보고서 작성 에이전트)',
-        guidePath: '/market/onemacs/install',
+        guidePath: '/market/ReportWritingAgent#install',
         get label() { return clean(process.env.REPORT_WRITING_AGENT_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.REPORT_WRITING_AGENT_PRICE, 10) || 5500; },
         get version() { return clean(process.env.REPORT_WRITING_AGENT_VERSION) || 'v1.0'; },
@@ -160,10 +160,18 @@ function generateReserveId() {
     return `RS-${ymd}-${randomCode(4)}`;
 }
 
-/** XXXX-XXXX-XXXX-XXXX */
+/**
+ * One MACS 연결 코드 — 영문 대문자 2자 + 숫자 6자 (예: KM482913). PO 확정 2026-09-25.
+ * 손님이 다루는 코드는 이것과 PIN 번호 둘뿐이다. 이 코드 하나로 고정 주소(분양 서버)와
+ * 모바일 앱의 PC 찾기(허브)를 모두 한다. 영문은 I·O 를 뺀다(숫자 1·0 과 헷갈림). 약 5.8억 가지.
+ * 옛 이름(generateLicenseKey)은 호출하는 곳이 많아 그대로 둔다. 옛 주문의 16자리 키는 분양 서버가 계속 받는다.
+ */
+const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';   // I · O 제외 (24자)
 function generateLicenseKey() {
-    const c = randomCode(16);
-    return `${c.slice(0, 4)}-${c.slice(4, 8)}-${c.slice(8, 12)}-${c.slice(12, 16)}`;
+    const b = crypto.randomBytes(8);
+    let out = CODE_LETTERS[b[0] % CODE_LETTERS.length] + CODE_LETTERS[b[1] % CODE_LETTERS.length];
+    for (let i = 2; i < 8; i++) out += String(b[i] % 10);
+    return out;
 }
 
 function baseUrl(req) {
