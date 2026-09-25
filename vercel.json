@@ -41,97 +41,6 @@
       ]
     },
     {
-      "source": "/console/report-agent_v1.0.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"report-agent_v1.0.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/console/OneMACSPackage_v3.3.16.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"OneMACSPackage_v3.3.16.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/console/StockTradeAutoSystemPackage_v1.3.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"StockTradeAutoSystemPackage_v1.3.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/console/consolesystem_v2.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"consolesystem_v2.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/console/install.md",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=300"
-        }
-      ]
-    },
-    {
-      "source": "/console/trading-bot_v1.zip",
-      "headers": [
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"trading-bot_v1.zip\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/console/trading-bot.md",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=300"
-        }
-      ]
-    },
-    {
       "source": "/js/(.*)",
       "headers": [
         {
@@ -230,22 +139,6 @@
     {
       "source": "/market/onemacs/install",
       "destination": "/market/onemacs/install.html"
-    },
-    {
-      "source": "/market/onemacs/install.md",
-      "destination": "/console/install.md"
-    },
-    {
-      "source": "/market/onemacs/trading-bot.md",
-      "destination": "/console/trading-bot.md"
-    },
-    {
-      "source": "/market/onemacs/consolesystem_v2.zip",
-      "destination": "/console/consolesystem_v2.zip"
-    },
-    {
-      "source": "/market/onemacs/trading-bot_v1.zip",
-      "destination": "/console/trading-bot_v1.zip"
     },
     {
       "source": "/market/onemacs/faq",

@@ -89,19 +89,26 @@ const url = SITE + '/console/' + NAME;
 if (CHECK_ONLY) { say('\n--check 이므로 여기서 멈춥니다. 올릴 주소: ' + url); process.exit(0); }
 
 // ── 2. vercel.json 헤더 ───────────────────────────────────────
+// 2026-09-25: 출시 전 받기 차단 규칙(/console/:file → /market)을 넣었다(PO 「출시도 안 했는데 올려놓냐」).
+// 새 판을 올린다는 것은 출시한다는 뜻이므로 여기서 그 규칙을 뺀다. 옛 기준줄(consolesystem_v2 헤더)은 그날 지웠다.
 const vjPath = path.join(ROOT, 'vercel.json');
-let vj = fs.readFileSync(vjPath, 'utf8');
-if (vj.includes('/console/' + NAME)) {
+const vjObj = JSON.parse(fs.readFileSync(vjPath, 'utf8'));
+const BLOCK_SRC = '/console/:file(.*.zip)';
+if (vjObj.redirects.some((r) => r.source === BLOCK_SRC)) {
+  vjObj.redirects = vjObj.redirects.filter((r) => r.source !== BLOCK_SRC);
+  say('② 출시 전 받기 차단 규칙을 뺐습니다');
+}
+if (vjObj.headers.some((h) => h.source === '/console/' + NAME)) {
   say('② 내려받기 헤더 — 이미 있습니다');
 } else {
-  const marker = '    {\n      "source": "/console/consolesystem_v2.zip",';
-  if (!vj.includes(marker)) die('vercel.json 에서 헤더를 넣을 자리를 찾지 못했습니다.');
-  const block = '    {\n      "source": "/console/' + NAME + '",\n      "headers": [\n        {\n          "key": "Content-Disposition",\n          "value": "attachment; filename=\\"' + NAME + '\\""\n        },\n        {\n          "key": "Cache-Control",\n          "value": "public, max-age=3600"\n        }\n      ]\n    },\n';
-  vj = vj.replace(marker, block + marker);
-  JSON.parse(vj);                       // 깨졌으면 여기서 던진다
-  fs.writeFileSync(vjPath, vj, 'utf8');
+  vjObj.headers.unshift({ source: '/console/' + NAME, headers: [
+    { key: 'Content-Disposition', value: 'attachment; filename="' + NAME + '"' },
+    { key: 'Cache-Control', value: 'public, max-age=3600' }
+  ] });
   say('② 내려받기 헤더 추가 ✔');
 }
+fs.writeFileSync(vjPath, JSON.stringify(vjObj, null, 2) + '\n', 'utf8');
+let vj = fs.readFileSync(vjPath, 'utf8');
 
 // ── 3. 환경변수 ───────────────────────────────────────────────
 const ver = (NAME.match(/_v([\d.]+)\.zip$/) || [])[1];
