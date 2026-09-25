@@ -2,7 +2,7 @@
  * /api/review-comments — 리뷰 댓글·답글 (답글은 1단계까지)
  *   GET  ?review=<id>                          published 댓글·답글 (시간순, 부모→자식은 화면에서 묶음)
  *   GET  ?verify=<token>                       확인 링크 → 게시 → 302 리뷰 페이지 #c-<id>
- *   POST {review, parent?, nick, email, body, website}   댓글(pending) → 확인 메일
+ *   POST {review, parent?, nick, email, body, website}   댓글(pending) → 확인 이메일
  */
 
 const db = require('./lib/supabase.js');

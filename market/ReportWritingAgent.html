@@ -223,7 +223,7 @@
       <div class="kv row"><b>2편</b><span>AI 에이전트 분류 — 어떤 유형이 있고 무엇을 고를 것인가<span class="pill-soon" style="margin-left:8px">준비 중</span></span></div>
       <div class="kv row"><b>3편</b><span>AI 에이전트 직접 만들기 — 목표서부터 출하까지<span class="pill-soon" style="margin-left:8px">준비 중</span></span></div>
     </div>
-    <p class="quiet" style="margin-top:14px">세 편 모두 다듬는 중이고, 올라가는 대로 이 자리에 링크가 붙습니다. 예약하신 분께는 출시 안내 메일에 함께 넣어 드립니다.</p>
+    <p class="quiet" style="margin-top:14px">세 편 모두 다듬는 중이고, 올라가는 대로 이 자리에 링크가 붙습니다. 예약하신 분께는 출시 안내 이메일에 함께 넣어 드립니다.</p>
   </div>
 </section>
 
@@ -312,11 +312,11 @@
           <input class="pay-input" type="text" id="rs-name" placeholder="홍길동" autocomplete="name" maxlength="50">
           <label class="pay-label" for="rs-phone">휴대폰 (선택)</label>
           <input class="pay-input" type="tel" id="rs-phone" placeholder="010-0000-0000" autocomplete="tel" maxlength="30">
-          <label class="rs-agree" for="rs-agree"><input type="checkbox" id="rs-agree" required> <span>출시 안내 메일 수신에 동의합니다 (필수)</span></label>
+          <label class="rs-agree" for="rs-agree"><input type="checkbox" id="rs-agree" required> <span>출시 안내 이메일 수신에 동의합니다 (필수)</span></label>
           <p class="pay-error" id="rs-error" role="alert" hidden></p>
           <button type="submit" class="btn btn-go" id="rs-btn">예약하기</button>
         </form>
-        <p class="quiet" style="text-align:center">예약은 무료이며 결제가 아닙니다. 출시 첫날 메일 한 통을 보내드립니다.</p>
+        <p class="quiet" style="text-align:center">예약은 무료이며 결제가 아닙니다. 출시 첫날 이메일 한 통을 보내드립니다.</p>
       </div>
       <div class="rs-step" id="rs-step-done">
         <div class="done-box">
@@ -324,7 +324,7 @@
           <p class="pay-title" style="color:var(--ok)" id="rs-done-title">예약 완료</p>
           <p style="color:var(--fg)">예약번호 <b class="mono" id="rs-done-id"></b></p>
           <p style="color:var(--fg);margin-top:6px">출시 첫날 <b id="rs-done-email"></b>로 알려드립니다.</p>
-          <p class="note" style="margin-top:10px" id="rs-done-note">예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.</p>
+          <p class="note" style="margin-top:10px" id="rs-done-note">예약 확인 이메일을 보내드렸습니다. 이메일이 안 보이면 스팸함을 확인해 주세요.</p>
         </div>
         <p style="color:var(--fg2);font-size:14px;text-align:center;margin-bottom:10px">One MACS를 함께 보시면 이 에이전트를 핸드폰에서 여는 방법도 같이 준비하실 수 있습니다.</p>
         <a class="btn btn-go" href="/market/onemacs">One MACS · 원맥스 보기</a>
@@ -379,7 +379,7 @@
         var err = $('rs-error');
         setMsg(err, '');
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '올바른 이메일 주소를 입력해 주세요.'); $('rs-email').focus(); return; }
-        if (!agree) { setMsg(err, '출시 안내 메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
+        if (!agree) { setMsg(err, '출시 안내 이메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
         var btn = $('rs-btn');
         var orig = btn.textContent;
         btn.disabled = true; btn.textContent = '예약 중...';
@@ -396,10 +396,10 @@
             $('rs-done-email').textContent = data.email || email;
             if (data.duplicate) {
                 $('rs-done-title').textContent = '이미 예약된 이메일입니다';
-                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
+                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 이메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
             } else {
                 $('rs-done-title').textContent = '예약 완료';
-                $('rs-done-note').textContent = '예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.';
+                $('rs-done-note').textContent = '예약 확인 이메일을 보내드렸습니다. 이메일이 안 보이면 스팸함을 확인해 주세요.';
             }
             rsStep('rs-step-done');
             var sec = $('reserve');

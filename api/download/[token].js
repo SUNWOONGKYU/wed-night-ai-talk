@@ -109,7 +109,7 @@ module.exports = async function handler(req, res) {
   상품: ${esc(product.name)} ${esc(product.version)}<br>
   주문번호: ${esc(orderId)}<br>
   남은 다운로드 횟수: <b>${maxDownloads - count - 1}</b>회<br>
-  라이선스 키는 구매 완료 메일에 있습니다.<br><br>
+  라이선스 키는 구매 완료 이메일에 있습니다.<br><br>
   ${steps}
 </div>`, `<meta http-equiv="refresh" content="2;url=${esc(fileUrl)}">`));
     } catch (error) {

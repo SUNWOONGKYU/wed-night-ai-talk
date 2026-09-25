@@ -7,6 +7,7 @@ const BAD = [/말풍선/, /쫄병/, /팀장/, /팀원/, /부린다/, /부하/, /
 // '쓰다' 계열 금지(→ 사용·기록·저장·남기다). 예외: 글쓰기·글을 쓰·덮어쓰·리뷰/댓글 남기기 계열은 아래 ALLOW 로 먼저 지운 뒤 검사 (PO 2026-09-21)
 const ALLOW = /글쓰기|글을 쓰|덮어\s?쓰|쓰레기|씨앗|copy-ok/g;
 BAD.push(/(?<![글덮어])(쓴다|쓰다|씁니다|써서|쓸 수|쓰는|쓰면|쓰고 |쓰세요|쓸 때|쓰려|쓰던|쓰든|쓰며|쓰시|쓰겠|쓰므로|썼|쓴 |쓸 수)/);
+BAD.push(/(?<!이)메일/);  // '메일' 금지 → 항상 '이메일' (PO 2026-09-25)
 const EXT = new Set(['.html', '.md', '.js', '.json']);
 function walk(d, out) { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); const st = fs.statSync(p); if (st.isDirectory()) { if (!/^(_old|_backup|node_modules|img)/.test(f)) walk(p, out); } else if (EXT.has(path.extname(f))) out.push(p); } return out; }
 let files = process.argv.slice(2);

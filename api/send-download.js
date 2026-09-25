@@ -107,11 +107,11 @@ module.exports = async function handler(req, res) {
         });
 
         // 2. 주소 분양 서버에 주문을 알린다 — 라이선스 키로 고정 주소 권리를 등록한다.
-        //    실패해도 결제와 메일을 막지 않는다. 손님이 돈을 내고 아무것도 못 받는 일이 없어야 한다.
+        //    실패해도 결제와 이메일을 막지 않는다. 손님이 돈을 내고 아무것도 못 받는 일이 없어야 한다.
         //    (같은 order_id 로 다시 불러도 분양 서버가 한 번만 처리한다)
         await notifyIssuer({ orderId, licenseKey, productId });
 
-        // 3. 메일 발송
+        // 3. 이메일 발송
         await sendPurchaseEmail({
             name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, downloads,
             productName: product.name,

@@ -1,13 +1,13 @@
 /**
  * 출시 통지(결제 안내) 도구 — PO 결정 2026-09-22 "B: 예약자에게 결제 안내 발송"
- * 출시 알림 예약자(Reservations 시트 status=RESERVED) 전원에게 "출시되었습니다 — 결제 안내" 메일을 1회 보내고
+ * 출시 알림 예약자(Reservations 시트 status=RESERVED) 전원에게 "출시되었습니다 — 결제 안내" 이메일을 1회 보내고
  * Reservations 에 notifiedAt · status=NOTIFIED_PAY 를 기록한다(중복 발송 방지). 다운로드 링크·라이선스 키는 보내지 않는다
  * (결제 후 판매 페이지에서 이메일을 입력하면 그때 발송된다 — 기존 confirm-payment 흐름).
  *
  * ★ 실행은 PO 신호가 있을 때만. 기본은 dry-run(대상 목록만). 실제 발송은 --send.
  *
  * 사용법 (저장소 루트에서):
- *   npx vercel env pull .env.local                  # 시트·메일 환경변수 임시 확보 (끝나면 .env.local 삭제)
+ *   npx vercel env pull .env.local                  # 시트·이메일 환경변수 임시 확보 (끝나면 .env.local 삭제)
  *   node scripts/notify-reservers-payment.js                    # dry-run: 대상 목록·제외 목록 출력, 발송 없음
  *   node scripts/notify-reservers-payment.js --send             # 실제 발송 + 시트 갱신
  *   node scripts/notify-reservers-payment.js --send --only=a@b.com   # 1명만(테스트)

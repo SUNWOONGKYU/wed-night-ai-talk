@@ -3,10 +3,10 @@
  *   GET  ?app=onemacs&sort=new|stars&page=1     published 리뷰 목록(20개) + 요약(평균·분포) + 댓글 수
  *   GET  ?app=onemacs&summary=1                 요약만 (홈 카드) · 60초 캐시
  *   GET  ?verify=<token>                        확인 링크: 게시 / 수정본 교체 / 삭제 / 내 리뷰 관리 진입 → 302 리뷰 페이지
- *   POST {app, nick, email, stars?, body, website}           새 리뷰(pending) → 확인 메일. 같은 이메일이 이미 있으면 "내 리뷰 고치기" 안내(409)
- *   POST {action:'manage', app, email}                        내 리뷰 고치기·지우기 진입 메일(review_manage 토큰)
- *   POST {action:'edit', manage:<token>, nick?, stars?, body}   수정본을 pending_* 에 저장(게시본 유지) → 확인 메일(review_edit)
- *   POST {action:'delete', manage:<token>}                    삭제 확인 메일(review_delete)
+ *   POST {app, nick, email, stars?, body, website}           새 리뷰(pending) → 확인 이메일. 같은 이메일이 이미 있으면 "내 리뷰 고치기" 안내(409)
+ *   POST {action:'manage', app, email}                        내 리뷰 고치기·지우기 진입 이메일(review_manage 토큰)
+ *   POST {action:'edit', manage:<token>, nick?, stars?, body}   수정본을 pending_* 에 저장(게시본 유지) → 확인 이메일(review_edit)
+ *   POST {action:'delete', manage:<token>}                    삭제 확인 이메일(review_delete)
  *
  * 게시 원칙: 이메일 확인 링크(24시간 1회) 클릭 시 게시. 이메일 원문 저장 안 함(해시). 링크·이메일·전화 마스킹. honeypot(website) 채워지면 조용히 200.
  * 레이트리밋: 같은 IP 1분 3건(DB 정본 + 메모리). 구매 확인: 게시 시 Orders 시트의 주문 이메일 해시와 대조(1회).

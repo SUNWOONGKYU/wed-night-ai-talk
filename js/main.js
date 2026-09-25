@@ -286,7 +286,7 @@ document.getElementById('signup-optional-toggle').addEventListener('click', (e) 
 
 // ========== 예비멤버 감지 안내 ==========
 // 예비멤버 = profiles 행은 있지만 로그인 계정(auth.users)이 없는 사람. notes 에 '예비 멤버' 마크가 붙어 있다.
-// PO 방침(2026-08-16): 예비멤버에게 일괄 안내 메일을 발송하지 않는다.
+// PO 방침(2026-08-16): 예비멤버에게 일괄 안내 이메일을 발송하지 않는다.
 //   대신 모임 신청 등으로 가입 모달에 닿았을 때 여기서 알아보고 전환 신청을 유도한다.
 // 이 기능은 DB.checkProvisionalMember() 에 의존한다 — index.html 이 js/db.js 를 반드시 로드해야 한다.
 // (2026-09-02: profiles 행을 직접 읽던 방식에서 서버 RPC 로 교체 — 익명에게 회원 이메일·전화번호가
@@ -1907,10 +1907,10 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         }
 
         // 이메일 인증(Confirm email)이 켜져 있으면 session이 null로 돌아온다.
-        // 이 경우 프로필 저장은 아직 불가능(RLS가 auth.uid()를 요구) → 메일함 안내 후 종료.
+        // 이 경우 프로필 저장은 아직 불가능(RLS가 auth.uid()를 요구) → 이메일함 안내 후 종료.
         if (!signUpData.session) {
             setStatus(statusEl,
-                '✉️ ' + email + ' 으로 인증 메일을 보냈습니다.\n메일의 링크를 눌러 인증을 완료하면 ' +
+                '✉️ ' + email + ' 으로 인증 이메일을 보냈습니다.\n이메일의 링크를 눌러 인증을 완료하면 ' +
                 (provisionalHit ? '정규 멤버로 전환됩니다.' : '가입이 끝납니다.'),
                 'success');
             e.target.reset();
@@ -1987,18 +1987,18 @@ document.getElementById('forgot-password-form').addEventListener('submit', async
         return;
     }
 
-    setStatus(statusEl, '메일 발송 중...', 'loading');
+    setStatus(statusEl, '이메일 발송 중...', 'loading');
     btn.disabled = true;
 
     try {
         await Auth.sendPasswordResetEmail(email);
-        setStatus(statusEl, '비밀번호 재설정 링크가 이메일로 발송되었습니다. 메일함을 확인해주세요.', 'success');
+        setStatus(statusEl, '비밀번호 재설정 링크가 이메일로 발송되었습니다. 이메일함을 확인해주세요.', 'success');
     } catch (err) {
-        const errMsg = err.message || '메일 발송 중 오류가 발생했습니다.';
+        const errMsg = err.message || '이메일 발송 중 오류가 발생했습니다.';
         if (errMsg.includes('rate') || errMsg.includes('limit')) {
             setStatus(statusEl, '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', 'error');
         } else {
-            setStatus(statusEl, '메일 발송 중 오류: ' + errMsg, 'error');
+            setStatus(statusEl, '이메일 발송 중 오류: ' + errMsg, 'error');
         }
     } finally {
         btn.disabled = false;

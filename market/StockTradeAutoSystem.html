@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>주식 매매 자동화 시스템 (STAS) | WAAT AI 툴 마켓</title>
 <link rel="canonical" href="https://www.waat.community/market/StockTradeAutoSystem">
-<meta name="description" content="주식 매매 자동화 시스템 (STAS): 국내 주식선물 290종목을 매일 아침 훑어 오늘 살펴볼 후보를 고르고, 살 시점이 오면 텔레그램으로 물어봅니다. 사람이 승인을 눌러야 주문이 나갑니다. 5,500원 1회. 규칙은 전부 꺼진 채로 나갑니다.">
+<meta name="description" content="주식 매매 자동화 시스템 (STAS): 국내 주식선물 290종목을 대상으로 하여, 매일 아침 장이 시작되기 전에 오늘의 매매 종목 후보를 선정하고, 그 종목들에서 매수·매도 신호가 포착되면 텔레그램을 통해 매매 여부를 물어 승인을 받습니다. 이 시스템은 모의투자용입니다. 패키지 안에 들어 있는 신호·운영 규칙은 예시로 제시되어 있습니다. 실제 매매를 하실 때는 자신만의 신호·운영 규칙을 만들어서 하셔야 합니다. 5,500원 1회.">
 <link rel="stylesheet" href="/css/theme.css?v=20260921a">
 <script src="/js/theme.js?v=20260921a"></script>
 <link rel="stylesheet" href="/css/site-nav.css?v=20260921a">
@@ -36,8 +36,7 @@
     <span class="pill-soon">출시 예정 · 예약 받는 중</span>
     <h1 style="margin-top:12px">주식 매매 자동화 시스템</h1>
     <span style="display:block;font-size:13px;color:var(--fg3);margin-top:2px">STAS · Stock Trading Auto System</span>
-    <p class="lead" style="margin-top:14px">국내 주식선물 <b>290종목</b>을 매일 아침 훑어 오늘 살펴볼 후보를 고르고, 살 시점이 오면 텔레그램으로 물어봅니다. <b>사람이 승인을 눌러야 주문이 나갑니다.</b></p>
-    <p class="lead" style="margin-top:8px">스스로 사고파는 물건이 아닙니다. <b>규칙은 전부 꺼진 채로 나갑니다</b> — 본인 기준을 넣어 본인 시스템을 세우시라고 드리는 틀입니다.</p>
+    <p class="lead" style="margin-top:14px">실전매매 자동화 프로그램이 아니고, <b>모의투자용</b>입니다. 제작자인 <a href="https://saa.house/about" target="_blank" rel="noopener">선웅규</a>가 만든 신호 규칙과 운영 규칙이 <b>예시로</b> 들어 있습니다. 이 예시로 모의투자를 해 보시고, 이를 참고해 <b>본인에게 맞는 신호 규칙과 운영 규칙을 직접 만드십시오.</b></p>
     <a class="btn" href="#reserve" style="margin-top:18px">출시 알림 예약하기<small>출시 가격 5,500원 · VAT 포함 · 1회 결제 · 월 구독 없음 · Windows 전용</small></a>
     <div class="bar"></div>
   </div>
@@ -49,13 +48,12 @@
     <span class="eyebrow">60초 요약</span>
     <h2>급하시면 이것만 보셔도 됩니다.</h2>
     <div class="stack" style="margin-top:18px">
-      <div class="kv row"><b>무엇인가</b><span>매일 아침 주식선물 290종목을 훑어 후보를 고르고, 살 시점이 오면 텔레그램으로 물어보는 시스템</span></div>
-      <div class="kv row"><b>스스로 사나</b><span><b>아닙니다.</b> 사람이 승인을 눌러야 주문이 나갑니다. 묻지 않고 사는 경우는 없습니다</span></div>
-      <div class="kv row"><b>규칙은</b><span>여섯 개가 들어 있고 <b>전부 꺼진 채로</b> 나갑니다. 무엇을 켤지는 받으신 분이 정합니다</span></div>
-      <div class="kv row"><b>얼마나 걸리나</b><span>290종목을 평가해 후보를 고르는 데 <b>약 24초</b> (실측)</span></div>
-      <div class="kv row"><b>무엇이 필요한가</b><span>Windows PC · Python · <b>한국투자증권 선물옵션 계좌</b> · 텔레그램 봇(직접 만드십니다)</span></div>
-      <div class="kv row"><b>크기</b><span>파일 <b>30개 · 0.70MB</b></span></div>
-      <div class="kv row"><b>값</b><span><b>5,500원 한 번</b> · 따로 파는 상품입니다</span></div>
+      <div class="kv row"><b>시스템 소개</b><span>국내 주식선물 290종목을 대상으로, 사전에 정해진 신호 규칙과 운영 규칙에 따라 매매를 자동화하는 PC 프로그램입니다.</span></div>
+      <div class="kv row"><b>매매 주문 방식</b><span>스스로 매매 주문을 하지 않습니다. 매수·매도 시점이 오면 텔레그램을 통해 매수·매도 여부를 묻고, 승인하시면 주문합니다. 승인 없이 주문하게 하려면 별도로 자동매매 설정을 해야 합니다. 단, 운영 규칙에 미리 정한 손절과 트레일링 스탑(이익 확정)은 묻지 않고 바로 실행합니다.</span></div> <!-- copy-ok: 「자동매매 설정」은 PO 2026-09-25 직접 지시 -->
+      <div class="kv row"><b>신호·운영 규칙</b><span>신호 규칙 6개와 운영 규칙 7개 항목이 예시로 들어 있습니다. 신호 규칙은 스캐너 화면에서 규칙마다 켜고 끌 수 있고, 운영 규칙은 항목마다 값을 변경할 수 있습니다. 이 예시로 모의투자를 해 보시고, 본인에게 맞는 신호 규칙과 운영 규칙을 만들어 보세요.</span></div>
+      <div class="kv row"><b>준비물</b><span>Windows PC · Python 3.11 이상 · Claude Code · 텔레그램 · 한국투자증권 계좌와 API 키</span></div>
+      <div class="kv row"><b>크기</b><span>파일 <b>31개 · 0.76MB</b></span></div>
+      <div class="kv row"><b>가격</b><span><b>5,500원</b> · 1회 결제</span></div>
     </div>
   </div>
 </section>
@@ -64,67 +62,20 @@
 <section>
   <div class="wrap">
     <span class="eyebrow">무엇이 다른가</span>
-    <h2>신호를 찾되, 사는 것은 사람이 정합니다.</h2>
+    <h2>매매 신호 발생은 프로그램이 하고, 매매 결정은 사람이 합니다.</h2>
     <div class="stack" style="margin-top:18px">
       <div class="cs-step"><div class="row"><span class="num">1</span><div>
-        <h3>묻지 않고 사지 않습니다</h3>
-        <p>살 시점이 오면 텔레그램으로 종목과 이유를 보내고 <b>기다립니다.</b> 승인을 누르셔야 주문이 나갑니다. 자리를 비우신 동안 마음대로 사는 일이 없습니다.</p>
+        <h3>승인 없이 매매 주문을 하지 않습니다</h3>
+        <p>매수·매도 시점이 오면 텔레그램을 통해 종목과 근거를 제시해서 매수·매도 여부를 묻습니다. 승인하시면 주문합니다. 자동매매 설정을 하지 않는 한, 자리를 비우신 동안 승인 없이 매매 주문을 하지 않습니다.</p> <!-- copy-ok: 「자동매매 설정」은 PO 2026-09-25 직접 지시 -->
       </div></div></div>
       <div class="cs-step"><div class="row"><span class="num">2</span><div>
-        <h3>규칙이 꺼진 채로 옵니다</h3>
-        <p>여섯 개의 신호 규칙이 들어 있지만 <b>켜진 것은 하나도 없습니다.</b> 만든 사람의 숫자를 그대로 받아 사용하시라는 물건이 아닙니다. 읽어 보시고 본인 기준으로 고쳐 켜십시오.</p>
+        <h3>신호·운영 규칙은 예시입니다</h3>
+        <p>제작자의 신호 규칙 6개와 운영 규칙 7개 항목이 예시로 들어 있습니다. 신호 규칙은 스캐너 화면에서 규칙마다 켜고 끌 수 있고, 운영 규칙은 항목마다 값을 변경할 수 있습니다. 이 예시로 모의투자를 해 보시고, 본인에게 맞는 신호 규칙과 운영 규칙을 만들어 보세요.</p>
         <p style="margin-top:8px">이 규칙들은 <b>국내 주식선물을 대상으로 뽑은 것</b>입니다. 그래서 실제로 거래하시려면 <b>선물옵션 계좌</b>가 필요합니다 — 일반 주식 계좌로는 안 되고, <b>기본예탁금</b>과 <b>사전교육 이수</b>가 조건입니다(조건과 금액은 증권사가 정합니다). 계좌 없이 <b>모의투자로 먼저 돌려 보셔도 됩니다.</b></p>
       </div></div></div>
       <div class="cs-step"><div class="row"><span class="num">3</span><div>
-        <h3>한도가 미리 걸려 있습니다</h3>
-        <p>기본값은 <b>하루에 새로 사는 종목 2개까지 · 동시에 5종목까지 · 한 종목에 3계약까지</b>입니다. 이 숫자도 본인 돈에 맞게 바꾸십니다.</p>
-      </div></div></div>
-      <div class="cs-step"><div class="row"><span class="num">4</span><div>
-        <h3>열쇠가 내 PC를 떠나지 않습니다</h3>
-        <p>증권사 API 키와 계좌 번호는 <b>내 PC 안에만</b> 있습니다. 저희가 대신 받지도, 보관하지도 않습니다. 키 신청도 본인이 하십니다.</p>
-      </div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== 하루가 어떻게 도나 ===================== -->
-<section style="background:var(--bg2)">
-  <div class="wrap">
-    <span class="eyebrow">하루가 어떻게 도나</span>
-    <h2>아침에 고르고, 낮에 기다립니다.</h2>
-    <div class="stack" style="margin-top:18px">
-      <div class="kv row"><b>08:40</b><span>선물 종목 맵을 갱신하고 기동합니다</span></div>
-      <div class="kv row"><b>08:45</b><span>전날 확정된 일봉으로 <b>290종목을 한 번</b> 평가해 오늘 살펴볼 후보를 확정합니다(약 24초). 텔레그램으로 «오늘 살펴볼 후보 N개»를 알려 드립니다 — <b>승인 요청이 아닙니다</b></span></div>
-      <div class="kv row"><b>08:45~12:00</b><span>후보만 계속 지켜봅니다. 살 시점이 오는 순간 <b>승인 요청 한 번</b>. 승인하시면 증거금을 먼저 확인하고 주문합니다</span></div>
-      <div class="kv row"><b>12:00</b><span>창을 닫습니다. 시점이 오지 않은 후보는 그날은 넘깁니다</span></div>
-      <div class="kv row"><b>장중</b><span>25~30초마다 손절·트레일링을 확인합니다. 290종목 3분봉은 3분마다 한 바퀴 돌며 <b>보여주고 쌓기만</b> 합니다 — 매매에 쓰지 않습니다</span></div>
-    </div>
-    <p class="quiet" style="margin-top:14px">290종목을 통째로 훑는 일은 아침 한 번뿐입니다. 그 뒤로는 후보만 봅니다.</p>
-  </div>
-</section>
-
-<!-- ===================== 준비물 ===================== -->
-<section>
-  <div class="wrap">
-    <span class="eyebrow">준비물</span>
-    <h2>네 가지가 있으면 됩니다.</h2>
-    <div class="stack" style="margin-top:18px">
-      <div class="cs-step"><div class="row"><span class="num">1</span><div>
-        <h3>Windows PC와 Python</h3>
-        <p>PC를 켜 두셔야 장중에 돕니다. <b>Windows 전용</b>입니다 — 기동·기록정리·거래일 판단이 전부 Windows 스크립트입니다.</p>
-      </div></div></div>
-      <div class="cs-step"><div class="row"><span class="num">2</span><div>
-        <h3>한국투자증권 선물옵션 계좌</h3>
-        <p><b>일반 주식 계좌로는 안 됩니다.</b> 따로 개설하셔야 하고, <b>기본예탁금</b>과 <b>사전교육 이수</b>가 조건입니다. 조건과 금액은 증권사가 정합니다.</p>
-        <p style="margin-top:8px">모의투자만 해 보실 생각이면 <b>실계좌 없이도 설치와 시험 기동을 전부 하실 수 있습니다.</b></p>
-      </div></div></div>
-      <div class="cs-step"><div class="row"><span class="num">3</span><div>
-        <h3>증권사 API 키 — 본인이 신청하십니다</h3>
-        <p>저희가 대신 받지 않고 보관하지도 않습니다. 받으신 키는 내 PC 안에만 둡니다.</p>
-      </div></div></div>
-      <div class="cs-step"><div class="row"><span class="num">4</span><div>
-        <h3>텔레그램 봇 — 본인이 만드십니다</h3>
-        <p>텔레그램을 설치하는 것만으로는 부족합니다. BotFather로 봇을 하나 만드셔야 하고 <b>약 10분</b> 걸립니다. 설명서에 순서가 있습니다.</p>
+        <h3>API 키는 내 PC 밖으로 나가지 않습니다</h3>
+        <p>증권사 API 키와 계좌 번호는 <b>내 PC 안에만</b> 저장됩니다. 타인에게 제공되거나 다른 곳에 보관되지 않습니다. API 키 신청도 본인이 직접 합니다.</p>
       </div></div></div>
     </div>
   </div>
@@ -134,18 +85,11 @@
 <section style="background:var(--bg2)">
   <div class="wrap">
     <span class="eyebrow">미리 아셔야 할 한계</span>
-    <h2>사시기 전에 꼭 읽어 주십시오.</h2>
-    <p class="lead" style="margin-top:12px">돈이 걸린 물건입니다. 불리한 것을 먼저 적습니다.</p>
+    <h2>구매하시기 전에 꼭 읽어 주십시오.</h2>
     <div class="stack" style="margin-top:18px">
-      <div class="kv row"><b>재어 본 결과를 숨기지 않습니다</b><span>저희가 8년 자료로 재어 본 결과를 전부 적어 두었습니다. <b>흔히 쓰이는 지표 조합 대부분은 유리한 점이 확인되지 않았습니다.</b> 수록된 여섯 규칙 중 <b>8년 검증을 거친 것은 하나뿐이고, 그마저 저희 기준으로는 「불합격」</b>입니다(아홉 항목 중 여덟을 통과하고 하나에서 미달). 왜 불합격인지, 어떤 항목에서 미달했는지도 설명서에 그대로 적었습니다. <b>그래서 규칙을 전부 꺼진 채로 보내 드립니다.</b></span></div>
-      <div class="kv row"><b>나머지 다섯은 재어 본 적이 없습니다</b><span>같은 규격으로 만들어 둔 것이지 성적을 확인한 것이 아닙니다</span></div>
-      <div class="kv row"><b>주식선물은 크게 움직입니다</b><span>계약 하나의 명목금액이 주가의 <b>열 배</b>입니다. 적은 돈으로 큰 금액을 다루는 셈이라 손익도 그만큼 크게 움직입니다. <b>처음에는 반드시 모의투자로</b> 시작하십시오</span></div>
-      <div class="kv row"><b>만든 사람도 만들어 가는 중입니다</b><span>자기 돈을 넣어 돌리면서 매일 수정하고 있습니다. 이것은 <b>정답이 아니라 틀</b>입니다</span></div>
-      <div class="kv row"><b>승인 요청이 하루 몇 번 올지 말씀드릴 수 없습니다</b><span>무엇을 켜느냐에 따라 달라지고 패키지는 전부 꺼진 채로 나갑니다. 재어 본 적이 없어 <b>숫자를 드리지 않습니다</b></span></div>
-      <div class="kv row"><b>Windows 만 확인했습니다</b><span>macOS·Linux 는 실행해 본 적이 없습니다</span></div>
-      <div class="kv row"><b>PC 가 꺼져 있으면 아무 일도 안 합니다</b><span>장중에 PC 가 켜져 있어야 합니다</span></div>
+      <p>지금까지 Windows PC에서만 사용해 보았습니다.</p>
+      <p>장중에 PC가 켜져 있어야만 작동합니다.</p>
     </div>
-    <p class="quiet" style="margin-top:14px">승률과 수익률 숫자는 이 자리에 적지 않습니다 — 수익 약속으로 읽히기 때문입니다. 그 숫자는 받으신 뒤 읽는 설명서에 전부 공개돼 있습니다.</p>
   </div>
 </section>
 
@@ -158,11 +102,10 @@
       <p class="launch-price">출시 가격</p>
       <div class="price">5,500<small>원 · VAT 포함</small></div>
       <p style="margin-top:8px;font-weight:700;color:var(--fg)">1회 결제 · 월 구독 없음 · Windows 전용</p>
-      <p style="margin-top:12px;color:var(--fg2);font-size:15px;line-height:1.8"><b>따로 파는 상품입니다.</b><br>다만 <b>One MACS(9,900원)</b>를 사시면 출시 기념 한 달 동안 이것을 <b>추가로 드립니다</b>.</p>
+      <p style="margin-top:12px;color:var(--fg2);font-size:15px;line-height:1.8"><b>One MACS</b>를 구매하신 분께는 <b>2026년 10월 25일까지 무료로 제공</b>합니다.</p>
       <a class="btn btn-go" href="#reserve" style="margin-top:16px">출시 알림 예약하기</a>
-      <p class="note" style="margin-top:14px">출시 후 결제 수단: 카카오페이 송금 · 무통장 입금. 증권사 수수료와 세금은 별도이며 저희와 무관합니다.</p>
+      <p class="note" style="margin-top:14px">출시 후 결제 수단: 카카오페이 송금 · 무통장 입금</p>
     </div>
-    <p class="quiet" style="margin-top:14px">받으시면 메일로 따로 보내드립니다.</p>
   </div>
 </section>
 
@@ -182,7 +125,7 @@
     <div class="card">
       <div class="rs-step active" id="rs-step-form">
         <p class="pay-title">출시 알림 예약하기</p>
-        <p class="sub" style="margin-bottom:6px">정식 출시 전입니다. 예약하시면 출시 첫날 패키지를 내려받으실 수 있는 이메일을 보내드립니다.</p>
+        <p class="sub" style="margin-bottom:6px">정식 출시 전입니다. 예약을 해 놓으시면 출시와 동시에 알림 이메일을 보내드립니다.</p>
         <form id="rs-form" novalidate>
           <label class="pay-label" for="rs-email">이메일 주소 (필수)</label>
           <input class="pay-input" type="email" id="rs-email" placeholder="이메일 주소" autocomplete="email" required>
@@ -190,11 +133,10 @@
           <input class="pay-input" type="text" id="rs-name" placeholder="홍길동" autocomplete="name" maxlength="50">
           <label class="pay-label" for="rs-phone">휴대폰 (선택)</label>
           <input class="pay-input" type="tel" id="rs-phone" placeholder="010-0000-0000" autocomplete="tel" maxlength="30">
-          <label class="rs-agree" for="rs-agree"><input type="checkbox" id="rs-agree" required> <span>출시 안내 메일 수신에 동의합니다 (필수)</span></label>
+          <label class="rs-agree" for="rs-agree"><input type="checkbox" id="rs-agree" required> <span>출시 안내 이메일 수신에 동의합니다 (필수)</span></label>
           <p class="pay-error" id="rs-error" role="alert" hidden></p>
           <button type="submit" class="btn btn-go" id="rs-btn">예약하기</button>
         </form>
-        <p class="quiet" style="text-align:center">예약은 무료이며 결제가 아닙니다. 출시 첫날 메일 한 통을 보내드립니다.</p>
       </div>
       <div class="rs-step" id="rs-step-done">
         <div class="done-box">
@@ -202,10 +144,8 @@
           <p class="pay-title" style="color:var(--ok)" id="rs-done-title">예약 완료</p>
           <p style="color:var(--fg)">예약번호 <b class="mono" id="rs-done-id"></b></p>
           <p style="color:var(--fg);margin-top:6px">출시 첫날 <b id="rs-done-email"></b>로 알려드립니다.</p>
-          <p class="note" style="margin-top:10px" id="rs-done-note">예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.</p>
+          <p class="note" style="margin-top:10px" id="rs-done-note">예약 확인 이메일을 보내드렸습니다. 이메일이 안 보이면 스팸함을 확인해 주세요.</p>
         </div>
-        <p style="color:var(--fg2);font-size:14px;text-align:center;margin-bottom:10px">기다리시는 동안 One MACS를 함께 보시면 이 시스템을 핸드폰에서 여는 방법도 같이 준비하실 수 있습니다.</p>
-        <a class="btn btn-go" href="/market/onemacs">One MACS · 원맥스 보기</a>
       </div>
     </div>
   </div>
@@ -221,10 +161,7 @@
 
 <footer class="foot" id="seller">
   <div class="wrap">
-    <p><b style="color:var(--fg2)">고지</b></p>
-    <p><b>이 시스템은 투자 판단을 대신해 주지 않습니다.</b> 신호를 찾아 알려 드리고, 사람이 승인한 주문만 대신 냅니다. 무엇을 켜고 얼마를 넣을지, 사고팔지는 전부 사용하시는 분이 정하며 그 결과도 사용하시는 분의 것입니다.</p>
-    <p>증권사 계좌·API 키·수수료·세금은 사용자 본인과 증권사 사이의 일이며, 파인더월드는 중개하지 않습니다.</p>
-    <p style="margin-top:16px">판매자: 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고: 준비 중<br>소개 <a href="https://saa.house/about" target="_blank" rel="noopener">https://saa.house/about</a> · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p>판매자: 파인더월드 · 대표 선웅규 · 사업자등록번호 354-33-01641 · 서울특별시 강남구 테헤란로63길 9, 916호(삼성동) · 통신판매업 신고: 준비 중<br>소개 <a href="https://saa.house/about" target="_blank" rel="noopener">https://saa.house/about</a> · 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
     <p><a href="/market">AI 툴 마켓 홈</a> · <a href="/market/onemacs">One MACS · 원맥스</a> · <a href="/market/ReportWritingAgent">보고서 작성 에이전트</a> · <a href="/">WAAT 홈</a> · <a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
   </div>
 </footer>
@@ -256,7 +193,7 @@
         var err = $('rs-error');
         setMsg(err, '');
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '올바른 이메일 주소를 입력해 주세요.'); $('rs-email').focus(); return; }
-        if (!agree) { setMsg(err, '출시 안내 메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
+        if (!agree) { setMsg(err, '출시 안내 이메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
         var btn = $('rs-btn');
         var orig = btn.textContent;
         btn.disabled = true; btn.textContent = '예약 중...';
@@ -273,10 +210,10 @@
             $('rs-done-email').textContent = data.email || email;
             if (data.duplicate) {
                 $('rs-done-title').textContent = '이미 예약된 이메일입니다';
-                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
+                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 이메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
             } else {
                 $('rs-done-title').textContent = '예약 완료';
-                $('rs-done-note').textContent = '예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.';
+                $('rs-done-note').textContent = '예약 확인 이메일을 보내드렸습니다. 이메일이 안 보이면 스팸함을 확인해 주세요.';
             }
             rsStep('rs-step-done');
             var sec = $('reserve');

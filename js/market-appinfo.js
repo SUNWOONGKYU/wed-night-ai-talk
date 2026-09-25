@@ -50,11 +50,13 @@
         h += item('권한 ' + (a.permissions ? a.permissions.length + '개' : ''), a.permissions && a.permissions.length ? list(a.permissions.map(function (p) { return '<b>' + esc(p.name) + '</b> — ' + esc(p.why); })) : '', true);
         if (a.dataSafety) {
             var d = a.dataSafety, rows = [];
+            if (d.summary) rows.push(esc(d.summary)); else {
             if (d.collect && d.collect.length) rows.push('<b>수집</b> — ' + d.collect.map(esc).join(' · '));
             if (d.onDevice && d.onDevice.length) rows.push('<b>툴 안에만 저장</b> — ' + d.onDevice.map(esc).join(' · '));
             if (d.share) rows.push('<b>제3자 공유</b> — ' + esc(d.share));
             if (d.deleteEmail) rows.push('<b>삭제 요청</b> — <a href="mailto:' + esc(d.deleteEmail) + '">' + esc(d.deleteEmail) + '</a>');
-            h += item('데이터 안전', list(rows) + (d.policy ? '<small><a href="' + esc(d.policy) + '">개인정보처리방침 보기</a></small>' : ''), true);
+            }
+            h += item('데이터 안전', (d.summary ? rows[0] : list(rows)) + (d.policy ? '<small><a href="' + esc(d.policy) + '">개인정보처리방침 보기</a></small>' : ''), true);
         }
         if (a.changelog && a.changelog.length) {
             var latest = a.changelog.slice(0, 3), older = a.changelog.slice(3);

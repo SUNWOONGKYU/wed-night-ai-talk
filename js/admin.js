@@ -173,12 +173,12 @@ function renderMembers(members) {
             ? `<span class="member-badge-provisional">예비 멤버</span>` +
               (source ? `<span class="member-note-source">${escapeHtml(source)}</span>` : '')
             : escapeHtml(m.notes || '-');
-        // 메일 수신 여부 — 수신거부자는 발송 대상에서 빠진다(서버에서도 한 번 더 걸러진다).
+        // 이메일 수신 여부 — 수신거부자는 발송 대상에서 빠진다(서버에서도 한 번 더 걸러진다).
         // 버튼을 눌러 관리자가 직접 켜고 끌 수 있다.
         const optOut = !!m.email_opt_out;
         const mailCell = `<button class="btn-secondary btn-small"
                 data-action="toggle-opt-out" data-id="${escapeAttr(m.id)}" data-value="${optOut ? 'false' : 'true'}" data-name="${escapeAttr(m.name || m.email || '')}"
-                title="${optOut ? '다시 받도록 되돌립니다' : '이 회원에게 메일을 보내지 않습니다'}"
+                title="${optOut ? '다시 받도록 되돌립니다' : '이 회원에게 이메일을 보내지 않습니다'}"
                 style="${optOut ? 'color:var(--accent-pink);' : ''}">${optOut ? '수신거부' : '수신'}</button>`;
 
         return `<tr${prov ? ' class="row-provisional"' : ''}>
@@ -206,7 +206,7 @@ function updateMemberCount(shownCount) {
     const prov = allMembers.filter(isProvisionalMember).length;
     const optOut = allMembers.filter(m => m.email_opt_out).length;
     let text = `전체 ${total}명 · 정규 ${total - prov}명 · 예비 ${prov}명`;
-    if (optOut > 0) text += ` · 메일 수신거부 ${optOut}명`;
+    if (optOut > 0) text += ` · 이메일 수신거부 ${optOut}명`;
     if (shownCount !== total) text += `  →  현재 ${shownCount}명 표시 중`;
     el.textContent = text;
 }
@@ -920,8 +920,8 @@ async function deleteMember(userId, displayName) {
     }
 }
 
-// ========== 메일 수신거부 토글 ==========
-// 회원이 직접 끌 수 있게 메일 하단에 수신거부 링크가 붙지만, "메일로 요청해 온"
+// ========== 이메일 수신거부 토글 ==========
+// 회원이 직접 끌 수 있게 이메일 하단에 수신거부 링크가 붙지만, "이메일로 요청해 온"
 // 경우를 위해 관리자도 직접 켜고 끌 수 있어야 한다.
 //
 // 서버(admin_set_email_opt_out)가 is_admin() 으로 가드한다 — 화면 확인만으로는
@@ -929,8 +929,8 @@ async function deleteMember(userId, displayName) {
 async function toggleEmailOptOut(userId, value, displayName) {
     const who = displayName || '이 회원';
     const msg = value
-        ? `${who} 에게 앞으로 메일을 보내지 않습니다.\n\n회원 자격과 모임 신청 기록은 그대로 유지됩니다.`
-        : `${who} 에게 다시 메일을 보냅니다.`;
+        ? `${who} 에게 앞으로 이메일을 보내지 않습니다.\n\n회원 자격과 모임 신청 기록은 그대로 유지됩니다.`
+        : `${who} 에게 다시 이메일을 보냅니다.`;
     if (!confirm(msg)) return;
 
     try {
@@ -1217,7 +1217,7 @@ async function refreshEmailRecipientPreview() {
         const excluded = _lastExcludedOptOut > 0 ? `  (수신거부 ${_lastExcludedOptOut}명 제외)` : '';
 
         // 회원 명단에 없는 주소는 수신거부 토큰을 만들 수 없어 '여기를 눌러 수신거부'
-        // 링크가 붙지 않는다(메일 앱 버튼은 회신 주소로 대체된다).
+        // 링크가 붙지 않는다(이메일 앱 버튼은 회신 주소로 대체된다).
         // 보내기 전에 알려준다 — 예전엔 보낸 뒤에야 알 수 있었다.
         const memberEmails = new Set(
             allMembers.map(m => (m.email || '').trim().toLowerCase()).filter(Boolean));
@@ -1290,7 +1290,7 @@ async function sendTestEmail() {
             ? ` · 수신거부 링크 포함 ✓`
             : ` · ⚠️ 수신거부 링크 없음 (이 주소가 회원 명단에 없습니다)`;
         const docMsg = u.body_had_html_doc ? ' · 본문이 완성 HTML 문서 형식' : '';
-        setEmailStatus(`✅ 테스트 발송 완료 (성공 ${result.sent} / 실패 ${result.failed})${unsubMsg}${docMsg}. 본인 메일함을 확인하세요.`, 'success');
+        setEmailStatus(`✅ 테스트 발송 완료 (성공 ${result.sent} / 실패 ${result.failed})${unsubMsg}${docMsg}. 본인 이메일함을 확인하세요.`, 'success');
         loadEmailLogs();
     } catch (e) {
         setEmailStatus('❌ 발송 실패: ' + e.message, 'error');

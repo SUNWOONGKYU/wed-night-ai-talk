@@ -91,7 +91,7 @@
     }
     function openCommentForm(reviewId, parentId, toNick) {
         var host = $('cw-' + reviewId); if (!host) return;
-        host.innerHTML = '<div class="to">' + (parentId ? esc(toNick) + ' 님에게 답글' : '이 리뷰에 댓글') + ' — 확인 메일의 버튼을 누르면 게시됩니다</div>' +
+        host.innerHTML = '<div class="to">' + (parentId ? esc(toNick) + ' 님에게 답글' : '이 리뷰에 댓글') + ' — 확인 이메일의 버튼을 누르면 게시됩니다</div>' +
             '<input class="cw-nick" placeholder="닉네임" maxlength="20"><input class="cw-email" type="email" placeholder="이메일 주소 (공개되지 않습니다)"><textarea class="cw-body" maxlength="500" placeholder="내용 (2~500자)"></textarea>' +
             '<div class="hp" aria-hidden="true"><input class="cw-web" tabindex="-1" autocomplete="off"></div>' +
             '<div class="msg" hidden></div><div class="row"><button type="button" class="cw-send">올리기</button><button type="button" class="ghost cw-cancel">취소</button></div>';
@@ -101,7 +101,7 @@
             var msg = host.querySelector('.msg'); var b = this; b.disabled = true;
             try {
                 await api('/api/review-comments', { method: 'POST', body: { review: reviewId, parent: parentId || null, nick: host.querySelector('.cw-nick').value.trim(), email: host.querySelector('.cw-email').value.trim(), body: host.querySelector('.cw-body').value.trim(), website: host.querySelector('.cw-web').value } });
-                host.innerHTML = '<div class="msg ok">확인 메일을 보냈습니다. 메일의 버튼을 누르면 댓글이 게시됩니다.</div>';
+                host.innerHTML = '<div class="msg ok">확인 이메일을 보냈습니다. 이메일의 버튼을 누르면 댓글이 게시됩니다.</div>';
             } catch (e) { setMsg(msg, e.message); b.disabled = false; }
         });
     }
@@ -111,7 +111,7 @@
     function enterEditMode() {
         $('rv-form-title').textContent = '내 리뷰 고치기';
         $('rv-submit').textContent = '고친 내용으로 바꾸기';
-        $('rv-form-note').textContent = '리뷰를 남길 때 사용한 이메일을 적고 바꿀 내용만 채우세요. 확인 메일의 버튼을 누르면 게시된 리뷰가 고친 내용으로 바뀝니다(그 전까지는 지금 리뷰가 그대로 보입니다).';
+        $('rv-form-note').textContent = '리뷰를 남길 때 사용한 이메일을 적고 바꿀 내용만 채우세요. 확인 이메일의 버튼을 누르면 게시된 리뷰가 고친 내용으로 바뀝니다(그 전까지는 지금 리뷰가 그대로 보입니다).';
         $('rv-body').placeholder = '바꿀 내용 (비워 두면 지금 내용 그대로)';
         $('rv-nick').placeholder = '바꿀 닉네임 (비워 두면 그대로)';
         show($('rv-delete'), true);
@@ -132,10 +132,10 @@
                                       : { app: APP, nick: nick, email: email, body: body, stars: stars || null, website: $('rv-website').value };
             await api('/api/reviews', { method: 'POST', body: payload });
             show($('rv-form'), false); show($('rv-form-note'), false); show($('rv-sent'), true);
-            $('rv-sent-note').textContent = manageToken ? '메일의 버튼을 누르면 고친 내용으로 바뀝니다. 메일이 안 보이면 스팸함을 확인해 주세요.' : '메일의 버튼을 누르면 리뷰가 게시됩니다. 메일이 안 보이면 스팸함을 확인해 주세요.';
+            $('rv-sent-note').textContent = manageToken ? '이메일의 버튼을 누르면 고친 내용으로 바뀝니다. 이메일이 안 보이면 스팸함을 확인해 주세요.' : '이메일의 버튼을 누르면 리뷰가 게시됩니다. 이메일이 안 보이면 스팸함을 확인해 주세요.';
             if (manageToken) { manageToken = ''; history.replaceState(null, '', location.pathname); }
         } catch (ex) {
-            if (ex.data && ex.data.duplicate) { setMsg(err, ex.message + ' 아래 "내 리뷰 고치기·지우기"에서 확인 메일을 받으세요.'); $('manage').scrollIntoView({ behavior: 'smooth' }); }
+            if (ex.data && ex.data.duplicate) { setMsg(err, ex.message + ' 아래 "내 리뷰 고치기·지우기"에서 확인 이메일을 받으세요.'); $('manage').scrollIntoView({ behavior: 'smooth' }); }
             else setMsg(err, ex.message);
             btn.disabled = false;
         }
@@ -144,12 +144,12 @@
         var err = $('rv-error'); setMsg(err, '');
         var email = $('rv-email').value.trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '리뷰를 남길 때 사용한 이메일을 적어 주세요.'); $('rv-email').focus(); return; }
-        if (!window.confirm('리뷰를 지우면 댓글도 함께 보이지 않습니다. 확인 메일을 보낼까요?')) return;
+        if (!window.confirm('리뷰를 지우면 댓글도 함께 보이지 않습니다. 확인 이메일을 보낼까요?')) return;
         var b = $('rv-delete'); b.disabled = true;
         try {
             await api('/api/reviews', { method: 'POST', body: { action: 'delete', manage: manageToken, email: email } });
             show($('rv-form'), false); show($('rv-form-note'), false); show($('rv-sent'), true);
-            $('rv-sent-note').textContent = '메일의 버튼을 누르면 리뷰가 지워집니다.';
+            $('rv-sent-note').textContent = '이메일의 버튼을 누르면 리뷰가 지워집니다.';
             manageToken = ''; history.replaceState(null, '', location.pathname);
         } catch (ex) { setMsg(err, ex.message); b.disabled = false; }
     }
@@ -159,7 +159,7 @@
         var email = $('rv-manage-email').value.trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(msg, '이메일 주소를 확인해 주세요.'); return; }
         var b = $('rv-manage-btn'); b.disabled = true;
-        try { await api('/api/reviews', { method: 'POST', body: { action: 'manage', app: APP, email: email } }); setMsg(msg, '확인 메일을 보냈습니다. 메일의 버튼을 누르면 이 페이지에서 고치거나 지울 수 있습니다.', true); }
+        try { await api('/api/reviews', { method: 'POST', body: { action: 'manage', app: APP, email: email } }); setMsg(msg, '확인 이메일을 보냈습니다. 이메일의 버튼을 누르면 이 페이지에서 고치거나 지울 수 있습니다.', true); }
         catch (ex) { setMsg(msg, ex.message); }
         b.disabled = false;
     }

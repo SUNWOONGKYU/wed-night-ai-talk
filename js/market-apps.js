@@ -30,7 +30,7 @@ window.MARKET_APPS = [
     //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
-    delivery: { type: '패키지(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
+    delivery: { type: '패키지(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 이메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
     needs: ['Windows PC에 One MACS를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
@@ -43,7 +43,7 @@ window.MARKET_APPS = [
       share: '없음', deleteEmail: 'wksun999@hanmail.net', policy: '/privacy.html' },
     changelog: [   // 사용자 관점 문장 · 버전별 3줄 이내 (근거: 평가_APK완성도_R1~R5.md). 1.4.6 이하는 근거 문서가 없어 비워 둔다(추정 금지)
       { ver: '1.4.9', date: '2026-09-21', notes: ['인터넷이 다시 연결되면 자동으로 다시 접속합니다', '핸드폰의 글꼴 크기 설정을 그대로 따릅니다', '화면 읽기 도구에서 버튼 이름을 읽어 줍니다'] },
-      { ver: '1.4.8', date: '2026-09-21', notes: ['설정에 "문제 신고"(오류 기록을 메일로 보내기)를 넣었습니다', '설치 안내 문장을 더 쉽게 고쳤습니다', '대화창의 긴급 정지 단추를 맨 앞으로, 탭 단추를 더 크게'] },
+      { ver: '1.4.8', date: '2026-09-21', notes: ['설정에 "문제 신고"(오류 기록을 이메일로 보내기)를 넣었습니다', '설치 안내 문장을 더 쉽게 고쳤습니다', '대화창의 긴급 정지 단추를 맨 앞으로, 탭 단추를 더 크게'] },
       { ver: '1.4.7', date: '2026-09-21', notes: ['PIN 이 틀리면 바로 알려 주고 다시 입력할 수 있습니다', 'PC 가 응답하지 않으면 20초 뒤 안내와 [다시 연결] 단추가 나옵니다', 'PIN 을 암호화해 저장하고, 뒤로가기로 이전 단계로 갈 수 있습니다'] } ],
     lang: '한국어', iap: false,
     released: null,                                   // 출시 후 'YYYY-MM-DD'. null + 예약 모드 → "출시 예정"
@@ -68,19 +68,16 @@ window.MARKET_APPS = [
     seller: { name: '파인더월드', link: '#seller' },
     reportEmail: 'wksun999@hanmail.net' },
   { id: 'StockTradeAutoSystem', name: '주식 매매 자동화 시스템 (STAS)', fullname: 'Stock Trading Auto System',
-    desc: '국내 주식선물 290종목을 매일 아침 훑어 오늘 살펴볼 후보를 고르고, 진입할 자리가 오면 텔레그램으로 물어봅니다.',
-    sub: '스스로 사고팔지 않습니다. 사람이 승인한 주문만 대신 냅니다. 규칙은 전부 꺼진 채로 나가고, 자기 규칙을 넣어 사용합니다.',
+    desc: '국내 주식선물 290종목을 대상으로, 사전에 정해진 신호 규칙과 운영 규칙에 따라 매매를 자동화하는 PC 프로그램입니다.',
+    sub: '매일 장 시작 전 오늘의 매매 종목 후보를 선정하고, 장중에 매수·매도 타이밍 신호가 포착되면 텔레그램을 통해 승인을 받아 주문이 이루어집니다. 보유 종목의 손절과 이익 확정은 운영 규칙에 따라 자동으로 처리됩니다. 이 시스템은 모의투자용이며, 이를 참고해 자신만의 신호 규칙과 운영 규칙을 만들어 사용하시기 바랍니다.',
     cat: '트레이딩', launch: 'config',
     price: 5500, tags: ['Windows PC', '증권사 계좌 필요'],
     icon: '선', color: 'linear-gradient(135deg,#1FB98A,#2E3A5F)',
     url: '/market/StockTradeAutoSystem',
     age: '전체',
-    delivery: { type: '내려받는 파일(PC 설치본)', note: '메일로 따로 보내드립니다. 자기 폴더에 풀고 One MACS에 연결하면 모바일 앱에서 열립니다' },
-    needs: ['Windows PC (켜 두어야 합니다)', 'Python', '증권사 계좌와 API 신청 — 선물옵션 거래 자격이 필요합니다', '텔레그램 (승인을 주고받습니다)'],
-    dataSafety: {
-      collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],
-      onDevice: ['증권사 열쇠와 계좌 번호(내 PC 안에만)', '신호와 거래 기록'],
-      share: '없음', deleteEmail: 'wksun999@hanmail.net', policy: '/privacy.html' },
+    delivery: { type: '내려받는 파일(PC 설치본)', note: '구매 확인 이메일의 「패키지 내려받기」 버튼으로 받습니다.' },
+    needs: ['Windows PC', 'Python 3.11 이상', 'Claude Code', '텔레그램', '한국투자증권 계좌와 API 키'],
+    dataSafety: { summary: '판매자는 이메일 주소만 받으며, 다른 곳에 넘기지 않습니다.', policy: '/privacy.html' },
     lang: '한국어', iap: false,
     released: null,
     seller: { name: '파인더월드', link: '#seller' },

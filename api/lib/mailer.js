@@ -1,6 +1,6 @@
 /**
- * Gmail SMTP 발송 — 구매 완료(다운로드 링크 + 라이선스 키) 메일 · 출시 알림 예약 완료 메일 · 리뷰/댓글 확인 메일 · 신고 알림
- * 출처: 기존 판매 시스템 confirm-payment.js / send-download.js 의 메일 부분을 One MACS · 원맥스 문안으로 교체
+ * Gmail SMTP 발송 — 구매 완료(다운로드 링크 + 라이선스 키) 이메일 · 출시 알림 예약 완료 이메일 · 리뷰/댓글 확인 이메일 · 신고 알림
+ * 출처: 기존 판매 시스템 confirm-payment.js / send-download.js 의 이메일 부분을 One MACS · 원맥스 문안으로 교체
  *
  * 환경변수: GMAIL_USER, GMAIL_APP_PASSWORD (Google 계정 > 보안 > 앱 비밀번호 16자리)
  */
@@ -31,12 +31,12 @@ function safeName(v) {
 }
 
 /**
- * 구매 완료 메일 HTML
+ * 구매 완료 이메일 HTML
  * @param {{name, email, orderId, amount, paymentMethod, licenseKey, downloadLink, downloads, productName, consoleGuideLink, expiryHours, maxDownloads, renewal, launch}} p
  *   downloads: [{id, label, name, link}] — 한 주문으로 받는 상품이 여럿일 때. 상품마다 「패키지 내려받기」 버튼과
  *              그 상품의 「구매 후 설치까지 5단계 안내」(문안 정본 js/install-steps.js)가 붙는다.
  *              없으면 downloadLink 하나 = One MACS 로 본다(옛 호출 호환: confirm-payment·renew·notify-reservations).
- *   launch: true 면 출시 알림 예약자에게 보내는 출시 첫날 메일 (scripts/notify-reservations.js) — 제목·내역 블록이 바뀐다
+ *   launch: true 면 출시 알림 예약자에게 보내는 출시 첫날 이메일 (scripts/notify-reservations.js) — 제목·내역 블록이 바뀐다
  */
 function purchaseEmailHtml(p) {
     const name = safeName(p.name);
@@ -119,7 +119,7 @@ ${isOneMacs ? `
 </div>`;
 }
 
-/** 구매 완료(또는 재발급) 메일 발송 */
+/** 구매 완료(또는 재발급) 이메일 발송 */
 async function sendPurchaseEmail(p) {
     const t = transporter();
     // One MACS 가 아닌 상품 이메일에는 One MACS 이름을 달지 않는다
@@ -139,7 +139,7 @@ async function sendPurchaseEmail(p) {
 }
 
 /**
- * 출시 알림 예약 완료 메일 HTML (api/reserve.js)
+ * 출시 알림 예약 완료 이메일 HTML (api/reserve.js)
  * @param {{name, email, reserveId, consoleGuideLink}} p
  */
 function reservationEmailHtml(p) {
@@ -172,12 +172,12 @@ function reservationEmailHtml(p) {
   </div>
 
   <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;">
-    문의: wksun999@hanmail.net · 이 메일은 출시 알림 예약 확인을 위한 자동 발송 메일입니다.
+    문의: wksun999@hanmail.net · 이 이메일은 출시 알림 예약 확인을 위한 자동 발송 이메일입니다.
   </div>
 </div>`;
 }
 
-/** 출시 알림 예약 완료 메일 발송 */
+/** 출시 알림 예약 완료 이메일 발송 */
 async function sendReservationEmail(p) {
     const t = transporter();
     await t.sendMail({
@@ -189,7 +189,7 @@ async function sendReservationEmail(p) {
 }
 
 /**
- * 리뷰·댓글 확인 메일 (api/reviews.js · api/review-comments.js)
+ * 리뷰·댓글 확인 이메일 (api/reviews.js · api/review-comments.js)
  * @param {{email, nick, appName, kind:'review'|'review_edit'|'review_delete'|'comment'|'review_manage', link, preview}} p
  */
 const VERIFY_COPY = {
@@ -214,7 +214,7 @@ function reviewVerifyHtml(p) {
   </div>
   ${p.preview ? `<div style="background:#F6F4EF;padding:16px 18px;border-radius:12px;font-size:14px;color:#4A5670;line-height:1.7;white-space:pre-wrap;">${esc(p.preview)}</div>` : ''}
   <div style="font-size:12px;color:#8A8F9E;line-height:1.7;border-top:1px solid #EAEAEC;padding-top:14px;margin-top:22px;">
-    본인이 작성한 것이 아니라면 이 메일을 무시하세요 — 아무것도 게시되지 않습니다. 이메일 주소는 확인 용도로만 사용하고 저장하지 않습니다. 문의: ${esc(supportEmail())}
+    본인이 작성한 것이 아니라면 이 이메일을 무시하세요 — 아무것도 게시되지 않습니다. 이메일 주소는 확인 용도로만 사용하고 저장하지 않습니다. 문의: ${esc(supportEmail())}
   </div>
 </div>`;
 }
@@ -248,7 +248,7 @@ async function sendReportAlertEmail(p) {
 
 
 /**
- * 출시 통지 — 결제 안내 메일 (scripts/notify-reservers-payment.js, PO 결정 2026-09-22 B)
+ * 출시 통지 — 결제 안내 이메일 (scripts/notify-reservers-payment.js, PO 결정 2026-09-22 B)
  * 다운로드 링크는 넣지 않는다. 결제 후 판매 페이지에서 이메일을 입력하면 기존 흐름(confirm-payment)이 링크를 보낸다.
  * @param {{name, email, reserveId, salesLink, installLink, pay:{price, kakaopayLink, bank:{name,account,holder}, expiryHours, maxDownloads}}} p
  */
@@ -290,7 +290,7 @@ function launchPaymentEmailHtml(p) {
   </div>
 
   <p style="color:#8A8F9E;font-size:12px;line-height:1.7;margin:0;text-align:center;">
-    문의: ${esc(supportEmail() || 'wksun999@hanmail.net')} · 이 메일은 출시 알림 예약에 따라 한 번만 보내는 안내 메일입니다.
+    문의: ${esc(supportEmail() || 'wksun999@hanmail.net')} · 이 이메일은 출시 알림 예약에 따라 한 번만 보내는 안내 이메일입니다.
   </p>
 </div>`;
 }

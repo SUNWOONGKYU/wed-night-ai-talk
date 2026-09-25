@@ -38,7 +38,7 @@ if (_supabase) {
 // ========== Auth Helpers ==========
 var Auth = {
     async signUp(email, password, metadata) {
-        // emailRedirectTo: 인증 메일의 링크를 눌렀을 때 돌아올 주소.
+        // emailRedirectTo: 인증 이메일의 링크를 눌렀을 때 돌아올 주소.
         // origin만 사용 (signInWithGoogle과 동일 규칙 — Redirect URL 허용목록 매칭 단순화)
         var { data, error } = await _supabase.auth.signUp({
             email,
@@ -421,7 +421,7 @@ var DB = {
         return data || [];
     },
 
-    // 메일 수신거부 켜기/끄기 (관리자). 회원 본인은 메일 하단 링크로 직접 처리한다.
+    // 이메일 수신거부 켜기/끄기 (관리자). 회원 본인은 이메일 하단 링크로 직접 처리한다.
     async setEmailOptOut(userId, value) {
         var { data, error } = await _supabase.rpc('admin_set_email_opt_out', {
             p_id: userId,

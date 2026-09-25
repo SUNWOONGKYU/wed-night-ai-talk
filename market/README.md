@@ -22,7 +22,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 툴에 공통으로 적용�
 | CLI 호환 안내(앱이 읽음) | `/market/onemacs/compat.json` | `market/onemacs/compat.json` (JSON · CORS *) |
 
 - 새 툴을 올릴 때도 같은 모양: `/market/<앱id>` + `/market/<앱id>/install` + `/market/<앱id>/<파일>`.
-- 부속 페이지 진입은 **그 툴의 상세 페이지 버튼·구매/예약 완료 화면·메일 링크**에서만. 전역 nav·홈 카드에는 넣지 않는다.
+- 부속 페이지 진입은 **그 툴의 상세 페이지 버튼·구매/예약 완료 화면·이메일 링크**에서만. 전역 nav·홈 카드에는 넣지 않는다.
 - 부속 페이지 상단에는 경로 표시 `AI 툴 마켓 › <툴 이름> › <페이지 이름>` 를 두고, `canonical` 은 정식 URL 로 쓴다. sitemap 에도 정식 URL 만 올린다.
 - 파일 자산(md·zip)은 저장소 위치를 옮기지 않고 `vercel.json` 의 `rewrites` 로 정식 경로에 연결한다(헤더 — text/plain·attachment — 도 정식 경로에 같이 선언).
 
@@ -30,7 +30,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 툴에 공통으로 적용�
 
 사람이 손으로 치는 짧은 주소(예 `waat.community/console`)는 둘 수 있지만 **301 리다이렉트로만** 둔다. 별칭은 정식 URL 이 아니다:
 
-- 사이트 메뉴·sitemap·canonical·메일·문서·상세 페이지의 링크는 항상 정식 하위 경로를 쓴다.
+- 사이트 메뉴·sitemap·canonical·이메일·문서·상세 페이지의 링크는 항상 정식 하위 경로를 쓴다.
 - 별칭은 이미 모바일 앱·문서·카탈로그에 박힌 주소가 깨지지 않게 하기 위한 것 — 지우지 않고 유지한다(원맥스: 모바일 앱 v1.4.x 문자열·설치 지시문·카탈로그에 `/console` 이 박혀 있음).
 - 별칭 아래의 파일 경로(`/console/install.md` 등)는 그대로 200 으로 계속 서빙한다(모바일 앱과 Claude Code 가 그 주소를 읽는다). 정식 경로도 같은 파일로 200.
 
@@ -55,7 +55,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 툴에 공통으로 적용�
 
 ## 5. 지원 창구 — FAQ · compat.json · "원맥스 진단해줘" · 알아 두실 점
 
-지원 창구는 **세 가지뿐**(PO 2026-09-21): ① PC의 Claude Code 에 "원맥스 진단해줘" ② `/market/onemacs/faq` ③ 모바일 앱의 문제 신고 메일.
+지원 창구는 **세 가지뿐**(PO 2026-09-21): ① PC의 Claude Code 에 "원맥스 진단해줘" ② `/market/onemacs/faq` ③ 모바일 앱의 문제 신고 이메일.
 판매 페이지에는 지원 안내·지원 채널 문구를 넣지 않는다. 별도 채팅방 안내나 "N일 안에 답합니다" 같은 응답 기한 약속 문구는 어디에도 쓰지 않는다.
 
 - `/market/onemacs/faq`: 자주 오는 문제 10개. 각 답 끝에 "그래도 안 되면 PC의 Claude Code 에 '원맥스 진단해줘'". 끝에 지원 창구 3가지. 진단 지시문(`원맥스_진단.md`)은 배포판에 동봉(배포판 담당).
@@ -99,7 +99,7 @@ PO 확정 2026-09-21. 마켓에 올라오는 모든 툴에 공통으로 적용�
 
 - 페이지 `/market/<앱id>/reviews`(`market/<앱id>/reviews.html`, `body[data-app]`·`data-app-name`), `css/reviews.css`, `js/reviews.js`. 판매 페이지 상단 메뉴 "상세 보기 · 리뷰(N)"(`.tabs`, market.css).
 - 저장: Supabase WAAT 프로젝트 `market_reviews` / `market_comments` / `market_verify_tokens` / `market_reports` / `market_rate_hits` + view `market_review_summary` (`supabase/migrations/20260921010000_market_reviews.sql`). RLS 켜고 정책 없음 → Vercel 함수가 `SUPABASE_SERVICE_KEY` 로만 접근(`api/lib/supabase.js`). 구글시트 사용 안 함.
-- API: `api/reviews.js`(목록·요약·생성·확인·내 리뷰 고치기/지우기) · `api/review-comments.js`(댓글·답글 1단계) · `api/review-report.js`(신고 3건 자동 숨김 + 판매자 메일) · `api/review-admin.js`(`X-Admin-Key` = `REVIEW_ADMIN_KEY`: 숨김/복구/지우기/판매자 답글). 공통 `api/lib/reviews.js`(검증·마스킹·이메일 해시·레이트리밋 DB 정본·토큰).
+- API: `api/reviews.js`(목록·요약·생성·확인·내 리뷰 고치기/지우기) · `api/review-comments.js`(댓글·답글 1단계) · `api/review-report.js`(신고 3건 자동 숨김 + 판매자 이메일) · `api/review-admin.js`(`X-Admin-Key` = `REVIEW_ADMIN_KEY`: 숨김/복구/지우기/판매자 답글). 공통 `api/lib/reviews.js`(검증·마스킹·이메일 해시·레이트리밋 DB 정본·토큰).
 - 규칙: 이메일 확인 링크(24시간 1회) 클릭 시 게시 · 이메일 원문 저장 안 함(`REVIEW_HASH_SALT` 해시) · 같은 이메일은 툴당 리뷰 1개 · 수정은 `pending_*` 에 두었다가 확인 시 교체(게시본 유지) · 삭제 = `deleted` + 댓글 숨김 · 판매자 답글 닉네임 "파인더월드" + 판매자 배지 · 링크/이메일/전화 마스킹 · 같은 IP 1분 3건 · honeypot · 관리 키는 sessionStorage 만.
 - **가짜 리뷰 금지**: 시드·테스트 리뷰를 운영 툴(app_code `onemacs`)에 넣지 않는다. 테스트는 app_code `test` 로만 하고 끝나면 지운다. 캡처도 빈 상태·실제 데이터만.
 - env: `SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `REVIEW_HASH_SALT` · `REVIEW_ADMIN_KEY` · `SELLER_NOTIFY_EMAIL`(없으면 SUPPORT_EMAIL). 개인정보처리방침(privacy.html 1절)에 리뷰 항목 명시.

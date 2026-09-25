@@ -1,7 +1,7 @@
 /**
  * POST /api/confirm-payment — 토스페이먼츠 카드 결제 승인 (선택 기능)
  * TOSS_CLIENT_KEY / TOSS_SECRET_KEY 가 있을 때만 화면에 카드 결제가 노출된다.
- * 승인 성공 → 라이선스 키·JWT → Sheets 저장(status PAID) → 메일 발송
+ * 승인 성공 → 라이선스 키·JWT → Sheets 저장(status PAID) → 이메일 발송
  *
  * 출처: 기존 판매 시스템 api/confirm-payment.js (알림톡 제거, One MACS · 원맥스 문안)
  * body: { paymentKey, orderId, amount, email?, name? }

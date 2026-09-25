@@ -1,6 +1,6 @@
 /**
  * POST /api/review-report {kind:'review'|'comment', id, reason}
- * 같은 IP 는 같은 대상에 1회. report_count 3 이상이면 자동 숨김(status hidden) + 판매자 알림 메일. 복구는 관리 모드(/api/review-admin).
+ * 같은 IP 는 같은 대상에 1회. report_count 3 이상이면 자동 숨김(status hidden) + 판매자 알림 이메일. 복구는 관리 모드(/api/review-admin).
  */
 
 const db = require('./lib/supabase.js');
@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
                 const reasons = (await db.select('market_reports', `select=reason&kind=eq.${kind}&target_id=eq.${id}`)).data.map(x => R.REASONS[x.reason] || x.reason).join(', ');
                 await sendReportAlertEmail({ to: R.sellerNotifyEmail(), kind, appName: app === 'onemacs' ? m.PRODUCT.name : app, nick: row.nick, body: row.body, reasons,
                                              adminLink: `${m.baseUrl(req)}/market/${encodeURIComponent(app || 'onemacs')}/reviews?admin=1` });
-            } catch (e) { console.error('신고 알림 메일 실패:', e && e.message); }
+            } catch (e) { console.error('신고 알림 이메일 실패:', e && e.message); }
         }
         return res.status(200).json({ success: true, hidden: count >= AUTO_HIDE });
     } catch (error) {

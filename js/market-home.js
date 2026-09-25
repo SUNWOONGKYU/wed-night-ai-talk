@@ -1,6 +1,6 @@
 // ========== WAAT AI 툴 마켓 홈 (market.html) — 툴 목록 렌더 (목록 하나, 툴마다 배너형) ==========
 // 데이터: js/market-apps.js (window.MARKET_APPS / window.MARKET_CATS). CSP 가 인라인 스크립트·onclick 을 막으므로 전부 여기서 이벤트를 단다.
-// 옛 링크 호환: /market#buy · /market#renew · /market#faq (카탈로그·메일·콘솔 페이지) → 상품 상세 /market/onemacs 로 보낸다.
+// 옛 링크 호환: /market#buy · /market#renew · /market#faq (카탈로그·이메일·콘솔 페이지) → 상품 상세 /market/onemacs 로 보낸다.
 
 (function () {
     'use strict';

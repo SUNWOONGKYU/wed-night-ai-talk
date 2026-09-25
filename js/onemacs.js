@@ -75,7 +75,7 @@
         var err = $('rs-error');
         setMsg(err, '');
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setMsg(err, '올바른 이메일 주소를 입력해 주세요.'); $('rs-email').focus(); return; }
-        if (!agree) { setMsg(err, '출시 안내 메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
+        if (!agree) { setMsg(err, '출시 안내 이메일 수신에 동의해 주세요.'); $('rs-agree').focus(); return; }
 
         var btn = $('rs-btn');
         var orig = btn.textContent;
@@ -93,10 +93,10 @@
             $('rs-done-email').textContent = data.email || email;
             if (data.duplicate) {
                 $('rs-done-title').textContent = '이미 예약된 이메일입니다';
-                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
+                $('rs-done-note').textContent = '예약번호는 처음 예약할 때 보내드린 이메일에도 있습니다. 출시 첫날 같은 주소로 알려드립니다.';
             } else {
                 $('rs-done-title').textContent = '예약 완료';
-                $('rs-done-note').textContent = '예약 확인 메일을 보내드렸습니다. 메일이 안 보이면 스팸함을 확인해 주세요.';
+                $('rs-done-note').textContent = '예약 확인 이메일을 보내드렸습니다. 이메일이 안 보이면 스팸함을 확인해 주세요.';
             }
             rsStep('rs-step-done');
             var sec = $('reserve');

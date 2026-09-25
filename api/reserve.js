@@ -5,7 +5,7 @@
  * 보고서 작성 AI 에이전트를 따로 예약할 수 있으므로, 중복 판정도 이메일+상품으로 본다.
  *   이메일 형식·수신 동의 검증 → 같은 이메일이 Reservations 시트에 있으면 기존 예약번호 반환(duplicate: true)
  *   → 없으면 예약번호 RS-YYYYMMDD-XXXX 발급 → Reservations 시트 기록(status RESERVED)
- *   → 예약 완료 메일(Gmail) → EmailLogs 기록(paymentMethod 'reserve')
+ *   → 예약 완료 이메일(Gmail) → EmailLogs 기록(paymentMethod 'reserve')
  *
  * 출시 첫날 발송은 scripts/notify-reservations.js (PO 지시 때만 실행).
  * 레이트리밋: 같은 IP 분당 5회 (인스턴스 메모리 — 서버리스라 완전하진 않지만 단순 남용은 막는다)
@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ success: false, error: '올바른 이메일 주소를 입력해 주세요.' });
     }
     if (!agree) {
-        return res.status(400).json({ success: false, error: '출시 안내 메일 수신에 동의해 주세요.' });
+        return res.status(400).json({ success: false, error: '출시 안내 이메일 수신에 동의해 주세요.' });
     }
     if (!product) {
         return res.status(400).json({ success: false, error: '알 수 없는 상품입니다.' });
@@ -76,8 +76,8 @@ module.exports = async function handler(req, res) {
             await sendReservationEmail({ name, email, reserveId, productName: product.name, consoleGuideLink: `${m.baseUrl(req)}${product.guidePath}` });
             await saveEmailLog({ paymentMethod: 'reserve', email, name, success: true });
         } catch (mailErr) {
-            // 시트에는 이미 기록됨 — 메일 실패는 로그만 남기고 예약은 성공으로 처리(출시 첫날 발송은 시트 기준)
-            console.error('reserve 메일 실패:', mailErr && mailErr.message);
+            // 시트에는 이미 기록됨 — 이메일 실패는 로그만 남기고 예약은 성공으로 처리(출시 첫날 발송은 시트 기준)
+            console.error('reserve 이메일 실패:', mailErr && mailErr.message);
             try { await saveEmailLog({ paymentMethod: 'reserve', email, name, success: false, errorMessage: mailErr && mailErr.message }); } catch (e) { /* ignore */ }
         }
 

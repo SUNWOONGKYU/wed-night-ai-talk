@@ -1,12 +1,12 @@
 /**
  * 출시 첫날 도구 — 출시 알림 예약자(Reservations 시트 status=RESERVED) 전원에게
- * 다운로드 링크(JWT, send-download 와 같은 토큰) + 라이선스 키 메일을 일괄 발송하고
+ * 다운로드 링크(JWT, send-download 와 같은 토큰) + 라이선스 키 이메일을 일괄 발송하고
  * Reservations 에 notifiedAt · status=NOTIFIED 를 기록한다.
  *
  * ★ 실행은 PO 지시가 있을 때만. 실행 전 Vercel 의 PRODUCT_MODE 를 sale 로 바꾸고 APK_DOWNLOAD_URL 이 살아 있는지 확인한다.
  *
  * 사용법 (저장소 루트에서):
- *   npx vercel env pull .env.local          # 시트·메일·JWT 환경변수를 임시로 받는다 (검증 후 .env.local 삭제)
+ *   npx vercel env pull .env.local          # 시트·이메일·JWT 환경변수를 임시로 받는다 (검증 후 .env.local 삭제)
  *   node scripts/notify-reservations.js --dry-run   # 발송 없이 대상 목록만 출력
  *   node scripts/notify-reservations.js             # 실제 발송 + 시트 갱신
  *   node scripts/notify-reservations.js --only=a@b.com   # 특정 이메일 1명만(테스트용)
@@ -16,7 +16,7 @@
  *   예약자마다 Orders 시트에 행을 하나 만든다 (orderId = 예약번호 RS-..., status RESERVATION, paymentMethod reserve, amount 0,
  *   licenseKey · downloadToken · product). /api/download/[token] 과 링크 재발급(/api/renew-download-link: 주문번호 자리에 예약번호)이
  *   그 행을 보고 동작하므로, 예약자도 구매자와 같은 다운로드·재발급 경로를 쓴다.
- *   메일은 mailer.sendPurchaseEmail({ launch: true }) — 제목 "[One MACS · 원맥스] 출시되었습니다 — 다운로드 링크와 라이선스 키".
+ *   이메일은 mailer.sendPurchaseEmail({ launch: true }) — 제목 "[One MACS · 원맥스] 출시되었습니다 — 다운로드 링크와 라이선스 키".
  *   이미 NOTIFIED 인 행은 건너뛴다(재실행 안전). 한 명 실패해도 다음 사람으로 계속 가고 끝에 실패 목록을 출력한다.
  *
  * 환경변수: GOOGLE_SERVICE_ACCOUNT, SPREADSHEET_ID, GMAIL_USER, GMAIL_APP_PASSWORD, JWT_SECRET, BASE_URL,

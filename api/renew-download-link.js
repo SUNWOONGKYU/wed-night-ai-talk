@@ -1,6 +1,6 @@
 /**
  * POST /api/renew-download-link
- * 링크 만료·횟수 초과 시 구매자가 주문번호 + 이메일로 재발급 요청 → 새 JWT → 시트 갱신 → 메일 재발송
+ * 링크 만료·횟수 초과 시 구매자가 주문번호 + 이메일로 재발급 요청 → 새 JWT → 시트 갱신 → 이메일 재발송
  *
  * 출처: 기존 판매 시스템 api/renew-download-link.js (알림톡 부분 제거, 이메일 필수로 강화)
  * body: { orderId, email }
