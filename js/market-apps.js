@@ -31,7 +31,7 @@ window.MARKET_APPS = [
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
     delivery: { type: '패키지(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 이메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
-    needs: ['Windows PC에 One MACS를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
+    needs: ['Windows PC', 'Node.js', 'Claude Code (필수)', 'Codex·Antigravity·Grok (선택)', 'Vercel 계정 (Jev 판단 자문용, 필수)', '안드로이드 핸드폰 또는 브라우저'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
       { name: '네트워크 상태', why: '인터넷이 다시 연결되면 자동으로 다시 접속합니다' },
