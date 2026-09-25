@@ -22,7 +22,7 @@
             unzip: '그대로 「압축 풀기」를 누르십시오. 설치할 때 `C:\\OneMACS` 폴더가 저절로 만들어집니다.',
             cmd: 'One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고 그대로 수행해서 설치해줘.',
             login: '로그인은 Claude Code가 대신하지 않습니다. 물어보면 본인이 직접 하십시오.',
-            done: '마지막에 One MACS 연결 코드(영문과 숫자 8자리)가 나옵니다. 휴대폰에서 One MACS 모바일 앱을 열고 이 코드를 넣으면 PC와 연결됩니다.'
+            done: '마지막에 One MACS 연결 코드(영문과 숫자 8자리)가 나옵니다. 모바일 기기에서 One MACS 모바일 앱을 열고 이 코드를 넣으면 PC와 연결됩니다.'
         },
         StockTradeAutoSystem: {
             unzip: '풀 곳에 `C:\\`를 적고 「압축 풀기」를 누르십시오. `C:\\StockTradeAutoSystem` 폴더가 생깁니다.',

@@ -18,7 +18,7 @@
 //              데이터는 모드와 무관하게 두고, 렌더(market-home.js)가 mode 에 따라 배지·버튼만 바꾼다
 window.MARKET_APPS = [
   { id: 'onemacs', name: 'One MACS · 원맥스', fullname: 'One-stop Multi AI-CLI Console System',
-    desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 핸드폰에서 AI 4대장 CLI에게 작업을 시킵니다.',
+    desc: '여러 PC에서 진행 중인 프로젝트를 한곳에 모아 놓고, 모바일 기기에서 AI 4대장 CLI에게 작업을 시킵니다.',
     sub: 'Claude Code를 중심으로 Codex·Antigravity·Grok CLI가 한 팀으로 구성되어 협업합니다.',
     cat: 'AI 협업 시스템', featured: true, launch: 'config',
     price: 9900, tags: ['Android', 'Claude Code 필요'],
@@ -30,8 +30,8 @@ window.MARKET_APPS = [
     //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
-    delivery: { type: '패키지(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 이메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
-    needs: ['Windows PC', 'Node.js', 'Claude Code (필수)', 'Codex·Antigravity·Grok (선택)', 'Vercel 계정 (Jev 판단 자문용, 필수)', '안드로이드 핸드폰 또는 브라우저'],
+    delivery: { type: '패키지(PC 설치본)에 포함', note: 'PC에 설치한 뒤 모바일 기기 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 이메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
+    needs: ['Windows PC', 'Node.js', 'Claude Code (필수)', 'Codex·Antigravity·Grok (선택)', 'Vercel 계정 (Jev 판단 자문용, 필수)', '안드로이드 기기 또는 브라우저'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
       { name: '네트워크 상태', why: '인터넷이 다시 연결되면 자동으로 다시 접속합니다' },
