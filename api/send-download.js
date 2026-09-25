@@ -21,7 +21,12 @@ const m = require('./lib/market.js');
 const ISSUER_URL = 'https://onemacs-issuer.consolesystem.workers.dev/v1/market/order';
 
 /** 주소 분양 서버 통지. 실패는 기록만 하고 넘어간다 — 결제 흐름을 막지 않는다 */
+// 분양 서버가 아는 상품 이름. 주식 매매 자동화 시스템은 One MACS 연결을 쓰지 않으므로 알리지 않는다.
+const ISSUER_PRODUCT = { onemacs: 'onemacs', ReportWritingAgent: 'report-agent' };
+
 async function notifyIssuer({ orderId, licenseKey, productId }) {
+    const product = ISSUER_PRODUCT[productId];
+    if (!product) return;
     const key = m.clean(process.env.MARKET_KEY);
     if (!key) { console.warn('MARKET_KEY 없음 — 주소 권리 등록을 건너뜁니다:', orderId); return; }
     try {
@@ -33,7 +38,8 @@ async function notifyIssuer({ orderId, licenseKey, productId }) {
                 // 기본 신분으로 부르면 클라우드플레어가 막을 수 있다(1010)
                 'User-Agent': 'WAAT-Market/1.0 (+https://www.waat.community)'
             },
-            body: JSON.stringify({ order_id: orderId, license: licenseKey, product: productId })
+            // 2026-09-25 HQ: 필드 이름 license → code (One MACS 연결 코드, 영문 2 + 숫자 6)
+            body: JSON.stringify({ order_id: orderId, code: licenseKey, product })
         });
         if (!r.ok) console.error('주소 권리 등록 실패', r.status, (await r.text()).slice(0, 200), orderId);
     } catch (e) {
