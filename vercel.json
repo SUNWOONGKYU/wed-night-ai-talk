@@ -308,6 +308,11 @@
   },
   "redirects": [
     {
+      "source": "/console/:file(.*.zip)",
+      "destination": "/market",
+      "statusCode": 302
+    },
+    {
       "source": "/console",
       "destination": "/market/onemacs/install",
       "statusCode": 301

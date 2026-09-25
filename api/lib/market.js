@@ -36,7 +36,7 @@ const PRODUCTS = {
         id: 'onemacs',
         code: 'console_system',
         name: 'One MACS · 원맥스',
-        category: '콘솔',
+        category: 'AI 협업 시스템',
         fileLabel: 'One MACS 배포판 (PC 설치본)',
         guidePath: '/market/onemacs/install',
         /** 시트 product 열(P)에 쓰는 값. env PRODUCT_NAME 이 있으면 그 값 그대로 */
