@@ -1,5 +1,5 @@
 /**
- * /api/reviews — 앱마켓 리뷰 (앱 공통, app_code 기준)
+ * /api/reviews — AI 툴 마켓 리뷰 (툴 공통, app_code 기준)
  *   GET  ?app=onemacs&sort=new|stars&page=1     published 리뷰 목록(20개) + 요약(평균·분포) + 댓글 수
  *   GET  ?app=onemacs&summary=1                 요약만 (홈 카드) · 60초 캐시
  *   GET  ?verify=<token>                        확인 링크: 게시 / 수정본 교체 / 삭제 / 내 리뷰 관리 진입 → 302 리뷰 페이지
@@ -53,7 +53,7 @@ async function handleGet(req, res) {
     const q = req.query || {};
     if (q.verify) return handleVerify(req, res, String(q.verify));
     const app = String(q.app || '').trim();
-    if (!R.validApp(app)) return res.status(400).json({ success: false, error: '어느 앱의 리뷰인지 알 수 없습니다.' });
+    if (!R.validApp(app)) return res.status(400).json({ success: false, error: '어느 툴의 리뷰인지 알 수 없습니다.' });
     if (q.summary) {
         res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
         return res.status(200).json(Object.assign({ success: true }, await summary(app)));
@@ -122,7 +122,7 @@ async function handlePost(req, res) {
 
     const app = String(b.app || '').trim();
     const email = String(b.email || '').trim();
-    if (!R.validApp(app)) return res.status(400).json({ success: false, error: '어느 앱의 리뷰인지 알 수 없습니다.' });
+    if (!R.validApp(app)) return res.status(400).json({ success: false, error: '어느 툴의 리뷰인지 알 수 없습니다.' });
     if (!R.isValidEmail(email)) return res.status(400).json({ success: false, error: '이메일 주소를 확인해 주세요.' });
     const eh = R.emailHash(email);
     const existing = (await db.select('market_reviews', `select=*&app_code=eq.${app}&email_hash=eq.${eh}&limit=1`)).data[0];

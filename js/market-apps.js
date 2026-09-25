@@ -1,4 +1,4 @@
-// ========== WAAT 앱마켓 — 상품 목록 ==========
+// ========== WAAT AI 툴 마켓 — 상품 목록 ==========
 // 여기에 한 줄(객체 하나) 추가하면 /market 홈에 카드가 생긴다. 렌더는 js/market-home.js.
 //   id       : 고유 키 (URL 슬러그와 맞춘다)
 //   name     : 이름(브랜드 표기 규칙: 'One MACS · 원맥스' 슬래시)
@@ -10,9 +10,9 @@
 //   tags     : 카드 아래 작은 배지
 //   bundle   : 포함 구성(배열). 렌더에서 '포함 구성: A · B' 한 줄
 //   icon/color : 아이콘 글자 / 배경
-//   seller   : { name, link } — 카드에 '판매자: name' 로 표시, 상세에서는 link(#seller 법정 표기 블록)로 연결. 열린 장터라 앱마다 적는다
+//   seller   : { name, link } — 카드에 '판매자: name' 로 표시, 상세에서는 link(#seller 법정 표기 블록)로 연결. 열린 장터라 툴마다 적는다
 //   url      : 카드 링크. null 이면 링크 없음(출시 예정 등)
-//   featured : (미사용 — 목록은 하나이고 모든 앱이 배너형으로 나열됨)
+//   featured : (미사용 — 목록은 하나이고 모든 툴이 배너형으로 나열됨)
 //   soon     : true 면 "출시 예정" 표시 (soonText 로 문구 지정)
 //   launch   : 'config' 면 출시 모드를 GET /api/market-config 의 mode 로 따른다 (reserve = 출시 알림 예약 카드 / sale = 결제 카드).
 //              데이터는 모드와 무관하게 두고, 렌더(market-home.js)가 mode 에 따라 배지·버튼만 바꾼다
@@ -25,12 +25,12 @@ window.MARKET_APPS = [
     bundle: ['트레이딩 시그널(국내 주식선물 290종목 스캐너 + 말로 전략 만들기) · 매매 자동화 봇(Trading Automation Bot)', '보고서 작성 에이전트 (ARWA)(단독 5,500원). One MACS에는 곧 업데이트로 들어갑니다'],
     icon: '', img: '/market/img/onemacs_icon.png',
     color: 'linear-gradient(135deg,#d97757,#1fb98a,#5b8cff)', url: '/market/onemacs',
-    // ---- 앱 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
+    // ---- 툴 정보 블록 (실제 값만 — 없는 값은 필드를 두지 않는다 → 렌더에서 숨김. 렌더: js/market-appinfo.js) ----
     // 버전·업데이트 날짜·다운로드 크기·다운로드 수·예약 수·평점은 여기 두지 않고 API 에서 온다(단일 소스):
     //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
     age: '전체',
     android: '8.0',                                   // → "Android 8.0 이상" (APK 최소 지원, 평가 R5)
-    delivery: { type: '배포판(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
+    delivery: { type: '배포판(PC 설치본)에 포함', note: 'PC에 설치한 뒤 핸드폰 설정에서 [앱 받기]를 누르면 내 PC가 모바일 앱을 내려 줍니다. 마켓에서 따로 받지 않습니다. 보고서 작성 에이전트 ARWA는 준비되는 대로 메일로 따로 보내드립니다. 구글 플레이 등록은 준비 중' },
     needs: ['Windows PC에 One MACS를 설치해야 합니다 (Claude Code 가 안내)', 'AI 4종(Claude Code·Codex·Antigravity·Grok) 중 1개 이상 로그인된 계정이 있어야 합니다', 'PC와 같은 인터넷이 아니어도 됩니다'],
     permissions: [
       { name: '인터넷',        why: 'PC 와 연결합니다' },
@@ -75,7 +75,7 @@ window.MARKET_APPS = [
     icon: '선', color: 'linear-gradient(135deg,#1FB98A,#2E3A5F)',
     url: '/market/StockTradeAutoSystem',
     age: '전체',
-    delivery: { type: '내려받는 파일(PC 설치본)', note: '메일로 따로 보내드립니다. 자기 폴더에 풀고 One MACS에 연결하면 앱에서 열립니다' },
+    delivery: { type: '내려받는 파일(PC 설치본)', note: '메일로 따로 보내드립니다. 자기 폴더에 풀고 One MACS에 연결하면 모바일 앱에서 열립니다' },
     needs: ['Windows PC (켜 두어야 합니다)', 'Python', '증권사 계좌와 API 신청 — 선물옵션 거래 자격이 필요합니다', '텔레그램 (승인을 주고받습니다)'],
     dataSafety: {
       collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],

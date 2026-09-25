@@ -1,4 +1,4 @@
-// ========== 앱 공통 "앱 정보" 블록 — 상단 요약 줄(카드·상세) + 상세 "앱 정보" 표 ==========
+// ========== 툴 공통 "툴 정보" 블록 — 상단 요약 줄(카드·상세) + 상세 "툴 정보" 표 ==========
 // 데이터: js/market-apps.js 의 APPS 항목 필드(실제 값만 — 없는 필드는 항목 숨김) + API(단일 소스):
 //   /api/market-config(version·updated·mode) · /api/market-stats(downloads·sizeLabel) · /api/reserve-count · /api/reviews?summary=1
 // 상세: <div data-appinfo-summary> (요약 줄) · <div id="appinfo"> (표). 홈: market-home.js 가 summaryHtml() 을 사용한다.
@@ -9,7 +9,7 @@
     function num(n) { return Number(n || 0).toLocaleString('ko-KR'); }
     async function getJson(url) { try { var r = await fetch(url); return r.ok ? await r.json() : null; } catch (e) { return null; } }
 
-    /** 앱 하나의 실시간 값 — {mode, version, updated, downloads, sizeLabel, reserveCount, reviewCount, avg} (없으면 null) */
+    /** 툴 하나의 실시간 값 — {mode, version, updated, downloads, sizeLabel, reserveCount, reviewCount, avg} (없으면 null) */
     async function loadStats(app) {
         var out = { mode: 'reserve', version: null, updated: null, downloads: null, sizeLabel: null, reserveCount: null, reviewCount: 0, avg: null };
         var cfg = window.MARKET_CONFIG || await getJson('/api/market-config');
@@ -37,7 +37,7 @@
     function item(k, v, wide) { return v ? '<div class="it' + (wide ? ' wide' : '') + '"><div class="k">' + esc(k) + '</div><div class="v">' + v + '</div></div>' : ''; }
     function list(arr) { return '<ul>' + arr.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
 
-    /** 상세 "앱 정보" 표 HTML (15항목 — 값이 없는 항목은 자동 숨김) */
+    /** 상세 "툴 정보" 표 HTML (15항목 — 값이 없는 항목은 자동 숨김) */
     function tableHtml(a, st) {
         var h = '';
         h += item('버전', st.version ? esc(String(st.version).replace(/^v/i, '')) : '');
@@ -51,7 +51,7 @@
         if (a.dataSafety) {
             var d = a.dataSafety, rows = [];
             if (d.collect && d.collect.length) rows.push('<b>수집</b> — ' + d.collect.map(esc).join(' · '));
-            if (d.onDevice && d.onDevice.length) rows.push('<b>앱 안에만 저장</b> — ' + d.onDevice.map(esc).join(' · '));
+            if (d.onDevice && d.onDevice.length) rows.push('<b>툴 안에만 저장</b> — ' + d.onDevice.map(esc).join(' · '));
             if (d.share) rows.push('<b>제3자 공유</b> — ' + esc(d.share));
             if (d.deleteEmail) rows.push('<b>삭제 요청</b> — <a href="mailto:' + esc(d.deleteEmail) + '">' + esc(d.deleteEmail) + '</a>');
             h += item('데이터 안전', list(rows) + (d.policy ? '<small><a href="' + esc(d.policy) + '">개인정보처리방침 보기</a></small>' : ''), true);
@@ -67,7 +67,7 @@
         h += item('가격', a.price === 0 ? '무료' : (a.price ? num(a.price) + '원 (1회)' : ''));
         h += item('판매자', a.seller ? esc(a.seller.name) + (a.seller.link ? ' · <a href="' + esc(a.seller.link) + '">판매자 정보 보기</a>' : '') : '');
         h += item('호환(태블릿)', a.tablet ? esc(a.tablet) : '');   // 실기기 미확인이면 필드 없음 → 숨김
-        h += item('신고', a.reportEmail ? '<a href="mailto:' + esc(a.reportEmail) + '?subject=' + encodeURIComponent('[WAAT 앱마켓] 부적절한 앱 신고 - ' + a.id) + '">부적절한 앱 신고</a>' : '');
+        h += item('신고', a.reportEmail ? '<a href="mailto:' + esc(a.reportEmail) + '?subject=' + encodeURIComponent('[WAAT AI 툴 마켓] 부적절한 툴 신고 - ' + a.id) + '">부적절한 툴 신고</a>' : '');
         return '<div class="info">' + h + '</div>';
     }
 

@@ -1,4 +1,4 @@
-// ========== WAAT 앱마켓 홈 (market.html) — 앱 목록 렌더 (목록 하나, 앱마다 배너형) ==========
+// ========== WAAT AI 툴 마켓 홈 (market.html) — 툴 목록 렌더 (목록 하나, 툴마다 배너형) ==========
 // 데이터: js/market-apps.js (window.MARKET_APPS / window.MARKET_CATS). CSP 가 인라인 스크립트·onclick 을 막으므로 전부 여기서 이벤트를 단다.
 // 옛 링크 호환: /market#buy · /market#renew · /market#faq (카탈로그·메일·콘솔 페이지) → 상품 상세 /market/onemacs 로 보낸다.
 
@@ -15,7 +15,7 @@
     var APPS = window.MARKET_APPS || [];
     var CATS = window.MARKET_CATS || ['전체'];
     var cat = '전체', q = '';
-    // 출시 모드 — GET /api/market-config 의 mode ('reserve' | 'sale'). 기본·fetch 실패 = reserve. launch:'config' 인 앱에만 적용.
+    // 출시 모드 — GET /api/market-config 의 mode ('reserve' | 'sale'). 기본·fetch 실패 = reserve. launch:'config' 인 툴에만 적용.
     var mode = 'reserve', reserveCount = 0, stats = {};   // stats[app.id] = MarketAppInfo.loadStats 결과(요약 줄)
     var $ = function (id) { return document.getElementById(id); };
 
@@ -36,7 +36,7 @@
         }).join('');
     }
 
-    // 앱 1개 = 배너형 카드 (로고 · 이름 2행 · 주제 · 부제 · 포함 구성 · 판매자 · 가격 · 버튼). 목록은 이것 하나뿐 — 별도 "판매 중인 앱" 그리드 없음(PO 2026-09-21)
+    // 툴 1개 = 배너형 카드 (로고 · 이름 2행 · 주제 · 부제 · 포함 구성 · 판매자 · 가격 · 버튼). 목록은 이것 하나뿐 — 별도 "판매 중인 툴" 그리드 없음(PO 2026-09-21)
     function feat(f) {
         var link = f.url ? esc(f.url) : '';
         var logo = f.img

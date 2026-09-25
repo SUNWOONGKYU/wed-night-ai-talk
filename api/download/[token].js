@@ -102,7 +102,7 @@ module.exports = async function handler(req, res) {
   2. 푼 폴더의 안내문을 열어 그대로 따라 합니다.<br>
   3. 라이선스 키를 넣으면 핸드폰에서 열 수 있는 주소가 나옵니다.` : `
   <b>다음 순서</b><br>
-  1. 내려받은 파일을 PC에서 아무 폴더에나 풉니다. (약 20MB · 핸드폰 앱과 설치 지시문이 함께 들어 있습니다)<br>
+  1. 내려받은 파일을 PC에서 아무 폴더에나 풉니다. (약 20MB · 모바일 앱과 설치 지시문이 함께 들어 있습니다)<br>
   2. 푼 폴더에서 Claude Code를 켜고 설치 지시문을 읽히면 <b>코드 8자리</b>가 나옵니다.<br>
   3. 핸드폰 브라우저로 주소를 열고 그 코드를 넣으면 연결됩니다.<br>
   (설치 안내는 PC 브라우저에서 <a href="https://www.waat.community/market/onemacs/install">waat.community/market/onemacs/install</a> 을 열어도 볼 수 있습니다)`;

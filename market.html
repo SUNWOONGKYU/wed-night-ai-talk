@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<!-- 앱마켓 원칙 정본: market/README.md (앱 페이지 구조 · 별칭 · 홈 · 문안). 아래는 요약.
-     원칙(PO 2026-09-21): 마켓 홈에는 특정 앱의 기능·고지·제작자·상표·면책을 넣지 않는다 — 앱에 관한 것은 카드 필드(js/market-apps.js)와 그 앱의 상세 페이지에만.
-     홈에 두는 것: 헤더(검색·카테고리) · 앱 목록 하나(앱마다 배너형 카드, 로고 포함) · 푸터는 "내 앱을 이 마켓에 올리고 싶다면 → 문의" 한 줄뿐.
+<!-- AI 툴 마켓 원칙 정본: market/README.md (툴 페이지 구조 · 별칭 · 홈 · 문안). 아래는 요약.
+     원칙(PO 2026-09-21): 마켓 홈에는 특정 툴의 기능·고지·제작자·상표·면책을 넣지 않는다 — 툴에 관한 것은 카드 필드(js/market-apps.js)와 그 툴의 상세 페이지에만.
+     홈에 두는 것: 헤더(검색·카테고리) · 툴 목록 하나(툴마다 배너형 카드, 로고 포함) · 푸터는 "내 툴을 이 마켓에 올리고 싶다면 → 문의" 한 줄뿐.
      푸터에 마켓 안내·결제 방법·운영자 정보·사업자 표기·정책 링크·©를 넣지 않는다 (PO 2026-09-21): 결제는 각 등록자가 알아서 할 일이고,
-     WAAT는 선웅규 개인이 운영하는 커뮤니티 사이트라 파인더월드와 무관하다(파인더월드는 원맥스 앱의 판매자일 뿐 → 그 상세 페이지에만). -->
+     WAAT는 선웅규 개인이 운영하는 커뮤니티 사이트라 파인더월드와 무관하다(파인더월드는 원맥스 툴의 판매자일 뿐 → 그 상세 페이지에만). -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WAAT 앱마켓</title>
-<meta name="description" content="WAAT 앱마켓 — 제작자들이 만든 AI 앱을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
-<meta property="og:title" content="WAAT 앱마켓">
-<meta property="og:description" content="제작자들이 만든 AI 앱을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
+<title>WAAT AI 툴 마켓</title>
+<meta name="description" content="WAAT AI 툴 마켓 — 제작자들이 만든 AI 툴을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
+<meta property="og:title" content="WAAT AI 툴 마켓">
+<meta property="og:description" content="제작자들이 만든 AI 툴을 사고파는 열린 장터. 결제 후 다운로드 링크를 이메일로 보냅니다.">
 <meta property="og:url" content="https://www.waat.community/market">
 <meta property="og:image" content="https://www.waat.community/market/img/hero_hub.png">
 <link rel="canonical" href="https://www.waat.community/market">
@@ -32,26 +32,26 @@
             <li><a href="/#schedule"><span class="nav-en">Meeting</span><span class="nav-ko">모임</span></a></li>
             <li><a href="/speakup.html"><span class="nav-en">Community</span><span class="nav-ko">게시판</span></a></li>
             <li><a href="/speakup.html?category=AI%20Biz%20Daily"><span class="nav-en">AI Biz Daily</span><span class="nav-ko">유망 AI Biz 발굴</span></a></li>
-            <li class="on"><a href="/market"><span class="nav-en">App Market</span><span class="nav-ko">앱 마켓</span></a></li>
+            <li class="on"><a href="/market"><span class="nav-en">AI Tool Market</span><span class="nav-ko">AI 툴 마켓</span></a></li>
         </ul>
         <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
     </div>
 </nav>
 
 <div class="hdr"><div class="wrap">
-  <a class="logo" href="/market"><i></i>WAAT<small>앱마켓</small></a>
-  <label class="search"><span aria-hidden="true">🔍</span><input id="q" type="search" placeholder="앱 검색" autocomplete="off"></label>
+  <a class="logo" href="/market"><i></i>WAAT<small>AI 툴 마켓</small></a>
+  <label class="search"><span aria-hidden="true">🔍</span><input id="q" type="search" placeholder="툴 검색" autocomplete="off"></label>
 </div></div>
 
 <div class="wrap">
   <!-- 카테고리 칩 (js/market-home.js 가 채움) -->
   <div class="cats" id="cats"></div>
 
-  <!-- 앱 목록은 하나뿐 (PO 2026-09-21): 앱마다 배너형(로고+이름+주제+부제+가격+버튼)으로 줄줄이. "판매 중인 앱" 같은 별도 목록·제목 없음 -->
+  <!-- 툴 목록은 하나뿐 (PO 2026-09-21): 툴마다 배너형(로고+이름+주제+부제+가격+버튼)으로 줄줄이. "판매 중인 툴" 같은 별도 목록·제목 없음 -->
   <div id="list"></div>
 
   <div class="foot">
-    <p>내 앱을 이 마켓에 올리고 싶다면 → 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
+    <p>내 툴을 이 마켓에 올리고 싶다면 → 문의 <a href="mailto:wksun999@hanmail.net">wksun999@hanmail.net</a></p>
   </div>
 </div>
 

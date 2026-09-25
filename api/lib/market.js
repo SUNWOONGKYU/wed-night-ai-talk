@@ -1,5 +1,5 @@
 /**
- * 앱 마켓 공통 — 상품 정보, 주문번호·라이선스 키 생성, 다운로드 파일 위치, 입력 검증
+ * AI 툴 마켓 공통 — 상품 정보, 주문번호·라이선스 키 생성, 다운로드 파일 위치, 입력 검증
  *
  * 환경변수 (전부 Vercel Environment Variables 에 PO 가 입력):
  *   PRODUCT_NAME            Orders 시트 P열 product 값 (기본 '콘솔시스템 v1.0')
@@ -12,7 +12,7 @@
  *   BASE_URL                https://www.waat.community
  *   SUPPORT_EMAIL           문의 안내용 (없으면 GMAIL_USER)
  *   PRODUCT_MODE            'reserve'(출시 전 — 출시 알림 예약만 받음, 기본) | 'sale'(판매 — 결제 UI)
- *   PRODUCT_UPDATED         앱 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
+ *   PRODUCT_UPDATED         툴 정보 '업데이트 날짜' YYYY-MM-DD (파일 교체 시 함께 갱신)
  *   REPORT_WRITING_AGENT_PRICE      보고서 작성 에이전트 단독 판매가 (원, 기본 5500)
  *   REPORT_WRITING_AGENT_VERSION / REPORT_WRITING_AGENT_UPDATED / REPORT_WRITING_AGENT_NAME
  *   REPORT_WRITING_AGENT_DOWNLOAD_URL  없으면 우리 사이트의 /console/report-agent_v1.0.zip
@@ -43,7 +43,7 @@ const PRODUCTS = {
         get label() { return clean(process.env.PRODUCT_NAME) || `${this.name} ${this.version}`; },
         get price() { return parseInt(process.env.PRODUCT_PRICE, 10) || 9900; },
         get version() { return clean(process.env.PRODUCT_VERSION) || 'v1.4.9'; },
-        /** 업데이트 날짜(앱 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, 파일 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
+        /** 업데이트 날짜(툴 정보) — env PRODUCT_UPDATED(YYYY-MM-DD, 파일 교체 시 함께 갱신), 없으면 이 배포의 콜드스타트 날짜(KST) */
         get updated() { return clean(process.env.PRODUCT_UPDATED) || DEPLOY_DATE; },
         get downloadUrl() { return apkDownloadUrl() || '/console/onemacs_v3.0.3.zip'; },
         /** 끼워 주는 상품 없음. 보고서 작성 에이전트(보고서 작성 에이전트)는 **따로 파는 상품**이다(PO 2026-09-23 정정).

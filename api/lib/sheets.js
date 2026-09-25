@@ -1,5 +1,5 @@
 /**
- * Google Sheets 데이터베이스 헬퍼 — 앱 마켓(One MACS · 원맥스) 주문
+ * Google Sheets 데이터베이스 헬퍼 — AI 툴 마켓(One MACS · 원맥스) 주문
  *
  * 출처: PO 의 기존 판매 시스템 (Claude설치가이드/v2.0/sales-system/api/lib/sheets.js, 2025-10)
  * 변경: ESM → CommonJS (WAAT api/ 는 module.exports 규약), Orders 시트에 N·O·P 열 추가

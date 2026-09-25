@@ -1,4 +1,4 @@
-// ========== 앱마켓 리뷰·댓글 (market/<앱id>/reviews.html) — 앱 공통. body[data-app] 이 app_code ==========
+// ========== AI 툴 마켓 리뷰·댓글 (market/<앱id>/reviews.html) — 툴 공통. body[data-app] 이 app_code ==========
 // API: /api/reviews · /api/review-comments · /api/review-report · /api/review-admin (설계: 브릿지 2026_09_21__PC2안_마켓리뷰댓글_시안.md)
 // 인라인 스크립트는 CSP 가 막으므로 전부 이 파일에 둔다. 관리 키는 sessionStorage 에만(URL·localStorage 금지).
 (function () {

@@ -62,7 +62,7 @@ function purchaseEmailHtml(p) {
   </div>
 
   <div style="background:#1A2238;color:#fff;padding:26px;border-radius:16px;margin-bottom:22px;text-align:center;">
-    <div style="font-size:14px;opacity:.85;margin-bottom:10px;">먼저 PC에서 <a href="https://www.waat.community/market/onemacs/install" style="color:#C9A961;font-weight:700;">waat.community/market/onemacs/install</a> 을 여세요 — 핸드폰 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다.</div>
+    <div style="font-size:14px;opacity:.85;margin-bottom:10px;">먼저 PC에서 <a href="https://www.waat.community/market/onemacs/install" style="color:#C9A961;font-weight:700;">waat.community/market/onemacs/install</a> 을 여세요 — 모바일 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다.</div>
     <div style="font-size:14px;opacity:.85;margin-bottom:12px;">보안 다운로드 링크${files.length > 1 ? ` — 파일 ${files.length}개` : ''}</div>
     ${files.map((f, i) => `<a href="${esc(f.link)}" style="display:${files.length > 1 ? 'block' : 'inline-block'};background:${i === 0 ? '#C9A961' : '#EFE3C2'};color:#1A2238;padding:14px 34px;text-decoration:none;border-radius:10px;font-weight:800;font-size:${i === 0 ? 17 : 15}px;${files.length > 1 ? 'margin:0 0 10px;' : ''}">${esc(f.label || f.name)} 내려받기</a>`).join('')}
     ${files.length > 1 ? `<div style="margin-top:6px;font-size:13px;opacity:.85;line-height:1.7;">두 개는 <b>따로 도는 프로그램</b>입니다. 각각 자기 폴더에 푸세요.</div>` : ''}
@@ -81,15 +81,15 @@ function purchaseEmailHtml(p) {
     <b>주식 매매 자동화 시스템 (STAS)</b> · 신호가 나면 텔레그램으로 물어보고, 승인하신 주문만 대신 넣습니다.<br>
     둘 다 One MACS 와 따로 파는 별도 상품(각 5,500원)이지만, <b>출시일로부터 한 달 동안 One MACS 를 사신 분께는 값을 더 받지 않습니다.</b>
     준비되는 대로 이 주소(${esc(p.email)})로 <b>하나씩 따로 보내드립니다.</b> 다시 결제하실 일도, 따로 신청하실 일도 없습니다.<br>
-    <span style="font-size:13px;opacity:.85;">받으시면 <b>각각 독립된 폴더</b>에 푸십시오(프로젝트가 서로 다릅니다). 그 폴더에서 Claude Code 에게 <b>"이 폴더의 CLAUDE_CODE_지시문.md 를 읽고 그대로 수행해줘"</b>, 끝나면 <b>"One MACS 에 연결해줘"</b> 라고 하시면 핸드폰 앱 안에서 바로 열립니다.</span>
+    <span style="font-size:13px;opacity:.85;">받으시면 <b>각각 독립된 폴더</b>에 푸십시오(프로젝트가 서로 다릅니다). 그 폴더에서 Claude Code 에게 <b>"이 폴더의 CLAUDE_CODE_지시문.md 를 읽고 그대로 수행해줘"</b>, 끝나면 <b>"One MACS 에 연결해줘"</b> 라고 하시면 모바일 앱 안에서 바로 열립니다.</span>
   </div>
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
     <h3 style="font-size:15px;margin:0 0 10px;">설치 순서</h3>
     <ol style="margin:0;padding-left:20px;color:#4A5670;font-size:14px;line-height:1.8;">
-      <li>PC에서 위 버튼으로 배포판을 받아 아무 폴더에나 풉니다. (Windows 10/11 · 약 20MB · <b>핸드폰 앱과 설치 지시문이 함께 들어 있습니다</b>)</li>
+      <li>PC에서 위 버튼으로 배포판을 받아 아무 폴더에나 풉니다. (Windows 10/11 · 약 20MB · <b>모바일 앱과 설치 지시문이 함께 들어 있습니다</b>)</li>
       <li>푼 폴더에서 Claude Code 를 켜고 아래 한 줄을 붙여넣으시면 설치가 진행되고 <b>코드 8자리</b>가 나옵니다.<br><span style="display:inline-block;margin:6px 0;padding:8px 12px;background:#F6F4EF;border-radius:8px;font-size:13px;color:#1A2238;">One MACS 폴더의 CLAUDE_CODE_지시문.md 를 읽고, 그 안의 지시를 순서대로 전부 수행해서 One MACS 를 이 PC 에 설치해줘.</span><br> 자세한 것은 푼 폴더의 <b>"One MACS 사용설명서.html"</b> 한 장에 다 있습니다. (PC 브라우저에서 <a href="${esc(p.consoleGuideLink)}" style="color:#2E3A5F;">waat.community/market/onemacs/install</a> 을 열어도 같은 안내를 볼 수 있습니다)</li>
-      <li>그 코드를 앱에 넣으면 핸드폰과 PC가 연결됩니다.</li>
+      <li>그 코드를 모바일 앱에 넣으면 핸드폰과 PC가 연결됩니다.</li>
     </ol>
   </div>
 
@@ -150,7 +150,7 @@ function reservationEmailHtml(p) {
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:18px;">
     <h3 style="font-size:15px;margin:0 0 8px;">그동안 미리 보실 수 있는 안내</h3>
-    <p style="margin:0;color:#4A5670;font-size:14px;line-height:1.8;">핸드폰 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다. 설치 안내는 지금 보실 수 있습니다.</p>
+    <p style="margin:0;color:#4A5670;font-size:14px;line-height:1.8;">모바일 앱을 사용하려면 PC에 One MACS를 먼저 설치해야 합니다. 설치 안내는 지금 보실 수 있습니다.</p>
     <a href="${esc(p.consoleGuideLink || 'https://www.waat.community/market/onemacs/install')}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">PC에 One MACS 설치하기 안내 보기</a>
   </div>
 
@@ -188,7 +188,7 @@ function reviewVerifyHtml(p) {
     return `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;max-width:600px;margin:0 auto;padding:36px 20px;color:#1a2238;">
   <div style="text-align:center;margin-bottom:24px;">
-    <p style="color:#8A8F9E;font-size:13px;margin:0 0 6px;">WAAT 앱마켓 · ${esc(p.appName)}</p>
+    <p style="color:#8A8F9E;font-size:13px;margin:0 0 6px;">WAAT AI 툴 마켓 · ${esc(p.appName)}</p>
     <h1 style="font-size:20px;margin:0;">${name}님, ${esc(c.title)}</h1>
   </div>
   <div style="text-align:center;margin:22px 0;">
@@ -205,9 +205,9 @@ async function sendReviewVerifyEmail(p) {
     const c = VERIFY_COPY[p.kind] || VERIFY_COPY.review;
     const t = transporter();
     await t.sendMail({
-        from: `"WAAT 앱마켓" <${process.env.GMAIL_USER}>`,
+        from: `"WAAT AI 툴 마켓" <${process.env.GMAIL_USER}>`,
         to: p.email,
-        subject: `[WAAT 앱마켓] ${c.subject} — ${p.appName}`,
+        subject: `[WAAT AI 툴 마켓] ${c.subject} — ${p.appName}`,
         html: reviewVerifyHtml(p)
     });
 }
@@ -216,9 +216,9 @@ async function sendReviewVerifyEmail(p) {
 async function sendReportAlertEmail(p) {
     const t = transporter();
     await t.sendMail({
-        from: `"WAAT 앱마켓" <${process.env.GMAIL_USER}>`,
+        from: `"WAAT AI 툴 마켓" <${process.env.GMAIL_USER}>`,
         to: p.to,
-        subject: `[WAAT 앱마켓] ${p.kind === 'comment' ? '댓글' : '리뷰'}이 신고 3건으로 자동 숨김 처리되었습니다 — ${p.appName}`,
+        subject: `[WAAT AI 툴 마켓] ${p.kind === 'comment' ? '댓글' : '리뷰'}이 신고 3건으로 자동 숨김 처리되었습니다 — ${p.appName}`,
         html: `
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;max-width:600px;margin:0 auto;padding:30px 20px;color:#1a2238;font-size:14px;line-height:1.7;">
   <p><b>${esc(p.appName)}</b>의 ${p.kind === 'comment' ? '댓글' : '리뷰'}이 신고 3건이 쌓여 자동으로 숨겨졌습니다.</p>
@@ -264,12 +264,12 @@ function launchPaymentEmailHtml(p) {
 
   <div style="background:#fff;border:1px solid #EAEAEC;padding:18px 20px;border-radius:12px;margin-bottom:14px;">
     <h3 style="font-size:15px;margin:0 0 8px;">결제한 뒤에 할 일</h3>
-    <p style="margin:0;color:#1a2238;font-size:14px;line-height:1.8;">판매 페이지에서 <b>"입금 완료 → 이메일 입력"</b>을 누르고 이메일을 넣으면, 그 주소로 앱 다운로드 링크와 라이선스 키를 바로 보내드립니다. 링크는 ${esc(p.pay.expiryHours || 24)}시간 동안 ${esc(p.pay.maxDownloads || 5)}번까지 받을 수 있고, 지나면 같은 페이지에서 다시 받을 수 있습니다.</p>
+    <p style="margin:0;color:#1a2238;font-size:14px;line-height:1.8;">판매 페이지에서 <b>"입금 완료 → 이메일 입력"</b>을 누르고 이메일을 넣으면, 그 주소로 툴 다운로드 링크와 라이선스 키를 바로 보내드립니다. 링크는 ${esc(p.pay.expiryHours || 24)}시간 동안 ${esc(p.pay.maxDownloads || 5)}번까지 받을 수 있고, 지나면 같은 페이지에서 다시 받을 수 있습니다.</p>
     <a href="${esc(p.salesLink)}" style="display:inline-block;margin-top:12px;background:#C9A961;color:#1A2238;padding:12px 26px;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">판매 페이지 열기</a>
   </div>
 
   <div style="background:#F6F4EF;padding:16px 20px;border-radius:12px;margin-bottom:18px;font-size:14px;line-height:1.8;color:#1a2238;">
-    설치는 PC의 Claude Code가 안내합니다. 앱을 받은 뒤 PC의 Claude Code에 설치 안내 주소를 붙여 넣으면, Claude Code가 필요한 것을 물어보면서 설치를 진행합니다. <a href="${esc(p.installLink)}" style="color:#1A2238;font-weight:700;">설치 안내 미리 보기</a>
+    설치는 PC의 Claude Code가 안내합니다. 툴을 받은 뒤 PC의 Claude Code에 설치 안내 주소를 붙여 넣으면, Claude Code가 필요한 것을 물어보면서 설치를 진행합니다. <a href="${esc(p.installLink)}" style="color:#1A2238;font-weight:700;">설치 안내 미리 보기</a>
   </div>
 
   <p style="color:#8A8F9E;font-size:12px;line-height:1.7;margin:0;text-align:center;">
