@@ -58,7 +58,7 @@ window.MARKET_APPS = [
     url: '/market/ReportWritingAgent',
     age: '전체',
     delivery: { type: '내려받는 파일(PC 설치본)', note: '받은 파일을 자기 폴더에 풉니다. One MACS 폴더 안이 아닙니다 — 따로 도는 프로그램입니다' },
-    needs: ['Windows PC (켜 두어야 합니다)', 'Claude Code 계정 (본인 구독)', '핸드폰에서 열려면 라이선스 키로 주소를 받습니다'],
+    needs: ['Windows PC', 'Python 3.14 이상', 'Claude Code', 'Codex(2차 검증용)'],
     dataSafety: {
       collect: ['주문 이메일(구매할 때)', '예약 이메일(출시 알림을 신청할 때)'],
       onDevice: ['작성 중인 보고서와 자료(내 PC 안에만)'],
